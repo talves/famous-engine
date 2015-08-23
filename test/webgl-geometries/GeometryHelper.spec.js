@@ -24,8 +24,8 @@
 
 'use strict';
 var test = require('tape');
-var GeometryHelper = require('../GeometryHelper');
-var Vec3 = require('../../math/Vec3');
+var GeometryHelper = require('../../src/webgl-geometries/GeometryHelper');
+var Vec3 = require('../../src/math/Vec3');
 
 test('GeometryHelper', function(t) {
     t.test('GeometryHelper.generateParametric', function(t) {

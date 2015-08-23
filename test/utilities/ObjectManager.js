@@ -25,7 +25,7 @@
 'use strict';
 
 var test = require('tape');
-var ObjectManager = require('../ObjectManager');
+var ObjectManager = require('../../src/utilities/ObjectManager');
 
 test('ObjectManager', function(t) {
     t.equal(

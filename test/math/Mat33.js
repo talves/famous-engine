@@ -25,8 +25,8 @@
 'use strict';
 
 var test = require('tape');
-var Mat33 = require('../Mat33');
-var Vec3 = require('../Vec3');
+var Mat33 = require('../../src/math/Mat33');
+var Vec3 = require('../../src/math/Vec3');
 
 test('Mat33', function(t) {
     t.test('constructor', function(t) {

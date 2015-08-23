@@ -24,7 +24,7 @@
 
 'use strict';
 
-var animationFrame = require('../animationFrame');
+var animationFrame = require('../../src/polyfills/animationFrame');
 var rAF = animationFrame.requestAnimationFrame;
 var cAF = animationFrame.cancelAnimationFrame;
 var test = require('tape');

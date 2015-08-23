@@ -27,8 +27,8 @@
 'use strict';
 
 var test = require('tape');
-var Scene = require('../Scene');
-var Dispatch = require('../Dispatch');
+var Scene = require('../../src/core/Scene');
+var Dispatch = require('../../src/core/Dispatch');
 
 test('Scene', function(t) {
     t.test('constructor', function(t) {

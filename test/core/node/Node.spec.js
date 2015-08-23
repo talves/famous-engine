@@ -1,7 +1,7 @@
 'use strict';
 
 var test = require('tape');
-var Node = require('../../Node');
+var Node = require('../../../src/core/Node');
 var api = require('./Node.api');
 
 test('Node class', function (t) {

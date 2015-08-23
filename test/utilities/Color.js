@@ -24,9 +24,9 @@
 
 'use strict';
 
-var Transitionable = require('../../transitions/Transitionable');
+var Transitionable = require('../../src/transitions/Transitionable');
 var test = require('tape');
-var Color = require('../Color');
+var Color = require('../../src/utilities/Color');
 
 var time = 0;
 

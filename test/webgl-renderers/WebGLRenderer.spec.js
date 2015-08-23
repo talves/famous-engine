@@ -25,7 +25,7 @@
 'use strict';
 
 var test = require('tape');
-var WebGLRenderer = require('../WebGLRenderer');
+var WebGLRenderer = require('../../src/webgl-renderers/WebGLRenderer');
 
 function createCanvas () {
     return document.createElement('canvas');

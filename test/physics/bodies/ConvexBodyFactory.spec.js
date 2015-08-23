@@ -25,8 +25,8 @@
 'use strict';
 
 var test = require('tape');
-var convexBodyFactory = require('../../bodies/convexBodyFactory');
-var Vec3 = require('../../../math/Vec3');
+var convexBodyFactory = require('../../../src/physics/bodies/convexBodyFactory');
+var Vec3 = require('../../../src/math/Vec3');
 
 function arraysAreApproximatelyEqual(a, b, tolerance) {
     for (var i = 0, len = a.length; i < len; i++) {

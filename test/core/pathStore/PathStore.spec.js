@@ -3,7 +3,7 @@
 var test = require('tape');
 var rewire = require('rewire');
 var api = require('./PathStore.api');
-var PathStore = rewire('../../PathStore');
+var PathStore = rewire('../../../src/core/PathStore');
 var PathUtilsStub = require('../path/Path.stub');
 var helpers = require('./PathStore.helpers');
 
@@ -32,7 +32,7 @@ test('PathStore class', function (t) {
 
         t.end();
     });
-    
+
     t.test('.insert method', function (t) {
         var pathStore = new PathStore();
 
@@ -41,10 +41,10 @@ test('PathStore class', function (t) {
         t.doesNotThrow(function () {
             pathStore.insert('a', a);
         }, 'insert should be able to be called with a string and any other argument');
-        
+
         t.equal(
             pathStore.get('a'), a,
-            'insert should insert the given item at the given path' + 
+            'insert should insert the given item at the given path' +
             ' such that the path can be used to look it up with the get method'
         );
 
@@ -86,7 +86,7 @@ test('PathStore class', function (t) {
                 );
             }
         });
-        
+
         t.end();
     });
 
@@ -145,4 +145,3 @@ test('PathStore class', function (t) {
 
     t.end();
 });
-

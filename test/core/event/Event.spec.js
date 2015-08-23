@@ -24,7 +24,7 @@
 
 'use strict';
 
-var Event = require('../../Event');
+var Event = require('../../../src/core/Event');
 var test = require('tape');
 
 test('Event', function (t) {

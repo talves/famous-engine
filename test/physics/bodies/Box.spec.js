@@ -24,8 +24,8 @@
 
 'use strict';
 
-var Particle = require('../../bodies/Particle');
-var Box = require('../../bodies/Box');
+var Particle = require('../../../src/physics/bodies/Particle');
+var Box = require('../../../src/physics/bodies/Box');
 var test = require('tape');
 
 test('Box', function(t) {

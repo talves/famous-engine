@@ -24,7 +24,7 @@
 
 'use strict';
 
-var Force = require('../../forces/Force');
+var Force = require('../../../src/physics/forces/Force');
 var test = require('tape');
 
 test('Force', function(t) {

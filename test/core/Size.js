@@ -25,7 +25,7 @@
 'use strict';
 
 var test = require('tape');
-var Size = require('../Size');
+var Size = require('../../src/core/Size');
 
 test('Size', function(t) {
     t.test('constructor', function(t) {

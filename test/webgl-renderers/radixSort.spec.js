@@ -24,7 +24,7 @@
 
 'use strict';
 var test = require('tape');
-var radixSort = require('../radixSort');
+var radixSort = require('../../src/webgl-renderers/radixSort');
 
 test('radixSort', function(t) {
 

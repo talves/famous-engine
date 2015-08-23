@@ -24,10 +24,10 @@
 
 'use strict';
 
-var BallAndSocket = require('../../constraints/BallAndSocket');
-var Constraint = require('../../constraints/Constraint');
-var Box = require('../../bodies/Box');
-var Vec3 = require('../../../math/Vec3');
+var BallAndSocket = require('../../../src/physics/constraints/BallAndSocket');
+var Constraint = require('../../../src/physics/constraints/Constraint');
+var Box = require('../../../src/physics/bodies/Box');
+var Vec3 = require('../../../src/math/Vec3');
 var test = require('tape');
 
 function vec3sAreEqual(a,b) {

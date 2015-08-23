@@ -24,7 +24,7 @@
 
 'use strict';
 
-var Channel = require('../../Channel');
+var Channel = require('../../../src/core/Channel');
 var api = require('./Channel.api');
 var test = require('tape');
 
@@ -51,7 +51,7 @@ test('Channel', function(t) {
 
         t.end();
     });
-    
+
     t.test('Workerless mode', function(t) {
         t.test('sendMessage method', function(t) {
             t.plan(2);

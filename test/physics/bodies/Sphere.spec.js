@@ -24,9 +24,9 @@
 
 'use strict';
 
-var Particle = require('../../bodies/Particle');
-var Sphere = require('../../bodies/Sphere');
-var Vec3 = require('../../../math/Vec3');
+var Particle = require('../../../src/physics/bodies/Particle');
+var Sphere = require('../../../src/physics/bodies/Sphere');
+var Vec3 = require('../../../src/math/Vec3');
 var test = require('tape');
 
 function arraysAreEqual(a, b) {

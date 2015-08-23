@@ -24,20 +24,20 @@
 
 'use strict';
 var test = require('tape');
-var Geometry = require('../Geometry');
+var Geometry = require('../../src/webgl-geometries/Geometry');
 
 var primitives = {
-    Box: require('../primitives/Box'),
-    Circle: require('../primitives/Circle'),
-    Cylinder: require('../primitives/Cylinder'),
-    GeodesicSphere: require('../primitives/GeodesicSphere'),
-    Icosahedron: require('../primitives/Icosahedron'),
-    ParametricCone: require('../primitives/ParametricCone'),
-    Plane: require('../primitives/Plane'),
-    Sphere: require('../primitives/Sphere'),
-    Tetrahedron: require('../primitives/Tetrahedron'),
-    Torus: require('../primitives/Torus'),
-    Triangle: require('../primitives/Triangle')
+    Box: require('../../src/webgl-geometries/primitives/Box'),
+    Circle: require('../../src/webgl-geometries/primitives/Circle'),
+    Cylinder: require('../../src/webgl-geometries/primitives/Cylinder'),
+    GeodesicSphere: require('../../src/webgl-geometries/primitives/GeodesicSphere'),
+    Icosahedron: require('../../src/webgl-geometries/primitives/Icosahedron'),
+    ParametricCone: require('../../src/webgl-geometries/primitives/ParametricCone'),
+    Plane: require('../../src/webgl-geometries/primitives/Plane'),
+    Sphere: require('../../src/webgl-geometries/primitives/Sphere'),
+    Tetrahedron: require('../../src/webgl-geometries/primitives/Tetrahedron'),
+    Torus: require('../../src/webgl-geometries/primitives/Torus'),
+    Triangle: require('../../src/webgl-geometries/primitives/Triangle')
 };
 
 test('Primitives', function(t) {

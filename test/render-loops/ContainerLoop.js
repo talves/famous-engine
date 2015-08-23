@@ -25,7 +25,7 @@
 'use strict';
 
 var test = require('tape');
-var ContainerLoop = require('../ContainerLoop');
+var ContainerLoop = require('../../src/render-loops/ContainerLoop');
 
 test('ContainerLoop', function(t) {
     t.test('constructor', function(t) {

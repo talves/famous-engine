@@ -24,10 +24,10 @@
 
 'use strict';
 
-var Particle = require('../../bodies/Particle');
-var Vec3 = require('../../../math/Vec3');
-var Mat33 = require('../../../math/Mat33');
-var Quaternion = require('../../../math/Quaternion');
+var Particle = require('../../../src/physics/bodies/Particle');
+var Vec3 = require('../../../src/math/Vec3');
+var Mat33 = require('../../../src/math/Mat33');
+var Quaternion = require('../../../src/math/Quaternion');
 var test = require('tape');
 
 test('Particle', function(t) {

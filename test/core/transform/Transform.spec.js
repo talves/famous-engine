@@ -2,7 +2,7 @@
 
 var test = require('tape');
 var api = require('./Transform.api');
-var Transform = require('../../Transform');
+var Transform = require('../../../src/core/Transform');
 var TransformStub = require('./Transform.stub');
 var NodeStub = require('../node/Node.stub');
 var sinon = require('sinon');
@@ -66,7 +66,7 @@ test('Transform class', function (t) {
         }, 'setParent should be callable');
 
         t.equal(transform.getParent(), 'hello',
-            'the value set as the parent should ' + 
+            'the value set as the parent should ' +
             'be what is returned from getParent');
 
         transform = new Transform('bye');
@@ -106,7 +106,7 @@ test('Transform class', function (t) {
         t.doesNotThrow( function () {
             transform.setBreakPoint();
         }, 'setBreakPoint should be callable');
-        
+
         t.ok(transform.isBreakPoint(), 'after calling setBreakpoint, a transform should be a breakpoint');
 
         t.end();
@@ -139,7 +139,7 @@ test('Transform class', function (t) {
         // sanity check
         if (parent !== transform.getParent() || !transform.isBreakPoint())
             throw new Error('transform.getParent or isBreakPoint is not functioning correctly');
-        
+
         t.doesNotThrow(transform.reset.bind(transform), 'reset should be callable without arguments');
 
         api.forEach(function (method) {
@@ -175,13 +175,13 @@ test('Transform class', function (t) {
         var transform = new Transform();
 
         // sanity check
-        if (transform.isBreakPoint()) throw new Error('transform is reporting itself to be ' + 
+        if (transform.isBreakPoint()) throw new Error('transform is reporting itself to be ' +
                                                       'a breakpoint after instantiation. isBreakPoint ' +
                                                       'or the constructor might be broken');
 
         t.throws(transform.getWorldTransform.bind(transform), 'getWorldTransform should throw if ' +
                                                               'the transform isn\'t a breakpoint');
-        
+
         transform.setBreakPoint();
 
         t.doesNotThrow(function () {
@@ -278,7 +278,7 @@ test('Transform class', function (t) {
     });
 
     t.test('setRotation method', function (t) {
-        
+
         // todo
 
         t.end();

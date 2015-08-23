@@ -25,7 +25,7 @@
 'use strict';
 
 var test = require('tape');
-var TextureRegistry = require('../TextureRegistry');
+var TextureRegistry = require('../../src/webgl-materials/TextureRegistry');
 
 test('TextureRegistry', function(t) {
 

@@ -27,9 +27,9 @@
 'use strict';
 
 var test = require('tape');
-var Node = require('../Node');
-var Size = require('../Size');
-var Scene = require('../Scene');
+var Node = require('../../src/core/Node');
+var Size = require('../../src/core/Size');
+var Scene = require('../../src/core/Scene');
 
 var IDENT = [
     1, 0, 0, 0,

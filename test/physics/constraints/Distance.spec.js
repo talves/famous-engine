@@ -24,10 +24,10 @@
 
 'use strict';
 
-var Distance = require('../../constraints/Distance');
-var Constraint = require('../../constraints/Constraint');
-var Box = require('../../bodies/Box');
-var Vec3 = require('../../../math/Vec3');
+var Distance = require('../../../src/physics/constraints/Distance');
+var Constraint = require('../../../src/physics/constraints/Constraint');
+var Box = require('../../../src/physics/bodies/Box');
+var Vec3 = require('../../../src/math/Vec3');
 var test = require('tape');
 
 test('Distance', function(t) {

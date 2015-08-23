@@ -2,7 +2,7 @@
 
 var test = require('tape');
 var api = require('./Path.api');
-var PathUtils = require('../../Path');
+var PathUtils = require('../../../src/core/Path');
 var helpers = require('./Path.helpers');
 
 test('PathUtils', function (t) {
@@ -58,7 +58,7 @@ test('PathUtils', function (t) {
             depth = PathUtils.depth(withId);
 
             t.equal(depth, target, '.depth should not discriminate if the path selector is an id');
-            
+
             depth = PathUtils.depth(withTrailingSlash);
 
             t.equal(depth, target, '.depth should not care about trailing slashes or an id selector');
@@ -72,11 +72,11 @@ test('PathUtils', function (t) {
             depth = PathUtils.depth(withTrailingSlash);
 
             t.equal(
-                    depth, target, 
+                    depth, target,
                     '.depth should give the same depth if the path has a class selector and a trailing slash'
             );
         });
-        
+
         t.end();
     });
 
@@ -103,7 +103,7 @@ test('PathUtils', function (t) {
 
         t.end();
     });
-    
+
     t.test('.indexAtDepth method', function (t) {
         Array.apply(null, Array(10)).map(function () {
             return Array.apply(null, Array(10)).map(function () {
@@ -114,7 +114,7 @@ test('PathUtils', function (t) {
             path.split('/').forEach(function (index, i) {
                 var result = PathUtils.indexAtDepth(path, i);
                 t.equal(
-                    result, result.constructor === String ? index : parseInt(index), 
+                    result, result.constructor === String ? index : parseInt(index),
                     'the index of ' + path + ' at depth ' + i + ' should be ' + index
                 );
             });
@@ -147,11 +147,11 @@ test('PathUtils', function (t) {
 
             for (var i = 0 ; i < 2 ; i++) {
                 t.ok(PathUtils.isChildOf(child, path), child + ' should be a child of ' + path);
-        
+
                 t.notOk(PathUtils.isChildOf(grandChild, path), grandChild + ' should not be a child of ' + path);
 
                 t.notOk(PathUtils.isChildOf(path, child), path + ' should not be a child of ' + child);
-        
+
                 t.notOk(PathUtils.isChildOf(path, grandChild), path + ' should not be a child of ' + grandChild);
 
                 t.notOk(PathUtils.isChildOf(path, path), path + ' should not be a child of itself');
@@ -229,5 +229,3 @@ test('PathUtils', function (t) {
 
     t.end();
 });
-
-

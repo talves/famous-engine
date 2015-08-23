@@ -24,8 +24,8 @@
 
 'use strict';
 var test = require('tape');
-var DynamicGeometry = require('../DynamicGeometry');
-var Circle = require('../primitives/Circle');
+var DynamicGeometry = require('../../src/webgl-geometries/DynamicGeometry');
+var Circle = require('../../src/webgl-geometries/primitives/Circle');
 
 test('DynamicGeometry', function(t) {
     t.test('constructor', function(t) {

@@ -25,10 +25,10 @@
 'use strict';
 
 var test = require('tape');
-var PointLight = require('../lights/PointLight');
+var PointLight = require('../../src/webgl-renderables/lights/PointLight');
 var MockDispatch = require('./MockDispatch');
 var MockColor = require('./MockColor');
-var Commands = require('../../core/Commands');
+var Commands = require('../../src/core/Commands');
 
 var time = 0;
 var pointLight;

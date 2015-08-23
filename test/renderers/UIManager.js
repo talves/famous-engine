@@ -25,7 +25,7 @@
 'use strict';
 
 var test = require('tape');
-var UIManager = require('../UIManager');
+var UIManager = require('../../src/renderers/UIManager');
 
 function noop() {}
 

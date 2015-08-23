@@ -24,7 +24,7 @@
 
 'use strict';
 
-var Constraint = require('../../constraints/Constraint');
+var Constraint = require('../../../src/physics/constraints/Constraint');
 var test = require('tape');
 
 test('Constraint', function(t) {

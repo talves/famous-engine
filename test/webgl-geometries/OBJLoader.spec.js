@@ -24,7 +24,7 @@
 
 'use strict';
 var test = require('tape');
-var OBJLoader = require('../OBJLoader');
+var OBJLoader = require('../../src/webgl-geometries/OBJLoader');
 
 test('OBJLoader', function(t) {
     var teapotURL = 'http://people.sc.fsu.edu/~jburkardt/data/obj/teapot.obj';

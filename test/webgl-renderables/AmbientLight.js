@@ -25,7 +25,7 @@
 'use strict';
 
 var test = require('tape');
-var AmbientLight = require('../lights/AmbientLight');
+var AmbientLight = require('../../src/webgl-renderables/lights/AmbientLight');
 var MockDispatch = require('./MockDispatch');
 var MockColor = require('./MockColor');
 

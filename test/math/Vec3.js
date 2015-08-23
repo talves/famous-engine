@@ -25,7 +25,7 @@
 'use strict';
 
 var test = require('tape');
-var Vec3 = require('../Vec3');
+var Vec3 = require('../../src/math/Vec3');
 
 var MockMatrix = function(value) {
     this._value = value.slice();

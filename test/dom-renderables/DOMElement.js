@@ -25,7 +25,7 @@
 'use strict';
 
 var test = require('tape');
-var DOMElement = require('../DOMElement.js');
+var DOMElement = require('../../src/dom-renderables/DOMElement.js');
 
 var IDENT = [
     1, 0, 0, 0,
@@ -230,9 +230,9 @@ test('DOMElement', function(t) {
 
         // domElement.onMount(node, 0);
         t.doesNotThrow(function() {
-            domElement.setContent('some content');    
+            domElement.setContent('some content');
         }, 'should not error when passed a String');
-        
+
         t.end();
     });
 

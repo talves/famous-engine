@@ -25,10 +25,10 @@
 'use strict';
 
 var test = require('tape');
-var Mesh = require('../Mesh');
+var Mesh = require('../../src/webgl-renderables/Mesh');
 var MockDispatch = require('./MockDispatch');
 var MockColor = require('./MockColor');
-var Commands = require('../../core/Commands');
+var Commands = require('../../src/core/Commands');
 
 var time = 0;
 var node;

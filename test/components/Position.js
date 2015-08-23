@@ -25,7 +25,7 @@
 'use strict';
 
 var test = require('tape');
-var Position = require('../Position');
+var Position = require('../../src/components/Position');
 
 test('Position', function(t) {
     t.test('constructor', function(t) {

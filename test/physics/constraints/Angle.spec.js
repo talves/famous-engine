@@ -24,10 +24,10 @@
 
 'use strict';
 
-var Angle = require('../../constraints/Angle');
-var Constraint = require('../../constraints/Constraint');
-var Box = require('../../bodies/Box');
-var Vec3 = require('../../../math/Vec3');
+var Angle = require('../../../src/physics/constraints/Angle');
+var Constraint = require('../../../src/physics/constraints/Constraint');
+var Box = require('../../../src/physics/bodies/Box');
+var Vec3 = require('../../../src/math/Vec3');
 var test = require('tape');
 
 test('Angle', function(t) {

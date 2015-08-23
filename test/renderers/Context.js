@@ -25,7 +25,7 @@
 'use strict';
 
 var test = require('tape');
-var Context = require('../Context');
+var Context = require('../../src/renderers/Context');
 
 var noop = function() {};
 

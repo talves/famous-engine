@@ -25,10 +25,10 @@
 'use strict';
 
 var test = require('tape');
-var FamousEngine = require('../../FamousEngine');
-var Clock = require('../../Clock');
-var Scene = require('../../Scene');
-var Commands = require('../../Commands');
+var FamousEngine = require('../../../src/core/FamousEngine');
+var Clock = require('../../../src/core/Clock');
+var Scene = require('../../../src/core/Scene');
+var Commands = require('../../../src/core/Commands');
 var api = require('./FamousEngine.api');
 
 function onUpdateWrap(fn) {

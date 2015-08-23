@@ -25,7 +25,7 @@
 'use strict';
 
 var test = require('tape');
-var keyValueToArrays = require('../keyValueToArrays');
+var keyValueToArrays = require('../../src/utilities/keyValueToArrays');
 
 test('keyValueToArrays', function(t) {
     t.equal(

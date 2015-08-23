@@ -24,10 +24,10 @@
 
 'use strict';
 
-var RotationalDrag = require('../../forces/RotationalDrag');
-var Force = require('../../forces/Force');
-var Box = require('../../bodies/Box');
-var Vec3 = require('../../../math/Vec3');
+var RotationalDrag = require('../../../src/physics/forces/RotationalDrag');
+var Force = require('../../../src/physics/forces/Force');
+var Box = require('../../../src/physics/bodies/Box');
+var Vec3 = require('../../../src/math/Vec3');
 var test = require('tape');
 
 function vec3sAreEqual(a,b) {

@@ -24,12 +24,12 @@
 
 'use strict';
 
-var RotationalSpring = require('../../forces/RotationalSpring');
-var Force = require('../../forces/Force');
-var Box = require('../../bodies/Box');
-var Vec3 = require('../../../math/Vec3');
-var Mat33 = require('../../../math/Mat33');
-var Quaternion = require('../../../math/Quaternion');
+var RotationalSpring = require('../../../src/physics/forces/RotationalSpring');
+var Force = require('../../../src/physics/forces/Force');
+var Box = require('../../../src/physics/bodies/Box');
+var Vec3 = require('../../../src/math/Vec3');
+var Mat33 = require('../../../src/math/Mat33');
+var Quaternion = require('../../../src/math/Quaternion');
 var test = require('tape');
 
 function vec3sAreEqual(a,b) {

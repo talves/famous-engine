@@ -2,10 +2,10 @@
 
 var api = require('./Dispatch.api');
 var rewire = require('rewire');
-var Dispatch = rewire('../../../core/Dispatch');
+var Dispatch = rewire('../../../src/core/Dispatch');
 var NodeStub = require('../node/Node.stub');
 var PathUtilsStub = require('../path/Path.stub');
-var Node = require('../../../core/Node');
+var Node = require('../../../src/core/Node');
 var test = require('tape');
 
 Dispatch.__set__('PathUtils', PathUtilsStub);
