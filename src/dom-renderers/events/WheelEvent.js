@@ -24,7 +24,7 @@
 
 'use strict';
 
-var MouseEvent = require('./MouseEvent');
+import { MouseEvent } from './MouseEvent';
 
 /**
  * See [UI Events (formerly DOM Level 3 Events)](http://www.w3.org/TR/2015/WD-uievents-20150428/#events-wheelevents).
@@ -34,7 +34,8 @@ var MouseEvent = require('./MouseEvent');
  *
  * @param {Event} ev The native DOM event.
  */
-function WheelEvent(ev) {
+ class WheelEvent extends MouseEvent {
+   constructor(ev) {
     // [Constructor(DOMString typeArg, optional WheelEventInit wheelEventInitDict)]
     // interface WheelEvent : MouseEvent {
     //     // DeltaModeCode
@@ -47,7 +48,7 @@ function WheelEvent(ev) {
     //     readonly    attribute unsigned long deltaMode;
     // };
 
-    MouseEvent.call(this, ev);
+    super(ev);
 
     /**
      * @name WheelEvent#DOM_DELTA_PIXEL
@@ -92,9 +93,6 @@ function WheelEvent(ev) {
     this.deltaMode = ev.deltaMode;
 }
 
-WheelEvent.prototype = Object.create(MouseEvent.prototype);
-WheelEvent.prototype.constructor = WheelEvent;
-
 /**
  * Return the name of the event type
  *
@@ -102,8 +100,10 @@ WheelEvent.prototype.constructor = WheelEvent;
  *
  * @return {String} Name of the event type
  */
-WheelEvent.prototype.toString = function toString () {
+toString() {
     return 'WheelEvent';
 };
 
-module.exports = WheelEvent;
+}
+
+export { WheelEvent };

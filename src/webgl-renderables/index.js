@@ -24,8 +24,8 @@
 
 'use strict';
 
-module.exports = {
-    Mesh: require('./Mesh'),
-    PointLight: require('./lights/PointLight'),
-    AmbientLight: require('./lights/AmbientLight')
-};
+import * as lights from './lights';
+import { Mesh } from './Mesh';
+
+export { lights };
+export { Mesh };

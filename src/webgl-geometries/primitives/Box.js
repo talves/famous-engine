@@ -24,7 +24,7 @@
 
 'use strict';
 
-var Geometry = require('../Geometry');
+import { Geometry } from '../Geometry';
 
 function pickOctant(i) {
     return [(i & 1) * 2 - 1, (i & 2) - 1, (i & 4) / 2 - 1];
@@ -51,8 +51,10 @@ var boxData = [
  *
  * @return {Object} constructed geometry
  */
-function BoxGeometry(options) {
-    if (!(this instanceof BoxGeometry)) return new BoxGeometry(options);
+class BoxGeometry extends Geometry {
+  constructor(options) {
+    //handled by es6 transpiler
+    //if (!(this instanceof BoxGeometry)) return new BoxGeometry(options);
 
     options = options || {};
 
@@ -89,10 +91,9 @@ function BoxGeometry(options) {
         { name: 'indices', data: indices, size: 1 }
     ];
 
-    Geometry.call(this, options);
+    super(options);
 }
 
-BoxGeometry.prototype = Object.create(Geometry.prototype);
-BoxGeometry.prototype.constructor = BoxGeometry;
+}
 
-module.exports = BoxGeometry;
+export { BoxGeometry };

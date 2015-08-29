@@ -24,8 +24,8 @@
 
 'use strict';
 
-var Curves = require('./Curves');
-var FamousEngine = require('../core/FamousEngine');
+import { Curves } from './Curves';
+import { FamousEngine } from '../core/FamousEngine';
 
 /**
  * A state maintainer for a smooth transition between
@@ -72,7 +72,8 @@ var FamousEngine = require('../core/FamousEngine');
  *                                              invocation of
  *                                              {@link Transitionable#from}
  */
-function Transitionable(initialState) {
+class Transitionable {
+  constructor(initialState) {
     this._queue = [];
     this._from = null;
     this._state = null;
@@ -80,14 +81,6 @@ function Transitionable(initialState) {
     this._pausedAt = null;
     if (initialState != null) this.from(initialState);
 }
-
-/**
- * Internal Clock used for determining the current time for the ongoing
- * transitions.
- *
- * @type {Performance|Date|Clock}
- */
-Transitionable.Clock = FamousEngine.getClock();
 
 /**
  * Registers a transition to be pushed onto the internal queue.
@@ -112,7 +105,7 @@ Transitionable.Clock = FamousEngine.getClock();
  *                                                          (e.g. slerp)
  * @return {Transitionable}         this
  */
-Transitionable.prototype.to = function to(finalState, curve, duration, callback, method) {
+to(finalState, curve, duration, callback, method) {
     curve = curve != null && curve.constructor === String ? Curves[curve] : curve;
     if (this._queue.length === 0) {
         this._startedAt = this.constructor.Clock.now();
@@ -138,7 +131,7 @@ Transitionable.prototype.to = function to(finalState, curve, duration, callback,
  *                                                  transition from
  * @return {Transitionable}         this
  */
-Transitionable.prototype.from = function from(initialState) {
+from(initialState) {
     this._state = initialState;
     this._from = this._sync(null, this._state);
     this._queue.length = 0;
@@ -159,7 +152,7 @@ Transitionable.prototype.from = function from(initialState) {
  *                                  completion (t=1)
  * @return {Transitionable}         this
  */
-Transitionable.prototype.delay = function delay(duration, callback) {
+delay(duration, callback) {
     var endState = this._queue.length > 0 ? this._queue[this._queue.length - 5] : this._state;
     return this.to(endState, Curves.flat, duration, callback);
 };
@@ -184,7 +177,7 @@ Transitionable.prototype.delay = function delay(duration, callback) {
  *                                                  interpolation.
  * @return {Transitionable}         this
  */
-Transitionable.prototype.override = function override(finalState, curve, duration, callback, method) {
+override(finalState, curve, duration, callback, method) {
     if (this._queue.length > 0) {
         if (finalState != null) this._queue[0] = finalState;
         if (curve != null)      this._queue[1] = curve.constructor === String ? Curves[curve] : curve;
@@ -213,7 +206,7 @@ Transitionable.prototype.override = function override(finalState, curve, duratio
  *                                          slerp)
  * @return {Object|Array|Number}            output
  */
-Transitionable.prototype._interpolate = function _interpolate(output, from, to, progress, method) {
+_interpolate(output, from, to, progress, method) {
     if (to instanceof Object) {
         if (method === 'slerp') {
             var x, y, z, w;
@@ -287,7 +280,7 @@ Transitionable.prototype._interpolate = function _interpolate(output, from, to, 
  *                                          output.
  * @return {Number|Array|Object} output     Passed in output object.
  */
-Transitionable.prototype._sync = function _sync(output, input) {
+_sync(output, input) {
     if (typeof input === 'number') output = input;
     else if (input instanceof Array) {
         if (output == null) output = [];
@@ -316,7 +309,7 @@ Transitionable.prototype._sync = function _sync(output, input) {
  * @return {Number|Array.Number}    Beginning state interpolated to this point
  *                                  in time.
  */
-Transitionable.prototype.get = function get(t) {
+get(t) {
     if (this._queue.length === 0) return this._state;
 
     t = this._pausedAt ? this._pausedAt : t;
@@ -353,7 +346,7 @@ Transitionable.prototype.get = function get(t) {
  *                      transition. Paused transitions are still being
  *                      considered active.
  */
-Transitionable.prototype.isActive = function isActive() {
+isActive() {
     return this._queue.length > 0;
 };
 
@@ -365,7 +358,7 @@ Transitionable.prototype.isActive = function isActive() {
  *
  * @return {Transitionable} this
  */
-Transitionable.prototype.halt = function halt() {
+halt() {
     return this.from(this.get());
 };
 
@@ -377,7 +370,7 @@ Transitionable.prototype.halt = function halt() {
  *
  * @return {Transitionable} this
  */
-Transitionable.prototype.pause = function pause() {
+pause() {
     this._pausedAt = this.constructor.Clock.now();
     return this;
 };
@@ -390,7 +383,7 @@ Transitionable.prototype.pause = function pause() {
  *
  * @return {Boolean} if the current action has been paused
  */
-Transitionable.prototype.isPaused = function isPaused() {
+isPaused() {
     return !!this._pausedAt;
 };
 
@@ -402,7 +395,7 @@ Transitionable.prototype.isPaused = function isPaused() {
  *
  * @return {Transitionable} this
  */
-Transitionable.prototype.resume = function resume() {
+resume() {
     var diff = this._pausedAt - this._startedAt;
     this._startedAt = this.constructor.Clock.now() - diff;
     this._pausedAt = null;
@@ -420,7 +413,7 @@ Transitionable.prototype.resume = function resume() {
  *    stable state to set to
  * @return {Transitionable}                             this
  */
-Transitionable.prototype.reset = function(start) {
+reset(start) {
     return this.from(start);
 };
 
@@ -442,7 +435,7 @@ Transitionable.prototype.reset = function(start) {
  *    completion (t=1)
  * @return {Transitionable} this
  */
-Transitionable.prototype.set = function(state, transition, callback) {
+set(state, transition, callback) {
     if (transition == null) {
         this.from(state);
         if (callback) callback();
@@ -453,4 +446,14 @@ Transitionable.prototype.set = function(state, transition, callback) {
     return this;
 };
 
-module.exports = Transitionable;
+}
+
+/**
+ * Internal Clock used for determining the current time for the ongoing
+ * transitions.
+ *
+ * @type {Performance|Date|Clock}
+ */
+Transitionable.Clock = FamousEngine.getClock();
+
+export { Transitionable };

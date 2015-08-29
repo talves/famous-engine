@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2015 Famous Industries Inc.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -31,7 +31,8 @@
  *
  * @param {Array} values a 3x3 matrix flattened
  */
-function Mat33(values) {
+class Mat33 {
+  constructor(values) {
     this.values = values || [1,0,0,0,1,0,0,0,1];
 }
 
@@ -42,7 +43,7 @@ function Mat33(values) {
  *
  * @return {Array} matrix values as array of rows.
  */
-Mat33.prototype.get = function get() {
+get() {
     return this.values;
 };
 
@@ -55,7 +56,7 @@ Mat33.prototype.get = function get() {
  *
  * @return {Mat33} this
  */
-Mat33.prototype.set = function set(values) {
+set(values) {
     this.values = values;
     return this;
 };
@@ -66,10 +67,10 @@ Mat33.prototype.set = function set(values) {
  * @method
  *
  * @param {Mat33} matrix The Mat33 to copy.
- * 
+ *
  * @return {Mat33} this
  */
-Mat33.prototype.copy = function copy(matrix) {
+copy(matrix) {
     var A = this.values;
     var B = matrix.values;
 
@@ -96,7 +97,7 @@ Mat33.prototype.copy = function copy(matrix) {
  *
  * @return {Vec3} The input vector after multiplication.
  */
-Mat33.prototype.vectorMultiply = function vectorMultiply(v, output) {
+vectorMultiply(v, output) {
     var M = this.values;
     var v0 = v.x;
     var v1 = v.y;
@@ -118,7 +119,7 @@ Mat33.prototype.vectorMultiply = function vectorMultiply(v, output) {
  *
  * @return {Mat33} this
  */
-Mat33.prototype.multiply = function multiply(matrix) {
+multiply(matrix) {
     var A = this.values;
     var B = matrix.values;
 
@@ -162,7 +163,7 @@ Mat33.prototype.multiply = function multiply(matrix) {
  *
  * @return {Mat33} this
  */
-Mat33.prototype.transpose = function transpose() {
+transpose() {
     var M = this.values;
 
     var M1 = M[1];
@@ -189,7 +190,7 @@ Mat33.prototype.transpose = function transpose() {
  *
  * @return {Number} The determinant.
  */
-Mat33.prototype.getDeterminant = function getDeterminant() {
+getDeterminant() {
     var M = this.values;
 
     var M3 = M[3];
@@ -213,7 +214,7 @@ Mat33.prototype.getDeterminant = function getDeterminant() {
  *
  * @return {Mat33} this
  */
-Mat33.prototype.inverse = function inverse() {
+inverse() {
     var M = this.values;
 
     var M0 = M[0];
@@ -246,6 +247,8 @@ Mat33.prototype.inverse = function inverse() {
 
     return this;
 };
+
+}
 
 /**
  * Clones the input Mat33.
@@ -487,4 +490,4 @@ Mat33.multiply = function multiply(matrix1, matrix2, output) {
     return output;
 };
 
-module.exports = Mat33;
+export { Mat33 };

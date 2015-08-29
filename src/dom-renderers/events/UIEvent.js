@@ -24,7 +24,7 @@
 
 'use strict';
 
-var Event = require('./Event');
+import { Event } from './Event';
 
 /**
  * See [UI Events (formerly DOM Level 3 Events)](http://www.w3.org/TR/2015/WD-uievents-20150428).
@@ -34,13 +34,14 @@ var Event = require('./Event');
  *
  * @param  {Event} ev   The native DOM event.
  */
-function UIEvent(ev) {
+class UIEvent extends Event {
+  constructor(ev) {
     // [Constructor(DOMString type, optional UIEventInit eventInitDict)]
     // interface UIEvent : Event {
     //     readonly    attribute Window? view;
     //     readonly    attribute long    detail;
     // };
-    Event.call(this, ev);
+    super(ev);
 
     /**
      * @name UIEvent#detail
@@ -49,9 +50,6 @@ function UIEvent(ev) {
     this.detail = ev.detail;
 }
 
-UIEvent.prototype = Object.create(Event.prototype);
-UIEvent.prototype.constructor = UIEvent;
-
 /**
  * Return the name of the event type
  *
@@ -59,8 +57,10 @@ UIEvent.prototype.constructor = UIEvent;
  *
  * @return {String} Name of the event type
  */
-UIEvent.prototype.toString = function toString () {
+toString (){
     return 'UIEvent';
 };
 
-module.exports = UIEvent;
+}
+
+export { UIEvent };

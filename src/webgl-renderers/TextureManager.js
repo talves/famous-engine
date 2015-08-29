@@ -23,8 +23,8 @@
  */
 'use strict';
 
-var Texture = require('./Texture');
-var createCheckerboard = require('./createCheckerboard');
+import { Texture } from './Texture';
+import { createCheckerBoard } from './createCheckerBoard';
 
 /**
  * Handles loading, binding, and resampling of textures for WebGLRenderer.
@@ -36,14 +36,15 @@ var createCheckerboard = require('./createCheckerboard');
  *
  * @return {undefined} undefined
  */
-function TextureManager(gl) {
+class TextureManager {
+  constructor(gl) {
     this.registry = [];
     this._needsResample = [];
 
     this._activeTexture = 0;
     this._boundTexture = null;
 
-    this._checkerboard = createCheckerboard();
+    this._checkerboard = createCheckerBoard();
 
     this.gl = gl;
 }
@@ -57,7 +58,7 @@ function TextureManager(gl) {
  * @param {Number}      time    Time in milliseconds according to the compositor.
  * @return {undefined}          undefined
  */
-TextureManager.prototype.update = function update(time) {
+update(time) {
     var registryLength = this.registry.length;
 
     for (var i = 1; i < registryLength; i++) {
@@ -85,7 +86,7 @@ TextureManager.prototype.update = function update(time) {
  * @param {Number}  slot    Texture slot to bind generated texture to.
  * @return {undefined}      undefined
  */
-TextureManager.prototype.register = function register(input, slot) {
+register(input, slot) {
     var _this = this;
 
     var source = input.data;
@@ -148,6 +149,40 @@ TextureManager.prototype.register = function register(input, slot) {
 };
 
 /**
+ * Sets active texture slot and binds target texture.  Also handles
+ * resampling when necessary.
+ *
+ * @method
+ *
+ * @param {Number} id Identifier used to retreive texture spec
+ *
+ * @return {undefined} undefined
+ */
+bindTexture(id) {
+    var spec = this.registry[id];
+
+    if (this._activeTexture !== spec.slot) {
+        this.gl.activeTexture(this.gl.TEXTURE0 + spec.slot);
+        this._activeTexture = spec.slot;
+    }
+
+    if (this._boundTexture !== id) {
+        this._boundTexture = id;
+        spec.texture.bind();
+    }
+
+    if (this._needsResample[spec.id]) {
+
+        // TODO: Account for resampling of arrays.
+
+        spec.texture.setImage(spec.source);
+        this._needsResample[spec.id] = false;
+    }
+};
+
+}
+
+/**
  * Loads an image from a string or Image object and executes a callback function.
  *
  * @method
@@ -175,36 +210,4 @@ function loadImage (input, callback) {
     return image;
 }
 
-/**
- * Sets active texture slot and binds target texture.  Also handles
- * resampling when necessary.
- *
- * @method
- *
- * @param {Number} id Identifier used to retreive texture spec
- *
- * @return {undefined} undefined
- */
-TextureManager.prototype.bindTexture = function bindTexture(id) {
-    var spec = this.registry[id];
-
-    if (this._activeTexture !== spec.slot) {
-        this.gl.activeTexture(this.gl.TEXTURE0 + spec.slot);
-        this._activeTexture = spec.slot;
-    }
-
-    if (this._boundTexture !== id) {
-        this._boundTexture = id;
-        spec.texture.bind();
-    }
-
-    if (this._needsResample[spec.id]) {
-
-        // TODO: Account for resampling of arrays.
-
-        spec.texture.setImage(spec.source);
-        this._needsResample[spec.id] = false;
-    }
-};
-
-module.exports = TextureManager;
+export { TextureManager };

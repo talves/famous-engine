@@ -24,10 +24,10 @@
 
 'use strict';
 
-var Constraint = require('./Constraint');
-var Vec3 = require('../../math/Vec3');
-var Mat33 = require('../../math/Mat33');
-var Quaternion = require('../../math/Quaternion');
+import { Constraint } from './Constraint';
+import { Vec3 } from '../../math/Vec3';
+import { Mat33 } from '../../math/Mat33';
+import { Quaternion } from '../../math/Quaternion';
 
 var VEC1_REGISTER = new Vec3();
 var VEC2_REGISTER = new Vec3();
@@ -44,29 +44,38 @@ var WxR_REGISTER = new Vec3();
  * @param {Particle} b The other body.
  * @param {Options} options An object of configurable options.
  */
-function BallAndSocket(a, b, options) {
-    this.a = a;
-    this.b = b;
+  class BallAndSocket extends Constraint {
+    constructor(a, b, options) {
+      super(options);
 
-    Constraint.call(this, options);
+     this.a = a;
+     this.b = b;
 
     this.impulse = new Vec3();
     this.angImpulseA = new Vec3();
     this.angImpulseB = new Vec3();
     this.error = new Vec3();
     this.effMassMatrix = new Mat33();
-}
 
-BallAndSocket.prototype = Object.create(Constraint.prototype);
-BallAndSocket.prototype.constructor = BallAndSocket;
 
-/**
- * Initialize the BallAndSocket. Sets defaults if a property was not already set.
- *
- * @method
- * @return {undefined} undefined
- */
-BallAndSocket.prototype.init = function() {
+        this.initLocals();
+    }
+
+    /**
+     * Initialize passing the Options.
+     *
+     * @method
+     * @return {undefined} undefined
+     */
+    init(options) {};
+
+  /**
+   * Initialize the BallAndSocket. Sets defaults if a property was not already set.
+   *
+   * @method
+   * @return {undefined} undefined
+   */
+  initLocals() {
     var w = this.anchor;
 
     var a = this.a;
@@ -90,7 +99,7 @@ BallAndSocket.prototype.init = function() {
  * @param {Number} dt The physics engine frame delta.
  * @return {undefined} undefined
  */
-BallAndSocket.prototype.update = function(time, dt) {
+update(time, dt) {
     var a = this.a;
     var b = this.b;
 
@@ -140,7 +149,7 @@ BallAndSocket.prototype.update = function(time, dt) {
  * @method
  * @return {undefined} undefined
  */
-BallAndSocket.prototype.resolve = function resolve() {
+resolve() {
     var a = this.a;
     var b = this.b;
 
@@ -166,4 +175,6 @@ BallAndSocket.prototype.resolve = function resolve() {
     this.angImpulseB.add(angImpulseB);
 };
 
-module.exports = BallAndSocket;
+}
+
+export { BallAndSocket };

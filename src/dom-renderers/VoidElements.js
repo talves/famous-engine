@@ -48,4 +48,4 @@ var VoidElements = {
     wbr   : true
 };
 
-module.exports = VoidElements;
+export { VoidElements };

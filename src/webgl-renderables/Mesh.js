@@ -26,12 +26,12 @@
 
 // TODO This will be removed once `Mesh#setGeometry` no longer accepts
 // geometries defined by name.
-var Geometry = require('../webgl-geometries');
+import { Geometry } from '../webgl-geometries';
 
-var Commands = require('../core/Commands');
-var TransformSystem = require('../core/TransformSystem');
-var Plane = require('../webgl-geometries/primitives/Plane');
-var OpacitySystem = require('../core/OpacitySystem');
+import { Commands } from '../core/Commands';
+import { TransformSystem } from '../core/TransformSystem';
+import { Plane } from '../webgl-geometries/primitives/Plane';
+import { OpacitySystem } from '../core/OpacitySystem';
 
 /**
  * The Mesh class is responsible for providing the API for how
@@ -50,7 +50,8 @@ var OpacitySystem = require('../core/OpacitySystem');
 
 var INPUTS = ['baseColor', 'normals', 'glossiness', 'positionOffset'];
 
-function Mesh (node, options) {
+class Mesh {
+  constructor(node, options) {
     this._node = null;
     this._id = null;
     this._changeQueue = [];
@@ -58,7 +59,7 @@ function Mesh (node, options) {
     this._requestingUpdate = false;
     this._inDraw = false;
     this.value = {
-        geometry: Plane(),
+        geometry: new Plane(),
         drawOptions: null,
         color: null,
         expressions: {},
@@ -79,7 +80,7 @@ function Mesh (node, options) {
  * @param {Object} options Draw options
  * @return {Mesh} Current mesh
  */
-Mesh.prototype.setDrawOptions = function setOptions (options) {
+setDrawOptions(options) {
     this._changeQueue.push(Commands.GL_SET_DRAW_OPTIONS);
     this._changeQueue.push(options);
 
@@ -94,7 +95,7 @@ Mesh.prototype.setDrawOptions = function setOptions (options) {
  *
  * @returns {Object} Options
  */
-Mesh.prototype.getDrawOptions = function getDrawOptions () {
+getDrawOptions() {
     return this.value.drawOptions;
 };
 
@@ -110,7 +111,7 @@ Mesh.prototype.getDrawOptions = function getDrawOptions () {
  *
  * @return {Mesh} Mesh
  */
-Mesh.prototype.setGeometry = function setGeometry (geometry, options) {
+setGeometry(geometry, options) {
     if (typeof geometry === 'string') {
         if (!Geometry[geometry]) throw 'Invalid geometry: "' + geometry + '".';
         else {
@@ -160,7 +161,7 @@ Mesh.prototype.setGeometry = function setGeometry (geometry, options) {
  *
  * @returns {Geometry} Geometry
  */
-Mesh.prototype.getGeometry = function getGeometry () {
+getGeometry() {
     return this.value.geometry;
 };
 
@@ -174,7 +175,7 @@ Mesh.prototype.getGeometry = function getGeometry () {
 *
 * @return {Mesh} Mesh
 */
-Mesh.prototype.setBaseColor = function setBaseColor (color) {
+setBaseColor(color) {
     var uniformValue;
     var isMaterial = color.__isAMaterial__;
     var isColor = !!color.getNormalizedRGBA;
@@ -221,7 +222,7 @@ Mesh.prototype.setBaseColor = function setBaseColor (color) {
  *
  * @returns {MaterialExpress|Color} MaterialExpress or Color instance
  */
-Mesh.prototype.getBaseColor = function getBaseColor () {
+getBaseColor() {
     return this.value.expressions.baseColor || this.value.color;
 };
 
@@ -234,7 +235,7 @@ Mesh.prototype.getBaseColor = function getBaseColor () {
  *
  * @return {Mesh} Mesh
  */
-Mesh.prototype.setFlatShading = function setFlatShading (bool) {
+setFlatShading(bool) {
     if (this._inDraw || this.value.flatShading !== bool) {
         this.value.flatShading = bool;
         if (this._initialized) {
@@ -255,7 +256,7 @@ Mesh.prototype.setFlatShading = function setFlatShading (bool) {
  *
  * @returns {Boolean} Boolean
  */
-Mesh.prototype.getFlatShading = function getFlatShading () {
+getFlatShading() {
     return this.value.flatShading;
 };
 
@@ -271,7 +272,7 @@ Mesh.prototype.getFlatShading = function getFlatShading () {
  *
  * @return {Mesh} Mesh
  */
-Mesh.prototype.setNormals = function setNormals (materialExpression) {
+setNormals(materialExpression) {
     var isMaterial = materialExpression.__isAMaterial__;
 
     if (isMaterial) {
@@ -299,7 +300,7 @@ Mesh.prototype.setNormals = function setNormals (materialExpression) {
  *
  * @returns {Array} The normals expression for Mesh
  */
-Mesh.prototype.getNormals = function getNormals (materialExpression) {
+getNormals(materialExpression) {
     return this.value.expressions.normals;
 };
 
@@ -314,7 +315,7 @@ Mesh.prototype.getNormals = function getNormals (materialExpression) {
  *
  * @return {Mesh} Mesh
  */
-Mesh.prototype.setGlossiness = function setGlossiness(glossiness, strength) {
+setGlossiness(glossiness, strength) {
     var isMaterial = glossiness.__isAMaterial__;
     var isColor = !!glossiness.getNormalizedRGB;
 
@@ -347,7 +348,7 @@ Mesh.prototype.setGlossiness = function setGlossiness(glossiness, strength) {
  *
  * @returns {MaterialExpress|Number} MaterialExpress or Number
  */
-Mesh.prototype.getGlossiness = function getGlossiness() {
+getGlossiness() {
     return this.value.expressions.glossiness || this.value.glossiness;
 };
 
@@ -361,7 +362,7 @@ Mesh.prototype.getGlossiness = function getGlossiness() {
  *
  * @return {Mesh} Mesh
  */
-Mesh.prototype.setPositionOffset = function positionOffset(materialExpression) {
+setPositionOffset(materialExpression) {
     var uniformValue;
     var isMaterial = materialExpression.__isAMaterial__;
 
@@ -394,7 +395,7 @@ Mesh.prototype.setPositionOffset = function positionOffset(materialExpression) {
  *
  * @returns {MaterialExpress|Number} MaterialExpress or Number
  */
-Mesh.prototype.getPositionOffset = function getPositionOffset () {
+getPositionOffset() {
     return this.value.expressions.positionOffset || this.value.positionOffset;
 };
 
@@ -405,7 +406,7 @@ Mesh.prototype.getPositionOffset = function getPositionOffset () {
  *
  * @returns {Object} Object
  */
-Mesh.prototype.getMaterialExpressions = function getMaterialExpressions () {
+getMaterialExpressions() {
     return this.value.expressions;
 };
 
@@ -416,7 +417,7 @@ Mesh.prototype.getMaterialExpressions = function getMaterialExpressions () {
  *
  * @returns {Number} Value
  */
-Mesh.prototype.getValue = function getValue () {
+getValue() {
     return this.value;
 };
 
@@ -427,7 +428,7 @@ Mesh.prototype.getValue = function getValue () {
  *
  * @return {Mesh} Mesh
  */
-Mesh.prototype._pushInvalidations = function _pushInvalidations (expressionName) {
+_pushInvalidations(expressionName) {
     var uniformKey;
     var expression = this.value.expressions[expressionName];
     var sender = this._node;
@@ -453,7 +454,7 @@ Mesh.prototype._pushInvalidations = function _pushInvalidations (expressionName)
 *
 * @return {undefined} undefined
 */
-Mesh.prototype.onUpdate = function onUpdate() {
+onUpdate() {
     var node = this._node;
     var queue = this._changeQueue;
 
@@ -504,7 +505,7 @@ Mesh.prototype.onUpdate = function onUpdate() {
  *
  * @return {undefined} undefined
  */
-Mesh.prototype.onMount = function onMount (node, id) {
+onMount(node, id) {
     this._node = node;
     this._id = id;
 
@@ -521,7 +522,7 @@ Mesh.prototype.onMount = function onMount (node, id) {
  *
  * @return {undefined} undefined
  */
-Mesh.prototype.onDismount = function onDismount () {
+onDismount() {
     this._initialized = false;
     this._inDraw = false;
 
@@ -540,7 +541,7 @@ Mesh.prototype.onDismount = function onDismount () {
  *
  * @return {undefined} undefined
  */
-Mesh.prototype.onShow = function onShow () {
+onShow() {
     this._changeQueue.push(Commands.GL_MESH_VISIBILITY, true);
 
     this._requestUpdate();
@@ -553,7 +554,7 @@ Mesh.prototype.onShow = function onShow () {
  *
  * @return {undefined} undefined
  */
-Mesh.prototype.onHide = function onHide () {
+onHide() {
     this._changeQueue.push(Commands.GL_MESH_VISIBILITY, false);
 
     this._requestUpdate();
@@ -569,7 +570,7 @@ Mesh.prototype.onHide = function onHide () {
  *
  * @return {undefined} undefined
  */
-Mesh.prototype.onTransformChange = function onTransformChange (transform) {
+onTransformChange(transform) {
     if (this._initialized) {
         this._changeQueue.push(Commands.GL_UNIFORMS);
         this._changeQueue.push('u_transform');
@@ -591,7 +592,7 @@ Mesh.prototype.onTransformChange = function onTransformChange (transform) {
  *
  * @return {undefined} undefined
  */
-Mesh.prototype.onSizeChange = function onSizeChange (x, y, z) {
+onSizeChange(x, y, z) {
     if (this._initialized) {
         this._changeQueue.push(Commands.GL_UNIFORMS);
         this._changeQueue.push('u_size');
@@ -611,7 +612,7 @@ Mesh.prototype.onSizeChange = function onSizeChange (x, y, z) {
  *
  * @return {undefined} undefined
  */
-Mesh.prototype.onOpacityChange = function onOpacityChange (opacity) {
+onOpacityChange(opacity) {
     if (this._initialized) {
         this._changeQueue.push(Commands.GL_UNIFORMS);
         this._changeQueue.push('u_opacity');
@@ -630,7 +631,7 @@ Mesh.prototype.onOpacityChange = function onOpacityChange (opacity) {
  *
  * @return {undefined} undefined
  */
-Mesh.prototype.onAddUIEvent = function onAddUIEvent (UIEvent) {
+onAddUIEvent(UIEvent) {
     //TODO
 };
 
@@ -641,7 +642,7 @@ Mesh.prototype.onAddUIEvent = function onAddUIEvent (UIEvent) {
  *
  * @return {undefined} undefined
  */
-Mesh.prototype._requestUpdate = function _requestUpdate () {
+_requestUpdate() {
     if (!this._requestingUpdate && this._node) {
         this._node.requestUpdate(this._id);
         this._requestingUpdate = true;
@@ -655,7 +656,7 @@ Mesh.prototype._requestUpdate = function _requestUpdate () {
  *
  * @return {undefined} undefined
  */
-Mesh.prototype.init = function init () {
+init() {
     this._initialized = true;
     this.onTransformChange(TransformSystem.get(this._node.getLocation()));
     this.onOpacityChange(OpacitySystem.get(this._node.getLocation()));
@@ -671,7 +672,7 @@ Mesh.prototype.init = function init () {
  *
  * @return {undefined} undefined
  */
-Mesh.prototype.draw = function draw () {
+draw() {
     this._inDraw = true;
 
     this.init();
@@ -692,6 +693,7 @@ Mesh.prototype.draw = function draw () {
     this._inDraw = false;
 };
 
+}
 
 function addMeshToMaterial(mesh, material, name) {
     var expressions = mesh.value.expressions;
@@ -714,4 +716,4 @@ function addMeshToMaterial(mesh, material, name) {
         material.meshes.push(mesh);
 }
 
-module.exports = Mesh;
+export { Mesh };

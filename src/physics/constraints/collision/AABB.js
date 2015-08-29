@@ -24,24 +24,6 @@
 
 'use strict';
 
-/**
- * Axis-aligned bounding box. Used in collision broadphases.
- *
- * @class AABB
- * @param {Particle} body The body around which to track a bounding box.
- */
-function AABB(body) {
-    this._body = body;
-    this._ID = body._ID;
-    this.position = null;
-    this.vertices = {
-        x: [],
-        y: [],
-        z: []
-    };
-    this.update();
-}
-
 var SPHERE = 1 << 2;
 var WALL = 1 << 3;
 
@@ -53,12 +35,31 @@ var FORWARD = 4;
 var BACKWARD = 5;
 
 /**
+ * Axis-aligned bounding box. Used in collision broadphases.
+ *
+ * @class AABB
+ * @param {Particle} body The body around which to track a bounding box.
+ */
+class AABB {
+  constructor(body) {
+    this._body = body;
+    this._ID = body._ID;
+    this.position = null;
+    this.vertices = {
+        x: [],
+        y: [],
+        z: []
+    };
+    this.update();
+}
+
+/**
  * Update the bounds to reflect the current orientation and position of the parent Body.
  *
  * @method
  * @return {undefined} undefined
  */
-AABB.prototype.update = function() {
+update() {
     var body = this._body;
     var pos = this.position = body.position;
 
@@ -131,6 +132,8 @@ AABB.prototype.update = function() {
     vertices.z[1] = maxZ + pos.z;
 };
 
+}
+
 /**
  * Check for overlap between two AABB's.
  *
@@ -167,4 +170,4 @@ AABB.checkOverlap = function(aabb1, aabb2) {
 
 AABB.vertexThreshold = 100;
 
-module.exports = AABB;
+export { AABB };

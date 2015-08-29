@@ -169,4 +169,4 @@ var Path = {
 
 };
 
-module.exports = Path;
+export { Path };

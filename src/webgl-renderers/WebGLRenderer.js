@@ -24,13 +24,13 @@
 
 'use strict';
 
-var Program = require('./Program');
-var BufferRegistry = require('./BufferRegistry');
-var sorter = require('./radixSort');
-var keyValueToArrays = require('../utilities/keyValueToArrays');
-var TextureManager = require('./TextureManager');
-var compileMaterial = require('./compileMaterial');
-var Registry = require('../utilities/Registry');
+import { Program } from './Program';
+import { BufferRegistry } from './BufferRegistry';
+import { radixSort as sorter } from './radixSort';
+import { keyValueToArrays } from '../utilities/keyValueToArrays';
+import { TextureManager } from './TextureManager';
+import { compileMaterial } from './compileMaterial';
+import { Registry } from '../utilities/Registry';
 
 var identity = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 
@@ -58,7 +58,8 @@ var globalUniforms = keyValueToArrays({
  *
  * @return {undefined} undefined
  */
-function WebGLRenderer(canvas, compositor) {
+class WebGLRenderer {
+  constructor(canvas, compositor) {
     canvas.classList.add('famous-webgl-renderer');
 
     this.canvas = canvas;
@@ -148,7 +149,7 @@ function WebGLRenderer(canvas, compositor) {
  *
  * @return {Object} WebGLContext WebGL context
  */
-WebGLRenderer.prototype.getWebGLContext = function getWebGLContext(canvas) {
+getWebGLContext(canvas) {
     if (this.gl) return this.gl;
 
     var names = ['webgl', 'experimental-webgl', 'webkit-3d', 'moz-webgl'];
@@ -171,7 +172,7 @@ WebGLRenderer.prototype.getWebGLContext = function getWebGLContext(canvas) {
  *
  * @return {Object} Newly created light spec
  */
-WebGLRenderer.prototype.createLight = function createLight(path) {
+createLight(path) {
     this.numLights++;
     var light = {
         color: [0, 0, 0],
@@ -190,7 +191,7 @@ WebGLRenderer.prototype.createLight = function createLight(path) {
  *
  * @return {Object} Newly created mesh spec.
  */
-WebGLRenderer.prototype.createMesh = function createMesh(path) {
+createMesh(path) {
     var uniforms = keyValueToArrays({
         u_opacity: 1,
         u_transform: identity,
@@ -228,7 +229,7 @@ WebGLRenderer.prototype.createMesh = function createMesh(path) {
  *
  * @return {undefined} undefined
  */
-WebGLRenderer.prototype.setCutoutState = function setCutoutState(path, usesCutout) {
+setCutoutState(path, usesCutout) {
     var cutout = this.getOrSetCutout(path);
 
     cutout.visible = usesCutout;
@@ -243,7 +244,7 @@ WebGLRenderer.prototype.setCutoutState = function setCutoutState(path, usesCutou
  *
  * @return {Object} Newly created cutout spec.
  */
-WebGLRenderer.prototype.getOrSetCutout = function getOrSetCutout(path) {
+getOrSetCutout(path) {
     var cutout = this.cutoutRegistry.get(path);
 
     if (!cutout) {
@@ -279,7 +280,7 @@ WebGLRenderer.prototype.getOrSetCutout = function getOrSetCutout(path) {
  *
  * @return {undefined} undefined
  */
-WebGLRenderer.prototype.setMeshVisibility = function setMeshVisibility(path, visibility) {
+setMeshVisibility(path, visibility) {
     var mesh = this.meshRegistry[path] || this.createMesh(path);
 
     mesh.visible = visibility;
@@ -293,7 +294,7 @@ WebGLRenderer.prototype.setMeshVisibility = function setMeshVisibility(path, vis
  *
  * @return {undefined} undefined
  */
-WebGLRenderer.prototype.removeMesh = function removeMesh(path) {
+removeMesh(path) {
     delete this.meshRegistry[path];
     var index = this.meshRegistryKeys.indexOf(path);
 
@@ -310,7 +311,7 @@ WebGLRenderer.prototype.removeMesh = function removeMesh(path) {
  *
  * @return {undefined} undefined
  */
-WebGLRenderer.prototype.setCutoutUniform = function setCutoutUniform(path, uniformName, uniformValue) {
+setCutoutUniform(path, uniformName, uniformValue) {
     var cutout = this.getOrSetCutout(path);
 
     var index = cutout.uniformKeys.indexOf(uniformName);
@@ -334,7 +335,7 @@ WebGLRenderer.prototype.setCutoutUniform = function setCutoutUniform(path, unifo
  *
  * @return {WebGLRenderer} this
  */
-WebGLRenderer.prototype.setMeshOptions = function(path, options) {
+setMeshOptions(path, options) {
     var mesh = this.meshRegistry[path] || this.createMesh(path);
 
     mesh.options = options;
@@ -353,7 +354,7 @@ WebGLRenderer.prototype.setMeshOptions = function(path, options) {
  *
  * @return {WebGLRenderer} this
  */
-WebGLRenderer.prototype.setAmbientLightColor = function setAmbientLightColor(path, r, g, b) {
+setAmbientLightColor(path, r, g, b) {
     this.ambientLightColor[0] = r;
     this.ambientLightColor[1] = g;
     this.ambientLightColor[2] = b;
@@ -372,7 +373,7 @@ WebGLRenderer.prototype.setAmbientLightColor = function setAmbientLightColor(pat
  *
  * @return {WebGLRenderer} this
  */
-WebGLRenderer.prototype.setLightPosition = function setLightPosition(path, x, y, z) {
+setLightPosition(path, x, y, z) {
     var light = this.lightRegistry.get(path) || this.createLight(path);
     light.position[0] = x;
     light.position[1] = y;
@@ -392,7 +393,7 @@ WebGLRenderer.prototype.setLightPosition = function setLightPosition(path, x, y,
  *
  * @return {WebGLRenderer} this
  */
-WebGLRenderer.prototype.setLightColor = function setLightColor(path, r, g, b) {
+setLightColor(path, r, g, b) {
     var light = this.lightRegistry.get(path) || this.createLight(path);
 
     light.color[0] = r;
@@ -412,7 +413,7 @@ WebGLRenderer.prototype.setLightColor = function setLightColor(path, r, g, b) {
  *
  * @return {WebGLRenderer} this
  */
-WebGLRenderer.prototype.handleMaterialInput = function handleMaterialInput(path, name, material) {
+handleMaterialInput(path, name, material) {
     var mesh = this.meshRegistry[path] || this.createMesh(path);
     material = compileMaterial(material, mesh.textures.length);
 
@@ -448,7 +449,7 @@ WebGLRenderer.prototype.handleMaterialInput = function handleMaterialInput(path,
  *
  * @return {undefined} undefined
  */
-WebGLRenderer.prototype.setGeometry = function setGeometry(path, geometry, drawType, dynamic) {
+setGeometry(path, geometry, drawType, dynamic) {
     var mesh = this.meshRegistry[path] || this.createMesh(path);
 
     mesh.geometry = geometry;
@@ -469,7 +470,7 @@ WebGLRenderer.prototype.setGeometry = function setGeometry(path, geometry, drawT
  *
  * @return {undefined} undefined
  */
-WebGLRenderer.prototype.setMeshUniform = function setMeshUniform(path, uniformName, uniformValue) {
+setMeshUniform(path, uniformName, uniformValue) {
     var mesh = this.meshRegistry[path] || this.createMesh(path);
 
     var index = mesh.uniformKeys.indexOf(uniformName);
@@ -496,7 +497,7 @@ WebGLRenderer.prototype.setMeshUniform = function setMeshUniform(path, uniformNa
  *
  * @return {undefined} undefined
  */
-WebGLRenderer.prototype.bufferData = function bufferData(geometryId, bufferName, bufferValue, bufferSpacing, isDynamic) {
+bufferData(geometryId, bufferName, bufferValue, bufferSpacing, isDynamic) {
     this.bufferRegistry.allocate(geometryId, bufferName, bufferValue, bufferSpacing, isDynamic);
 };
 
@@ -510,7 +511,7 @@ WebGLRenderer.prototype.bufferData = function bufferData(geometryId, bufferName,
  *
  * @return {undefined} undefined
  */
-WebGLRenderer.prototype.draw = function draw(renderState) {
+draw(renderState) {
     var time = this.compositor.getTime();
 
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
@@ -532,7 +533,7 @@ WebGLRenderer.prototype.draw = function draw(renderState) {
  *
  * @return {undefined} undefined
  */
-WebGLRenderer.prototype.drawMeshes = function drawMeshes() {
+drawMeshes() {
     var gl = this.gl;
     var buffers;
     var mesh;
@@ -579,7 +580,7 @@ WebGLRenderer.prototype.drawMeshes = function drawMeshes() {
  *
  * @return {undefined} undefined
  */
-WebGLRenderer.prototype.drawCutouts = function drawCutouts() {
+drawCutouts() {
     var cutout;
     var buffers;
     var cutouts = this.cutoutRegistry.getValues();
@@ -614,7 +615,7 @@ WebGLRenderer.prototype.drawCutouts = function drawCutouts() {
  *
  * @return {undefined} undefined
  */
-WebGLRenderer.prototype.setGlobalUniforms = function setGlobalUniforms(renderState) {
+setGlobalUniforms(renderState) {
     var light;
     var stride;
     var lights = this.lightRegistry.getValues();
@@ -677,7 +678,7 @@ WebGLRenderer.prototype.setGlobalUniforms = function setGlobalUniforms(renderSta
  *
  * @return {undefined} undefined
  */
-WebGLRenderer.prototype.drawBuffers = function drawBuffers(vertexBuffers, mode, id) {
+drawBuffers(vertexBuffers, mode, id) {
     var gl = this.gl;
     var length = 0;
     var attribute;
@@ -785,7 +786,7 @@ WebGLRenderer.prototype.drawBuffers = function drawBuffers(vertexBuffers, mode, 
  *
  * @return {undefined} undefined
  */
-WebGLRenderer.prototype.updateSize = function updateSize(size) {
+updateSize(size) {
     if (size) {
         var pixelRatio = window.devicePixelRatio || 1;
         var displayWidth = ~~(size[0] * pixelRatio);
@@ -816,7 +817,7 @@ WebGLRenderer.prototype.updateSize = function updateSize(size) {
  *
  * @return {undefined} undefined
  */
-WebGLRenderer.prototype.handleOptions = function handleOptions(options, mesh) {
+handleOptions(options, mesh) {
     var gl = this.gl;
     if (!options) return;
 
@@ -843,11 +844,13 @@ WebGLRenderer.prototype.handleOptions = function handleOptions(options, mesh) {
  *
  * @return {undefined} undefined
  */
-WebGLRenderer.prototype.resetOptions = function resetOptions(options) {
+resetOptions(options) {
     var gl = this.gl;
     if (!options) return;
     if (options.blending) gl.disable(gl.BLEND);
     if (options.side === 'back') gl.cullFace(gl.BACK);
 };
 
-module.exports = WebGLRenderer;
+}
+
+export { WebGLRenderer };

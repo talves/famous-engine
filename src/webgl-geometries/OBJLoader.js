@@ -24,8 +24,8 @@
 
 'use strict';
 
-var loadURL        = require('../utilities/loadURL');
-var GeometryHelper = require('./GeometryHelper');
+import { loadURL } from '../utilities/loadURL';
+import { GeometryHelper } from './GeometryHelper';
 
 /*
  * A singleton object that takes that makes requests
@@ -489,4 +489,4 @@ function flatten(arr) {
     return out;
 }
 
-module.exports = OBJLoader;
+export { OBJLoader };

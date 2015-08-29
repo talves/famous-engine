@@ -24,7 +24,7 @@
 
 'use strict';
 
-var UIEvent = require('./UIEvent');
+import { UIEvent } from './UIEvent';
 
 /**
  * See [UI Events (formerly DOM Level 3 Events)](http://www.w3.org/TR/2015/WD-uievents-20150428/#events-focusevent).
@@ -34,17 +34,15 @@ var UIEvent = require('./UIEvent');
  *
  * @param {Event} ev The native DOM event.
  */
-function FocusEvent(ev) {
+ class FocusEvent extends UIEvent {
+   constructor(ev) {
     // [Constructor(DOMString typeArg, optional FocusEventInit focusEventInitDict)]
     // interface FocusEvent : UIEvent {
     //     readonly    attribute EventTarget? relatedTarget;
     // };
 
-    UIEvent.call(this, ev);
+    super(ev);
 }
-
-FocusEvent.prototype = Object.create(UIEvent.prototype);
-FocusEvent.prototype.constructor = FocusEvent;
 
 /**
  * Return the name of the event type
@@ -53,8 +51,10 @@ FocusEvent.prototype.constructor = FocusEvent;
  *
  * @return {String} Name of the event type
  */
-FocusEvent.prototype.toString = function toString () {
+toString() {
     return 'FocusEvent';
 };
 
-module.exports = FocusEvent;
+}
+
+export { FocusEvent };

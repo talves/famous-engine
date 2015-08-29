@@ -24,7 +24,7 @@
 
 'use strict';
 
-var Commands = require('../../core/Commands');
+import { Commands } from '../../core/Commands';
 
 /**
  * The blueprint for all light components.
@@ -37,7 +37,8 @@ var Commands = require('../../core/Commands');
  *
  * @return {undefined} undefined
  */
-function Light(node) {
+class Light {
+  constructor(node) {
     this._node = node;
     this._requestingUpdate = false;
     this._color = null;
@@ -58,7 +59,7 @@ function Light(node) {
 *
 * @return {Light} Light
 */
-Light.prototype.setColor = function setColor(color) {
+setColor(color) {
     if (!color.getNormalizedRGB) return false;
     if (!this._requestingUpdate) {
         this._node.requestUpdate(this._id);
@@ -80,7 +81,7 @@ Light.prototype.setColor = function setColor(color) {
 *
 * @returns {Color} Color
 */
-Light.prototype.getColor = function getColor() {
+getColor() {
     return this._color;
 };
 
@@ -92,7 +93,7 @@ Light.prototype.getColor = function getColor() {
 *
 * @return {undefined} undefined
 */
-Light.prototype.onUpdate = function onUpdate() {
+onUpdate() {
     var path = this._node.getLocation();
 
     this._node
@@ -117,4 +118,6 @@ Light.prototype.onUpdate = function onUpdate() {
     }
 };
 
-module.exports = Light;
+}
+
+export { Light };

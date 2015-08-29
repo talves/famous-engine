@@ -24,8 +24,8 @@
 
 'use strict';
 
-var Geometry = require('../Geometry');
-var GeometryHelper = require('../GeometryHelper');
+import { Geometry } from '../Geometry';
+import { GeometryHelper } from '../GeometryHelper';
 
 /**
  * This function returns a new static geometry, which is passed
@@ -39,8 +39,10 @@ var GeometryHelper = require('../GeometryHelper');
  *
  * @return {Object} constructed geometry
  */
-function GeodesicSphere (options) {
-    if (!(this instanceof GeodesicSphere)) return new GeodesicSphere(options);
+ class GeodesicSphere extends Geometry {
+   constructor(options) {
+     //handled by es6 transpiler
+    //if (!(this instanceof GeodesicSphere)) return new GeodesicSphere(options);
 
     var t = (1 + Math.sqrt(5)) * 0.5;
 
@@ -74,10 +76,9 @@ function GeodesicSphere (options) {
         { name: 'indices', data: indices, size: 1 }
     ];
 
-    Geometry.call(this, options);
+    super(options);
 }
 
-GeodesicSphere.prototype = Object.create(Geometry.prototype);
-GeodesicSphere.prototype.constructor = GeodesicSphere;
+}
 
-module.exports = GeodesicSphere;
+export { GeodesicSphere };

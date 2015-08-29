@@ -24,8 +24,8 @@
 
 'use strict';
 
-var Force = require('./Force');
-var Vec3 = require('../../math/Vec3');
+import { Force } from './Force';
+import { Vec3 } from '../../math/Vec3';
 
 var FORCE_REGISTER = new Vec3();
 
@@ -37,22 +37,10 @@ var FORCE_REGISTER = new Vec3();
  * @param {Particle[]} targets The targets to affect.
  * @param {Object} options The options hash.
  */
-function Gravity1D(targets, options) {
-    Force.call(this, targets, options);
+class Gravity1D extends Force {
+  constructor(targets, options) {
+    super(targets, options);
 }
-
-Gravity1D.prototype = Object.create(Force.prototype);
-Gravity1D.prototype.constructor = Gravity1D;
-
-/**
- * @enum directions
- */
-Gravity1D.DOWN     = 0;
-Gravity1D.UP       = 1;
-Gravity1D.LEFT     = 2;
-Gravity1D.RIGHT    = 3;
-Gravity1D.FORWARD  = 4;
-Gravity1D.BACKWARD = 5;
 
 /**
  * Initialize the Force. Sets defaults if a property was not already set.
@@ -61,7 +49,7 @@ Gravity1D.BACKWARD = 5;
  * @param {Object} options The options hash.
  * @return {undefined} undefined
  */
-Gravity1D.prototype.init = function(options) {
+init(options) {
     this.max = this.max || Infinity;
     if (options.acceleration) {
         this.strength = this.acceleration.length();
@@ -101,7 +89,7 @@ Gravity1D.prototype.init = function(options) {
  * @method
  * @return {undefined} undefined
  */
-Gravity1D.prototype.update = function() {
+update() {
     var targets = this.targets;
 
     var force = FORCE_REGISTER;
@@ -118,4 +106,16 @@ Gravity1D.prototype.update = function() {
     }
 };
 
-module.exports = Gravity1D;
+}
+
+/**
+ * @enum directions
+ */
+Gravity1D.DOWN     = 0;
+Gravity1D.UP       = 1;
+Gravity1D.LEFT     = 2;
+Gravity1D.RIGHT    = 3;
+Gravity1D.FORWARD  = 4;
+Gravity1D.BACKWARD = 5;
+
+export { Gravity1D };

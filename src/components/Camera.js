@@ -24,7 +24,7 @@
 
 'use strict';
 
-var Commands = require('../core/Commands');
+import { Commands } from '../core/Commands';
 
 /**
  * Camera is a component that is responsible for sending information to the renderer about where
@@ -35,7 +35,8 @@ var Commands = require('../core/Commands');
  *
  * @param {Node} node to which the instance of Camera will be a component of
  */
-function Camera(node) {
+class Camera {
+constructor(node) {
     this._node = node;
     this._projectionType = Camera.ORTHOGRAPHIC_PROJECTION;
     this._focalDepth = 0;
@@ -49,16 +50,12 @@ function Camera(node) {
     this.setFlat();
 }
 
-Camera.FRUSTUM_PROJECTION = 0;
-Camera.PINHOLE_PROJECTION = 1;
-Camera.ORTHOGRAPHIC_PROJECTION = 2;
-
 /**
  * @method
  *
  * @return {String} Name of the component
  */
-Camera.prototype.toString = function toString() {
+toString() {
     return 'Camera';
 };
 
@@ -69,7 +66,7 @@ Camera.prototype.toString = function toString() {
  *
  * @return {Object} the state of the component
  */
-Camera.prototype.getValue = function getValue() {
+getValue() {
     return {
         component: this.toString(),
         projectionType: this._projectionType,
@@ -88,7 +85,7 @@ Camera.prototype.getValue = function getValue() {
  *
  * @return {Boolean} status of the set
  */
-Camera.prototype.setValue = function setValue(state) {
+setValue(state) {
     if (this.toString() === state.component) {
         this.set(state.projectionType, state.focalDepth, state.near, state.far);
         return true;
@@ -108,7 +105,7 @@ Camera.prototype.setValue = function setValue(state) {
  *
  * @return {Boolean} status of the set
  */
-Camera.prototype.set = function set(type, depth, near, far) {
+set(type, depth, near, far) {
     if (!this._requestingUpdate) {
         this._node.requestUpdate(this._id);
         this._requestingUpdate = true;
@@ -128,7 +125,7 @@ Camera.prototype.set = function set(type, depth, near, far) {
  *
  * @return {Camera} this
  */
-Camera.prototype.setDepth = function setDepth(depth) {
+setDepth(depth) {
     if (!this._requestingUpdate) {
         this._node.requestUpdate(this._id);
         this._requestingUpdate = true;
@@ -152,7 +149,7 @@ Camera.prototype.setDepth = function setDepth(depth) {
  *
  * @return {Camera} this
  */
-Camera.prototype.setFrustum = function setFrustum(near, far) {
+setFrustum(near, far) {
     if (!this._requestingUpdate) {
         this._node.requestUpdate(this._id);
         this._requestingUpdate = true;
@@ -174,7 +171,7 @@ Camera.prototype.setFrustum = function setFrustum(near, far) {
  *
  * @return {Camera} this
  */
-Camera.prototype.setFlat = function setFlat() {
+setFlat() {
     if (!this._requestingUpdate) {
         this._node.requestUpdate(this._id);
         this._requestingUpdate = true;
@@ -198,7 +195,7 @@ Camera.prototype.setFlat = function setFlat() {
  *
  * @return {undefined} undefined
  */
-Camera.prototype.onUpdate = function onUpdate() {
+onUpdate() {
     this._requestingUpdate = false;
 
     var path = this._node.getLocation();
@@ -263,7 +260,7 @@ Camera.prototype.onUpdate = function onUpdate() {
  *
  * @return {Camera} this
  */
-Camera.prototype.onTransformChange = function onTransformChange(transform) {
+onTransformChange(transform) {
     var a = transform;
     this._viewDirty = true;
 
@@ -310,4 +307,10 @@ Camera.prototype.onTransformChange = function onTransformChange(transform) {
     this._viewTransform[15] = (a20 * b03 - a21 * b01 + a22 * b00) * det;
 };
 
-module.exports = Camera;
+}
+
+Camera.FRUSTUM_PROJECTION = 0;
+Camera.PINHOLE_PROJECTION = 1;
+Camera.ORTHOGRAPHIC_PROJECTION = 2;
+
+export { Camera };

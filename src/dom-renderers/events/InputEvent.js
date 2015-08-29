@@ -24,7 +24,7 @@
 
 'use strict';
 
-var UIEvent = require('./UIEvent');
+import { UIEvent } from './UIEvent';
 
 /**
  * See [Input Events](http://w3c.github.io/editing-explainer/input-events.html#idl-def-InputEvent).
@@ -34,7 +34,8 @@ var UIEvent = require('./UIEvent');
  *
  * @param {Event} ev The native DOM event.
  */
-function InputEvent(ev) {
+ class InputEvent extends UIEvent {
+   constructor(ev) {
     // [Constructor(DOMString typeArg, optional InputEventInit inputEventInitDict)]
     // interface InputEvent : UIEvent {
     //     readonly    attribute DOMString inputType;
@@ -43,7 +44,7 @@ function InputEvent(ev) {
     //     readonly    attribute Range     targetRange;
     // };
 
-    UIEvent.call(this, ev);
+    super(ev);
 
     /**
      * @name    InputEvent#inputType
@@ -72,9 +73,6 @@ function InputEvent(ev) {
     this.targetRange = ev.targetRange;
 }
 
-InputEvent.prototype = Object.create(UIEvent.prototype);
-InputEvent.prototype.constructor = InputEvent;
-
 /**
  * Return the name of the event type
  *
@@ -82,8 +80,10 @@ InputEvent.prototype.constructor = InputEvent;
  *
  * @return {String} Name of the event type
  */
-InputEvent.prototype.toString = function toString () {
+toString() {
     return 'InputEvent';
 };
 
-module.exports = InputEvent;
+}
+
+export { InputEvent };

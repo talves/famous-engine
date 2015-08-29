@@ -38,7 +38,7 @@
  *                                          `Object.keys()`
  *         {Array}          result.values   Values of passed in object.
  */
-module.exports = function keyValuesToArrays(obj) {
+var keyValueToArrays = function(obj) {
     var keysArray = [], valuesArray = [];
     var i = 0;
     for(var key in obj) {
@@ -53,3 +53,5 @@ module.exports = function keyValuesToArrays(obj) {
         values: valuesArray
     };
 };
+
+export { keyValueToArrays };

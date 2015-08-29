@@ -24,18 +24,8 @@
 
 'use strict';
 
-var Particle = require('./Particle');
-var Vec3 = require('../../math/Vec3');
-
-/**
- * @enum directions
- */
-Wall.DOWN = 0;
-Wall.UP = 1;
-Wall.LEFT = 2;
-Wall.RIGHT = 3;
-Wall.FORWARD = 4;
-Wall.BACKWARD = 5;
+import { Particle } from './Particle';
+import { Vec3 } from '../../math/Vec3';
 
 /**
  * An axis-aligned boundary. Will not respond to forces or impulses.
@@ -44,8 +34,9 @@ Wall.BACKWARD = 5;
  * @extends Particle
  * @param {Object} options The initial state of the body.
  */
-function Wall(options) {
-    Particle.call(this, options);
+ class Wall extends Particle {
+   constructor(options) {
+     super(options);
 
     var n = this.normal = new Vec3();
 
@@ -81,7 +72,16 @@ function Wall(options) {
     this.type = 1 << 3;
 }
 
-Wall.prototype = Object.create(Particle.prototype);
-Wall.prototype.constructor = Wall;
+}
 
-module.exports = Wall;
+/**
+ * @enum directions
+ */
+Wall.DOWN = 0;
+Wall.UP = 1;
+Wall.LEFT = 2;
+Wall.RIGHT = 3;
+Wall.FORWARD = 4;
+Wall.BACKWARD = 5;
+
+export { Wall };

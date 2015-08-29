@@ -36,7 +36,8 @@ var GeometryIds = 0;
  * @param {Object} options instantiation options
  * @return {undefined} undefined
  */
-function Geometry(options) {
+class Geometry {
+  constructor(options) {
     this.options = options || {};
     this.DEFAULT_BUFFER_SIZE = 3;
 
@@ -61,4 +62,6 @@ function Geometry(options) {
     }
 }
 
-module.exports = Geometry;
+}
+
+export { Geometry };

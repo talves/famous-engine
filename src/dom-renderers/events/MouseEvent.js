@@ -24,7 +24,7 @@
 
 'use strict';
 
-var UIEvent = require('./UIEvent');
+import { UIEvent } from './UIEvent';
 
 /**
  * See [UI Events (formerly DOM Level 3 Events)](http://www.w3.org/TR/2015/WD-uievents-20150428/#events-mouseevents).
@@ -34,7 +34,8 @@ var UIEvent = require('./UIEvent');
  *
  * @param {Event} ev The native DOM event.
  */
-function MouseEvent(ev) {
+ class MouseEvent extends UIEvent {
+   constructor(ev) {
     // [Constructor(DOMString typeArg, optional MouseEventInit mouseEventInitDict)]
     // interface MouseEvent : UIEvent {
     //     readonly    attribute long           screenX;
@@ -52,7 +53,7 @@ function MouseEvent(ev) {
     //     boolean getModifierState (DOMString keyArg);
     // };
 
-    UIEvent.call(this, ev);
+    super(ev);
 
     /**
      * @name MouseEvent#screenX
@@ -151,9 +152,6 @@ function MouseEvent(ev) {
     this.offsetY = ev.offsetY;
 }
 
-MouseEvent.prototype = Object.create(UIEvent.prototype);
-MouseEvent.prototype.constructor = MouseEvent;
-
 /**
  * Return the name of the event type
  *
@@ -161,8 +159,10 @@ MouseEvent.prototype.constructor = MouseEvent;
  *
  * @return {String} Name of the event type
  */
-MouseEvent.prototype.toString = function toString () {
+toString() {
     return 'MouseEvent';
 };
 
-module.exports = MouseEvent;
+}
+
+export { MouseEvent };

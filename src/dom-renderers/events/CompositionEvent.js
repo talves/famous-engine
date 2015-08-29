@@ -24,7 +24,7 @@
 
 'use strict';
 
-var UIEvent = require('./UIEvent');
+import { UIEvent } from './UIEvent';
 
 /**
  * See [UI Events (formerly DOM Level 3 Events)](http://www.w3.org/TR/2015/WD-uievents-20150428/#events-compositionevents).
@@ -34,13 +34,14 @@ var UIEvent = require('./UIEvent');
  *
  * @param {Event} ev The native DOM event.
  */
-function CompositionEvent(ev) {
+class CompositionEvent extends UIEvent {
+  constructor(ev) {
     // [Constructor(DOMString typeArg, optional CompositionEventInit compositionEventInitDict)]
     // interface CompositionEvent : UIEvent {
     //     readonly    attribute DOMString data;
     // };
 
-    UIEvent.call(this, ev);
+    super(ev);
 
     /**
      * @name CompositionEvent#data
@@ -49,9 +50,6 @@ function CompositionEvent(ev) {
     this.data = ev.data;
 }
 
-CompositionEvent.prototype = Object.create(UIEvent.prototype);
-CompositionEvent.prototype.constructor = CompositionEvent;
-
 /**
  * Return the name of the event type
  *
@@ -59,8 +57,10 @@ CompositionEvent.prototype.constructor = CompositionEvent;
  *
  * @return {String} Name of the event type
  */
-CompositionEvent.prototype.toString = function toString () {
+toString() {
     return 'CompositionEvent';
 };
 
-module.exports = CompositionEvent;
+}
+
+export { CompositionEvent };

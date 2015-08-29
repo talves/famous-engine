@@ -24,10 +24,10 @@
 
 'use strict';
 
-var WebGLRenderer = require('../webgl-renderers/WebGLRenderer');
-var Camera = require('../components/Camera');
-var DOMRenderer = require('../dom-renderers/DOMRenderer');
-var Commands = require('../core/Commands');
+import { WebGLRenderer } from '../webgl-renderers/WebGLRenderer';
+import { Camera } from '../components/Camera';
+import { DOMRenderer } from '../dom-renderers/DOMRenderer';
+import { Commands } from '../core/Commands';
 
 /**
  * Context is a render layer with its own WebGLRenderer and DOMRenderer.
@@ -48,7 +48,8 @@ var Commands = require('../core/Commands');
  * @param {Compositor} compositor Compositor reference to pass down to
  * WebGLRenderer.
  */
-function Context(selector, compositor) {
+class Context {
+  constructor(selector, compositor) {
     this._compositor = compositor;
     this._rootEl = document.querySelector(selector);
     this._selector = selector;
@@ -102,7 +103,7 @@ function Context(selector, compositor) {
  *
  * @return {Context} this
  */
-Context.prototype.updateSize = function () {
+updateSize() {
     var width = this._rootEl.offsetWidth;
     var height = this._rootEl.offsetHeight;
 
@@ -124,7 +125,7 @@ Context.prototype.updateSize = function () {
  *
  * @return {undefined} undefined
  */
-Context.prototype.draw = function draw() {
+draw() {
     this._domRenderer.draw(this._renderState);
     if (this._webGLRenderer) this._webGLRenderer.draw(this._renderState);
 
@@ -141,7 +142,7 @@ Context.prototype.draw = function draw() {
  *
  * @return {undefined} undefined
  */
-Context.prototype._initDOMRenderer = function _initDOMRenderer() {
+_initDOMRenderer() {
     this._domRendererRootEl = document.createElement('div');
     this._rootEl.appendChild(this._domRendererRootEl);
     this._domRendererRootEl.style.visibility = 'hidden';
@@ -153,7 +154,7 @@ Context.prototype._initDOMRenderer = function _initDOMRenderer() {
     );
 };
 
-Context.prototype.initCommandCallbacks = function initCommandCallbacks () {
+initCommandCallbacks () {
     this._commandCallbacks[Commands.INIT_DOM] = initDOM;
     this._commandCallbacks[Commands.DOM_RENDER_SIZE] = domRenderSize;
     this._commandCallbacks[Commands.CHANGE_TRANSFORM] = changeTransform;
@@ -198,7 +199,7 @@ Context.prototype.initCommandCallbacks = function initCommandCallbacks () {
  *
  * @return {undefined} undefined
  */
-Context.prototype._initWebGLRenderer = function _initWebGLRenderer() {
+_initWebGLRenderer() {
     this._webGLRendererRootEl = document.createElement('canvas');
     this._rootEl.appendChild(this._webGLRendererRootEl);
 
@@ -218,7 +219,7 @@ Context.prototype._initWebGLRenderer = function _initWebGLRenderer() {
  *
  * @return {undefined} undefined
  */
-Context.prototype.getRootSize = function getRootSize() {
+getRootSize() {
     return [
         this._rootEl.offsetWidth,
         this._rootEl.offsetHeight
@@ -231,7 +232,7 @@ Context.prototype.getRootSize = function getRootSize() {
  *
  * @return {undefined} undefined
  */
-Context.prototype.checkInit = function checkInit () {
+checkInit () {
     if (this._initDOM) {
         this._domRendererRootEl.style.visibility = 'visible';
         this._initDOM = false;
@@ -251,7 +252,7 @@ Context.prototype.checkInit = function checkInit () {
  *
  * @return {Number} iterator indicating progress through the command queue.
  */
-Context.prototype.receive = function receive(path, commands, iterator) {
+receive(path, commands, iterator) {
     var localIterator = iterator;
 
     var command = commands[++localIterator];
@@ -274,7 +275,7 @@ Context.prototype.receive = function receive(path, commands, iterator) {
  *
  * @return {DOMRenderer}    The DOMRenderer being used by the Context.
  */
-Context.prototype.getDOMRenderer = function getDOMRenderer() {
+getDOMRenderer() {
     return this._domRenderer;
 };
 
@@ -285,9 +286,11 @@ Context.prototype.getDOMRenderer = function getDOMRenderer() {
  *
  * @return {WebGLRenderer|null}    The WebGLRenderer being used by the Context.
  */
-Context.prototype.getWebGLRenderer = function getWebGLRenderer() {
+getWebGLRenderer() {
     return this._webGLRenderer;
 };
+
+}
 
 // Command Callbacks
 function preventDefault (context, path, commands, iterator) {
@@ -540,4 +543,4 @@ function changeViewTransform (context, path, commands, iterator) {
     return iterator;
 }
 
-module.exports = Context;
+export { Context };

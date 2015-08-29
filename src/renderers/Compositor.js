@@ -24,9 +24,9 @@
 
 'use strict';
 
-var Context = require('./Context');
-var injectCSS = require('./inject-css');
-var Commands = require('../core/Commands');
+import { Context } from './Context';
+import { injectCSS } from './inject-css';
+import { Commands } from '../core/Commands';
 
 /**
  * Instantiates a new Compositor.
@@ -40,7 +40,8 @@ var Commands = require('../core/Commands');
  * @constructor
  * @return {undefined} undefined
  */
-function Compositor() {
+class Compositor {
+  constructor() {
     injectCSS();
 
     this._contexts = {};
@@ -56,7 +57,7 @@ function Compositor() {
     });
 }
 
-Compositor.prototype.onResize = function onResize () {
+onResize() {
     this._resized = true;
     for (var selector in this._contexts) {
         this._contexts[selector].updateSize();
@@ -75,7 +76,7 @@ Compositor.prototype.onResize = function onResize () {
  *
  * @return {Number} time The clock time used in core.
  */
-Compositor.prototype.getTime = function getTime() {
+getTime() {
     return this._time;
 };
 
@@ -94,7 +95,7 @@ Compositor.prototype.getTime = function getTime() {
  *
  * @return {undefined} undefined
  */
-Compositor.prototype.sendEvent = function sendEvent(path, ev, payload) {
+sendEvent(path, ev, payload) {
     this._outCommands.push(Commands.WITH, path, Commands.TRIGGER, ev, payload);
 };
 
@@ -111,7 +112,7 @@ Compositor.prototype.sendEvent = function sendEvent(path, ev, payload) {
  *
  * @return {undefined} undefined
  */
-Compositor.prototype.sendResize = function sendResize (selector, size) {
+sendResize (selector, size) {
     this.sendEvent(selector, 'CONTEXT_RESIZE', size);
 };
 
@@ -129,7 +130,7 @@ Compositor.prototype.sendResize = function sendResize (selector, size) {
  *
  * @return {undefined} undefined
  */
-Compositor.prototype.handleWith = function handleWith (iterator, commands) {
+handleWith(iterator, commands) {
     var path = commands[iterator];
     var pathArr = path.split('/');
     var context = this.getOrSetContext(pathArr.shift());
@@ -147,7 +148,7 @@ Compositor.prototype.handleWith = function handleWith (iterator, commands) {
  *
  * @return {Context} context
  */
-Compositor.prototype.getOrSetContext = function getOrSetContext(selector) {
+getOrSetContext(selector) {
     if (this._contexts[selector]) {
         return this._contexts[selector];
     }
@@ -167,7 +168,7 @@ Compositor.prototype.getOrSetContext = function getOrSetContext(selector) {
  *                              register the context.
  * @return {Context}            The repsective context.
  */
-Compositor.prototype.getContext = function getContext(selector) {
+getContext(selector) {
     if (this._contexts[selector])
         return this._contexts[selector];
 };
@@ -181,7 +182,7 @@ Compositor.prototype.getContext = function getContext(selector) {
  *
  * @return {Array} outCommands set of commands to be sent back
  */
-Compositor.prototype.drawCommands = function drawCommands() {
+drawCommands() {
     var commands = this._inCommands;
     var localIterator = 0;
     var command = commands[localIterator];
@@ -224,7 +225,7 @@ Compositor.prototype.drawCommands = function drawCommands() {
  *
  * @return {undefined} undefined
  */
-Compositor.prototype.updateSize = function updateSize() {
+updateSize() {
     for (var selector in this._contexts) {
         this._contexts[selector].updateSize();
     }
@@ -241,7 +242,7 @@ Compositor.prototype.updateSize = function updateSize() {
  *
  * @return {undefined} undefined
  */
-Compositor.prototype.receiveCommands = function receiveCommands(commands) {
+receiveCommands(commands) {
     var len = commands.length;
     for (var i = 0; i < len; i++) {
         this._inCommands.push(commands[i]);
@@ -264,7 +265,7 @@ Compositor.prototype.receiveCommands = function receiveCommands(commands) {
  *
  * @return {undefined} undefined
  */
-Compositor.prototype.giveSizeFor = function giveSizeFor(iterator, commands) {
+giveSizeFor(iterator, commands) {
     var selector = commands[iterator];
     var context = this.getContext(selector);
     if (context) {
@@ -284,10 +285,12 @@ Compositor.prototype.giveSizeFor = function giveSizeFor(iterator, commands) {
  *
  * @return {undefined} undefined
  */
-Compositor.prototype.clearCommands = function clearCommands() {
+clearCommands() {
     this._inCommands.length = 0;
     this._outCommands.length = 0;
     this._resized = false;
 };
 
-module.exports = Compositor;
+}
+
+export { Compositor };

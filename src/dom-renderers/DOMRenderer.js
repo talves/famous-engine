@@ -24,12 +24,12 @@
 
 'use strict';
 
-var ElementCache = require('./ElementCache');
-var math = require('./Math');
-var PathUtils = require('../core/Path');
-var vendorPrefix = require('../utilities/vendorPrefix');
-var CallbackStore = require('../utilities/CallbackStore');
-var eventMap = require('./events/EventMap');
+import { ElementCache } from './ElementCache';
+import * as math from './Math';
+import { Path as PathUtils } from '../core/Path';
+import { vendorPrefix } from '../utilities/vendorPrefix';
+import { CallbackStore } from '../utilities/CallbackStore';
+import { EventMap } from './events/EventMap';
 
 var TRANSFORM = null;
 
@@ -46,7 +46,8 @@ var TRANSFORM = null;
  * @param {String} selector the selector of the element.
  * @param {Compositor} compositor the compositor controlling the renderer
  */
-function DOMRenderer (element, selector, compositor) {
+class DOMRenderer {
+  constructor(element, selector, compositor) {
     var _this = this;
 
     element.classList.add('famous-dom-renderer');
@@ -109,7 +110,7 @@ function DOMRenderer (element, selector, compositor) {
  *
  * @return {undefined} undefined
  */
-DOMRenderer.prototype.subscribe = function subscribe(type) {
+subscribe(type) {
     this._assertTargetLoaded();
     this._listen(type);
     this._target.subscribe[type] = true;
@@ -124,7 +125,7 @@ DOMRenderer.prototype.subscribe = function subscribe(type) {
  * @param  {String} type    The type of events that should be prevented.
  * @return {undefined}      undefined
  */
-DOMRenderer.prototype.preventDefault = function preventDefault(type) {
+preventDefault(type) {
     this._assertTargetLoaded();
     this._listen(type);
     this._target.preventDefault[type] = true;
@@ -141,7 +142,7 @@ DOMRenderer.prototype.preventDefault = function preventDefault(type) {
  *                          `preventDefault`.
  * @return {undefined}      undefined
  */
-DOMRenderer.prototype.allowDefault = function allowDefault(type) {
+allowDefault(type) {
     this._assertTargetLoaded();
     this._listen(type);
     this._target.preventDefault[type] = false;
@@ -162,14 +163,14 @@ DOMRenderer.prototype.allowDefault = function allowDefault(type) {
  * @param  {String} type    The event type to listen to (e.g. click).
  * @return {undefined}      undefined
  */
-DOMRenderer.prototype._listen = function _listen(type) {
+_listen(type) {
     this._assertTargetLoaded();
 
     if (
         !this._target.listeners[type] && !this._root.listeners[type]
     ) {
         // FIXME Add to content DIV if available
-        var target = eventMap[type][1] ? this._root : this._target;
+        var target = EventMap[type][1] ? this._root : this._target;
         target.listeners[type] = this._boundTriggerEvent;
         target.element.addEventListener(type, this._boundTriggerEvent);
     }
@@ -183,7 +184,7 @@ DOMRenderer.prototype._listen = function _listen(type) {
  * @param {String} type DOM event type (e.g. click, mouseover).
  * @return {undefined} undefined
  */
-DOMRenderer.prototype.unsubscribe = function unsubscribe(type) {
+unsubscribe(type) {
     this._assertTargetLoaded();
     this._target.subscribe[type] = false;
 };
@@ -199,7 +200,7 @@ DOMRenderer.prototype.unsubscribe = function unsubscribe(type) {
  *
  * @return {undefined} undefined
  */
-DOMRenderer.prototype._triggerEvent = function _triggerEvent(ev) {
+_triggerEvent(ev) {
     if (this._lastEv === ev) return;
 
     // Use ev.path, which is an array of Elements (polyfilled if needed).
@@ -225,7 +226,7 @@ DOMRenderer.prototype._triggerEvent = function _triggerEvent(ev) {
         if (this._elements[path] && this._elements[path].subscribe[ev.type]) {
             this._lastEv = ev;
 
-            var NormalizedEventConstructor = eventMap[ev.type][0];
+            var NormalizedEventConstructor = EventMap[ev.type][0];
 
             // Finally send the event to the Worker Thread through the
             // compositor.
@@ -247,7 +248,7 @@ DOMRenderer.prototype._triggerEvent = function _triggerEvent(ev) {
  *
  * @return {Array} a vec3 of the offset size of the dom element
  */
-DOMRenderer.prototype.getSizeOf = function getSizeOf(path) {
+getSizeOf(path) {
     var element = this._elements[path];
     if (!element) return null;
 
@@ -255,17 +256,6 @@ DOMRenderer.prototype.getSizeOf = function getSizeOf(path) {
     this._compositor.sendEvent(path, 'resize', res);
     return res;
 };
-
-function _getPath(ev) {
-    // TODO move into _triggerEvent, avoid object allocation
-    var path = [];
-    var node = ev.target;
-    while (node !== document.body) {
-        path.push(node);
-        node = node.parentNode;
-    }
-    return path;
-}
 
 /**
  * Executes the retrieved draw commands. Draw commands only refer to the
@@ -277,7 +267,7 @@ function _getPath(ev) {
  *
  * @return {undefined} undefined
  */
-DOMRenderer.prototype.draw = function draw(renderState) {
+draw(renderState) {
     if (renderState.perspectiveDirty) {
         this.perspectiveDirty = true;
 
@@ -317,7 +307,7 @@ DOMRenderer.prototype.draw = function draw(renderState) {
  *
  * @return {undefined} undefined
  */
-DOMRenderer.prototype._assertPathLoaded = function _asserPathLoaded() {
+_assertPathLoaded() {
     if (!this._path) throw new Error('path not loaded');
 };
 
@@ -329,7 +319,7 @@ DOMRenderer.prototype._assertPathLoaded = function _asserPathLoaded() {
  *
  * @return {undefined} undefined
  */
-DOMRenderer.prototype._assertParentLoaded = function _assertParentLoaded() {
+_assertParentLoaded() {
     if (!this._parent) throw new Error('parent not loaded');
 };
 
@@ -342,7 +332,7 @@ DOMRenderer.prototype._assertParentLoaded = function _assertParentLoaded() {
  *
  * @return {undefined} undefined
  */
-DOMRenderer.prototype._assertChildrenLoaded = function _assertChildrenLoaded() {
+_assertChildrenLoaded() {
     if (!this._children) throw new Error('children not loaded');
 };
 
@@ -353,7 +343,7 @@ DOMRenderer.prototype._assertChildrenLoaded = function _assertChildrenLoaded() {
  *
  * @return {undefined} undefined
  */
-DOMRenderer.prototype._assertTargetLoaded = function _assertTargetLoaded() {
+_assertTargetLoaded() {
     if (!this._target) throw new Error('No target loaded');
 };
 
@@ -365,7 +355,7 @@ DOMRenderer.prototype._assertTargetLoaded = function _assertTargetLoaded() {
  *
  * @return {ElementCache} Parent element.
  */
-DOMRenderer.prototype.findParent = function findParent () {
+findParent () {
     this._assertPathLoaded();
 
     var path = this._path;
@@ -388,7 +378,7 @@ DOMRenderer.prototype.findParent = function findParent () {
  *
  * @return {ElementCache|undefined} Element loaded under defined path.
  */
-DOMRenderer.prototype.findTarget = function findTarget() {
+findTarget() {
     this._target = this._elements[this._path];
     return this._target;
 };
@@ -402,7 +392,7 @@ DOMRenderer.prototype.findTarget = function findTarget() {
  *
  * @return {String} Loaded path
  */
-DOMRenderer.prototype.loadPath = function loadPath (path) {
+loadPath (path) {
     this._path = path;
     this._target = this._elements[this._path];
     return this._path;
@@ -418,7 +408,7 @@ DOMRenderer.prototype.loadPath = function loadPath (path) {
  * @param {HTMLElement} element the inserted element
  * @param {HTMLElement} parent the parent of the inserted element
  */
-DOMRenderer.prototype.resolveChildren = function resolveChildren (element, parent) {
+resolveChildren (element, parent) {
     var i = 0;
     var childNode;
     var path = this._path;
@@ -449,7 +439,7 @@ DOMRenderer.prototype.resolveChildren = function resolveChildren (element, paren
  *
  * @return {undefined} undefined
  */
-DOMRenderer.prototype.insertEl = function insertEl (tagName) {
+insertEl (tagName) {
 
     this.findParent();
 
@@ -486,7 +476,7 @@ DOMRenderer.prototype.insertEl = function insertEl (tagName) {
  *
  * @return {undefined} undefined
  */
-DOMRenderer.prototype.setProperty = function setProperty (name, value) {
+setProperty (name, value) {
     this._assertTargetLoaded();
     this._target.element.style[name] = value;
 };
@@ -507,7 +497,7 @@ DOMRenderer.prototype.setProperty = function setProperty (name, value) {
  *
  * @return {undefined} undefined
  */
-DOMRenderer.prototype.setSize = function setSize (width, height) {
+setSize (width, height) {
     this._assertTargetLoaded();
 
     this.setWidth(width);
@@ -527,7 +517,7 @@ DOMRenderer.prototype.setSize = function setSize (width, height) {
  *
  * @return {undefined} undefined
  */
-DOMRenderer.prototype.setWidth = function setWidth(width) {
+setWidth(width) {
     this._assertTargetLoaded();
 
     var contentWrapper = this._target.content;
@@ -560,7 +550,7 @@ DOMRenderer.prototype.setWidth = function setWidth(width) {
  *
  * @return {undefined} undefined
  */
-DOMRenderer.prototype.setHeight = function setHeight(height) {
+setHeight(height) {
     this._assertTargetLoaded();
 
     var contentWrapper = this._target.content;
@@ -590,7 +580,7 @@ DOMRenderer.prototype.setHeight = function setHeight(height) {
  *
  * @return {undefined} undefined
  */
-DOMRenderer.prototype.setAttribute = function setAttribute(name, value) {
+setAttribute(name, value) {
     this._assertTargetLoaded();
     this._target.element.setAttribute(name, value);
 };
@@ -604,7 +594,7 @@ DOMRenderer.prototype.setAttribute = function setAttribute(name, value) {
  *
  * @return {undefined} undefined
  */
-DOMRenderer.prototype.setContent = function setContent(content) {
+setContent(content) {
     this._assertTargetLoaded();
 
     if (this._target.formElement) {
@@ -640,7 +630,7 @@ DOMRenderer.prototype.setContent = function setContent(content) {
  *
  * @return {undefined} undefined
  */
-DOMRenderer.prototype.setMatrix = function setMatrix (transform) {
+setMatrix (transform) {
     this._assertTargetLoaded();
     this._target.element.style[TRANSFORM] = this._stringifyMatrix(transform);
 };
@@ -655,7 +645,7 @@ DOMRenderer.prototype.setMatrix = function setMatrix (transform) {
  *
  * @return {undefined} undefined
  */
-DOMRenderer.prototype.addClass = function addClass(domClass) {
+addClass(domClass) {
     this._assertTargetLoaded();
     this._target.element.classList.add(domClass);
 };
@@ -671,7 +661,7 @@ DOMRenderer.prototype.addClass = function addClass(domClass) {
  *
  * @return {undefined} undefined
  */
-DOMRenderer.prototype.removeClass = function removeClass(domClass) {
+removeClass(domClass) {
     this._assertTargetLoaded();
     this._target.element.classList.remove(domClass);
 };
@@ -686,7 +676,7 @@ DOMRenderer.prototype.removeClass = function removeClass(domClass) {
  * @param {Array} m    Matrix as an array or array-like object.
  * @return {String}     Stringified matrix as `matrix3d`-property.
  */
-DOMRenderer.prototype._stringifyMatrix = function _stringifyMatrix(m) {
+_stringifyMatrix(m) {
     var r = 'matrix3d(';
 
     r += (m[0] < 0.000001 && m[0] > -0.000001) ? '0,' : m[0] + ',';
@@ -720,7 +710,7 @@ DOMRenderer.prototype._stringifyMatrix = function _stringifyMatrix(m) {
  *                              occurs.
  * @return {DOMRenderer}        this
  */
-DOMRenderer.prototype.onInsertEl = function onInsertEl(path, callback) {
+onInsertEl(path, callback) {
     this._insertElCallbackStore.on(path, callback);
     return this;
 };
@@ -736,7 +726,7 @@ DOMRenderer.prototype.onInsertEl = function onInsertEl(path, callback) {
  * @param  {Function} callback  Callback function to be deregistered.
  * @return {DOMRenderer}        this
  */
-DOMRenderer.prototype.offInsertEl = function offInsertEl(path, callback) {
+offInsertEl(path, callback) {
     this._insertElCallbackStore.off(path, callback);
     return this;
 };
@@ -753,7 +743,7 @@ DOMRenderer.prototype.offInsertEl = function offInsertEl(path, callback) {
  *                              being removed at the specified path.
  * @return {DOMRenderer}        this
  */
-DOMRenderer.prototype.onRemoveEl = function onRemoveEl(path, callback) {
+onRemoveEl(path, callback) {
     this._removeElCallbackStore.on(path, callback);
     return this;
 };
@@ -769,9 +759,22 @@ DOMRenderer.prototype.onRemoveEl = function onRemoveEl(path, callback) {
  * @param  {Function} callback  Callback function to be deregistered.
  * @return {DOMRenderer}        this
  */
-DOMRenderer.prototype.offRemoveEl = function offRemoveEl(path, callback) {
+offRemoveEl(path, callback) {
     this._removeElCallbackStore.off(path, callback);
     return this;
 };
 
-module.exports = DOMRenderer;
+}
+
+function _getPath(ev) {
+    // TODO move into _triggerEvent, avoid object allocation
+    var path = [];
+    var node = ev.target;
+    while (node !== document.body) {
+        path.push(node);
+        node = node.parentNode;
+    }
+    return path;
+}
+
+export { DOMRenderer };

@@ -26,13 +26,13 @@
 
 'use strict';
 
-var SizeSystem = require('./SizeSystem');
-var Dispatch = require('./Dispatch');
-var TransformSystem = require('./TransformSystem');
-var OpacitySystem = require('./OpacitySystem');
-var Size = require('./Size');
-var Opacity = require('./Opacity');
-var Transform = require('./Transform');
+import { SizeSystem } from './SizeSystem';
+import { Dispatch } from './Dispatch';
+import { TransformSystem } from './TransformSystem';
+import { OpacitySystem } from './OpacitySystem';
+import { Size } from './Size';
+import { Opacity } from './Opacity';
+import { Transform } from './Transform';
 
 /**
  * Nodes define hierarchy and geometrical transformations. They can be moved
@@ -72,7 +72,8 @@ var Transform = require('./Transform');
  * @class Node
  * @constructor
  */
-function Node () {
+class Node {
+  constructor() {
     this._requestingUpdate = false;
     this._inUpdate = false;
     this._mounted = false;
@@ -102,12 +103,6 @@ function Node () {
     if (!this.constructor.NO_DEFAULT_COMPONENTS) this._init();
 }
 
-Node.RELATIVE_SIZE = 0;
-Node.ABSOLUTE_SIZE = 1;
-Node.RENDER_SIZE = 2;
-Node.DEFAULT_SIZE = 0;
-Node.NO_DEFAULT_COMPONENTS = false;
-
 /**
  * Protected method. Initializes a node with a default Transform and Size component
  *
@@ -116,7 +111,7 @@ Node.NO_DEFAULT_COMPONENTS = false;
  *
  * @return {undefined} undefined
  */
-Node.prototype._init = function _init () {
+_init() {
     this._transformID = this.addComponent(new Transform());
     this._sizeID = this.addComponent(new Size());
     this._opacityID = this.addComponent(new Opacity());
@@ -131,7 +126,7 @@ Node.prototype._init = function _init () {
  *
  * @return {undefined} undefined;
  */
-Node.prototype._setParent = function _setParent (parent) {
+_setParent(parent) {
     if (this._parent && this._parent.getChildren().indexOf(this) !== -1) {
         this._parent.removeChild(this);
     }
@@ -149,7 +144,7 @@ Node.prototype._setParent = function _setParent (parent) {
  *
  * @return {undefined} undefined
  */
-Node.prototype._setMounted = function _setMounted (mounted, path) {
+_setMounted(mounted, path) {
     this._mounted = mounted;
     this._id = path ? path : null;
 };
@@ -164,7 +159,7 @@ Node.prototype._setMounted = function _setMounted (mounted, path) {
  *
  * @return {undefined} undefined
  */
-Node.prototype._setShown = function _setShown (shown) {
+_setShown(shown) {
     this._shown = shown;
 };
 
@@ -177,7 +172,7 @@ Node.prototype._setShown = function _setShown (shown) {
  *
  * @return {undefined} undefined
  */
-Node.prototype._setUpdater = function _setUpdater (updater) {
+_setUpdater(updater) {
     this._updater = updater;
     if (this._requestingUpdate) this._updater.requestUpdate(this);
 };
@@ -194,16 +189,9 @@ Node.prototype._setUpdater = function _setUpdater (updater) {
  *
  * @return {String} location (path), e.g. `body/0/1`
  */
-Node.prototype.getLocation = function getLocation () {
+getLocation() {
     return this._id;
 };
-
-/**
- * @alias getId
- *
- * @return {String} the path of the Node
- */
-Node.prototype.getId = Node.prototype.getLocation;
 
 /**
  * Dispatches the event using the Dispatch. All descendent nodes will
@@ -216,13 +204,13 @@ Node.prototype.getId = Node.prototype.getLocation;
  *
  * @return {Node} this
  */
-Node.prototype.emit = function emit (event, payload) {
+emit(event, payload) {
     Dispatch.dispatch(this.getLocation(), event, payload);
     return this;
 };
 
 // THIS WILL BE DEPRECATED
-Node.prototype.sendDrawCommand = function sendDrawCommand (message) {
+sendDrawCommand(message) {
     this._updater.message(message);
     return this;
 };
@@ -235,7 +223,7 @@ Node.prototype.sendDrawCommand = function sendDrawCommand (message) {
  * @return {Object}     Serialized representation of the node, including
  *                      components.
  */
-Node.prototype.getValue = function getValue () {
+getValue() {
     var numberOfChildren = this._children.length;
     var numberOfComponents = this._components.length;
     var i = 0;
@@ -317,7 +305,7 @@ Node.prototype.getValue = function getValue () {
  * @return {Object}     Serialized representation of the node, including
  *                      children, excluding components.
  */
-Node.prototype.getComputedValue = function getComputedValue () {
+getComputedValue() {
     console.warn('Node.getComputedValue is depricated. Use Node.getValue instead');
     var numberOfChildren = this._children.length;
 
@@ -345,7 +333,7 @@ Node.prototype.getComputedValue = function getComputedValue () {
  *
  * @return {Array.<Node>}   An array of children.
  */
-Node.prototype.getChildren = function getChildren () {
+getChildren() {
     return this._fullChildren;
 };
 
@@ -358,7 +346,7 @@ Node.prototype.getChildren = function getChildren () {
  *
  * @return {Array}  An array of children. Might contain `null` elements.
  */
-Node.prototype.getRawChildren = function getRawChildren() {
+getRawChildren() {
     return this._children;
 };
 
@@ -370,7 +358,7 @@ Node.prototype.getRawChildren = function getRawChildren() {
  *
  * @return {Node}       Parent node.
  */
-Node.prototype.getParent = function getParent () {
+getParent() {
     return this._parent;
 };
 
@@ -394,7 +382,7 @@ Node.prototype.getParent = function getParent () {
  *
  * @return {Node} this
  */
-Node.prototype.requestUpdate = function requestUpdate (requester) {
+requestUpdate(requester) {
     if (this._inUpdate || !this.isMounted())
         return this.requestUpdateOnNextTick(requester);
     if (this._updateQueue.indexOf(requester) === -1) {
@@ -427,7 +415,7 @@ Node.prototype.requestUpdate = function requestUpdate (requester) {
  *
  * @return {Node} this
  */
-Node.prototype.requestUpdateOnNextTick = function requestUpdateOnNextTick (requester) {
+requestUpdateOnNextTick(requester) {
     if (this._nextUpdateQueue.indexOf(requester) === -1)
         this._nextUpdateQueue.push(requester);
     return this;
@@ -441,7 +429,7 @@ Node.prototype.requestUpdateOnNextTick = function requestUpdateOnNextTick (reque
  *
  * @return {Boolean}    Boolean indicating whether the node is mounted or not.
  */
-Node.prototype.isMounted = function isMounted () {
+isMounted() {
     return this._mounted;
 };
 
@@ -453,7 +441,7 @@ Node.prototype.isMounted = function isMounted () {
  *
  * @return {Boolean}    Boolean indicating whether the node is rendered or not.
  */
-Node.prototype.isRendered = function isRendered () {
+isRendered() {
     return this._mounted && this._shown;
 };
 
@@ -465,7 +453,7 @@ Node.prototype.isRendered = function isRendered () {
  * @return {Boolean}    Boolean indicating whether the node is visible
  *                      ("shown") or not.
  */
-Node.prototype.isShown = function isShown () {
+isShown() {
     return this._shown;
 };
 
@@ -479,7 +467,7 @@ Node.prototype.isShown = function isShown () {
  *
  * @return {Number}         Relative opacity of the node.
  */
-Node.prototype.getOpacity = function getOpacity () {
+getOpacity() {
     if (!this.constructor.NO_DEFAULT_COMPONENTS)
         return this.getComponent(this._opacityID).getOpacity();
     else if (this.isMounted())
@@ -494,7 +482,7 @@ Node.prototype.getOpacity = function getOpacity () {
  *
  * @return {Float32Array}   An array representing the mount point.
  */
-Node.prototype.getMountPoint = function getMountPoint () {
+getMountPoint() {
     if (!this.constructor.NO_DEFAULT_COMPONENTS)
         return this.getComponent(this._transformID).getMountPoint();
     else if (this.isMounted())
@@ -509,7 +497,7 @@ Node.prototype.getMountPoint = function getMountPoint () {
  *
  * @return {Float32Array}   An array representing the align.
  */
-Node.prototype.getAlign = function getAlign () {
+getAlign() {
     if (!this.constructor.NO_DEFAULT_COMPONENTS)
         return this.getComponent(this._transformID).getAlign();
     else if (this.isMounted())
@@ -524,7 +512,7 @@ Node.prototype.getAlign = function getAlign () {
  *
  * @return {Float32Array}   An array representing the origin.
  */
-Node.prototype.getOrigin = function getOrigin () {
+getOrigin() {
     if (!this.constructor.NO_DEFAULT_COMPONENTS)
         return this.getComponent(this._transformID).getOrigin();
     else if (this.isMounted())
@@ -539,7 +527,7 @@ Node.prototype.getOrigin = function getOrigin () {
  *
  * @return {Float32Array}   An array representing the position.
  */
-Node.prototype.getPosition = function getPosition () {
+getPosition() {
     if (!this.constructor.NO_DEFAULT_COMPONENTS)
         return this.getComponent(this._transformID).getPosition();
     else if (this.isMounted())
@@ -554,7 +542,7 @@ Node.prototype.getPosition = function getPosition () {
  *
  * @return {Float32Array} an array of four values, showing the rotation as a quaternion
  */
-Node.prototype.getRotation = function getRotation () {
+getRotation() {
     if (!this.constructor.NO_DEFAULT_COMPONENTS)
         return this.getComponent(this._transformID).getRotation();
     else if (this.isMounted())
@@ -569,7 +557,7 @@ Node.prototype.getRotation = function getRotation () {
  *
  * @return {Float32Array} an array showing the current scale vector
  */
-Node.prototype.getScale = function getScale () {
+getScale() {
     if (!this.constructor.NO_DEFAULT_COMPONENTS)
         return this.getComponent(this._transformID).getScale();
     else if (this.isMounted())
@@ -584,7 +572,7 @@ Node.prototype.getScale = function getScale () {
  *
  * @return {Float32Array} an array of numbers showing the current size mode
  */
-Node.prototype.getSizeMode = function getSizeMode () {
+getSizeMode() {
     if (!this.constructor.NO_DEFAULT_COMPONENTS)
         return this.getComponent(this._sizeID).getSizeMode();
     else if (this.isMounted())
@@ -599,7 +587,7 @@ Node.prototype.getSizeMode = function getSizeMode () {
  *
  * @return {Float32Array} a vector 3 showing the current proportional size
  */
-Node.prototype.getProportionalSize = function getProportionalSize () {
+getProportionalSize() {
     if (!this.constructor.NO_DEFAULT_COMPONENTS)
         return this.getComponent(this._sizeID).getProportional();
     else if (this.isMounted())
@@ -614,7 +602,7 @@ Node.prototype.getProportionalSize = function getProportionalSize () {
  *
  * @return {Float32Array} a vector 3 showing the current differential size
  */
-Node.prototype.getDifferentialSize = function getDifferentialSize () {
+getDifferentialSize() {
     if (!this.constructor.NO_DEFAULT_COMPONENTS)
         return this.getComponent(this._sizeID).getDifferential();
     else if (this.isMounted())
@@ -629,7 +617,7 @@ Node.prototype.getDifferentialSize = function getDifferentialSize () {
  *
  * @return {Float32Array} a vector 3 showing the current absolute size of the node
  */
-Node.prototype.getAbsoluteSize = function getAbsoluteSize () {
+getAbsoluteSize() {
     if (!this.constructor.NO_DEFAULT_COMPONENTS)
         return this.getComponent(this._sizeID).getAbsolute();
     else if (this.isMounted())
@@ -646,7 +634,7 @@ Node.prototype.getAbsoluteSize = function getAbsoluteSize () {
  *
  * @return {Float32Array} a vector 3 showing the current render size
  */
-Node.prototype.getRenderSize = function getRenderSize () {
+getRenderSize() {
     if (!this.constructor.NO_DEFAULT_COMPONENTS)
         return this.getComponent(this._sizeID).getRender();
     else if (this.isMounted())
@@ -661,7 +649,7 @@ Node.prototype.getRenderSize = function getRenderSize () {
  *
  * @return {Float32Array} a vector 3 of the final calculated side of the node
  */
-Node.prototype.getSize = function getSize () {
+getSize() {
     if (!this.constructor.NO_DEFAULT_COMPONENTS)
         return this.getComponent(this._sizeID).get();
     else if (this.isMounted())
@@ -676,7 +664,7 @@ Node.prototype.getSize = function getSize () {
  *
  * @return {Float32Array} a 16 value transform
  */
-Node.prototype.getTransform = function getTransform () {
+getTransform() {
     return TransformSystem.get(this.getLocation());
 };
 
@@ -687,7 +675,7 @@ Node.prototype.getTransform = function getTransform () {
  *
  * @return {Array} an array of strings representing the current subscribed UI event of this node
  */
-Node.prototype.getUIEvents = function getUIEvents () {
+getUIEvents() {
     return this._UIEvents;
 };
 
@@ -702,7 +690,7 @@ Node.prototype.getUIEvents = function getUIEvents () {
  *
  * @return {Node} the appended node.
  */
-Node.prototype.addChild = function addChild (child) {
+addChild(child) {
     var index = child ? this._children.indexOf(child) : -1;
     child = child ? child : new Node();
 
@@ -730,7 +718,7 @@ Node.prototype.addChild = function addChild (child) {
  *
  * @return {Boolean} whether or not the node was successfully removed
  */
-Node.prototype.removeChild = function removeChild (child) {
+removeChild(child) {
     var index = this._children.indexOf(child);
 
     if (index > - 1) {
@@ -766,7 +754,7 @@ Node.prototype.removeChild = function removeChild (child) {
  *                              registered. Indices aren't necessarily
  *                              consecutive.
  */
-Node.prototype.addComponent = function addComponent (component) {
+addComponent(component) {
     var index = this._components.indexOf(component);
     if (index === -1) {
         index = this._freedComponentIndicies.length ? this._freedComponentIndicies.pop() : this._components.length;
@@ -790,7 +778,7 @@ Node.prototype.addComponent = function addComponent (component) {
  * @return {*}              The component registered at the passed in index (if
  *                          any).
  */
-Node.prototype.getComponent = function getComponent (index) {
+getComponent(index) {
     return this._components[index];
 };
 
@@ -804,7 +792,7 @@ Node.prototype.getComponent = function getComponent (index) {
  *
  * @return {Node} this
  */
-Node.prototype.removeComponent = function removeComponent (component) {
+removeComponent(component) {
     var index = this._components.indexOf(component);
     if (index !== -1) {
         this._freedComponentIndicies.push(index);
@@ -830,7 +818,7 @@ Node.prototype.removeComponent = function removeComponent (component) {
  *
  * @return {undefined} undefined
  */
-Node.prototype.removeUIEvent = function removeUIEvent (eventName) {
+removeUIEvent(eventName) {
     var UIEvents = this.getUIEvents();
     var components = this._components;
     var component;
@@ -856,7 +844,7 @@ Node.prototype.removeUIEvent = function removeUIEvent (eventName) {
  *
  * @return {Node} this
  */
-Node.prototype.addUIEvent = function addUIEvent (eventName) {
+addUIEvent(eventName) {
     var UIEvents = this.getUIEvents();
     var components = this._components;
     var component;
@@ -883,7 +871,7 @@ Node.prototype.addUIEvent = function addUIEvent (eventName) {
  *
  * @return {undefined} undefined
  */
-Node.prototype._requestUpdate = function _requestUpdate (force) {
+_requestUpdate(force) {
     if (force || !this._requestingUpdate) {
         if (this._updater)
             this._updater.requestUpdate(this);
@@ -903,7 +891,7 @@ Node.prototype._requestUpdate = function _requestUpdate (force) {
  *
  * @return {Boolean} whether or not a new value was inserted.
  */
-Node.prototype._vecOptionalSet = function _vecOptionalSet (vec, index, val) {
+_vecOptionalSet(vec, index, val) {
     if (val != null && vec[index] !== val) {
         vec[index] = val;
         if (!this._requestingUpdate) this._requestUpdate();
@@ -921,7 +909,7 @@ Node.prototype._vecOptionalSet = function _vecOptionalSet (vec, index, val) {
  *
  * @return {Node} this
  */
-Node.prototype.show = function show () {
+show() {
     Dispatch.show(this.getLocation());
     this._shown = true;
     return this;
@@ -936,7 +924,7 @@ Node.prototype.show = function show () {
  *
  * @return {Node} this
  */
-Node.prototype.hide = function hide () {
+hide() {
     Dispatch.hide(this.getLocation());
     this._shown = false;
     return this;
@@ -954,7 +942,7 @@ Node.prototype.hide = function hide () {
  *
  * @return {Node} this
  */
-Node.prototype.setAlign = function setAlign (x, y, z) {
+setAlign(x, y, z) {
     if (!this.constructor.NO_DEFAULT_COMPONENTS)
         this.getComponent(this._transformID).setAlign(x, y, z);
     else if (this.isMounted())
@@ -975,7 +963,7 @@ Node.prototype.setAlign = function setAlign (x, y, z) {
  *
  * @return {Node} this
  */
-Node.prototype.setMountPoint = function setMountPoint (x, y, z) {
+setMountPoint(x, y, z) {
     if (!this.constructor.NO_DEFAULT_COMPONENTS)
         this.getComponent(this._transformID).setMountPoint(x, y, z);
     else if (this.isMounted())
@@ -996,7 +984,7 @@ Node.prototype.setMountPoint = function setMountPoint (x, y, z) {
  *
  * @return {Node} this
  */
-Node.prototype.setOrigin = function setOrigin (x, y, z) {
+setOrigin(x, y, z) {
     if (!this.constructor.NO_DEFAULT_COMPONENTS)
         this.getComponent(this._transformID).setOrigin(x, y, z);
     else if (this.isMounted())
@@ -1017,7 +1005,7 @@ Node.prototype.setOrigin = function setOrigin (x, y, z) {
  *
  * @return {Node} this
  */
-Node.prototype.setPosition = function setPosition (x, y, z) {
+setPosition(x, y, z) {
     if (!this.constructor.NO_DEFAULT_COMPONENTS)
         this.getComponent(this._transformID).setPosition(x, y, z);
     else if (this.isMounted())
@@ -1041,7 +1029,7 @@ Node.prototype.setPosition = function setPosition (x, y, z) {
  *
  * @return {Node} this
  */
-Node.prototype.setRotation = function setRotation (x, y, z, w) {
+setRotation(x, y, z, w) {
     if (!this.constructor.NO_DEFAULT_COMPONENTS)
         this.getComponent(this._transformID).setRotation(x, y, z, w);
     else if (this.isMounted())
@@ -1062,7 +1050,7 @@ Node.prototype.setRotation = function setRotation (x, y, z, w) {
  *
  * @return {Node} this
  */
-Node.prototype.setScale = function setScale (x, y, z) {
+setScale(x, y, z) {
     if (!this.constructor.NO_DEFAULT_COMPONENTS)
         this.getComponent(this._transformID).setScale(x, y, z);
     else if (this.isMounted())
@@ -1081,7 +1069,7 @@ Node.prototype.setScale = function setScale (x, y, z) {
  *
  * @return {Node} this
  */
-Node.prototype.setOpacity = function setOpacity (val) {
+setOpacity(val) {
     if (!this.constructor.NO_DEFAULT_COMPONENTS)
         this.getComponent(this._opacityID).setOpacity(val);
     else if (this.isMounted())
@@ -1115,7 +1103,7 @@ Node.prototype.setOpacity = function setOpacity (val) {
  *
  * @return {Node} this
  */
-Node.prototype.setSizeMode = function setSizeMode (x, y, z) {
+setSizeMode(x, y, z) {
     if (!this.constructor.NO_DEFAULT_COMPONENTS)
         this.getComponent(this._sizeID).setSizeMode(x, y, z);
     else if (this.isMounted())
@@ -1137,7 +1125,7 @@ Node.prototype.setSizeMode = function setSizeMode (x, y, z) {
  *
  * @return {Node} this
  */
-Node.prototype.setProportionalSize = function setProportionalSize (x, y, z) {
+setProportionalSize(x, y, z) {
     if (!this.constructor.NO_DEFAULT_COMPONENTS)
         this.getComponent(this._sizeID).setProportional(x, y, z);
     else if (this.isMounted())
@@ -1164,7 +1152,7 @@ Node.prototype.setProportionalSize = function setProportionalSize (x, y, z) {
  *
  * @return {Node} this
  */
-Node.prototype.setDifferentialSize = function setDifferentialSize (x, y, z) {
+setDifferentialSize(x, y, z) {
     if (!this.constructor.NO_DEFAULT_COMPONENTS)
         this.getComponent(this._sizeID).setDifferential(x, y, z);
     else if (this.isMounted())
@@ -1184,7 +1172,7 @@ Node.prototype.setDifferentialSize = function setDifferentialSize (x, y, z) {
  *
  * @return {Node} this
  */
-Node.prototype.setAbsoluteSize = function setAbsoluteSize (x, y, z) {
+setAbsoluteSize(x, y, z) {
     if (!this.constructor.NO_DEFAULT_COMPONENTS)
         this.getComponent(this._sizeID).setAbsolute(x, y, z);
     else if (this.isMounted())
@@ -1200,7 +1188,7 @@ Node.prototype.setAbsoluteSize = function setAbsoluteSize (x, y, z) {
  *
  * @return {Number} current frame
  */
-Node.prototype.getFrame = function getFrame () {
+getFrame() {
     return this._updater.getFrame();
 };
 
@@ -1212,7 +1200,7 @@ Node.prototype.getFrame = function getFrame () {
  *
  * @return {Array} list of components.
  */
-Node.prototype.getComponents = function getComponents () {
+getComponents() {
     return this._components;
 };
 
@@ -1226,7 +1214,7 @@ Node.prototype.getComponents = function getComponents () {
  *
  * @return {Node} this
  */
-Node.prototype.update = function update (time){
+update(time){
     this._inUpdate = true;
     var nextQueue = this._nextUpdateQueue;
     var queue = this._updateQueue;
@@ -1264,7 +1252,7 @@ Node.prototype.update = function update (time){
  *
  * @return {Node} this
  */
-Node.prototype.mount = function mount (path) {
+mount(path) {
     if (this.isMounted())
         throw new Error('Node is already mounted at: ' + this.getLocation());
 
@@ -1293,7 +1281,7 @@ Node.prototype.mount = function mount (path) {
  *
  * @return {Node} this
  */
-Node.prototype.dismount = function dismount () {
+dismount() {
     if (!this.isMounted())
         throw new Error('Node is not mounted');
 
@@ -1307,4 +1295,19 @@ Node.prototype.dismount = function dismount () {
     if (!this._requestingUpdate) this._requestUpdate();
 };
 
-module.exports = Node;
+/**
+ * @alias getId
+ *
+ * @return {String} the path of the Node
+ */
+getId() { return this.getLocation(); };
+
+}
+
+Node.RELATIVE_SIZE = 0;
+Node.ABSOLUTE_SIZE = 1;
+Node.RENDER_SIZE = 2;
+Node.DEFAULT_SIZE = 0;
+Node.NO_DEFAULT_COMPONENTS = false;
+
+export { Node };

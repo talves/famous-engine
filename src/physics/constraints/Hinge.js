@@ -24,10 +24,10 @@
 
 'use strict';
 
-var Constraint = require('./Constraint');
-var Vec3 = require('../../math/Vec3');
-var Mat33 = require('../../math/Mat33');
-var Quaternion = require('../../math/Quaternion');
+import { Constraint } from './Constraint';
+import { Vec3 } from '../../math/Vec3';
+import { Mat33 } from '../../math/Mat33';
+import { Quaternion } from '../../math/Quaternion';
 
 var VEC1_REGISTER = new Vec3();
 var VEC2_REGISTER = new Vec3();
@@ -48,11 +48,12 @@ var DELTA_REGISTER = new Vec3();
  * @param {Options} options The options hash.
  *
  */
-function Hinge(a, b, options) {
+ class Hinge extends Constraint {
+   constructor(a, b, options) {
+     super(options);
+
     this.a = a;
     this.b = b;
-
-    Constraint.call(this, options);
 
     this.impulse = new Vec3();
     this.angImpulseA = new Vec3();
@@ -61,10 +62,17 @@ function Hinge(a, b, options) {
     this.errorRot = [0,0];
     this.effMassMatrix = new Mat33();
     this.effMassMatrixRot = [];
-}
 
-Hinge.prototype = Object.create(Constraint.prototype);
-Hinge.prototype.constructor = Hinge;
+        this.initLocals();
+    }
+
+    /**
+     * Initialize passing the Options.
+     *
+     * @method
+     * @return {undefined} undefined
+     */
+    init(options) {};
 
 /**
  * Initialize the Hinge. Sets defaults if a property was not already set.
@@ -72,7 +80,7 @@ Hinge.prototype.constructor = Hinge;
  * @method
  * @return {undefined} undefined
  */
-Hinge.prototype.init = function() {
+initLocals() {
     var w = this.anchor;
 
     var u = this.axis.normalize();
@@ -110,7 +118,7 @@ Hinge.prototype.init = function() {
  * @param {Number} dt The physics engine frame delta.
  * @return {undefined} undefined
  */
-Hinge.prototype.update = function(time, dt) {
+update(time, dt) {
     var a = this.a;
     var b = this.b;
 
@@ -201,7 +209,7 @@ Hinge.prototype.update = function(time, dt) {
  * @method
  * @return {undefined} undefined
  */
-Hinge.prototype.resolve = function resolve() {
+resolve() {
     var a = this.a;
     var b = this.b;
 
@@ -247,4 +255,6 @@ Hinge.prototype.resolve = function resolve() {
     this.angImpulseB.add(angImpulseB);
 };
 
-module.exports = Hinge;
+}
+
+export { Hinge };

@@ -24,16 +24,16 @@
 
 'use strict';
 
-var Constraint = require('./Constraint');
-var Vec3 = require('../../math/Vec3');
+import { Constraint } from './Constraint';
+import { Vec3 } from '../../math/Vec3';
 
 var IMPULSE_REGISTER = new Vec3();
 var NORMAL_REGISTER = new Vec3();
 
 /** @const */
-var EPSILSON = 1e-7;
+const EPSILSON = 1e-7;
 /** @const */
-var PI = Math.PI;
+const PI = Math.PI;
 
 
 /**
@@ -44,23 +44,31 @@ var PI = Math.PI;
  * @param {Particle[]} targets The bodies to track.
  * @param {Object} options The options hash.
  */
-function Curve(targets, options) {
+class Curve extends Constraint {
+  constructor(targets, options) {
+    super(options);
+
     if (targets) {
         if (targets instanceof Array) this.targets = targets;
         else this.targets = [targets];
     }
     else this.targets = [];
 
-    Constraint.call(this, options);
-
     this.impulses = {};
     this.normals = {};
     this.velocityBiases = {};
     this.divisors = {};
-}
 
-Curve.prototype = Object.create(Constraint.prototype);
-Curve.prototype.constructor = Curve;
+        this.initLocals();
+    }
+
+    /**
+     * Initialize passing the Options.
+     *
+     * @method
+     * @return {undefined} undefined
+     */
+    init(options) {};
 
 /**
  * Initialize the Curve. Sets defaults if a property was not already set.
@@ -68,7 +76,7 @@ Curve.prototype.constructor = Curve;
  * @method
  * @return {undefined} undefined
  */
-Curve.prototype.init = function() {
+initLocals() {
     this.equation1 = this.equation1 || function() {
         return 0;
     };
@@ -90,7 +98,7 @@ Curve.prototype.init = function() {
  * @param {Number} dt The physics engine frame delta.
  * @return {undefined} undefined
  */
-Curve.prototype.update = function update(time, dt) {
+update(time, dt) {
     var targets = this.targets;
 
     var normals = this.normals;
@@ -168,7 +176,7 @@ Curve.prototype.update = function update(time, dt) {
  * @method
  * @return {undefined} undefined
  */
-Curve.prototype.resolve = function resolve() {
+resolve() {
     var targets = this.targets;
 
     var normals = this.normals;
@@ -196,4 +204,6 @@ Curve.prototype.resolve = function resolve() {
     }
 };
 
-module.exports = Curve;
+}
+
+export { Curve };

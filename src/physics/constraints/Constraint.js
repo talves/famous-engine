@@ -33,7 +33,8 @@ var _ID = 0;
  * @class Constraint
  * @param {Object} options The options hash.
  */
-function Constraint(options) {
+class Constraint {
+  constructor(options) {
     options = options || {};
     this.setOptions(options);
 
@@ -47,7 +48,7 @@ function Constraint(options) {
  * @param {Object} options The options hash.
  * @return {undefined} undefined
  */
-Constraint.prototype.setOptions = function setOptions(options) {
+setOptions(options) {
     for (var key in options) this[key] = options[key];
     this.init(options);
 };
@@ -59,7 +60,7 @@ Constraint.prototype.setOptions = function setOptions(options) {
  * @param {Object} options The options hash.
  * @return {undefined} undefined
  */
-Constraint.prototype.init = function init(options) {};
+init(options) {};
 
 /**
  * Detect violations of the constraint. Warm start the constraint, if possible.
@@ -69,7 +70,7 @@ Constraint.prototype.init = function init(options) {};
  * @param {Number} dt The physics engine frame delta.
  * @return {undefined} undefined
  */
-Constraint.prototype.update = function update(time, dt) {};
+update(time, dt) {};
 
 /**
  * Apply impulses to resolve the constraint.
@@ -79,6 +80,8 @@ Constraint.prototype.update = function update(time, dt) {};
  * @param {Number} dt The physics engine frame delta.
  * @return {undefined} undefined
  */
-Constraint.prototype.resolve = function resolve(time, dt) {};
+resolve(time, dt) {};
 
-module.exports = Constraint;
+}
+
+export { Constraint };

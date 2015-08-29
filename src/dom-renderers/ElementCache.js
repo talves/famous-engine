@@ -24,7 +24,7 @@
 
 'use strict';
 
-var VoidElements = require('./VoidElements');
+import { VoidElements } from './VoidElements';
 
 /**
  * ElementCache is being used for keeping track of an element's DOM Element,
@@ -38,7 +38,8 @@ var VoidElements = require('./VoidElements');
  * @param {String} path Path used for uniquely identifying the location in the
  *                      scene graph.
  */
-function ElementCache (element, path) {
+class ElementCache {
+  constructor(element, path) {
     this.tagName = element.tagName.toLowerCase();
     this.void = VoidElements[this.tagName];
 
@@ -60,4 +61,6 @@ function ElementCache (element, path) {
     this.subscribe = {};
 }
 
-module.exports = ElementCache;
+}
+
+export { ElementCache };

@@ -32,7 +32,8 @@
  * @constructor
  * @private
  */
-function Clock () {
+class Clock {
+  constructor() {
     this._time = 0;
     this._frame = 0;
     this._timerQueue = [];
@@ -60,7 +61,7 @@ function Clock () {
  *
  * @return {Clock} this
  */
-Clock.prototype.setScale = function setScale (scale) {
+setScale(scale) {
     this._scale = scale;
     return this;
 };
@@ -70,7 +71,7 @@ Clock.prototype.setScale = function setScale (scale) {
  *
  * @return {Number} scale    The scale at which the clock time is passing.
  */
-Clock.prototype.getScale = function getScale () {
+getScale() {
     return this._scale;
 };
 
@@ -84,7 +85,7 @@ Clock.prototype.getScale = function getScale () {
  *                       `update` method on all registered objects
  * @return {Clock}       this
  */
-Clock.prototype.step = function step (time) {
+step(time) {
     this._frame++;
 
     this._scaledTime = this._scaledTime + (time - this._time)*this._scale;
@@ -106,20 +107,9 @@ Clock.prototype.step = function step (time) {
  * @return  {Number} time high resolution timestamp used for invoking the
  *                       `update` method on all registered objects
  */
-Clock.prototype.now = function now () {
+now() {
     return this._scaledTime;
 };
-
-/**
- * Returns the internal clock time.
- *
- * @method  getTime
- * @deprecated Use #now instead
- *
- * @return  {Number} time high resolution timestamp used for invoking the
- *                       `update` method on all registered objects
- */
-Clock.prototype.getTime = Clock.prototype.now;
 
 /**
  * Returns the number of frames elapsed so far.
@@ -128,7 +118,7 @@ Clock.prototype.getTime = Clock.prototype.now;
  *
  * @return {Number} frames
  */
-Clock.prototype.getFrame = function getFrame () {
+getFrame() {
     return this._frame;
 };
 
@@ -144,7 +134,7 @@ Clock.prototype.getFrame = function getFrame () {
  *
  * @return {Function} timer function used for Clock#clearTimer
  */
-Clock.prototype.setTimeout = function (callback, delay) {
+setTimeout(callback, delay) {
     var params = Array.prototype.slice.call(arguments, 2);
     var startedAt = this._time;
     var timer = function(time) {
@@ -171,7 +161,7 @@ Clock.prototype.setTimeout = function (callback, delay) {
  *
  * @return {Function} timer function used for Clock#clearTimer
  */
-Clock.prototype.setInterval = function setInterval(callback, delay) {
+setInterval(callback, delay) {
     var params = Array.prototype.slice.call(arguments, 2);
     var startedAt = this._time;
     var timer = function(time) {
@@ -196,7 +186,7 @@ Clock.prototype.setInterval = function setInterval(callback, delay) {
  *                              `Clock#setInterval` returned callback function
  * @return {Clock}              this
  */
-Clock.prototype.clearTimer = function (timer) {
+clearTimer(timer) {
     var index = this._timerQueue.indexOf(timer);
     if (index !== -1) {
         this._timerQueue.splice(index, 1);
@@ -204,5 +194,6 @@ Clock.prototype.clearTimer = function (timer) {
     return this;
 };
 
-module.exports = Clock;
+}
 
+export { Clock };

@@ -24,14 +24,14 @@
 
 'use strict';
 
-var Particle = require('./bodies/Particle');
-var Constraint = require('./constraints/Constraint');
-var Force = require('./forces/Force');
+import { Particle } from './bodies/Particle';
+import { Constraint } from './constraints/Constraint';
+import { Force } from './forces/Force';
 
-var CallbackStore = require('../utilities/CallbackStore');
+import { CallbackStore } from '../utilities/CallbackStore';
 
-var Vec3 = require('../math/Vec3');
-var Quaternion = require('../math/Quaternion');
+import { Vec3 } from '../math/Vec3';
+import { Quaternion } from '../math/Quaternion';
 
 var VEC_REGISTER = new Vec3();
 var QUAT_REGISTER = new Quaternion();
@@ -44,7 +44,8 @@ var DELTA_REGISTER = new Vec3();
  * @class PhysicsEngine
  * @param {Object} options A hash of configurable options.
  */
-function PhysicsEngine(options) {
+class PhysicsEngine {
+  constructor(options) {
     this.events = new CallbackStore();
 
     options = options || {};
@@ -95,7 +96,7 @@ function PhysicsEngine(options) {
  * @param {Function} callback Callback to register for the event.
  * @return {PhysicsEngine} this
  */
-PhysicsEngine.prototype.on = function on(key, callback) {
+on(key, callback) {
     this.events.on(key, callback);
     return this;
 };
@@ -108,7 +109,7 @@ PhysicsEngine.prototype.on = function on(key, callback) {
  * @param {Function} callback Callback to deregister for the event.
  * @return {PhysicsEngine} this
  */
-PhysicsEngine.prototype.off = function off(key, callback) {
+off(key, callback) {
     this.events.off(key, callback);
     return this;
 };
@@ -121,7 +122,7 @@ PhysicsEngine.prototype.off = function off(key, callback) {
  * @param {Object} payload Payload to pass to the event listeners.
  * @return {PhysicsEngine} this
  */
-PhysicsEngine.prototype.trigger = function trigger(key, payload) {
+trigger(key, payload) {
     this.events.trigger(key, payload);
     return this;
 };
@@ -136,7 +137,7 @@ PhysicsEngine.prototype.trigger = function trigger(key, payload) {
  * @param {Number} z The z component.
  * @return {PhysicsEngine} this
  */
-PhysicsEngine.prototype.setOrigin = function setOrigin(x, y, z) {
+setOrigin(x, y, z) {
     this.origin.set(x, y, z);
     return this;
 };
@@ -152,51 +153,10 @@ PhysicsEngine.prototype.setOrigin = function setOrigin(x, y, z) {
  * @param {Number} z The z component.
  * @return {PhysicsEngine} this
  */
-PhysicsEngine.prototype.setOrientation = function setOrientation(w, x, y, z) {
+setOrientation(w, x, y, z) {
     this.orientation.set(w, x, y, z).normalize();
     return this;
 };
-
-/**
- * Private helper method to store an element in a library array.
- *
- * @method
- * @private
- * @param {Object} context Object in possesion of the element arrays.
- * @param {Object} element The body, force, or constraint to add.
- * @param {String} key Where to store the element.
- * @return {undefined} undefined
- */
-function _addElement(context, element, key) {
-    var map = context._entityMaps[key];
-    if (map[element._ID] == null) {
-        var library = context[key];
-        var indexPool = context._indexPools[key];
-        if (indexPool.length) map[element._ID] = indexPool.pop();
-        else map[element._ID] = library.length;
-        library[map[element._ID]] = element;
-    }
-}
-
-/**
- * Private helper method to remove an element from a library array.
- *
- * @method
- * @private
- * @param {Object} context Object in possesion of the element arrays.
- * @param {Object} element The body, force, or constraint to remove.
- * @param {String} key Where to store the element.
- * @return {undefined} undefined
- */
-function _removeElement(context, element, key) {
-    var map = context._entityMaps[key];
-    var index = map[element._ID];
-    if (index != null) {
-        context._indexPools[key].push(index);
-        context[key][index] = null;
-        map[element._ID] = null;
-    }
-}
 
 /**
  * Add a group of bodies, force, or constraints to the engine.
@@ -204,7 +164,7 @@ function _removeElement(context, element, key) {
  * @method
  * @return {PhysicsEngine} this
  */
-PhysicsEngine.prototype.add = function add() {
+add() {
     for (var j = 0, lenj = arguments.length; j < lenj; j++) {
         var entity = arguments[j];
         if (entity instanceof Array) {
@@ -228,7 +188,7 @@ PhysicsEngine.prototype.add = function add() {
  * @method
  * @return {PhysicsEngine} this
  */
-PhysicsEngine.prototype.remove = function remove() {
+remove() {
     for (var j = 0, lenj = arguments.length; j < lenj; j++) {
         var entity = arguments[j];
         if (entity instanceof Array) {
@@ -253,7 +213,7 @@ PhysicsEngine.prototype.remove = function remove() {
  * @param {Particle} body The body to track.
  * @return {undefined} undefined
  */
-PhysicsEngine.prototype.addBody = function addBody(body) {
+addBody(body) {
     _addElement(this, body, 'bodies');
 };
 
@@ -264,7 +224,7 @@ PhysicsEngine.prototype.addBody = function addBody(body) {
  * @param {Force} force The force to track.
  * @return {undefined} undefined
  */
-PhysicsEngine.prototype.addForce = function addForce(force) {
+addForce(force) {
     _addElement(this, force, 'forces');
 };
 
@@ -275,7 +235,7 @@ PhysicsEngine.prototype.addForce = function addForce(force) {
  * @param {Constraint} constraint The constraint to track.
  * @return {undefined} undefined
  */
-PhysicsEngine.prototype.addConstraint = function addConstraint(constraint) {
+addConstraint(constraint) {
     _addElement(this, constraint, 'constraints');
 };
 
@@ -286,7 +246,7 @@ PhysicsEngine.prototype.addConstraint = function addConstraint(constraint) {
  * @param {Particle} body The body to stop tracking.
  * @return {undefined} undefined
  */
-PhysicsEngine.prototype.removeBody = function removeBody(body) {
+removeBody(body) {
     _removeElement(this, body, 'bodies');
 };
 
@@ -297,7 +257,7 @@ PhysicsEngine.prototype.removeBody = function removeBody(body) {
  * @param {Force} force The force to stop tracking.
  * @return {undefined} undefined
  */
-PhysicsEngine.prototype.removeForce = function removeForce(force) {
+removeForce(force) {
     _removeElement(this, force, 'forces');
 };
 
@@ -308,7 +268,7 @@ PhysicsEngine.prototype.removeForce = function removeForce(force) {
  * @param {Constraint} constraint The constraint to stop tracking.
  * @return {undefined} undefined
  */
-PhysicsEngine.prototype.removeConstraint = function removeConstraint(constraint) {
+removeConstraint(constraint) {
     _removeElement(this, constraint, 'constraints');
 };
 
@@ -320,7 +280,7 @@ PhysicsEngine.prototype.removeConstraint = function removeConstraint(constraint)
  * @param {Number} time The time to which to update.
  * @return {undefined} undefined
  */
-PhysicsEngine.prototype.update = function update(time) {
+update(time) {
     if (this.time === 0) this.time = time;
 
     var bodies = this.bodies;
@@ -396,7 +356,7 @@ PhysicsEngine.prototype.update = function update(time) {
  * @return {Object} Position and rotation of the body, taking into account
  * the origin and orientation of the world.
  */
-PhysicsEngine.prototype.getTransform = function getTransform(body) {
+getTransform(body) {
     var o = this.origin;
     var oq = this.orientation;
     var transform = this.transformBuffers;
@@ -422,6 +382,52 @@ PhysicsEngine.prototype.getTransform = function getTransform(body) {
 
     return transform;
 };
+
+}
+
+/**
+ * Private helper method to store an element in a library array.
+ *
+ * @method
+ * @private
+ * @param {Object} context Object in possesion of the element arrays.
+ * @param {Object} element The body, force, or constraint to add.
+ * @param {String} key Where to store the element.
+ * @return {undefined} undefined
+ */
+function _addElement(context, element, key) {
+    var map = context._entityMaps[key];
+    if (map[element._ID] == null) {
+        var library = context[key];
+        var indexPool = context._indexPools[key];
+        if (indexPool.length) {
+          map[element._ID] = indexPool.pop()
+        } else {
+          map[element._ID] = library.length;
+        }
+        library[map[element._ID]] = element;
+    }
+}
+
+/**
+ * Private helper method to remove an element from a library array.
+ *
+ * @method
+ * @private
+ * @param {Object} context Object in possesion of the element arrays.
+ * @param {Object} element The body, force, or constraint to remove.
+ * @param {String} key Where to store the element.
+ * @return {undefined} undefined
+ */
+function _removeElement(context, element, key) {
+    var map = context._entityMaps[key];
+    var index = map[element._ID];
+    if (index != null) {
+        context._indexPools[key].push(index);
+        context[key][index] = null;
+        map[element._ID] = null;
+    }
+}
 
 /**
  * Update the Particle momenta based off of current incident force and torque.
@@ -495,4 +501,4 @@ function _integratePose(body, dt) {
     body.updateInertia();
 }
 
-module.exports = PhysicsEngine;
+export { PhysicsEngine };

@@ -24,7 +24,7 @@
 
 'use strict';
 
-var UIEvent = require('./UIEvent');
+import { UIEvent } from './UIEvent';
 
 /**
  * See [UI Events (formerly DOM Level 3 Events)](http://www.w3.org/TR/2015/WD-uievents-20150428/#events-keyboardevents).
@@ -34,7 +34,8 @@ var UIEvent = require('./UIEvent');
  *
  * @param {Event} ev The native DOM event.
  */
-function KeyboardEvent(ev) {
+ class KeyboardEvent extends UIEvent {
+   constructor(ev) {
     // [Constructor(DOMString typeArg, optional KeyboardEventInit keyboardEventInitDict)]
     // interface KeyboardEvent : UIEvent {
     //     // KeyLocationCode
@@ -54,7 +55,7 @@ function KeyboardEvent(ev) {
     //     boolean getModifierState (DOMString keyArg);
     // };
 
-    UIEvent.call(this, ev);
+    super(ev);
 
     /**
      * @name KeyboardEvent#DOM_KEY_LOCATION_STANDARD
@@ -142,9 +143,6 @@ function KeyboardEvent(ev) {
     this.keyCode = ev.keyCode;
 }
 
-KeyboardEvent.prototype = Object.create(UIEvent.prototype);
-KeyboardEvent.prototype.constructor = KeyboardEvent;
-
 /**
  * Return the name of the event type
  *
@@ -152,8 +150,10 @@ KeyboardEvent.prototype.constructor = KeyboardEvent;
  *
  * @return {String} Name of the event type
  */
-KeyboardEvent.prototype.toString = function toString () {
+toString() {
     return 'KeyboardEvent';
 };
 
-module.exports = KeyboardEvent;
+}
+
+export { KeyboardEvent };

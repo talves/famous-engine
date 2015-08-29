@@ -26,7 +26,7 @@
 
 'use strict';
 
-var PathUtils = require('./Path');
+import { Path as PathUtils } from './Path';
 
 /**
  * A class that can be used to associate any item with a path.
@@ -36,7 +36,8 @@ var PathUtils = require('./Path');
  * @class
  *
  */
-function PathStore () {
+class PathStore {
+  constructor() {
     this.items = [];
     this.paths = [];
     this.memo = {};
@@ -53,7 +54,7 @@ function PathStore () {
  *
  * @return {undefined} undefined
  */
-PathStore.prototype.insert = function insert (path, item) {
+insert(path, item) {
     var paths = this.paths;
     var index = paths.indexOf(path);
     if (index !== -1)
@@ -103,7 +104,7 @@ PathStore.prototype.insert = function insert (path, item) {
  *
  * @return {undefined} undefined
  */
-PathStore.prototype.remove = function remove (path) {
+remove(path) {
     var paths = this.paths;
     var index = this.memo[path] ? this.memo[path] : paths.indexOf(path);
     if (index === -1)
@@ -128,7 +129,7 @@ PathStore.prototype.remove = function remove (path) {
  *
  * @return {Any | undefined} the item stored or undefined
  */
-PathStore.prototype.get = function get (path) {
+get(path) {
     if (this.memo[path]) return this.items[this.memo[path]];
 
     var index = this.paths.indexOf(path);
@@ -148,7 +149,7 @@ PathStore.prototype.get = function get (path) {
  *
  * @return {Array} items currently stored
  */
-PathStore.prototype.getItems = function getItems () {
+getItems() {
     return this.items;
 };
 
@@ -160,8 +161,10 @@ PathStore.prototype.getItems = function getItems () {
  *
  * @return {Array} paths currently stored
  */
-PathStore.prototype.getPaths = function getPaths () {
+getPaths() {
     return this.paths;
 };
 
-module.exports = PathStore;
+}
+
+export { PathStore };

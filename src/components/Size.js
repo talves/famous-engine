@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2015 Famous Industries Inc.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -24,8 +24,8 @@
 
 'use strict';
 
-var Transitionable = require('../transitions/Transitionable');
-var SizeSystem = require('../core/SizeSystem');
+import { Transitionable } from '../transitions/Transitionable';
+import { SizeSystem } from '../core/SizeSystem';
 
 /**
  * Size component used for managing the size of the Node it is attached to.
@@ -35,7 +35,8 @@ var SizeSystem = require('../core/SizeSystem');
  *
  * @param {Node} node Node that the Size component is attached to
  */
-function Size(node) {
+class Size {
+  constructor(node) {
     this._node = node;
     this._id = node.addComponent(this);
     this._requestingUpdate = false;
@@ -61,11 +62,6 @@ function Size(node) {
     };
 }
 
-Size.RELATIVE = 0;
-Size.ABSOLUTE = 1;
-Size.RENDER = 2;
-Size.DEFAULT = Size.RELATIVE;
-
 /**
  * Set which mode each axis of Size will have its dimensions
  * calculated by.  Size can be calculated by absolute pixel definitions,
@@ -79,7 +75,7 @@ Size.DEFAULT = Size.RELATIVE;
  *
  * @return {Size} this
  */
-Size.prototype.setMode = function setMode(x, y, z) {
+setMode(x, y, z) {
     this._node.setSizeMode(x, y, z);
     return this;
 };
@@ -91,7 +87,7 @@ Size.prototype.setMode = function setMode(x, y, z) {
  *
  * @return {String} Name of the component
  */
-Size.prototype.toString = function toString() {
+toString() {
     return 'Size';
 };
 
@@ -127,7 +123,7 @@ Size.prototype.toString = function toString() {
  *
  * @return {Object} the internal state of the component
  */
-Size.prototype.getValue = function getValue() {
+getValue() {
     return {
         sizeMode: SizeSystem.get(this._node.getLocation()).getSizeMode(),
         absolute: {
@@ -157,7 +153,7 @@ Size.prototype.getValue = function getValue() {
  *
  * @return {Boolean} boolean indicating whether the new state has been applied
  */
-Size.prototype.setValue = function setValue(state) {
+setValue(state) {
     if (this.toString() === state.component) {
         this.setMode.apply(this, state.sizeMode);
         if (state.absolute) {
@@ -183,7 +179,7 @@ Size.prototype.setValue = function setValue(state) {
  *
  * @return {Boolean} boolean indicating whether the new state has been applied
  */
-Size.prototype._isActive = function _isActive(type) {
+_isActive(type) {
     return type.x.isActive() || type.y.isActive() || type.z.isActive();
 };
 
@@ -197,7 +193,7 @@ Size.prototype._isActive = function _isActive(type) {
  * @return {Boolean} boolean indicating whether the new state has been applied
  */
 
-Size.prototype.isActive = function isActive(){
+isActive(){
     return (
         this._isActive(this._absolute) ||
         this._isActive(this._proportional) ||
@@ -213,7 +209,7 @@ Size.prototype.isActive = function isActive(){
  *
  * @return {undefined} undefined
  */
-Size.prototype.onUpdate = function onUpdate() {
+onUpdate() {
     var abs = this._absolute;
     this._node.setAbsoluteSize(
         abs.x.get(),
@@ -251,7 +247,7 @@ Size.prototype.onUpdate = function onUpdate() {
 *                            transitions have been completed
 * @return {Size} this
 */
-Size.prototype.setAbsolute = function setAbsolute(x, y, z, options, callback) {
+setAbsolute(x, y, z, options, callback) {
     if (!this._requestingUpdate) {
         this._node.requestUpdate(this._id);
         this._requestingUpdate = true;
@@ -296,7 +292,7 @@ Size.prototype.setAbsolute = function setAbsolute(x, y, z, options, callback) {
 *                            transitions have been completed
 * @return {Size} this
 */
-Size.prototype.setProportional = function setProportional(x, y, z, options, callback) {
+setProportional(x, y, z, options, callback) {
     if (!this._requestingUpdate) {
         this._node.requestUpdate(this._id);
         this._requestingUpdate = true;
@@ -342,7 +338,7 @@ Size.prototype.setProportional = function setProportional(x, y, z, options, call
 *                            transitions have been completed
 * @return {Size} this
 */
-Size.prototype.setDifferential = function setDifferential(x, y, z, options, callback) {
+setDifferential(x, y, z, options, callback) {
     if (!this._requestingUpdate) {
         this._node.requestUpdate(this._id);
         this._requestingUpdate = true;
@@ -382,7 +378,7 @@ Size.prototype.setDifferential = function setDifferential(x, y, z, options, call
  *
  * @return {Array} size three dimensional computed size
  */
-Size.prototype.get = function get () {
+get() {
     return this._node.getSize();
 };
 
@@ -393,7 +389,7 @@ Size.prototype.get = function get () {
  *
  * @return {Size} this
  */
-Size.prototype.halt = function halt () {
+halt() {
     this._proportional.x.halt();
     this._proportional.y.halt();
     this._proportional.z.halt();
@@ -406,4 +402,11 @@ Size.prototype.halt = function halt () {
     return this;
 };
 
-module.exports = Size;
+}
+
+Size.RELATIVE = 0;
+Size.ABSOLUTE = 1;
+Size.RENDER = 2;
+Size.DEFAULT = Size.RELATIVE;
+
+export { Size };

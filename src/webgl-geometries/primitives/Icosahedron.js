@@ -24,8 +24,8 @@
 
 'use strict';
 
-var Geometry = require('../Geometry');
-var GeometryHelper = require('../GeometryHelper');
+import { Geometry } from '../Geometry';
+import { GeometryHelper } from '../GeometryHelper';
 
 /**
  * This function returns a new static geometry, which is passed
@@ -39,8 +39,10 @@ var GeometryHelper = require('../GeometryHelper');
  *
  * @return {Object} constructed geometry
  */
-function Icosahedron(options) {
-    if (!(this instanceof Icosahedron)) return new Icosahedron(options);
+ class Icosahedron extends Geometry {
+   constructor(options) {
+     //handled by es6 transpiler
+    //if (!(this instanceof Icosahedron)) return new Icosahedron(options);
 
     options = options || {};
     var t = ( 1 + Math.sqrt( 5 ) ) / 2;
@@ -71,10 +73,9 @@ function Icosahedron(options) {
         { name: 'indices', data: indices, size: 1 }
     ];
 
-    Geometry.call(this, options);
+    super(options);
 }
 
-Icosahedron.prototype = Object.create(Geometry.prototype);
-Icosahedron.prototype.constructor = Icosahedron;
+}
 
-module.exports = Icosahedron;
+export { Icosahedron };

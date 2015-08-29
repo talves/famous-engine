@@ -24,7 +24,7 @@
 
 'use strict';
 
-var Geometry = require('./Geometry');
+import { Geometry } from './Geometry';
 
 /**
  * DynamicGeometry is a component that defines and manages data
@@ -36,8 +36,9 @@ var Geometry = require('./Geometry');
  * @param {Object} options instantiation options
  * @return {undefined} undefined
  */
-function DynamicGeometry(options) {
-    Geometry.call(this, options);
+class DynamicGeometry extends Geometry {
+  constructor(options) {
+    super(options);
 
     this.spec.dynamic = true;
 }
@@ -50,7 +51,7 @@ function DynamicGeometry(options) {
  *
  * @return {Object} flattened length of the vertex positions attribute in the geometry.
  */
-DynamicGeometry.prototype.getLength = function getLength() {
+getLength() {
     return this.getVertexPositions().length;
 };
 
@@ -63,7 +64,7 @@ DynamicGeometry.prototype.getLength = function getLength() {
  * @param  {String}  bufferName     name of vertexBuffer to be retrieved.
  * @return {Object}                 value of buffer with corresponding bufferName.
  */
-DynamicGeometry.prototype.getVertexBuffer = function getVertexBuffer(bufferName) {
+getVertexBuffer(bufferName) {
     if (! bufferName) throw 'getVertexBuffer requires a name';
 
     var idx = this.spec.bufferNames.indexOf(bufferName);
@@ -82,7 +83,7 @@ DynamicGeometry.prototype.getVertexBuffer = function getVertexBuffer(bufferName)
  * @param  {Number} size        Vector size of input buffer data.
  * @return {Object}             current geometry.
  */
-DynamicGeometry.prototype.setVertexBuffer = function setVertexBuffer(bufferName, value, size) {
+setVertexBuffer(bufferName, value, size) {
     var idx = this.spec.bufferNames.indexOf(bufferName);
 
     if (idx === -1) {
@@ -107,7 +108,7 @@ DynamicGeometry.prototype.setVertexBuffer = function setVertexBuffer(bufferName,
  * @param  {Object} geometry    Geometry instance to copy buffers from.
  * @return {Object}             current geometry.
  */
-DynamicGeometry.prototype.fromGeometry = function fromGeometry(geometry) {
+fromGeometry(geometry) {
     var len = geometry.spec.bufferNames.length;
     for (var i = 0; i < len; i++) {
         this.setVertexBuffer(
@@ -126,7 +127,7 @@ DynamicGeometry.prototype.fromGeometry = function fromGeometry(geometry) {
  * @param  {Array}     value   New value for vertex position buffer
  * @return {Object}            current geometry.
  */
-DynamicGeometry.prototype.setVertexPositions = function (value) {
+setVertexPositions(value) {
     return this.setVertexBuffer('a_pos', value, 3);
 };
 
@@ -137,7 +138,7 @@ DynamicGeometry.prototype.setVertexPositions = function (value) {
  * @param  {Array}     value   Value to set normal buffer to.
  * @return {Object}            current geometry.
  */
-DynamicGeometry.prototype.setNormals = function (value) {
+setNormals(value) {
     return this.setVertexBuffer('a_normals', value, 3);
 };
 
@@ -148,7 +149,7 @@ DynamicGeometry.prototype.setNormals = function (value) {
  * @param  {Array}     value   New value for texture coordinates buffer.
  * @return {Object}            current geometry.
  */
-DynamicGeometry.prototype.setTextureCoords = function (value) {
+setTextureCoords(value) {
     return this.setVertexBuffer('a_texCoord', value, 2);
 };
 
@@ -158,7 +159,7 @@ DynamicGeometry.prototype.setTextureCoords = function (value) {
  * @param  {Array}     value   New value for index buffer
  * @return {Object}            current geometry.
  */
-DynamicGeometry.prototype.setIndices = function (value) {
+setIndices(value) {
     return this.setVertexBuffer('indices', value, 1);
 };
 
@@ -169,7 +170,7 @@ DynamicGeometry.prototype.setIndices = function (value) {
  * @param  {String} value  New drawing primitive for geometry
  * @return {Object}        current geometry.
  */
-DynamicGeometry.prototype.setDrawType = function (value) {
+setDrawType(value) {
     this.spec.type = value.toUpperCase();
     return this;
 };
@@ -180,7 +181,7 @@ DynamicGeometry.prototype.setDrawType = function (value) {
  * @method
  * @return {Array} Vertex buffer.
  */
-DynamicGeometry.prototype.getVertexPositions = function () {
+getVertexPositions() {
     return this.getVertexBuffer('a_pos');
 };
 
@@ -189,7 +190,7 @@ DynamicGeometry.prototype.getVertexPositions = function () {
  * @method
  * @return {Array} Vertex Buffer.
  */
-DynamicGeometry.prototype.getNormals = function () {
+getNormals() {
     return this.getVertexBuffer('a_normals');
 };
 
@@ -198,8 +199,10 @@ DynamicGeometry.prototype.getNormals = function () {
  * @method
  * @return {Array} Vertex Buffer.
  */
-DynamicGeometry.prototype.getTextureCoords = function () {
+getTextureCoords() {
     return this.getVertexBuffer('a_texCoord');
 };
 
-module.exports = DynamicGeometry;
+}
+
+export { DynamicGeometry };

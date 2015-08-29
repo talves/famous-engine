@@ -24,7 +24,8 @@
 
 'use strict';
 
-module.exports = {
-    Material: require('./Material'),
-    TextureRegistry: require('./TextureRegistry')
-};
+import { expressions as Material } from './Material';
+import { TextureRegistry } from './TextureRegistry';
+
+export { Material };
+export { TextureRegistry };

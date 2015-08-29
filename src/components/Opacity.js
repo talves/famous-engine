@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2015 Famous Industries Inc.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -24,7 +24,7 @@
 
 'use strict';
 
-var Transitionable = require('../transitions/Transitionable');
+import { Transitionable } from '../transitions/Transitionable';
 
 
 /**
@@ -35,12 +35,15 @@ var Transitionable = require('../transitions/Transitionable');
  *
  * @param {Node} node Node that the Opacity component is attached to
  */
-function Opacity(node) {
+class Opacity {
+  constructor(node) {
     this._node = node;
     this._id = node.addComponent(this);
     this._value = new Transitionable(1);
 
     this._requestingUpdate = false;
+
+    this.onUpdate = this.constructor.update;
 }
 
 /**
@@ -50,7 +53,7 @@ function Opacity(node) {
  *
  * @return {String} Name of the component
  */
-Opacity.prototype.toString = function toString() {
+toString() {
     return 'Opacity';
 };
 
@@ -59,10 +62,10 @@ Opacity.prototype.toString = function toString() {
  *
  * @method
  *
- * @return {Object} contains component key which holds the stringified constructor 
+ * @return {Object} contains component key which holds the stringified constructor
  * and value key which contains the numeric value
  */
-Opacity.prototype.getValue = function getValue() {
+getValue() {
     return {
         component: this.toString(),
         value: this._value.get()
@@ -78,7 +81,7 @@ Opacity.prototype.getValue = function getValue() {
  *
  * @return {Boolean} true if set is successful, false otherwise
  */
-Opacity.prototype.setValue = function setValue(value) {
+setValue(value) {
     if (this.toString() === value.component) {
         this.set(value.value);
         return true;
@@ -97,7 +100,7 @@ Opacity.prototype.setValue = function setValue(value) {
  *
  * @return {Opacity} this
  */
-Opacity.prototype.set = function set(value, transition, callback) {
+set(value, transition, callback) {
     if (!this._requestingUpdate) {
         this._node.requestUpdate(this._id);
         this._requestingUpdate = true;
@@ -114,7 +117,7 @@ Opacity.prototype.set = function set(value, transition, callback) {
  *
  * @return {Number} opacity as known by the component
  */
-Opacity.prototype.get = function get() {
+get() {
     return this._value.get();
 };
 
@@ -125,7 +128,7 @@ Opacity.prototype.get = function get() {
  *
  * @return {Opacity} this
  */
-Opacity.prototype.halt = function halt() {
+halt() {
     this._value.halt();
     return this;
 };
@@ -137,7 +140,7 @@ Opacity.prototype.halt = function halt() {
  *
  * @return {Boolean} whether or not the opacity is transitioning
  */
-Opacity.prototype.isActive = function isActive(){
+isActive(){
     return this._value.isActive();
 };
 
@@ -149,9 +152,9 @@ Opacity.prototype.isActive = function isActive(){
  *
  * @return {undefined} undefined
  */
-Opacity.prototype.update = function update () {
+update() {
     this._node.setOpacity(this._value.get());
-    
+
     if (this._value.isActive()) {
       this._node.requestUpdateOnNextTick(this._id);
     }
@@ -160,6 +163,6 @@ Opacity.prototype.update = function update () {
     }
 };
 
-Opacity.prototype.onUpdate = Opacity.prototype.update;
+}
 
-module.exports = Opacity;
+export { Opacity };

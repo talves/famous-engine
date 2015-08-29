@@ -36,7 +36,8 @@
  *
  * @return {undefined} undefined
  */
-function Texture(gl, options) {
+class Texture {
+  constructor(gl, options) {
     options = options || {};
     this.id = gl.createTexture();
     this.width = options.width || 0;
@@ -64,7 +65,7 @@ function Texture(gl, options) {
  * @method
  * @return {Object} Current texture instance.
  */
-Texture.prototype.bind = function bind() {
+bind() {
     this.gl.bindTexture(this.gl.TEXTURE_2D, this.id);
     return this;
 };
@@ -75,7 +76,7 @@ Texture.prototype.bind = function bind() {
  * @method
  * @return {Object} Current texture instance.
  */
-Texture.prototype.unbind = function unbind() {
+unbind() {
     this.gl.bindTexture(this.gl.TEXTURE_2D, null);
     return this;
 };
@@ -88,7 +89,7 @@ Texture.prototype.unbind = function unbind() {
  * @param {Image}   img     The image object to upload pixel data from.
  * @return {Object}         Current texture instance.
  */
-Texture.prototype.setImage = function setImage(img) {
+setImage(img) {
     this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl[this.format], this.gl[this.format], this.gl[this.type], img);
     if (this.mipmap) this.gl.generateMipmap(this.gl.TEXTURE_2D);
     return this;
@@ -102,7 +103,7 @@ Texture.prototype.setImage = function setImage(img) {
  * @param {Array}   input   Array to be set as data to texture.
  * @return {Object}         Current texture instance.
  */
-Texture.prototype.setArray = function setArray(input) {
+setArray(input) {
     this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl[this.format], this.width, this.height, 0, this.gl[this.format], this.gl[this.type], input);
     return this;
 };
@@ -119,7 +120,7 @@ Texture.prototype.setArray = function setArray(input) {
  *
  * @return {Array}          An array of the pixels contained in the snapshot.
  */
-Texture.prototype.readBack = function readBack(x, y, width, height) {
+readBack(x, y, width, height) {
     var gl = this.gl;
     var pixels;
     x = x || 0;
@@ -136,4 +137,6 @@ Texture.prototype.readBack = function readBack(x, y, width, height) {
     return pixels;
 };
 
-module.exports = Texture;
+}
+
+export { Texture };

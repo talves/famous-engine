@@ -24,8 +24,8 @@
 
 'use strict';
 
-var Force = require('./Force');
-var Vec3 = require('../../math/Vec3');
+import { Force } from './Force';
+import { Vec3 } from '../../math/Vec3';
 
 var TORQUE_REGISTER = new Vec3();
 
@@ -37,12 +37,10 @@ var TORQUE_REGISTER = new Vec3();
  * @param {Particle[]} targets The targets to affect.
  * @param {Object} options options to set on drag
  */
-function RotationalDrag(targets, options) {
-    Force.call(this, targets, options);
-}
-
-RotationalDrag.prototype = Object.create(Force.prototype);
-RotationalDrag.prototype.constructor = RotationalDrag;
+ class RotationalDrag extends Force {
+   constructor(targets, options) {
+     super(targets, options);
+ }
 
 /**
  * Used to scale angular velocity in the computation of the drag torque.
@@ -51,7 +49,7 @@ RotationalDrag.prototype.constructor = RotationalDrag;
  * @param {Vec3} omega The angular velocity.
  * @return {Number} The scale by which to multiply.
  */
-RotationalDrag.QUADRATIC = function QUADRATIC(omega) {
+QUADRATIC(omega) {
     return omega.length();
 };
 
@@ -61,7 +59,7 @@ RotationalDrag.QUADRATIC = function QUADRATIC(omega) {
  * @property {Function} LINEAR
  * @return {Number} The scale by which to multiply.
  */
-RotationalDrag.LINEAR = function LINEAR() {
+LINEAR() {
     return 1;
 };
 
@@ -71,7 +69,7 @@ RotationalDrag.LINEAR = function LINEAR() {
  * @method
  * @return {undefined} undefined
  */
-RotationalDrag.prototype.init = function init() {
+init() {
     this.max = this.max || Infinity;
     this.strength = this.strength || 1;
     this.type = this.type || RotationalDrag.LINEAR;
@@ -83,7 +81,7 @@ RotationalDrag.prototype.init = function init() {
  * @method
  * @return {undefined} undefined
  */
-RotationalDrag.prototype.update = function update() {
+update() {
     var targets = this.targets;
     var type = this.type;
 
@@ -100,4 +98,6 @@ RotationalDrag.prototype.update = function update() {
     }
 };
 
-module.exports = RotationalDrag;
+}
+
+export { RotationalDrag };

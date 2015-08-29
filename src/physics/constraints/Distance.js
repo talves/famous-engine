@@ -24,8 +24,8 @@
 
 'use strict';
 
-var Constraint = require('./Constraint');
-var Vec3 = require('../../math/Vec3');
+import { Constraint } from './Constraint';
+import { Vec3 } from '../../math/Vec3';
 
 var NORMAL_REGISTER = new Vec3();
 var IMPULSE_REGISTER = new Vec3();
@@ -33,7 +33,7 @@ var V_REGISTER = new Vec3();
 var P_REGISTER = new Vec3();
 
 /** @const */
-var PI = Math.PI;
+const PI = Math.PI;
 
 /**
  * A constraint that keeps two bodies within a certain distance.
@@ -44,21 +44,29 @@ var PI = Math.PI;
  * @param {Particle} b The other body.
  * @param {Object} options An object of configurable options.
  */
-function Distance(a, b, options) {
+ class Distance extends Constraint {
+   constructor(a, b, options) {
+     super(options);
+
     this.a = a;
     this.b = b;
-
-    Constraint.call(this, options);
 
     this.impulse = 0;
     this.distance = 0;
     this.normal = new Vec3();
     this.velocityBias = 0;
     this.divisor = 0;
-}
 
-Distance.prototype = Object.create(Constraint.prototype);
-Distance.prototype.constructor = Distance;
+        this.initLocals();
+    }
+
+    /**
+     * Initialize passing the Options.
+     *
+     * @method
+     * @return {undefined} undefined
+     */
+    init(options) {};
 
 /**
  * Initialize the Distance. Sets defaults if a property was not already set.
@@ -66,7 +74,7 @@ Distance.prototype.constructor = Distance;
  * @method
  * @return {undefined} undefined
  */
-Distance.prototype.init = function() {
+initLocals() {
     this.length = this.length || Vec3.subtract(this.b.position, this.a.position, P_REGISTER).length();
     this.minLength = this.minLength || 0;
     this.period = this.period || 0.2;
@@ -84,7 +92,7 @@ Distance.prototype.init = function() {
  * @param {Number} dt The physics engine frame delta.
  * @return {undefined} undefined
  */
-Distance.prototype.update = function(time, dt) {
+update(time, dt) {
     var a = this.a;
     var b = this.b;
 
@@ -146,7 +154,7 @@ Distance.prototype.update = function(time, dt) {
  * @method
  * @return {undefined} undefined
  */
-Distance.prototype.resolve = function resolve() {
+resolve() {
     var a = this.a;
     var b = this.b;
 
@@ -172,4 +180,6 @@ Distance.prototype.resolve = function resolve() {
     this.impulse += lambda;
 };
 
-module.exports = Distance;
+}
+
+export { Distance };

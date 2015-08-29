@@ -24,7 +24,7 @@
 
 'use strict';
 
-var UIEvent = require('./UIEvent');
+import { UIEvent } from './UIEvent';
 
 var EMPTY_ARRAY = [];
 
@@ -36,7 +36,8 @@ var EMPTY_ARRAY = [];
  *
  * @param {Touch} touch The native Touch object.
  */
-function Touch(touch) {
+ class Touch {
+   constructor(touch) {
     // interface Touch {
     //     readonly    attribute long        identifier;
     //     readonly    attribute EventTarget target;
@@ -89,8 +90,9 @@ function Touch(touch) {
      * @type Number
      */
     this.pageY = touch.pageY;
-}
+  }
 
+}
 
 /**
  * Normalizes the browser's native TouchList by converting it into an array of
@@ -124,7 +126,8 @@ function cloneTouchList(touchList) {
  *
  * @param {Event} ev The native DOM event.
  */
-function TouchEvent(ev) {
+ class TouchEvent extends UIEvent {
+   constructor(ev) {
     // interface TouchEvent : UIEvent {
     //     readonly    attribute TouchList touches;
     //     readonly    attribute TouchList targetTouches;
@@ -134,7 +137,7 @@ function TouchEvent(ev) {
     //     readonly    attribute boolean   ctrlKey;
     //     readonly    attribute boolean   shiftKey;
     // };
-    UIEvent.call(this, ev);
+    super(ev);
 
     /**
      * @name TouchEvent#touches
@@ -177,10 +180,8 @@ function TouchEvent(ev) {
      * @type Boolean
      */
     this.shiftKey = ev.shiftKey;
-}
 
-TouchEvent.prototype = Object.create(UIEvent.prototype);
-TouchEvent.prototype.constructor = TouchEvent;
+}
 
 /**
  * Return the name of the event type
@@ -189,8 +190,10 @@ TouchEvent.prototype.constructor = TouchEvent;
  *
  * @return {String} Name of the event type
  */
-TouchEvent.prototype.toString = function toString () {
+toString() {
     return 'TouchEvent';
 };
 
-module.exports = TouchEvent;
+}
+
+export { TouchEvent };

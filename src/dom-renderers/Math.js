@@ -35,7 +35,7 @@
  * @return {Array} out
  *   output array that is storing the transform matrix
  */
-function invert (out, a) {
+var invert =  function(out, a) {
     var a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3],
         a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7],
         a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11],
@@ -94,7 +94,7 @@ function invert (out, a) {
  * @return {Array} out
  *   output array that is storing the transform matrix
  */
-function multiply (out, a, b) {
+var multiply = function(out, a, b) {
     var a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3],
         a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7],
         a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11],
@@ -178,7 +178,5 @@ function multiply (out, a, b) {
     return out;
 }
 
-module.exports = {
-    multiply: multiply,
-    invert: invert
-};
+export { invert };
+export { multiply };

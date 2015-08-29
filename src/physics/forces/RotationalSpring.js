@@ -24,10 +24,10 @@
 
 'use strict';
 
-var Force = require('./Force');
-var Vec3 = require('../../math/Vec3');
-var Mat33 = require('../../math/Mat33');
-var Quaternion = require('../../math/Quaternion');
+import { Force } from './Force';
+import { Vec3 } from '../../math/Vec3';
+import { Mat33 } from '../../math/Mat33';
+import { Quaternion } from '../../math/Quaternion';
 
 var Q_REGISTER = new Quaternion();
 var DAMPING_REGISTER = new Vec3();
@@ -35,7 +35,7 @@ var XYZ_REGISTER = new Vec3();
 var MAT_REGISTER = new Mat33();
 
 /** @const PI */
-var PI = Math.PI;
+const PI = Math.PI;
 
 /**
  * A spring-like behavior that attempts to enforce a specfic orientation by applying torque.
@@ -46,13 +46,11 @@ var PI = Math.PI;
  * @param {Particle[]} targets The targets to affect.
  * @param {Object} options The options hash.
  */
-function RotationalSpring(source, targets, options) {
-    this.source = source || null;
-    Force.call(this, targets, options);
-}
-
-RotationalSpring.prototype = Object.create(Force.prototype);
-RotationalSpring.prototype.constructor = RotationalSpring;
+ class RotationalSpring extends Force {
+   constructor(source, targets, options) {
+     super(targets, options);
+     this.source = source || null;
+ }
 
 /**
  * Initialize the Force. Sets defaults if a property was not already set.
@@ -61,7 +59,7 @@ RotationalSpring.prototype.constructor = RotationalSpring;
  * @param {Object} options The options hash.
  * @return {undefined} undefined
  */
-RotationalSpring.prototype.init = function init(options) {
+init(options) {
     if (!this.source) this.anchor = this.anchor ? this.anchor.normalize() : new Quaternion(1,0,0,0);
     if (options.stiffness || options.damping) {
         this.stiffness = this.stiffness || 100;
@@ -85,7 +83,7 @@ RotationalSpring.prototype.init = function init(options) {
  * @method
  * @return {undefined} undefined
  */
-RotationalSpring.prototype.update = function update() {
+update() {
     var source = this.source;
     var targets = this.targets;
 
@@ -139,4 +137,6 @@ RotationalSpring.prototype.update = function update() {
     }
 };
 
-module.exports = RotationalSpring;
+}
+
+export { RotationalSpring };

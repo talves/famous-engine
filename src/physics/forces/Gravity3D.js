@@ -24,8 +24,8 @@
 
 'use strict';
 
-var Force = require('./Force');
-var Vec3 = require('../../math/Vec3');
+import { Force } from './Force';
+import { Vec3 } from '../../math/Vec3';
 
 var FORCE_REGISTER = new Vec3();
 
@@ -38,13 +38,11 @@ var FORCE_REGISTER = new Vec3();
  * @param {Particle[]} targets The targets to affect.
  * @param {Object} options The options hash.
  */
-function Gravity3D(source, targets, options) {
-    this.source = source || null;
-    Force.call(this, targets, options);
-}
-
-Gravity3D.prototype = Object.create(Force.prototype);
-Gravity3D.prototype.constructor = Gravity3D;
+ class Gravity3D extends Force {
+   constructor(source, targets, options) {
+     super(targets, options);
+     this.source = source || null;
+ }
 
 /**
  * Initialize the Force. Sets defaults if a property was not already set.
@@ -52,7 +50,7 @@ Gravity3D.prototype.constructor = Gravity3D;
  * @method
  * @return {undefined} undefined
  */
-Gravity3D.prototype.init = function() {
+init() {
     this.max = this.max || Infinity;
     this.strength = this.strength || 200;
 };
@@ -63,7 +61,7 @@ Gravity3D.prototype.init = function() {
  * @method
  * @return {undefined} undefined
  */
-Gravity3D.prototype.update = function() {
+update() {
     var source = this.source;
     var targets = this.targets;
 
@@ -91,4 +89,6 @@ Gravity3D.prototype.update = function() {
     }
 };
 
-module.exports = Gravity3D;
+}
+
+export { Gravity3D };

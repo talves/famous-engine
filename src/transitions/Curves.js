@@ -251,4 +251,4 @@ var Curves = {
     }
 };
 
-module.exports = Curves;
+export { Curves };

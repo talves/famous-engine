@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2015 Famous Industries Inc.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,10 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
- 
+
 'use strict';
 
-var TextureRegistry = require('./TextureRegistry');
+import { TextureRegistry } from './TextureRegistry';
 
 var expressions = {};
 
@@ -167,7 +167,8 @@ for (var snippetName in snippets) {
  * @param {Object} map of uniform data of float, vec2, vec3, vec4
  */
 
-function Material(name, chunk, inputs, options) {
+class Material {
+  constructor(name, chunk, inputs, options) {
     options = options || {};
 
     this.name = name;
@@ -189,9 +190,7 @@ function Material(name, chunk, inputs, options) {
     this.__isAMaterial__ = true;
 }
 
-Material.id = 2;
-
-Material.prototype.setUniform = function setUniform(name, value) {
+setUniform(name, value) {
     this.uniforms[name] = value;
 
     this.invalidations.push(name);
@@ -199,7 +198,22 @@ Material.prototype.setUniform = function setUniform(name, value) {
     for(var i = 0; i < this.meshes.length; i++) this.meshes[i]._requestUpdate();
 };
 
-module.exports = expressions;
+// Recursively iterates over a material's inputs, invoking a given callback
+// with the current material
+traverse(callback) {
+	var inputs = this.inputs;
+    var len = inputs && inputs.length;
+    var idx = -1;
+
+    while (++idx < len) inputs[idx].traverse(callback);
+
+    callback(this);
+};
+
+}
+
+Material.id = 2;
+
 expressions.Material = Material;
 
 expressions.Texture = function (source) {
@@ -211,15 +225,4 @@ expressions.Custom = function (schema, inputs, uniforms) {
     return new Material('custom', {glsl: schema, output: 1, uniforms: uniforms || {}} , inputs);
 };
 
-// Recursively iterates over a material's inputs, invoking a given callback
-// with the current material
-Material.prototype.traverse = function traverse(callback) {
-	var inputs = this.inputs;
-    var len = inputs && inputs.length;
-    var idx = -1;
-
-    while (++idx < len) inputs[idx].traverse(callback);
-
-    callback(this);
-};
-
+export { expressions };

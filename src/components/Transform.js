@@ -24,13 +24,14 @@
 
 'use strict';
 
-var Transitionable = require('../transitions/Transitionable');
-var Quaternion = require('../math/Quaternion');
+import { Transitionable } from '../transitions/Transitionable';
+import { Quaternion } from '../math/Quaternion';
 
 var Q_REGISTER = new Quaternion();
 var Q2_REGISTER = new Quaternion();
 
-function Vec3Transitionable(x, y, z, transform) {
+class Vec3Transitionable {
+  constructor(x, y, z, transform) {
     this._transform = transform;
     this._dirty = false;
     this.x = new Transitionable(x);
@@ -39,14 +40,14 @@ function Vec3Transitionable(x, y, z, transform) {
     this._values = {x: x, y: y, z: z};
 }
 
-Vec3Transitionable.prototype.get = function get() {
+get() {
     this._values.x = this.x.get();
     this._values.y = this.y.get();
     this._values.z = this.z.get();
     return this._values;
 };
 
-Vec3Transitionable.prototype.set = function set(x, y, z, options, callback) {
+set(x, y, z, options, callback) {
     if (!this._transform._dirty) {
         this._transform._node.requestUpdate(this._transform._id);
         this._transform._dirty = true;
@@ -68,43 +69,46 @@ Vec3Transitionable.prototype.set = function set(x, y, z, options, callback) {
     return this;
 };
 
-Vec3Transitionable.prototype.isActive = function isActive() {
+isActive() {
     return this.x.isActive() || this.y.isActive() || this.z.isActive();
 };
 
-Vec3Transitionable.prototype.pause = function pause() {
+pause() {
     this.x.pause();
     this.y.pause();
     this.z.pause();
     return this;
 };
 
-Vec3Transitionable.prototype.resume = function resume() {
+resume() {
     this.x.resume();
     this.y.resume();
     this.z.resume();
     return this;
 };
 
-Vec3Transitionable.prototype.halt = function halt() {
+halt() {
     this.x.halt();
     this.y.halt();
     this.z.halt();
     return this;
 };
 
-function QuatTransitionable(x, y, z, w, transform) {
+}
+
+class QuatTransitionable {
+  constructor(x, y, z, w, transform) {
     this._transform = transform;
     this._dirty = false;
     this._t = new Transitionable([x,y,z,w]);
 }
 
-QuatTransitionable.prototype.get = function get() {
+get() {
     return this._t.get();
 };
 
 
-QuatTransitionable.prototype.set = function set(x, y, z, w, options, callback) {
+set(x, y, z, w, options, callback) {
     if (!this._transform._dirty) {
         this._transform._node.requestUpdate(this._transform._id);
         this._transform._dirty = true;
@@ -116,27 +120,30 @@ QuatTransitionable.prototype.set = function set(x, y, z, w, options, callback) {
 };
 
 
-QuatTransitionable.prototype.isActive = function isActive() {
+isActive() {
     return this._t.isActive();
 };
 
-QuatTransitionable.prototype.pause = function pause() {
+pause() {
     this._t.pause();
     return this;
 };
 
-QuatTransitionable.prototype.resume = function resume() {
+resume() {
     this._t.resume();
     return this;
 };
 
-QuatTransitionable.prototype.halt = function halt() {
+halt() {
     this._dirty = false;
     this._t.halt();
     return this;
 };
 
-function Transform(node) {
+}
+
+class Transform {
+  constructor(node) {
     this._node = node;
     this._id = node.addComponent(this);
     this.origin = null;
@@ -149,11 +156,11 @@ function Transform(node) {
     this._dirty = false;
 }
 
-Transform.prototype.toString = function toString() {
+toString() {
     return 'Transform';
 };
 
-Transform.prototype.getValue = function getValue() {
+getValue() {
     return {
         component: this.toString(),
         origin: this.origin && this.origin.get(),
@@ -165,7 +172,7 @@ Transform.prototype.getValue = function getValue() {
     };
 };
 
-Transform.prototype.setState = function setState(state) {
+setState(state) {
     if (this.toString() === state.component) {
         if (state.origin) {
             this.setOrigin(state.origin.x, state.origin.y, state.origin.z);
@@ -190,7 +197,7 @@ Transform.prototype.setState = function setState(state) {
     return false;
 };
 
-Transform.prototype.setOrigin = function setOrigin(x, y, z, options, callback) {
+setOrigin(x, y, z, options, callback) {
     if (!this.origin) {
         var v = this._node.getOrigin();
         this.origin = new Vec3Transitionable(v[0], v[1], v[2], this);
@@ -199,7 +206,7 @@ Transform.prototype.setOrigin = function setOrigin(x, y, z, options, callback) {
     return this;
 };
 
-Transform.prototype.setMountPoint = function setMountPoint(x, y, z, options, callback) {
+setMountPoint(x, y, z, options, callback) {
     if (!this.mountPoint) {
         var v = this._node.getMountPoint();
         this.mountPoint = new Vec3Transitionable(v[0], v[1], v[2], this);
@@ -208,7 +215,7 @@ Transform.prototype.setMountPoint = function setMountPoint(x, y, z, options, cal
     return this;
 };
 
-Transform.prototype.setAlign = function setAlign(x, y, z, options, callback) {
+setAlign(x, y, z, options, callback) {
     if (!this.align) {
         var v = this._node.getAlign();
         this.align = new Vec3Transitionable(v[0], v[1], v[2], this);
@@ -217,7 +224,7 @@ Transform.prototype.setAlign = function setAlign(x, y, z, options, callback) {
     return this;
 };
 
-Transform.prototype.setScale = function setScale(x, y, z, options, callback) {
+setScale(x, y, z, options, callback) {
     if (!this.scale) {
         var v = this._node.getScale();
         this.scale = new Vec3Transitionable(v[0], v[1], v[2], this);
@@ -226,7 +233,7 @@ Transform.prototype.setScale = function setScale(x, y, z, options, callback) {
     return this;
 };
 
-Transform.prototype.setPosition = function setPosition(x, y, z, options, callback) {
+setPosition(x, y, z, options, callback) {
     if (!this.position) {
         var v = this._node.getPosition();
         this.position = new Vec3Transitionable(v[0], v[1], v[2], this);
@@ -235,7 +242,7 @@ Transform.prototype.setPosition = function setPosition(x, y, z, options, callbac
     return this;
 };
 
-Transform.prototype.translate = function translate(x, y, z, options, callback) {
+translate(x, y, z, options, callback) {
     if (!this.position) {
         var v = this._node.getPosition();
         this.position = new Vec3Transitionable(v[0], v[1], v[2], this);
@@ -251,7 +258,7 @@ Transform.prototype.translate = function translate(x, y, z, options, callback) {
     return this;
 };
 
-Transform.prototype.setRotation = function setRotation(x, y, z, w, options, callback) {
+setRotation(x, y, z, w, options, callback) {
     if (!this.rotation) {
         var v = this._node.getRotation();
         this.rotation = new QuatTransitionable(v[0], v[1], v[2], v[3], this);
@@ -269,7 +276,7 @@ Transform.prototype.setRotation = function setRotation(x, y, z, w, options, call
     return this;
 };
 
-Transform.prototype.rotate = function rotate(x, y, z, w, options, callback) {
+rotate(x, y, z, w, options, callback) {
     if (!this.rotation) {
         var v = this._node.getRotation();
         this.rotation = new QuatTransitionable(v[0], v[1], v[2], v[3], this);
@@ -297,7 +304,7 @@ Transform.prototype.rotate = function rotate(x, y, z, w, options, callback) {
     return this;
 };
 
-Transform.prototype.clean = function clean() {
+clean() {
     var node = this._node;
     var c;
     var isDirty = false;
@@ -336,6 +343,8 @@ Transform.prototype.clean = function clean() {
     else this._dirty = false;
 };
 
-Transform.prototype.onUpdate = Transform.prototype.clean;
+onUpdate() { return this.clean() };
 
-module.exports = Transform;
+}
+
+export { Transform };

@@ -24,8 +24,8 @@
 
 'use strict';
 
-var Constraint = require('./Constraint');
-var Vec3 = require('../../math/Vec3');
+import { Constraint } from './Constraint';
+import { Vec3 } from '../../math/Vec3';
 
 var NORMAL_REGISTER = new Vec3();
 var IMPULSE_REGISTER = new Vec3();
@@ -34,7 +34,7 @@ var P_REGISTER = new Vec3();
 var DIRECTION_REGISTER = new Vec3();
 
 /** @const */
-var PI = Math.PI;
+const PI = Math.PI;
 
 /**
  * A constraint that maintains the direction of one body from another.
@@ -45,21 +45,30 @@ var PI = Math.PI;
  * @param {Particle} b The other body.
  * @param {Object} options An object of configurable options.
  */
-function Direction(a, b, options) {
+ class Direction extends Constraint {
+   constructor(a, b, options) {
+     super(options);
+
     this.a = a;
     this.b = b;
 
-    Constraint.call(this, options);
 
     this.impulse = 0;
     this.distance = 0;
     this.normal = new Vec3();
     this.velocityBias = 0;
     this.divisor = 0;
-}
 
-Direction.prototype = Object.create(Constraint.prototype);
-Direction.prototype.constructor = Direction;
+        this.initLocals();
+    }
+
+    /**
+     * Initialize passing the Options.
+     *
+     * @method
+     * @return {undefined} undefined
+     */
+    init(options) {};
 
 /**
  * Initialize the Direction. Sets defaults if a property was not already set.
@@ -67,7 +76,7 @@ Direction.prototype.constructor = Direction;
  * @method
  * @return {undefined} undefined
  */
-Direction.prototype.init = function() {
+initLocals() {
     this.direction = this.direction || Vec3.subtract(this.b.position, this.a.position, new Vec3());
     this.direction.normalize();
     this.minLength = this.minLength || 0;
@@ -86,7 +95,7 @@ Direction.prototype.init = function() {
  * @param {Number} dt The physics engine frame delta.
  * @return {undefined} undefined
  */
-Direction.prototype.update = function update(time, dt) {
+update(time, dt) {
     var a = this.a;
     var b = this.b;
 
@@ -149,7 +158,7 @@ Direction.prototype.update = function update(time, dt) {
  * @method
  * @return {undefined} undefined
  */
-Direction.prototype.resolve = function update() {
+resolve() {
     var a = this.a;
     var b = this.b;
 
@@ -175,4 +184,6 @@ Direction.prototype.resolve = function update() {
     this.impulse += lambda;
 };
 
-module.exports = Direction;
+}
+
+export { Direction };

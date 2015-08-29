@@ -24,7 +24,7 @@
 
 'use strict';
 
-var AABB = require('./AABB');
+import { AABB } from './AABB';
 
 /**
  * @const {String[]} AXES x, y, and z axes
@@ -39,7 +39,8 @@ var AXES = ['x', 'y', 'z'];
  * @class SweepAndPrune
  * @param {Particle[]} targets The bodies to track.
  */
-function SweepAndPrune(targets) {
+class SweepAndPrune {
+  constructor(targets) {
     this._sweepVolumes = [];
     this._entityRegistry = {};
     this._boundingVolumeRegistry = {};
@@ -61,7 +62,7 @@ function SweepAndPrune(targets) {
  * @param {Body} body The body to track.
  * @return {undefined} undefined
  */
-SweepAndPrune.prototype.add = function(body) {
+add(body) {
     var boundingVolume = new AABB(body);
     var sweepVolume = new SweepVolume(boundingVolume);
 
@@ -82,7 +83,7 @@ SweepAndPrune.prototype.add = function(body) {
  * @param {Body} body The body to cease tracking.
  * @return {undefined} undefined
  */
-SweepAndPrune.prototype.remove = function remove(body) {
+remove(body) {
     this._entityRegistry[body._ID] = null;
     this._boundingVolumeRegistry[body._ID] = null;
     var i, len;
@@ -125,7 +126,7 @@ SweepAndPrune.prototype.remove = function remove(body) {
  * @method
  * @return {Array.<Particle[]>} The result of the broadphase.
  */
-SweepAndPrune.prototype.update = function() {
+update() {
     var _sweepVolumes = this._sweepVolumes;
     var _entityRegistry = this._entityRegistry;
     var _boundingVolumeRegistry = this._boundingVolumeRegistry;
@@ -203,13 +204,16 @@ SweepAndPrune.prototype.update = function() {
     return overlaps;
 };
 
+}
+
 /**
  * Object used to associate an AABB with its endpoints in the sorted lists.
  *
  * @class SweepVolume
  * @param {AABB} boundingVolume The bounding volume to track.
  */
-function SweepVolume(boundingVolume) {
+class SweepVolume {
+  constructor(boundingVolume) {
     this._boundingVolume = boundingVolume;
     this._ID = boundingVolume._ID;
     this.points = {
@@ -226,7 +230,7 @@ function SweepVolume(boundingVolume) {
  * @method
  * @return {undefined} undefined
  */
-SweepVolume.prototype.update = function() {
+update() {
     var boundingVolume = this._boundingVolume;
     boundingVolume.update();
 
@@ -239,4 +243,6 @@ SweepVolume.prototype.update = function() {
     }
 };
 
-module.exports = SweepAndPrune;
+}
+
+export { SweepAndPrune };

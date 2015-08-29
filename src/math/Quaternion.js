@@ -44,7 +44,8 @@ var sqrt = Math.sqrt;
  * @param {Number} y The y component.
  * @param {Number} z The z component.
  */
-function Quaternion(w, x, y, z) {
+class Quaternion {
+  constructor(w, x, y, z) {
     this.w = w || 1;
     this.x = x || 0;
     this.y = y || 0;
@@ -61,7 +62,7 @@ function Quaternion(w, x, y, z) {
  *
  * @return {Quaternion} this
  */
-Quaternion.prototype.multiply = function multiply(q) {
+multiply(q) {
     var x1 = this.x;
     var y1 = this.y;
     var z1 = this.z;
@@ -88,7 +89,7 @@ Quaternion.prototype.multiply = function multiply(q) {
  *
  * @return {Quaternion} this
  */
-Quaternion.prototype.leftMultiply = function leftMultiply(q) {
+leftMultiply(q) {
     var x1 = q.x;
     var y1 = q.y;
     var z1 = q.z;
@@ -116,7 +117,7 @@ Quaternion.prototype.leftMultiply = function leftMultiply(q) {
  *
  * @return {Vec3} The rotated version of the Vec3.
  */
-Quaternion.prototype.rotateVector = function rotateVector(v, output) {
+rotateVector(v, output) {
     var cw = this.w;
     var cx = -this.x;
     var cy = -this.y;
@@ -149,7 +150,7 @@ Quaternion.prototype.rotateVector = function rotateVector(v, output) {
  *
  * @return {Quaternion} this
  */
-Quaternion.prototype.invert = function invert() {
+invert() {
     this.w = -this.w;
     this.x = -this.x;
     this.y = -this.y;
@@ -164,7 +165,7 @@ Quaternion.prototype.invert = function invert() {
  *
  * @return {Quaternion} this
  */
-Quaternion.prototype.conjugate = function conjugate() {
+conjugate() {
     this.x = -this.x;
     this.y = -this.y;
     this.z = -this.z;
@@ -178,7 +179,7 @@ Quaternion.prototype.conjugate = function conjugate() {
  *
  * @return {Number} length of the Quaternion
  */
-Quaternion.prototype.length = function length() {
+length() {
     var w = this.w;
     var x = this.x;
     var y = this.y;
@@ -193,7 +194,7 @@ Quaternion.prototype.length = function length() {
  *
  * @return {Quaternion} this
  */
-Quaternion.prototype.normalize = function normalize() {
+normalize() {
     var w = this.w;
     var x = this.x;
     var y = this.y;
@@ -220,7 +221,7 @@ Quaternion.prototype.normalize = function normalize() {
  *
  * @return {Quaternion} this
  */
-Quaternion.prototype.set = function set(w, x ,y, z) {
+set(w, x ,y, z) {
     if (w != null) this.w = w;
     if (x != null) this.x = x;
     if (y != null) this.y = y;
@@ -237,7 +238,7 @@ Quaternion.prototype.set = function set(w, x ,y, z) {
  *
  * @return {Quaternion} this
  */
-Quaternion.prototype.copy = function copy(q) {
+copy(q) {
     this.w = q.w;
     this.x = q.x;
     this.y = q.y;
@@ -252,7 +253,7 @@ Quaternion.prototype.copy = function copy(q) {
  *
  * @return {Quaternion} this
  */
-Quaternion.prototype.clear = function clear() {
+clear() {
     this.w = 1;
     this.x = 0;
     this.y = 0;
@@ -270,7 +271,7 @@ Quaternion.prototype.clear = function clear() {
  *
  * @return {Number} the resulting dot product
  */
-Quaternion.prototype.dot = function dot(q) {
+dot(q) {
     return this.w * q.w + this.x * q.x + this.y * q.y + this.z * q.z;
 };
 
@@ -285,7 +286,7 @@ Quaternion.prototype.dot = function dot(q) {
  *
  * @return {Quaternion} The quaternion the slerp results were saved to
  */
-Quaternion.prototype.slerp = function slerp(q, t, output) {
+slerp(q, t, output) {
     var w = this.w;
     var x = this.x;
     var y = this.y;
@@ -331,7 +332,7 @@ Quaternion.prototype.slerp = function slerp(q, t, output) {
  *
  * @return {Array} the Quaternion as a Transform matrix
  */
-Quaternion.prototype.toMatrix = function toMatrix(output) {
+toMatrix(output) {
     var w = this.w;
     var x = this.x;
     var y = this.y;
@@ -361,7 +362,7 @@ Quaternion.prototype.toMatrix = function toMatrix(output) {
  *
  * @return {Vec3} the Vec3 the result was stored in
  */
-Quaternion.prototype.toEuler = function toEuler(output) {
+toEuler(output) {
     var w = this.w;
     var x = this.x;
     var y = this.y;
@@ -394,7 +395,7 @@ Quaternion.prototype.toEuler = function toEuler(output) {
  *
  * @return {Quaternion} The equivalent Quaternion.
  */
-Quaternion.prototype.fromEuler = function fromEuler(x, y, z) {
+fromEuler(x, y, z) {
     var hx = x * 0.5;
     var hy = y * 0.5;
     var hz = z * 0.5;
@@ -427,7 +428,7 @@ Quaternion.prototype.fromEuler = function fromEuler(x, y, z) {
  *
  * @return {Quaternion} this
  */
-Quaternion.prototype.fromAngleAxis = function fromAngleAxis(angle, x, y, z) {
+fromAngleAxis(angle, x, y, z) {
     var len = sqrt(x * x + y * y + z * z);
     if (len === 0) {
         this.w = 1;
@@ -444,6 +445,8 @@ Quaternion.prototype.fromAngleAxis = function fromAngleAxis(angle, x, y, z) {
     }
     return this;
 };
+
+}
 
 /**
  * Multiply the input Quaternions.
@@ -545,4 +548,4 @@ Quaternion.dot = function dot(q1, q2) {
     return q1.w * q2.w + q1.x * q2.x + q1.y * q2.y + q1.z * q2.z;
 };
 
-module.exports = Quaternion;
+export { Quaternion };

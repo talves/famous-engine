@@ -24,8 +24,8 @@
 
 'use strict';
 
-var Geometry = require('../Geometry');
-var GeometryHelper = require('../GeometryHelper');
+import { Geometry } from '../Geometry';
+import { GeometryHelper } from '../GeometryHelper';
 
 /**
  * This function returns a new static geometry, which is passed
@@ -40,8 +40,10 @@ var GeometryHelper = require('../GeometryHelper');
  * @return {Object} constructed geometry
  */
 
-function Torus(options) {
-    if (!(this instanceof Torus)) return new Torus(options);
+ class Torus extends Geometry {
+   constructor(options) {
+     //handled by es6 transpiler
+    //if (!(this instanceof Torus)) return new Torus(options);
 
     options = options || {};
     var detail = options.detail || 30;
@@ -61,11 +63,10 @@ function Torus(options) {
         { name: 'indices', data: buffers.indices, size: 1 }
     ];
 
-    Geometry.call(this, options);
+    super(options);
 }
 
-Torus.prototype = Object.create(Geometry.prototype);
-Torus.prototype.constructor = Torus;
+}
 
 /**
  * function used in iterative construction of parametric primitive.
@@ -86,4 +87,4 @@ Torus.generator = function generator(c, a, u, v, pos) {
     pos[2] = a * Math.sin(2 * v);
 };
 
-module.exports = Torus;
+export { Torus };

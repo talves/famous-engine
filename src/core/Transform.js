@@ -35,7 +35,8 @@ var ONES = [1, 1, 1];
  *
  * @param {Transform} parent the parent Transform
  */
-function Transform (parent) {
+class Transform {
+  constructor(parent) {
     this.local = new Float32Array(Transform.IDENT);
     this.global = new Float32Array(Transform.IDENT);
     this.offsets = {
@@ -61,14 +62,6 @@ function Transform (parent) {
     this.calculatingWorldMatrix = false;
 }
 
-Transform.IDENT = [ 1, 0, 0, 0,
-                    0, 1, 0, 0,
-                    0, 0, 1, 0,
-                    0, 0, 0, 1 ];
-
-Transform.WORLD_CHANGED = 1;
-Transform.LOCAL_CHANGED = 2;
-
 /**
  * resets the transform state such that it no longer has a parent
  * and is not a breakpoint.
@@ -77,7 +70,7 @@ Transform.LOCAL_CHANGED = 2;
  *
  * @return {undefined} undefined
  */
-Transform.prototype.reset = function reset () {
+reset() {
     this.parent = null;
     this.breakPoint = false;
     this.calculatingWorldMatrix = false;
@@ -92,7 +85,7 @@ Transform.prototype.reset = function reset () {
  *
  * @return {undefined} undefined
  */
-Transform.prototype.setParent = function setParent (parent) {
+setParent(parent) {
     this.parent = parent;
 };
 
@@ -103,7 +96,7 @@ Transform.prototype.setParent = function setParent (parent) {
  *
  * @return {Transform | null} the parent of this transform if one exists
  */
-Transform.prototype.getParent = function getParent () {
+getParent() {
     return this.parent;
 };
 
@@ -116,7 +109,7 @@ Transform.prototype.getParent = function getParent () {
  *
  * @return {undefined} undefined
  */
-Transform.prototype.setBreakPoint = function setBreakPoint () {
+setBreakPoint() {
     this.breakPoint = true;
     this.calculatingWorldMatrix = true;
 };
@@ -128,7 +121,7 @@ Transform.prototype.setBreakPoint = function setBreakPoint () {
  *
  * @return {undefined} undefined
  */
-Transform.prototype.setCalculateWorldMatrix = function setCalculateWorldMatrix () {
+setCalculateWorldMatrix() {
     this.calculatingWorldMatrix = true;
 };
 
@@ -139,7 +132,7 @@ Transform.prototype.setCalculateWorldMatrix = function setCalculateWorldMatrix (
  *
  * @return {Boolean} true if this transform is a breakpoint
  */
-Transform.prototype.isBreakPoint = function isBreakPoint () {
+isBreakPoint() {
     return this.breakPoint;
 };
 
@@ -150,7 +143,7 @@ Transform.prototype.isBreakPoint = function isBreakPoint () {
  *
  * @return {Float32Array} local transform
  */
-Transform.prototype.getLocalTransform = function getLocalTransform () {
+getLocalTransform() {
     return this.local;
 };
 
@@ -161,7 +154,7 @@ Transform.prototype.getLocalTransform = function getLocalTransform () {
  *
  * @return {Float32Array} world transform.
  */
-Transform.prototype.getWorldTransform = function getWorldTransform () {
+getWorldTransform() {
     if (!this.isBreakPoint() && !this.calculatingWorldMatrix)
         throw new Error('This transform is not calculating world transforms');
     return this.global;
@@ -176,59 +169,11 @@ Transform.prototype.getWorldTransform = function getWorldTransform () {
  *
  * @return {undefined} undefined
  */
-Transform.prototype.calculate = function calculate (node) {
+calculate(node) {
     if (!this.parent || this.parent.isBreakPoint())
-        return fromNode(node, this);
-    else return fromNodeWithParent(node, this);
+        return _fromNode(node, this);
+    else return _fromNodeWithParent(node, this);
 };
-
-/**
- * A private method to potentially set a value within an
- * array. Will set the value if a value was given
- * for the third argument and if that value is different
- * than the value that is currently in the array at the given index.
- * Returns true if a value was set and false if not.
- *
- * @method
- *
- * @param {Array} vec The array to set the value within
- * @param {Number} index The index at which to set the value
- * @param {Any} val The value to potentially set in the array
- *
- * @return {Boolean} whether or not a value was set
- */
-function _vecOptionalSet (vec, index, val) {
-    if (val != null && vec[index] !== val) {
-        vec[index] = val;
-        return true;
-    } else return false;
-}
-
-/**
- * private method to set values within an array.
- * Returns whether or not the array has been changed.
- *
- * @method
- *
- * @param {Array} vec The vector to be operated upon
- * @param {Number | null | undefined} x The x value of the vector
- * @param {Number | null | undefined} y The y value of the vector
- * @param {Number | null | undefined} z The z value of the vector
- * @param {Number | null | undefined} w the w value of the vector
- *
- * @return {Boolean} whether or not the array was changed
- */
-function setVec (vec, x, y, z, w) {
-    var propagate = false;
-
-    propagate = _vecOptionalSet(vec, 0, x) || propagate;
-    propagate = _vecOptionalSet(vec, 1, y) || propagate;
-    propagate = _vecOptionalSet(vec, 2, z) || propagate;
-    if (w != null)
-        propagate = _vecOptionalSet(vec, 3, w) || propagate;
-
-    return propagate;
-}
 
 /**
  * Gets the position component of the transform
@@ -237,7 +182,7 @@ function setVec (vec, x, y, z, w) {
  *
  * @return {Float32Array} the position component of the transform
  */
-Transform.prototype.getPosition = function getPosition () {
+getPosition() {
     return this.vectors.position;
 };
 
@@ -252,8 +197,8 @@ Transform.prototype.getPosition = function getPosition () {
  *
  * @return {undefined} undefined
  */
-Transform.prototype.setPosition = function setPosition (x, y, z) {
-    this.vectors.positionChanged = setVec(this.vectors.position, x, y, z);
+setPosition(x, y, z) {
+    this.vectors.positionChanged = _setVec(this.vectors.position, x, y, z);
 };
 
 /**
@@ -263,7 +208,7 @@ Transform.prototype.setPosition = function setPosition (x, y, z) {
  *
  * @return {Float32Array} the quaternion representation of the transform's rotation
  */
-Transform.prototype.getRotation = function getRotation () {
+getRotation() {
     return this.vectors.rotation;
 };
 
@@ -280,7 +225,7 @@ Transform.prototype.getRotation = function getRotation () {
  *
  * @return {undefined} undefined
  */
-Transform.prototype.setRotation = function setRotation (x, y, z, w) {
+setRotation(x, y, z, w) {
     var quat = this.vectors.rotation;
     var qx, qy, qz, qw;
 
@@ -344,7 +289,7 @@ Transform.prototype.setRotation = function setRotation (x, y, z, w) {
         this._lastEulerVals[2] = z;
     }
 
-    this.vectors.rotationChanged = setVec(quat, qx, qy, qz, qw);
+    this.vectors.rotationChanged = _setVec(quat, qx, qy, qz, qw);
 };
 
 /**
@@ -354,7 +299,7 @@ Transform.prototype.setRotation = function setRotation (x, y, z, w) {
  *
  * @return {Float32Array} the scale component of the transform
  */
-Transform.prototype.getScale = function getScale () {
+getScale() {
     return this.vectors.scale;
 };
 
@@ -369,8 +314,8 @@ Transform.prototype.getScale = function getScale () {
  *
  * @return {undefined} undefined
  */
-Transform.prototype.setScale = function setScale (x, y, z) {
-    this.vectors.scaleChanged = setVec(this.vectors.scale, x, y, z);
+setScale(x, y, z) {
+    this.vectors.scaleChanged = _setVec(this.vectors.scale, x, y, z);
 };
 
 /**
@@ -380,7 +325,7 @@ Transform.prototype.setScale = function setScale (x, y, z) {
  *
  * @return {Float32Array} the align value of the transform
  */
-Transform.prototype.getAlign = function getAlign () {
+getAlign() {
     return this.offsets.align;
 };
 
@@ -395,8 +340,8 @@ Transform.prototype.getAlign = function getAlign () {
  *
  * @return {undefined} undefined
  */
-Transform.prototype.setAlign = function setAlign (x, y, z) {
-    this.offsets.alignChanged = setVec(this.offsets.align, x, y, z != null ? z - 0.5 : z);
+setAlign(x, y, z) {
+    this.offsets.alignChanged = _setVec(this.offsets.align, x, y, z != null ? z - 0.5 : z);
 };
 
 /**
@@ -406,7 +351,7 @@ Transform.prototype.setAlign = function setAlign (x, y, z) {
  *
  * @return {Float32Array} the mount point of the transform
  */
-Transform.prototype.getMountPoint = function getMountPoint () {
+getMountPoint() {
     return this.offsets.mountPoint;
 };
 
@@ -421,8 +366,8 @@ Transform.prototype.getMountPoint = function getMountPoint () {
  *
  * @return {undefined} undefined
  */
-Transform.prototype.setMountPoint = function setMountPoint (x, y, z) {
-    this.offsets.mountPointChanged = setVec(this.offsets.mountPoint, x, y, z != null ? z - 0.5 : z);
+setMountPoint(x, y, z) {
+    this.offsets.mountPointChanged = _setVec(this.offsets.mountPoint, x, y, z != null ? z - 0.5 : z);
 };
 
 /**
@@ -432,7 +377,7 @@ Transform.prototype.setMountPoint = function setMountPoint (x, y, z) {
  *
  * @return {Float32Array} the origin
  */
-Transform.prototype.getOrigin = function getOrigin () {
+getOrigin() {
     return this.offsets.origin;
 };
 
@@ -447,8 +392,8 @@ Transform.prototype.getOrigin = function getOrigin () {
  *
  * @return {undefined} undefined
  */
-Transform.prototype.setOrigin = function setOrigin (x, y, z) {
-    this.offsets.originChanged = setVec(this.offsets.origin, x, y, z != null ? z - 0.5 : z);
+setOrigin(x, y, z) {
+    this.offsets.originChanged = _setVec(this.offsets.origin, x, y, z != null ? z - 0.5 : z);
 };
 
 /**
@@ -458,19 +403,29 @@ Transform.prototype.setOrigin = function setOrigin (x, y, z) {
  *
  * @return {undefined} undefined
  */
-Transform.prototype.calculateWorldMatrix = function calculateWorldMatrix () {
+calculateWorldMatrix() {
     var nearestBreakPoint = this.parent;
 
     while (nearestBreakPoint && !nearestBreakPoint.isBreakPoint())
         nearestBreakPoint = nearestBreakPoint.parent;
 
-    if (nearestBreakPoint) return multiply(this.global, nearestBreakPoint.getWorldTransform(), this.local);
+    if (nearestBreakPoint) return _multiply(this.global, nearestBreakPoint.getWorldTransform(), this.local);
     else {
         for (var i = 0; i < 16 ; i++) this.global[i] = this.local[i];
         return false;
     }
 };
 
+
+}
+
+Transform.IDENT = [ 1, 0, 0, 0,
+                    0, 1, 0, 0,
+                    0, 0, 1, 0,
+                    0, 0, 0, 1 ];
+
+Transform.WORLD_CHANGED = 1;
+Transform.LOCAL_CHANGED = 2;
 
 /**
  * Private function. Creates a transformation matrix from a Node's spec.
@@ -480,7 +435,7 @@ Transform.prototype.calculateWorldMatrix = function calculateWorldMatrix () {
  *
  * @return {Boolean} whether or not the target array was changed
  */
-function fromNode (node, transform) {
+function _fromNode (node, transform) {
     var target = transform.getLocalTransform();
     var mySize = node.getSize();
     var vectors = transform.vectors;
@@ -580,7 +535,7 @@ function fromNode (node, transform) {
  *
  * @return {Boolean} whether or not the transform changed
  */
-function fromNodeWithParent (node, transform) {
+function _fromNodeWithParent (node, transform) {
     var target = transform.getLocalTransform();
     var parentMatrix = transform.parent.getLocalTransform();
     var mySize = node.getSize();
@@ -705,7 +660,7 @@ function fromNodeWithParent (node, transform) {
  *
  * @return {undefined} undefined
  */
-function multiply (out, a, b) {
+function _multiply (out, a, b) {
     var a00 = a[0], a01 = a[1], a02 = a[2],
         a10 = a[4], a11 = a[5], a12 = a[6],
         a20 = a[8], a21 = a[9], a22 = a[10],
@@ -782,4 +737,52 @@ function multiply (out, a, b) {
     return changed;
 }
 
-module.exports = Transform;
+/**
+ * A private method to potentially set a value within an
+ * array. Will set the value if a value was given
+ * for the third argument and if that value is different
+ * than the value that is currently in the array at the given index.
+ * Returns true if a value was set and false if not.
+ *
+ * @method
+ *
+ * @param {Array} vec The array to set the value within
+ * @param {Number} index The index at which to set the value
+ * @param {Any} val The value to potentially set in the array
+ *
+ * @return {Boolean} whether or not a value was set
+ */
+function _vecOptionalSet(vec, index, val) {
+    if (val != null && vec[index] !== val) {
+        vec[index] = val;
+        return true;
+    } else return false;
+}
+
+/**
+ * private method to set values within an array.
+ * Returns whether or not the array has been changed.
+ *
+ * @method
+ *
+ * @param {Array} vec The vector to be operated upon
+ * @param {Number | null | undefined} x The x value of the vector
+ * @param {Number | null | undefined} y The y value of the vector
+ * @param {Number | null | undefined} z The z value of the vector
+ * @param {Number | null | undefined} w the w value of the vector
+ *
+ * @return {Boolean} whether or not the array was changed
+ */
+function _setVec (vec, x, y, z, w) {
+    var propagate = false;
+
+    propagate = _vecOptionalSet(vec, 0, x) || propagate;
+    propagate = _vecOptionalSet(vec, 1, y) || propagate;
+    propagate = _vecOptionalSet(vec, 2, z) || propagate;
+    if (w != null)
+        propagate = _vecOptionalSet(vec, 3, w) || propagate;
+
+    return propagate;
+}
+
+export { Transform };

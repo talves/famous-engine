@@ -40,7 +40,8 @@
  *
  * @param {Event} ev The native DOM event.
  */
-function Event(ev) {
+class Event {
+  constructor(ev) {
     // [Constructor(DOMString type, optional EventInit eventInitDict),
     //  Exposed=Window,Worker]
     // interface Event {
@@ -111,8 +112,10 @@ function Event(ev) {
  *
  * @return {String} Name of the event type
  */
-Event.prototype.toString = function toString () {
+toString (){
     return 'Event';
 };
 
-module.exports = Event;
+}
+
+export { Event };

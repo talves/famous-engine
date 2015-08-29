@@ -24,32 +24,30 @@
 
 'use strict';
 
-function Opacity (parent) {
-    this.local = 1;
-    this.global = 1;
-    this.opacity = 1;
-    this.parent = parent ? parent : null;
-    this.breakPoint = false;
-    this.calculatingWorldOpacity = false;
-}
+class Opacity {
+  constructor(parent) {
+      this.local = 1;
+      this.global = 1;
+      this.opacity = 1;
+      this.parent = parent ? parent : null;
+      this.breakPoint = false;
+      this.calculatingWorldOpacity = false;
+  }
 
-Opacity.WORLD_CHANGED = 1;
-Opacity.LOCAL_CHANGED = 2;
-
-Opacity.prototype.reset = function reset () {
+reset() {
     this.parent = null;
     this.breakPoint = false;
 };
 
-Opacity.prototype.setParent = function setParent (parent) {
+setParent(parent) {
     this.parent = parent;
 };
 
-Opacity.prototype.getParent = function getParent () {
+getParent() {
     return this.parent;
 };
 
-Opacity.prototype.setBreakPoint = function setBreakPoint () {
+setBreakPoint() {
     this.breakPoint = true;
     this.calculatingWorldOpacity = true;
 };
@@ -61,39 +59,39 @@ Opacity.prototype.setBreakPoint = function setBreakPoint () {
  *
  * @return {undefined} undefined
  */
-Opacity.prototype.setCalculateWorldOpacity = function setCalculateWorldOpacity () {
+setCalculateWorldOpacity() {
     this.calculatingWorldOpacity = true;
 };
 
-Opacity.prototype.isBreakPoint = function isBreakPoint () {
+isBreakPoint() {
     return this.breakPoint;
 };
 
-Opacity.prototype.getLocalOpacity = function getLocalOpacity () {
+getLocalOpacity() {
     return this.local;
 };
 
-Opacity.prototype.getWorldOpacity = function getWorldOpacity () {
+getWorldOpacity() {
     if (!this.isBreakPoint() && !this.calculatingWorldOpacity)
         throw new Error('This opacity is not calculating world transforms');
     return this.global;
 };
 
-Opacity.prototype.calculate = function calculate (node) {
+calculate(node) {
     if (!this.parent || this.parent.isBreakPoint())
         return this.fromNode(node);
     else return this.fromNodeWithParent(node);
 };
 
-Opacity.prototype.getOpacity = function getOpacity () {
+getOpacity() {
     return this.opacity;
 };
 
-Opacity.prototype.setOpacity = function setOpacity (opacity) {
+setOpacity (opacity) {
     this.opacity = opacity;
 };
 
-Opacity.prototype.calculateWorldOpacity = function calculateWorldOpacity () {
+calculateWorldOpacity() {
     var nearestBreakPoint = this.parent;
 
     var previousGlobal = this.global;
@@ -111,7 +109,7 @@ Opacity.prototype.calculateWorldOpacity = function calculateWorldOpacity () {
     return previousGlobal !== this.global;
 };
 
-Opacity.prototype.fromNode = function fromNode () {
+fromNode() {
     var changed = 0;
 
     if (this.opacity !== this.local)
@@ -125,7 +123,7 @@ Opacity.prototype.fromNode = function fromNode () {
     return changed;
 };
 
-Opacity.prototype.fromNodeWithParent = function fromNodeWithParent () {
+fromNodeWithParent() {
     var changed = 0;
 
     var previousLocal = this.local;
@@ -141,4 +139,9 @@ Opacity.prototype.fromNodeWithParent = function fromNodeWithParent () {
     return changed;
 };
 
-module.exports = Opacity;
+}
+
+Opacity.WORLD_CHANGED = 1;
+Opacity.LOCAL_CHANGED = 2;
+
+export { Opacity };

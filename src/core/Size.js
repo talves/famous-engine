@@ -23,7 +23,6 @@
  */
 
 'use strict';
-
 var ONES = [1, 1, 1];
 var ZEROS = [0, 0, 0];
 
@@ -33,7 +32,8 @@ var ZEROS = [0, 0, 0];
  *
  * @param {Size} parent the parent size
  */
-function Size (parent) {
+class Size {
+  constructor(parent) {
 
     this.finalSize = new Float32Array(3);
     this.sizeChanged = false;
@@ -56,80 +56,6 @@ function Size (parent) {
     this.parent = parent != null ? parent : null;
 }
 
-// an enumeration of the different types of size modes
-Size.RELATIVE = 0;
-Size.ABSOLUTE = 1;
-Size.RENDER = 2;
-Size.DEFAULT = Size.RELATIVE;
-
-/**
- * Private method which sets a value within an array
- * and report if the value has changed.
- *
- * @method
- *
- * @param {Array} vec The array to set the value in
- * @param {Number} index The index at which to set the value
- * @param {Any} val If the val is undefined or null, or if the value
- *                  is the same as what is already there, then nothing
- *                  is set.
- *
- * @return {Boolean} returns true if anything changed
- */
-function _vecOptionalSet (vec, index, val) {
-    if (val != null && vec[index] !== val) {
-        vec[index] = val;
-        return true;
-    } else return false;
-}
-
-/**
- * Private method which sets three values within an array of three
- * using _vecOptionalSet. Returns whether anything has changed.
- *
- * @method
- *
- * @param {Array} vec The array to set the values of
- * @param {Any} x The first value to set within the array
- * @param {Any} y The second value to set within the array
- * @param {Any} z The third value to set within the array
- *
- * @return {Boolean} whether anything has changed
- */
-function setVec (vec, x, y, z) {
-    var propagate = false;
-
-    propagate = _vecOptionalSet(vec, 0, x) || propagate;
-    propagate = _vecOptionalSet(vec, 1, y) || propagate;
-    propagate = _vecOptionalSet(vec, 2, z) || propagate;
-
-    return propagate;
-}
-
-/**
- * Private method to allow for polymorphism in the size mode such that strings
- * or the numbers from the enumeration can be used.
- *
- * @method
- *
- * @param {String|Number} val The Size mode to resolve.
- *
- * @return {Number} the resolved size mode from the enumeration.
- */
-function resolveSizeMode (val) {
-    if (val.constructor === String) {
-        switch (val.toLowerCase()) {
-            case 'relative':
-            case 'default': return Size.RELATIVE;
-            case 'absolute': return Size.ABSOLUTE;
-            case 'render': return Size.RENDER;
-            default: throw new Error('unknown size mode: ' + val);
-        }
-    }
-    else if (val < 0 || val > Size.RENDER) throw new Error('unknown size mode: ' + val);
-    return val;
-}
-
 /**
  * Sets the parent of this size.
  *
@@ -139,7 +65,7 @@ function resolveSizeMode (val) {
  *
  * @return {Size} this
  */
-Size.prototype.setParent = function setParent (parent) {
+setParent(parent) {
     this.parent = parent;
     return this;
 };
@@ -151,7 +77,7 @@ Size.prototype.setParent = function setParent (parent) {
  *
  * @returns {Size|undefined} the parent if one exists
  */
-Size.prototype.getParent = function getParent () {
+getParent() {
     return this.parent;
 };
 
@@ -166,11 +92,11 @@ Size.prototype.getParent = function getParent () {
  *
  * @return {array} array of size modes
  */
-Size.prototype.setSizeMode = function setSizeMode (x, y, z) {
-    if (x != null) x = resolveSizeMode(x);
-    if (y != null) y = resolveSizeMode(y);
-    if (z != null) z = resolveSizeMode(z);
-    this.sizeModeChanged = setVec(this.sizeMode, x, y, z);
+setSizeMode(x, y, z) {
+    if (x != null) x = _resolveSizeMode(x);
+    if (y != null) y = _resolveSizeMode(y);
+    if (z != null) z = _resolveSizeMode(z);
+    this.sizeModeChanged = _setVec(this.sizeMode, x, y, z);
     return this;
 };
 
@@ -181,7 +107,7 @@ Size.prototype.setSizeMode = function setSizeMode (x, y, z) {
  *
  * @return {Array} the current size mode of the this.
  */
-Size.prototype.getSizeMode = function getSizeMode () {
+getSizeMode() {
     return this.sizeMode;
 };
 
@@ -196,8 +122,8 @@ Size.prototype.getSizeMode = function getSizeMode () {
  *
  * @return {Size} this
  */
-Size.prototype.setAbsolute = function setAbsolute (x, y, z) {
-    this.absoluteSizeChanged = setVec(this.absoluteSize, x, y, z);
+setAbsolute(x, y, z) {
+    this.absoluteSizeChanged = _setVec(this.absoluteSize, x, y, z);
     return this;
 };
 
@@ -208,7 +134,7 @@ Size.prototype.setAbsolute = function setAbsolute (x, y, z) {
  *
  * @return {array} array of absolute size
  */
-Size.prototype.getAbsolute = function getAbsolute () {
+getAbsolute() {
     return this.absoluteSize;
 };
 
@@ -223,8 +149,8 @@ Size.prototype.getAbsolute = function getAbsolute () {
  *
  * @return {Size} this
  */
-Size.prototype.setProportional = function setProportional (x, y, z) {
-    this.proportionalSizeChanged = setVec(this.proportionalSize, x, y, z);
+setProportional(x, y, z) {
+    this.proportionalSizeChanged = _setVec(this.proportionalSize, x, y, z);
     return this;
 };
 
@@ -235,7 +161,7 @@ Size.prototype.setProportional = function setProportional (x, y, z) {
  *
  * @return {array} array of proportional size
  */
-Size.prototype.getProportional = function getProportional () {
+getProportional() {
     return this.proportionalSize;
 };
 
@@ -250,8 +176,8 @@ Size.prototype.getProportional = function getProportional () {
  *
  * @return {Size} this
  */
-Size.prototype.setDifferential = function setDifferential (x, y, z) {
-    this.differentialSizeChanged = setVec(this.differentialSize, x, y, z);
+setDifferential(x, y, z) {
+    this.differentialSizeChanged = _setVec(this.differentialSize, x, y, z);
     return this;
 };
 
@@ -262,7 +188,7 @@ Size.prototype.setDifferential = function setDifferential (x, y, z) {
  *
  * @return {array} array of differential size
  */
-Size.prototype.getDifferential = function getDifferential () {
+getDifferential() {
     return this.differentialSize;
 };
 
@@ -277,7 +203,7 @@ Size.prototype.getDifferential = function getDifferential () {
  *
  * @return {Size} this
  */
-Size.prototype.get = function get () {
+get() {
     return this.finalSize;
 };
 
@@ -293,7 +219,7 @@ Size.prototype.get = function get () {
  *
  * @return {Boolean} true if the size of the node has changed.
  */
-Size.prototype.fromComponents = function fromComponents (components) {
+fromComponents(components) {
     var mode = this.sizeMode;
     var target = this.finalSize;
     var parentSize = this.parent ? this.parent.get() : ZEROS;
@@ -328,5 +254,80 @@ Size.prototype.fromComponents = function fromComponents (components) {
     return changed;
 };
 
-module.exports = Size;
+}
 
+// an enumeration of the different types of size modes
+Size.RELATIVE = 0;
+Size.ABSOLUTE = 1;
+Size.RENDER = 2;
+Size.DEFAULT = Size.RELATIVE;
+
+/**
+ * Private method which sets a value within an array
+ * and report if the value has changed.
+ *
+ * @method
+ *
+ * @param {Array} vec The array to set the value in
+ * @param {Number} index The index at which to set the value
+ * @param {Any} val If the val is undefined or null, or if the value
+ *                  is the same as what is already there, then nothing
+ *                  is set.
+ *
+ * @return {Boolean} returns true if anything changed
+ */
+function _vecOptionalSet(vec, index, val) {
+    if (val != null && vec[index] !== val) {
+        vec[index] = val;
+        return true;
+    } else return false;
+}
+
+/**
+ * Private method which sets three values within an array of three
+ * using _vecOptionalSet. Returns whether anything has changed.
+ *
+ * @method
+ *
+ * @param {Array} vec The array to set the values of
+ * @param {Any} x The first value to set within the array
+ * @param {Any} y The second value to set within the array
+ * @param {Any} z The third value to set within the array
+ *
+ * @return {Boolean} whether anything has changed
+ */
+function _setVec(vec, x, y, z) {
+    var propagate = false;
+
+    propagate = _vecOptionalSet(vec, 0, x) || propagate;
+    propagate = _vecOptionalSet(vec, 1, y) || propagate;
+    propagate = _vecOptionalSet(vec, 2, z) || propagate;
+
+    return propagate;
+}
+
+/**
+ * Private method to allow for polymorphism in the size mode such that strings
+ * or the numbers from the enumeration can be used.
+ *
+ * @method
+ *
+ * @param {String|Number} val The Size mode to resolve.
+ *
+ * @return {Number} the resolved size mode from the enumeration.
+ */
+function _resolveSizeMode (val) {
+    if (val.constructor === String) {
+        switch (val.toLowerCase()) {
+            case 'relative':
+            case 'default': return Size.RELATIVE;
+            case 'absolute': return Size.ABSOLUTE;
+            case 'render': return Size.RENDER;
+            default: throw new Error('unknown size mode: ' + val);
+        }
+    }
+    else if (val < 0 || val > Size.RENDER) throw new Error('unknown size mode: ' + val);
+    return val;
+}
+
+export { Size };

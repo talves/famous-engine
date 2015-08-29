@@ -80,4 +80,8 @@ var animationFrame = {
     cancelAnimationFrame: cAF
 };
 
-module.exports = animationFrame;
+var requestAnimationFrame = rAF;
+var cancelAnimationFrame = cAF;
+
+export { requestAnimationFrame };
+export { cancelAnimationFrame };

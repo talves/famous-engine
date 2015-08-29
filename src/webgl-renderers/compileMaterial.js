@@ -128,4 +128,4 @@ function _arrayToVec(array) {
     return 'vec' + len + '(' + array.join(',')  + ')';
 }
 
-module.exports = compileMaterial;
+export { compileMaterial };

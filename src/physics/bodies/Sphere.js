@@ -24,8 +24,8 @@
 
 'use strict';
 
-var Particle = require('./Particle');
-var Vec3 = require('../../math/Vec3');
+import { Particle } from './Particle';
+import { Vec3 } from '../../math/Vec3';
 
 var SUPPORT_REGISTER = new Vec3();
 
@@ -36,8 +36,9 @@ var SUPPORT_REGISTER = new Vec3();
  * @extends Particle
  * @param {Object} options The initial state of the body.
  */
-function Sphere(options) {
-    Particle.call(this, options);
+class Sphere extends Particle {
+  constructor(options) {
+    super(options);
     var r  = options.radius || 1;
     this.radius = r;
     this.size = [2*r, 2*r, 2*r];
@@ -50,16 +51,13 @@ function Sphere(options) {
     this.type = 1 << 2;
 }
 
-Sphere.prototype = Object.create(Particle.prototype);
-Sphere.prototype.constructor = Sphere;
-
 /**
  * Getter for radius.
  *
  * @method
  * @return {Number} radius
  */
-Sphere.prototype.getRadius = function getRadius() {
+getRadius() {
     return this.radius;
 };
 
@@ -70,7 +68,7 @@ Sphere.prototype.getRadius = function getRadius() {
  * @param {Number} radius The intended radius of the sphere.
  * @return {Sphere} this
  */
-Sphere.prototype.setRadius = function setRadius(radius) {
+setRadius(radius) {
     this.radius = radius;
     this.size = [2*this.radius, 2*this.radius, 2*this.radius];
     return this;
@@ -83,7 +81,8 @@ Sphere.prototype.setRadius = function setRadius(radius) {
  * @method
  * @return {undefined} undefined
  */
-Sphere.prototype.updateLocalInertia = function updateInertia() {
+
+updateInertia() {
     var m = this.mass;
     var r = this.radius;
 
@@ -109,12 +108,10 @@ Sphere.prototype.updateLocalInertia = function updateInertia() {
  * @param {Vec3} direction The direction in which to search.
  * @return {Vec3} The support point.
  */
-Sphere.prototype.support = function support(direction) {
+support(direction) {
     return Vec3.scale(direction, this.radius, SUPPORT_REGISTER);
 };
 
-/**
- * @exports Sphere
- * @module Sphere
- */
-module.exports = Sphere;
+}
+
+export { Sphere };

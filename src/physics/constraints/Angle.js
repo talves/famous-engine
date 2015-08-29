@@ -24,9 +24,9 @@
 
 'use strict';
 
-var Constraint = require('./Constraint');
-var Vec3 = require('../../math/Vec3');
-var Mat33 = require('../../math/Mat33');
+import { Constraint } from './Constraint';
+import { Vec3 } from '../../math/Vec3';
+import { Mat33 } from '../../math/Mat33';
 
 var DELTA_REGISTER = new Vec3();
 
@@ -40,19 +40,27 @@ var DELTA_REGISTER = new Vec3();
  *  @param {Particle} b The other body.
  *  @param {Object} options An object of configurable options.
  */
-function Angle(a, b, options) {
+class Angle extends Constraint {
+  constructor(a, b, options) {
+    super(options);
+
     this.a = a;
     this.b = b;
-
-    Constraint.call(this, options);
 
     this.effectiveInertia = new Mat33();
     this.angularImpulse = new Vec3();
     this.error = 0;
+
+    this.initLocals();
 }
 
-Angle.prototype = Object.create(Constraint.prototype);
-Angle.prototype.constructor = Angle;
+/**
+ * Initialize passing the Options.
+ *
+ * @method
+ * @return {undefined} undefined
+ */
+init(options) {};
 
 /**
  * Initialize the Angle. Sets defaults if a property was not already set.
@@ -61,7 +69,7 @@ Angle.prototype.constructor = Angle;
  * @param {Object} options The options hash.
  * @return {undefined} undefined
  */
-Angle.prototype.init = function() {
+initLocals() {
     this.cosAngle = this.cosAngle || this.a.orientation.dot(this.b.orientation);
 };
 
@@ -71,7 +79,7 @@ Angle.prototype.init = function() {
  * @method
  * @return {undefined} undefined
  */
-Angle.prototype.update = function update() {
+update() {
     var a = this.a;
     var b = this.b;
 
@@ -99,7 +107,7 @@ Angle.prototype.update = function update() {
  * @method
  * @return {undefined} undefined
  */
-Angle.prototype.resolve = function update() {
+resolve() {
     var a = this.a;
     var b = this.b;
 
@@ -119,4 +127,6 @@ Angle.prototype.resolve = function update() {
     this.angularImpulse.add(angularImpulse);
 };
 
-module.exports = Angle;
+}
+
+export { Angle };

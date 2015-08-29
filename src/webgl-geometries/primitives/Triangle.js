@@ -24,8 +24,8 @@
 
 'use strict';
 
-var Geometry = require('../Geometry');
-var GeometryHelper = require('../GeometryHelper');
+import { Geometry } from '../Geometry';
+import { GeometryHelper } from '../GeometryHelper';
 
 /**
  * This function returns a new static geometry, which is passed
@@ -39,8 +39,10 @@ var GeometryHelper = require('../GeometryHelper');
  *
  * @return {Object} constructed geometry
  */
-function Triangle (options) {
-    if (!(this instanceof Triangle)) return new Triangle(options);
+ class Triangle extends Geometry {
+   constructor(options) {
+     //handled by es6 transpiler
+    //if (!(this instanceof Triangle)) return new Triangle(options);
 
     options  = options || {};
     var detail   = options.detail || 1;
@@ -73,10 +75,9 @@ function Triangle (options) {
             { name: 'indices', data: indices, size: 1 }
     ];
 
-    Geometry.call(this, options);
+    super(options);
 }
 
-Triangle.prototype = Object.create(Geometry.prototype);
-Triangle.prototype.constructor = Triangle;
+}
 
-module.exports = Triangle;
+export { Triangle };

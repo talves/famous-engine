@@ -30,7 +30,8 @@
  * @class CallbackStore
  * @constructor
  */
-function CallbackStore () {
+class CallbackStore {
+  constructor() {
     this._events = {};
 }
 
@@ -46,7 +47,7 @@ function CallbackStore () {
  * @return {Function} destroy   A function to call if you want to remove the
  *                              callback.
  */
-CallbackStore.prototype.on = function on (key, callback) {
+on(key, callback) {
     if (!this._events[key]) this._events[key] = [];
     var callbackList = this._events[key];
     callbackList.push(callback);
@@ -67,7 +68,7 @@ CallbackStore.prototype.on = function on (key, callback) {
  *                              listeners for key.
  * @return {CallbackStore} this
  */
-CallbackStore.prototype.off = function off (key, callback) {
+off(key, callback) {
     var events = this._events[key];
     if (events) events.splice(events.indexOf(callback), 1);
     return this;
@@ -83,7 +84,7 @@ CallbackStore.prototype.off = function off (key, callback) {
  * @param  {Object}        payload  The event payload (event object).
  * @return {CallbackStore} this
  */
-CallbackStore.prototype.trigger = function trigger (key, payload) {
+trigger(key, payload) {
     var events = this._events[key];
     if (events) {
         var i = 0;
@@ -93,4 +94,6 @@ CallbackStore.prototype.trigger = function trigger (key, payload) {
     return this;
 };
 
-module.exports = CallbackStore;
+}
+
+export { CallbackStore };

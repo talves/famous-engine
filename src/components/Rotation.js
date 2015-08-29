@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2015 Famous Industries Inc.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -24,7 +24,7 @@
 
 'use strict';
 
-var Position = require('./Position');
+import { Position } from './Position';
 
 /**
  * Rotation is a component that allows the tweening of a Node's rotation. Rotation
@@ -35,8 +35,9 @@ var Position = require('./Position');
  *
  * @param {Node} node Node that the Rotation component will be attached to
  */
-function Rotation(node) {
-    Position.call(this, node);
+class Rotation extends Position {
+  constructor(node) {
+    super(node);
 
     var initial = node.getRotation();
 
@@ -59,6 +60,8 @@ function Rotation(node) {
     this._x.set(rx);
     this._y.set(ry);
     this._z.set(rz);
+
+    this.onUpdate = this.constructor.update;
 }
 
 /**
@@ -68,12 +71,9 @@ function Rotation(node) {
  *
  * @return {String} Name of the component
  */
-Rotation.prototype.toString = function toString() {
+toString() {
     return 'Rotation';
 };
-
-Rotation.prototype = Object.create(Position.prototype);
-Rotation.prototype.constructor = Rotation;
 
 /**
  * When the node this component is attached to updates, update the value
@@ -83,11 +83,11 @@ Rotation.prototype.constructor = Rotation;
  *
  * @return {undefined} undefined
  */
-Rotation.prototype.update = function update() {
+update() {
     this._node.setRotation(this._x.get(), this._y.get(), this._z.get());
     this._checkUpdate();
 };
 
-Rotation.prototype.onUpdate = Rotation.prototype.update;
+}
 
-module.exports = Rotation;
+export { Rotation };

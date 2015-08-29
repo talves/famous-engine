@@ -24,7 +24,7 @@
 
 'use strict';
 
-var AABB = require('./AABB');
+import { AABB } from './AABB';
 
 /**
  * O(n^2) comparisons with an AABB check for a midphase. Likely to be more performant
@@ -33,7 +33,8 @@ var AABB = require('./AABB');
  * @class BruteForAABB
  * @param {Particles[]} targets The bodies to track.
  */
-function BruteForceAABB(targets) {
+class BruteForceAABB {
+  constructor(targets) {
     this._volumes = [];
     this._entityRegistry = {};
     for (var i = 0; i < targets.length; i++) {
@@ -48,7 +49,7 @@ function BruteForceAABB(targets) {
  * @param {Particle} body The body to track.
  * @return {undefined} undefined
  */
-BruteForceAABB.prototype.add = function add(body) {
+add(body) {
     var boundingVolume = new AABB(body);
 
     this._entityRegistry[body._ID] = body;
@@ -61,7 +62,7 @@ BruteForceAABB.prototype.add = function add(body) {
  * @method
  * @return {Array.<Particle[]>} Results.
  */
-BruteForceAABB.prototype.update = function update() {
+update() {
     var _volumes = this._volumes;
     var _entityRegistry = this._entityRegistry;
 
@@ -80,6 +81,8 @@ BruteForceAABB.prototype.update = function update() {
     return result;
 };
 
+}
+
 /**
  * The most simple yet computationally intensive broad-phase. Immediately passes its targets to the narrow-phase,
  * resulting in an O(n^2) process. Only feasible for a relatively small number of bodies.
@@ -87,9 +90,10 @@ BruteForceAABB.prototype.update = function update() {
  * @class BruteForce
  * @param {Particle[]} targets The targets to track.
  */
-function BruteForce(targets) {
+class BruteForce {
+  constructor(targets) {
     this.targets = targets;
-}
+  }
 
 /**
  * Start tracking a Particle.
@@ -98,7 +102,7 @@ function BruteForce(targets) {
  * @param {Particle} body The body to track.
  * @return {undefined} undefined
  */
-BruteForce.prototype.add = function add(body) {
+add(body) {
     this.targets.push(body);
 };
 
@@ -108,9 +112,11 @@ BruteForce.prototype.add = function add(body) {
  * @method
  * @return {Array.<Particle[]>} Results.
  */
-BruteForce.prototype.update = function update() {
+update() {
     return [this.targets];
 };
 
-module.exports.BruteForceAABB = BruteForceAABB;
-module.exports.BruteForce = BruteForce;
+}
+
+export { BruteForceAABB };
+export { BruteForce };

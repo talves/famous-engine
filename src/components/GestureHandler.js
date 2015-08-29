@@ -24,8 +24,8 @@
 
 'use strict';
 
-var CallbackStore = require('../utilities/CallbackStore');
-var Vec2 = require('../math/Vec2');
+import { CallbackStore } from '../utilities/CallbackStore';
+import { Vec2 } from '../math/Vec2';
 
 var VEC_REGISTER = new Vec2();
 
@@ -40,7 +40,8 @@ var gestures = {drag: true, tap: true, rotate: true, pinch: true};
  * @param {Node} node The node with which to register the handler.
  * @param {Array} events An array of event objects specifying .event and .callback properties.
  */
-function GestureHandler(node, events) {
+class GestureHandler{
+  constructor(node, events) {
     this.node = node;
     this.id = node.addComponent(this);
 
@@ -124,7 +125,7 @@ function GestureHandler(node, events) {
  *
  * @return {undefined} undefined
  */
-GestureHandler.prototype.onReceive = function onReceive (ev, payload) {
+onReceive(ev, payload) {
     switch(ev) {
         case 'touchstart':
         case 'mousedown':
@@ -153,7 +154,7 @@ GestureHandler.prototype.onReceive = function onReceive (ev, payload) {
  *
  * @return {String} Name of the component
  */
-GestureHandler.prototype.toString = function toString() {
+toString() {
     return 'GestureHandler';
 };
 
@@ -167,7 +168,7 @@ GestureHandler.prototype.toString = function toString() {
  *
  * @return {undefined} undefined
  */
-GestureHandler.prototype.on = function on(ev, cb) {
+on(ev, cb) {
     var gesture = ev.event || ev;
     if (gestures[gesture]) {
         this.trackedGestures[gesture] = true;
@@ -184,7 +185,7 @@ GestureHandler.prototype.on = function on(ev, cb) {
  *
  * @return {undefined} undefined
  */
-GestureHandler.prototype.triggerGestures = function() {
+triggerGestures() {
     var payload = this.event;
     for (var i = 0, len = this.gestures.length; i < len; i++) {
         var gesture = this.gestures[i];
@@ -219,9 +220,11 @@ GestureHandler.prototype.triggerGestures = function() {
  *
  * @return {undefined} undefined
  */
-GestureHandler.prototype.trigger = function trigger (ev, payload) {
+trigger(ev, payload) {
     this._events.trigger(ev, payload);
 };
+
+}
 
 /**
  * Process up to the first two touch/mouse move events. Exit out if the first two points are already being tracked.
@@ -501,4 +504,4 @@ function _processMouseLeave() {
     }
 }
 
-module.exports = GestureHandler;
+export { GestureHandler };

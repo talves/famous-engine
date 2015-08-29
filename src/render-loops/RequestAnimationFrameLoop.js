@@ -24,7 +24,7 @@
 
 'use strict';
 
-var polyfills = require('../polyfills');
+import * as polyfills from '../polyfills';
 var rAF = polyfills.requestAnimationFrame;
 var cAF = polyfills.cancelAnimationFrame;
 
@@ -40,7 +40,8 @@ var cAF = polyfills.cancelAnimationFrame;
 var DOCUMENT_ACCESS = typeof document !== 'undefined';
 
 if (DOCUMENT_ACCESS) {
-    var VENDOR_HIDDEN, VENDOR_VISIBILITY_CHANGE;
+    var VENDOR_HIDDEN;
+    var VENDOR_VISIBILITY_CHANGE;
 
     // Opera 12.10 and Firefox 18 and later support
     if (typeof document.hidden !== 'undefined') {
@@ -69,7 +70,8 @@ if (DOCUMENT_ACCESS) {
  *
  * @class RequestAnimationFrameLoop
  */
-function RequestAnimationFrameLoop() {
+class RequestAnimationFrameLoop {
+  constructor() {
     var _this = this;
 
     // References to objects to be updated on next frame.
@@ -112,7 +114,7 @@ function RequestAnimationFrameLoop() {
  *
  * @return {undefined} undefined
  */
-RequestAnimationFrameLoop.prototype._onVisibilityChange = function _onVisibilityChange() {
+_onVisibilityChange() {
     if (document[VENDOR_HIDDEN]) {
         this._onUnfocus();
     }
@@ -130,7 +132,7 @@ RequestAnimationFrameLoop.prototype._onVisibilityChange = function _onVisibility
  *
  * @return {undefined} undefined
  */
-RequestAnimationFrameLoop.prototype._onFocus = function _onFocus() {
+_onFocus() {
     if (this._startOnVisibilityChange) {
         this._start();
     }
@@ -145,7 +147,7 @@ RequestAnimationFrameLoop.prototype._onFocus = function _onFocus() {
  *
  * @return {undefined} undefined
  */
-RequestAnimationFrameLoop.prototype._onUnfocus = function _onUnfocus() {
+_onUnfocus() {
     this._stop();
 };
 
@@ -158,7 +160,7 @@ RequestAnimationFrameLoop.prototype._onUnfocus = function _onUnfocus() {
  *
  * @return {RequestAnimationFrameLoop} this
  */
-RequestAnimationFrameLoop.prototype.start = function start() {
+start() {
     if (!this._running) {
         this._startOnVisibilityChange = true;
         this._start();
@@ -175,7 +177,7 @@ RequestAnimationFrameLoop.prototype.start = function start() {
 *
  * @return {undefined} undefined
  */
-RequestAnimationFrameLoop.prototype._start = function _start() {
+_start() {
     this._running = true;
     this._sleepDiff = true;
     this._rAF = rAF(this._looper);
@@ -189,7 +191,7 @@ RequestAnimationFrameLoop.prototype._start = function _start() {
  *
  * @return {RequestAnimationFrameLoop} this
  */
-RequestAnimationFrameLoop.prototype.stop = function stop() {
+stop() {
     if (this._running) {
         this._startOnVisibilityChange = false;
         this._stop();
@@ -206,7 +208,7 @@ RequestAnimationFrameLoop.prototype.stop = function stop() {
  *
  * @return {undefined} undefined
  */
-RequestAnimationFrameLoop.prototype._stop = function _stop() {
+_stop() {
     this._running = false;
     this._stoppedAt = this._time;
 
@@ -222,7 +224,7 @@ RequestAnimationFrameLoop.prototype._stop = function _stop() {
  * @return {Boolean} boolean value indicating whether the
  * RequestAnimationFrameLoop is currently running or not
  */
-RequestAnimationFrameLoop.prototype.isRunning = function isRunning() {
+isRunning() {
     return this._running;
 };
 
@@ -236,7 +238,7 @@ RequestAnimationFrameLoop.prototype.isRunning = function isRunning() {
  *
  * @return {RequestAnimationFrameLoop} this
  */
-RequestAnimationFrameLoop.prototype.step = function step (time) {
+step(time) {
     this._time = time;
     if (this._sleepDiff) {
         this._sleep += time - this._stoppedAt;
@@ -262,7 +264,7 @@ RequestAnimationFrameLoop.prototype.step = function step (time) {
  * method on all registered objects
  * @return {RequestAnimationFrameLoop} this
  */
-RequestAnimationFrameLoop.prototype.loop = function loop(time) {
+loop(time) {
     this.step(time);
     this._rAF = rAF(this._looper);
     return this;
@@ -281,7 +283,7 @@ RequestAnimationFrameLoop.prototype.loop = function loop(time) {
  *
  * @return {RequestAnimationFrameLoop} this
  */
-RequestAnimationFrameLoop.prototype.update = function update(updateable) {
+update(updateable) {
     if (this._updates.indexOf(updateable) === -1) {
         this._updates.push(updateable);
     }
@@ -299,7 +301,7 @@ RequestAnimationFrameLoop.prototype.update = function update(updateable) {
  *
  * @return {RequestAnimationFrameLoop} this
  */
-RequestAnimationFrameLoop.prototype.noLongerUpdate = function noLongerUpdate(updateable) {
+noLongerUpdate(updateable) {
     var index = this._updates.indexOf(updateable);
     if (index > -1) {
         this._updates.splice(index, 1);
@@ -307,4 +309,6 @@ RequestAnimationFrameLoop.prototype.noLongerUpdate = function noLongerUpdate(upd
     return this;
 };
 
-module.exports = RequestAnimationFrameLoop;
+}
+
+export { RequestAnimationFrameLoop };

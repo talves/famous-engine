@@ -24,8 +24,8 @@
 
 'use strict';
 
-var Geometry = require('../Geometry');
-var GeometryHelper = require('../GeometryHelper');
+import { Geometry } from '../Geometry';
+import { GeometryHelper } from '../GeometryHelper';
 
 /**
  * This function generates custom buffers and passes them to
@@ -39,8 +39,10 @@ var GeometryHelper = require('../GeometryHelper');
  *
  * @return {Object} constructed geometry
  */
-function Tetrahedron(options) {
-    if (!(this instanceof Tetrahedron)) return new Tetrahedron(options);
+ class Tetrahedron extends Geometry {
+   constructor(options) {
+     //handled by es6 transpiler
+    //if (!(this instanceof Tetrahedron)) return new Tetrahedron(options);
 
     var textureCoords = [];
     var normals = [];
@@ -97,10 +99,9 @@ function Tetrahedron(options) {
         { name: 'indices', data: indices, size: 1 }
     ];
 
-    Geometry.call(this, options);
+    super(options);
 }
 
-Tetrahedron.prototype = Object.create(Geometry.prototype);
-Tetrahedron.prototype.constructor = Tetrahedron;
+}
 
-module.exports = Tetrahedron;
+export { Tetrahedron };

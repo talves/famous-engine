@@ -24,19 +24,17 @@
 
 'use strict';
 
-var Vec3 = require('../../math/Vec3');
-var Constraint = require('./Constraint');
+import { Constraint } from './Constraint';
+import { Vec3 } from '../../math/Vec3';
 
-var SweepAndPrune = require('./collision/SweepAndPrune');
-var BruteForce = require('./collision/BruteForce');
-var ConvexCollision = require('./collision/ConvexCollisionDetection');
+import { SweepAndPrune } from './collision/SweepAndPrune';
+import * as BruteForce from './collision/BruteForce';
+import * as ConvexCollision from './collision/ConvexCollisionDetection';
 var gjk = ConvexCollision.gjk;
 var epa = ConvexCollision.epa;
-var ContactManifoldTable = require('./collision/ContactManifold');
+import { ContactManifoldTable } from './collision/ContactManifold';
 
-var ObjectManager = require('../../utilities/ObjectManager');
-ObjectManager.register('CollisionData', CollisionData);
-var oMRequestCollisionData = ObjectManager.requestCollisionData;
+import { ObjectManager } from '../../utilities/ObjectManager';
 
 var VEC_REGISTER = new Vec3();
 
@@ -65,7 +63,8 @@ function clamp(value, lower, upper) {
  * @param {Vec3} localContactA The contact for A in local coordinates.
  * @param {Vec3} localContactB The contact for B in local coordinates.
  */
-function CollisionData(penetration, normal, worldContactA, worldContactB, localContactA, localContactB) {
+class CollisionData {
+  constructor(penetration, normal, worldContactA, worldContactB, localContactA, localContactB) {
     this.penetration = penetration;
     this.normal = normal;
     this.worldContactA = worldContactA;
@@ -86,7 +85,7 @@ function CollisionData(penetration, normal, worldContactA, worldContactB, localC
  * @param {Vec3} localContactB The contact for B in local coordinates.
  * @return {CollisionData} this
  */
-CollisionData.prototype.reset = function reset(penetration, normal, worldContactA, worldContactB, localContactA, localContactB) {
+reset(penetration, normal, worldContactA, worldContactB, localContactA, localContactB) {
     this.penetration = penetration;
     this.normal = normal;
     this.worldContactA = worldContactA;
@@ -97,103 +96,10 @@ CollisionData.prototype.reset = function reset(penetration, normal, worldContact
     return this;
 };
 
-/**
- * Ridid body Elastic Collision
- *
- * @class Collision
- * @extends Constraint
- * @param {Particle[]} targets The bodies to track.
- * @param {Object} options The options hash.
- */
-function Collision(targets, options) {
-    this.targets = [];
-    if (targets) this.targets = this.targets.concat(targets);
-
-    Constraint.call(this, options);
 }
 
-Collision.prototype = Object.create(Constraint.prototype);
-Collision.prototype.constructor = Collision;
-
-/**
- * Initialize the Collision tracker. Sets defaults if a property was not already set.
- *
- * @method
- * @return {undefined} undefined
- */
-Collision.prototype.init = function() {
-    if (this.broadPhase) {
-        var BroadPhase = this.broadphase;
-        if (BroadPhase instanceof Function) this.broadPhase = new BroadPhase(this.targets);
-    }
-    else this.broadPhase = new SweepAndPrune(this.targets);
-    this.contactManifoldTable = this.contactManifoldTable || new ContactManifoldTable();
-};
-
-/**
- * Collison detection. Updates the existing contact manifolds, runs the broadphase, and performs narrowphase
- * collision detection. Warm starts the contacts based on the results of the previous physics frame
- * and prepares necesssary calculations for the resolution.
- *
- * @method
- * @param {Number} time The current time in the physics engine.
- * @param {Number} dt The physics engine frame delta.
- * @return {undefined} undefined
- */
- Collision.prototype.update = function update(time, dt) {
-    this.contactManifoldTable.update(dt);
-    if (this.targets.length === 0) return;
-    var i, len;
-    for (i = 0, len = this.targets.length; i < len; i++) {
-        this.targets[i].updateShape();
-    }
-    var potentialCollisions = this.broadPhase.update();
-    var pair;
-    for (i = 0, len = potentialCollisions.length; i < len; i++) {
-        pair = potentialCollisions[i];
-        if (pair) this.applyNarrowPhase(pair);
-    }
-    this.contactManifoldTable.prepContacts(dt);
-};
-
-/**
- * Apply impulses to resolve all Contact constraints.
- *
- * @method
- * @param {Number} time The current time in the physics engine.
- * @param {Number} dt The physics engine frame delta.
- * @return {undefined} undefined
- */
-Collision.prototype.resolve = function resolve(time, dt) {
-    this.contactManifoldTable.resolveManifolds(dt);
-};
-
-/**
- * Add a target or targets to the collision system.
- *
- * @method
- * @param {Particle} target The body to begin tracking.
- * @return {undefined} undefined
- */
-Collision.prototype.addTarget = function addTarget(target) {
-    this.targets.push(target);
-    this.broadPhase.add(target);
-};
-
-/**
- * Remove a target or targets from the collision system.
- *
- * @method
- * @param {Particle} target The body to remove.
- * @return {undefined} undefined
- */
-Collision.prototype.removeTarget = function removeTarget(target) {
-    var index = this.targets.indexOf(target);
-    if (index < 0) return;
-    this.targets.splice(index, 1);
-    this.broadPhase.remove(target);
-};
-
+ObjectManager.register('CollisionData', CollisionData);
+var oMRequestCollisionData = ObjectManager.requestCollisionData;
 
 var CONVEX = 1 << 0;
 var BOX = 1 << 1;
@@ -222,6 +128,114 @@ dispatch[BOX_WALL] = convexIntersectWall;
 dispatch[SPHERE_WALL] = convexIntersectWall;
 
 /**
+ * Ridid body Elastic Collision
+ *
+ * @class Collision
+ * @extends Constraint
+ * @param {Particle[]} targets The bodies to track.
+ * @param {Object} options The options hash.
+ */
+ class Collision extends Constraint {
+   constructor(targets, options) {
+    super(options);
+
+    this.targets = [];
+    if (targets) this.targets = this.targets.concat(targets);
+
+    this.initTracker();
+}
+
+/**
+ * Initialize passing the Options.
+ *
+ * @method
+ * @return {undefined} undefined
+ */
+init(options) {};
+
+/**
+ * Initialize the Collision tracker. Sets defaults if a property was not already set.
+ *
+ * @method
+ * @return {undefined} undefined
+ */
+
+initTracker() {
+  if (this.broadPhase) {
+      var BroadPhase = this.broadphase;
+      if (BroadPhase instanceof Function) this.broadPhase = new BroadPhase(this.targets);
+  } else {
+    this.broadPhase = new SweepAndPrune(this.targets);
+  }
+  this.contactManifoldTable = this.contactManifoldTable || new ContactManifoldTable();
+};
+
+/**
+ * Collision detection. Updates the existing contact manifolds, runs the broadphase, and performs narrowphase
+ * collision detection. Warm starts the contacts based on the results of the previous physics frame
+ * and prepares necesssary calculations for the resolution.
+ *
+ * @method
+ * @param {Number} time The current time in the physics engine.
+ * @param {Number} dt The physics engine frame delta.
+ * @return {undefined} undefined
+ */
+ update(time, dt) {
+    this.contactManifoldTable.update(dt);
+    if (this.targets.length === 0) return;
+    var i, len;
+    for (i = 0, len = this.targets.length; i < len; i++) {
+        this.targets[i].updateShape();
+    }
+    var potentialCollisions = this.broadPhase.update();
+    var pair;
+    for (i = 0, len = potentialCollisions.length; i < len; i++) {
+        pair = potentialCollisions[i];
+        if (pair) this.applyNarrowPhase(pair);
+    }
+    this.contactManifoldTable.prepContacts(dt);
+};
+
+/**
+ * Apply impulses to resolve all Contact constraints.
+ *
+ * @method
+ * @param {Number} time The current time in the physics engine.
+ * @param {Number} dt The physics engine frame delta.
+ * @return {undefined} undefined
+ */
+resolve(time, dt) {
+    this.contactManifoldTable.resolveManifolds(dt);
+};
+
+/**
+ * Add a target or targets to the collision system.
+ *
+ * @method
+ * @param {Particle} target The body to begin tracking.
+ * @return {undefined} undefined
+ */
+addTarget(target) {
+    this.targets.push(target);
+    this.broadPhase.add(target);
+};
+
+/**
+ * Remove a target or targets from the collision system.
+ *
+ * @method
+ * @param {Particle} target The body to remove.
+ * @return {undefined} undefined
+ */
+removeTarget(target) {
+    var index = this.targets.indexOf(target);
+    if (index < 0) return;
+    this.targets.splice(index, 1);
+    this.broadPhase.remove(target);
+};
+
+
+/**
  * Narrowphase collision detection,
  * registers the Contact constraints for colliding bodies.
  *
@@ -231,7 +245,7 @@ dispatch[SPHERE_WALL] = convexIntersectWall;
  * @param {Particle[]} targets The targets.
  * @return {undefined} undefined
  */
-Collision.prototype.applyNarrowPhase = function applyNarrowPhase(targets) {
+applyNarrowPhase(targets) {
     for (var i = 0, len = targets.length; i < len; i++) {
         for (var j = i + 1; j < len; j++) {
             var  a = targets[i];
@@ -245,6 +259,8 @@ Collision.prototype.applyNarrowPhase = function applyNarrowPhase(targets) {
         }
     }
 };
+
+}
 
 /**
  * Detects sphere-sphere collisions and registers the Contact.
@@ -405,4 +421,4 @@ Collision.SweepAndPrune = SweepAndPrune;
 Collision.BruteForce = BruteForce.BruteForce;
 Collision.BruteForceAABB = BruteForce.BruteForceAABB;
 
-module.exports = Collision;
+export { Collision }

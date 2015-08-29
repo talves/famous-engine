@@ -24,14 +24,10 @@
 
 'use strict';
 
-var Vec3 = require('../math/Vec3');
-var Mat33 = require('../math/Mat33');
+import { Vec3 } from '../math/Vec3';
+import { Mat33 } from '../math/Mat33';
 
-var ObjectManager = require('../utilities/ObjectManager');
-ObjectManager.register('DynamicGeometry', DynamicGeometry);
-ObjectManager.register('DynamicGeometryFeature', DynamicGeometryFeature);
-var oMRequestDynamicGeometryFeature = ObjectManager.requestDynamicGeometryFeature;
-var oMFreeDynamicGeometryFeature = ObjectManager.freeDynamicGeometryFeature;
+import { ObjectManager } from '../utilities/ObjectManager';
 
 var TRIPLE_REGISTER = new Vec3();
 
@@ -103,11 +99,12 @@ var BD_REGISTER = new Vec3();
  * @param {Vec3} normal The Vec3 orthogonal to the feature, pointing out of the geometry.
  * @param {Number[]} vertexIndices The indices of the vertices which compose the feature.
  */
-function DynamicGeometryFeature(distance, normal, vertexIndices) {
+class DynamicGeometryFeature {
+  constructor(distance, normal, vertexIndices) {
     this.distance = distance;
     this.normal = normal;
     this.vertexIndices = vertexIndices;
-}
+  }
 
 /**
  * Used by ObjectManager to reset objects.
@@ -118,7 +115,7 @@ function DynamicGeometryFeature(distance, normal, vertexIndices) {
  * @param {Number[]} vertexIndices Indices of the vertices which compose the feature.
  * @return {DynamicGeometryFeature} this
  */
-DynamicGeometryFeature.prototype.reset = function(distance, normal, vertexIndices) {
+reset(distance, normal, vertexIndices) {
     this.distance = distance;
     this.normal = normal;
     this.vertexIndices = vertexIndices;
@@ -126,12 +123,19 @@ DynamicGeometryFeature.prototype.reset = function(distance, normal, vertexIndice
     return this;
 };
 
+}
+
+ObjectManager.register('DynamicGeometryFeature', DynamicGeometryFeature);
+var oMRequestDynamicGeometryFeature = ObjectManager.requestDynamicGeometryFeature;
+var oMFreeDynamicGeometryFeature = ObjectManager.freeDynamicGeometryFeature;
+
 /**
  * Abstract object representing a growing polyhedron. Used in ConvexHull and in GJK+EPA collision detection.
  *
  * @class DynamicGeometry
  */
-function DynamicGeometry() {
+class DynamicGeometry {
+  constructor() {
     this.vertices = [];
     this.numVertices = 0;
     this.features = [];
@@ -150,7 +154,7 @@ function DynamicGeometry() {
  * @method
  * @return {DynamicGeometry} this
  */
-DynamicGeometry.prototype.reset = function reset() {
+reset() {
     this.vertices = [];
     this.numVertices = 0;
     this.features = [];
@@ -172,7 +176,7 @@ DynamicGeometry.prototype.reset = function reset() {
  * @param {Object} vertexObj Object returned by the support function.
  * @return {undefined} undefined
  */
-DynamicGeometry.prototype.addVertex = function(vertexObj) {
+addVertex(vertexObj) {
     var index = this._IDPool.vertices.length ? this._IDPool.vertices.pop() : this.vertices.length;
     this.vertices[index] = vertexObj;
     this.lastVertexIndex = index;
@@ -186,7 +190,7 @@ DynamicGeometry.prototype.addVertex = function(vertexObj) {
  * @param {Number} index Index of the vertex to remove.
  * @return {Object} vertex The vertex object.
  */
-DynamicGeometry.prototype.removeVertex = function(index) {
+removeVertex(index) {
     var vertex = this.vertices[index];
     this.vertices[index] = null;
     this._IDPool.vertices.push(index);
@@ -204,7 +208,7 @@ DynamicGeometry.prototype.removeVertex = function(index) {
  * @param {Number[]} vertexIndices The indices of the vertices which compose the feature.
  * @return {undefined} undefined
  */
-DynamicGeometry.prototype.addFeature = function(distance, normal, vertexIndices) {
+addFeature(distance, normal, vertexIndices) {
     var index = this._IDPool.features.length ? this._IDPool.features.pop() : this.features.length;
     this.features[index] = oMRequestDynamicGeometryFeature().reset(distance, normal, vertexIndices);
     this.numFeatures++;
@@ -217,7 +221,7 @@ DynamicGeometry.prototype.addFeature = function(distance, normal, vertexIndices)
  * @param {Number} index Index of the feature to remove.
  * @return {undefined} undefined
  */
-DynamicGeometry.prototype.removeFeature = function(index) {
+removeFeature(index) {
     var feature = this.features[index];
     this.features[index] = null;
     this._IDPool.features.push(index);
@@ -232,7 +236,7 @@ DynamicGeometry.prototype.removeFeature = function(index) {
  * @method
  * @return {Object} The last vertex added.
  */
-DynamicGeometry.prototype.getLastVertex = function() {
+getLastVertex() {
     return this.vertices[this.lastVertexIndex];
 };
 
@@ -242,7 +246,7 @@ DynamicGeometry.prototype.getLastVertex = function() {
  * @method
  * @return {DynamicGeometryFeature} The closest feature.
  */
-DynamicGeometry.prototype.getFeatureClosestToOrigin = function() {
+getFeatureClosestToOrigin() {
     var min = Infinity;
     var closest = null;
     var features = this.features;
@@ -258,34 +262,6 @@ DynamicGeometry.prototype.getFeatureClosestToOrigin = function() {
 };
 
 /**
- * Adds edge if not already on the frontier, removes if the edge or its reverse are on the frontier.
- * Used when reshaping DynamicGeometry's.
- *
- * @method
- * @private
- * @param {Object[]} vertices Vec3 reference array.
- * @param {Array.<Number[]>} frontier Current edges potentially separating the features to remove from the persistant shape.
- * @param {Number} start The index of the starting Vec3 on the edge.
- * @param {Number} end The index of the culminating Vec3.
- * @return {undefined} undefined
- */
-function _validateEdge(vertices, frontier, start, end) {
-    var e0 = vertices[start].vertex;
-    var e1 = vertices[end].vertex;
-    for (var i = 0, len = frontier.length; i < len; i++) {
-        var edge = frontier[i];
-        if (!edge) continue;
-        var v0 = vertices[edge[0]].vertex;
-        var v1 = vertices[edge[1]].vertex;
-        if ((e0 === v0 && (e1 === v1)) || (e0 === v1 && (e1 === v0))) {
-            frontier[i] = null;
-            return;
-        }
-    }
-    frontier.push([start, end]);
-}
-
-/**
  * Based on the last (exterior) point added to the polyhedron, removes features as necessary and redetermines
  * its (convex) shape to include the new point by adding triangle features. Uses referencePoint, a point on the shape's
  * interior, to ensure feature normals point outward, else takes referencePoint to be the origin.
@@ -294,7 +270,7 @@ function _validateEdge(vertices, frontier, start, end) {
  * @param {Vec3} referencePoint Point known to be in the interior, used to orient feature normals.
  * @return {undefined} undefined
  */
-DynamicGeometry.prototype.reshape = function(referencePoint) {
+reshape(referencePoint) {
     var vertices = this.vertices;
     var point = this.getLastVertex().vertex;
     var features = this.features;
@@ -362,7 +338,7 @@ DynamicGeometry.prototype.reshape = function(referencePoint) {
  * in the object manager.
  * @return {Boolean} The result of the containment check.
  */
-DynamicGeometry.prototype.simplexContainsOrigin = function(direction, callback) {
+simplexContainsOrigin(direction, callback) {
     var numVertices = this.vertices.length;
 
     var a = this.lastVertexIndex;
@@ -449,6 +425,36 @@ DynamicGeometry.prototype.simplexContainsOrigin = function(direction, callback) 
     if (vertexToRemove && callback) callback(vertexToRemove);
     return false;
 };
+
+}
+
+/**
+ * Adds edge if not already on the frontier, removes if the edge or its reverse are on the frontier.
+ * Used when reshaping DynamicGeometry's.
+ *
+ * @method
+ * @private
+ * @param {Object[]} vertices Vec3 reference array.
+ * @param {Array.<Number[]>} frontier Current edges potentially separating the features to remove from the persistant shape.
+ * @param {Number} start The index of the starting Vec3 on the edge.
+ * @param {Number} end The index of the culminating Vec3.
+ * @return {undefined} undefined
+ */
+function _validateEdge(vertices, frontier, start, end) {
+    var e0 = vertices[start].vertex;
+    var e1 = vertices[end].vertex;
+    for (var i = 0, len = frontier.length; i < len; i++) {
+        var edge = frontier[i];
+        if (!edge) continue;
+        var v0 = vertices[edge[0]].vertex;
+        var v1 = vertices[edge[1]].vertex;
+        if ((e0 === v0 && (e1 === v1)) || (e0 === v1 && (e1 === v0))) {
+            frontier[i] = null;
+            return;
+        }
+    }
+    frontier.push([start, end]);
+}
 
 /**
  * Given an array of Vec3's, computes the convex hull. Used in constructing bodies in the physics system and to
@@ -793,7 +799,7 @@ function _computePolyhedralProperties(vertices, indices) {
     };
 }
 
-module.exports = {
-    DynamicGeometry: DynamicGeometry,
-    ConvexHull: ConvexHull
-};
+ObjectManager.register('DynamicGeometry', DynamicGeometry);
+
+export { DynamicGeometry };
+export { ConvexHull };

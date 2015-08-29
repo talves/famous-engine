@@ -38,7 +38,8 @@
  *
  * @return {undefined} undefined
  */
-function Buffer(target, type, gl) {
+class Buffer {
+  constructor(target, type, gl) {
     this.buffer = null;
     this.target = target;
     this.type = type;
@@ -54,11 +55,13 @@ function Buffer(target, type, gl) {
  *
  * @return {undefined} undefined
  */
-Buffer.prototype.subData = function subData() {
+subData() {
     var gl = this.gl;
     this.buffer = this.buffer || gl.createBuffer();
     gl.bindBuffer(this.target, this.buffer);
     gl.bufferData(this.target, new this.type(this.data), gl.STATIC_DRAW);
 };
 
-module.exports = Buffer;
+}
+
+export { Buffer };

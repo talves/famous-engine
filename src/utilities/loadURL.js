@@ -46,4 +46,4 @@ var loadURL = function loadURL(url, callback) {
     xhr.send();
 };
 
-module.exports = loadURL;
+export { loadURL };

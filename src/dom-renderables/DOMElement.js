@@ -24,11 +24,11 @@
 
 'use strict';
 
-var CallbackStore = require('../utilities/CallbackStore');
-var TransformSystem = require('../core/TransformSystem');
-var OpacitySystem = require('../core/OpacitySystem');
-var Commands = require('../core/Commands');
-var Size = require('../core/Size');
+import { CallbackStore } from '../utilities/CallbackStore';
+import { TransformSystem } from '../core/TransformSystem';
+import { OpacitySystem } from '../core/OpacitySystem';
+import { Commands } from '../core/Commands';
+import { Size } from '../core/Size';
 
 /**
  * A DOMElement is a component that can be added to a Node with the
@@ -53,7 +53,8 @@ var Size = require('../core/Size');
  *                                      WebGL canvas over this element which allows
  *                                      for DOM and WebGL layering.  On by default.
  */
-function DOMElement(node, options) {
+class DOMElement {
+  constructor(node, options) {
     if (!node) throw new Error('DOMElement must be instantiated on a node');
 
     this._changeQueue = [];
@@ -110,7 +111,7 @@ function DOMElement(node, options) {
  *
  * @return {Object} serialized interal state
  */
-DOMElement.prototype.getValue = function getValue() {
+getValue() {
     return {
         classes: this._classes,
         styles: this._styles,
@@ -132,7 +133,7 @@ DOMElement.prototype.getValue = function getValue() {
  *
  * @return {undefined} undefined
  */
-DOMElement.prototype.onUpdate = function onUpdate () {
+onUpdate() {
     var node = this._node;
     var queue = this._changeQueue;
     var len = queue.length;
@@ -166,7 +167,7 @@ DOMElement.prototype.onUpdate = function onUpdate () {
  *
  * @return {undefined} undefined
  */
-DOMElement.prototype.onMount = function onMount(node, id) {
+onMount(node, id) {
     this._node = node;
     this._id = id;
     this._UIEvents = node.getUIEvents().slice(0);
@@ -185,7 +186,7 @@ DOMElement.prototype.onMount = function onMount(node, id) {
  *
  * @return {undefined} undefined
  */
-DOMElement.prototype.onDismount = function onDismount() {
+onDismount() {
     this.setProperty('display', 'none');
     this.setAttribute('data-fa-path', '');
     this.setCutoutState(false);
@@ -203,7 +204,7 @@ DOMElement.prototype.onDismount = function onDismount() {
  *
  * @return {undefined} undefined
  */
-DOMElement.prototype.onShow = function onShow() {
+onShow() {
     this.setProperty('display', 'block');
 };
 
@@ -216,7 +217,7 @@ DOMElement.prototype.onShow = function onShow() {
  *
  * @return {undefined} undefined
  */
-DOMElement.prototype.onHide = function onHide() {
+onHide() {
     this.setProperty('display', 'none');
 };
 
@@ -230,7 +231,7 @@ DOMElement.prototype.onHide = function onHide() {
  *
  * @return {DOMElement} this
  */
-DOMElement.prototype.setCutoutState = function setCutoutState (usesCutout) {
+setCutoutState(usesCutout) {
     if (this._initialized)
         this._changeQueue.push(Commands.GL_CUTOUT_STATE, usesCutout);
 
@@ -249,7 +250,7 @@ DOMElement.prototype.setCutoutState = function setCutoutState (usesCutout) {
  *
  * @return {undefined} undefined
  */
-DOMElement.prototype.onTransformChange = function onTransformChange (transform) {
+onTransformChange(transform) {
     this._changeQueue.push(Commands.CHANGE_TRANSFORM);
     transform = transform.getLocalTransform();
 
@@ -269,7 +270,7 @@ DOMElement.prototype.onTransformChange = function onTransformChange (transform) 
  *
  * @return {DOMElement} this
  */
-DOMElement.prototype.onSizeChange = function onSizeChange(x, y) {
+onSizeChange(x, y) {
     var sizeMode = this._node.getSizeMode();
     var sizedX = sizeMode[0] !== Size.RENDER;
     var sizedY = sizeMode[1] !== Size.RENDER;
@@ -291,7 +292,7 @@ DOMElement.prototype.onSizeChange = function onSizeChange(x, y) {
  *
  * @return {DOMElement} this
  */
-DOMElement.prototype.onOpacityChange = function onOpacityChange(opacity) {
+onOpacityChange(opacity) {
     opacity = opacity.getLocalOpacity();
 
     return this.setProperty('opacity', opacity);
@@ -305,7 +306,7 @@ DOMElement.prototype.onOpacityChange = function onOpacityChange(opacity) {
  *
  * @return {undefined} undefined
  */
-DOMElement.prototype.onAddUIEvent = function onAddUIEvent(uiEvent) {
+onAddUIEvent(uiEvent) {
     if (this._UIEvents.indexOf(uiEvent) === -1) {
         this._subscribe(uiEvent);
         this._UIEvents.push(uiEvent);
@@ -324,7 +325,7 @@ DOMElement.prototype.onAddUIEvent = function onAddUIEvent(uiEvent) {
  *
  * @return {undefined} undefined
  */
-DOMElement.prototype.onRemoveUIEvent = function onRemoveUIEvent(UIEvent) {
+onRemoveUIEvent(UIEvent) {
     var index = this._UIEvents.indexOf(UIEvent);
     if (index !== -1) {
         this._unsubscribe(UIEvent);
@@ -346,7 +347,7 @@ DOMElement.prototype.onRemoveUIEvent = function onRemoveUIEvent(UIEvent) {
  *
  * @return {undefined} undefined
  */
-DOMElement.prototype._subscribe = function _subscribe (uiEvent) {
+_subscribe(uiEvent) {
     if (this._initialized) {
         this._changeQueue.push(Commands.SUBSCRIBE, uiEvent);
     }
@@ -367,7 +368,7 @@ DOMElement.prototype._subscribe = function _subscribe (uiEvent) {
  *                              scrolling)
  * @return {undefined}          undefined
  */
-DOMElement.prototype.preventDefault = function preventDefault (uiEvent) {
+preventDefault(uiEvent) {
     if (this._initialized) {
         this._changeQueue.push(Commands.PREVENT_DEFAULT, uiEvent);
     }
@@ -384,7 +385,7 @@ DOMElement.prototype.preventDefault = function preventDefault (uiEvent) {
  *                              {@link DOMElement#preventDefault}.
  * @return {undefined}          undefined
  */
-DOMElement.prototype.allowDefault = function allowDefault (uiEvent) {
+allowDefault(uiEvent) {
     if (this._initialized) {
         this._changeQueue.push(Commands.ALLOW_DEFAULT, uiEvent);
     }
@@ -402,7 +403,7 @@ DOMElement.prototype.allowDefault = function allowDefault (uiEvent) {
  *
  * @return {undefined} undefined
  */
-DOMElement.prototype._unsubscribe = function _unsubscribe (UIEvent) {
+_unsubscribe(UIEvent) {
     if (this._initialized) {
         this._changeQueue.push(Commands.UNSUBSCRIBE, UIEvent);
     }
@@ -423,7 +424,7 @@ DOMElement.prototype._unsubscribe = function _unsubscribe (UIEvent) {
  *
  * @return {undefined} undefined
  */
-DOMElement.prototype.onSizeModeChange = function onSizeModeChange(x, y, z) {
+onSizeModeChange(x, y, z) {
     if (x === Size.RENDER || y === Size.RENDER || z === Size.RENDER) {
         this._renderSized = true;
         this._requestRenderSize = true;
@@ -440,7 +441,7 @@ DOMElement.prototype.onSizeModeChange = function onSizeModeChange(x, y, z) {
  *
  * @return {Array} size of the rendered DOM element in pixels
  */
-DOMElement.prototype.getRenderSize = function getRenderSize() {
+getRenderSize() {
     return this._renderSize;
 };
 
@@ -452,7 +453,7 @@ DOMElement.prototype.getRenderSize = function getRenderSize() {
  *
  * @return {undefined} undefined
  */
-DOMElement.prototype._requestUpdate = function _requestUpdate() {
+_requestUpdate() {
     if (!this._requestingUpdate && this._id) {
         this._node.requestUpdate(this._id);
         this._requestingUpdate = true;
@@ -467,7 +468,7 @@ DOMElement.prototype._requestUpdate = function _requestUpdate() {
  *
  * @return {undefined} undefined
  */
-DOMElement.prototype.init = function init () {
+init() {
     this._changeQueue.push(Commands.INIT_DOM, this._tagName);
     this._initialized = true;
     this.onTransformChange(TransformSystem.get(this._node.getLocation()));
@@ -486,7 +487,7 @@ DOMElement.prototype.init = function init () {
  *
  * @return {DOMElement} this
  */
-DOMElement.prototype.setId = function setId (id) {
+setId(id) {
     this.setAttribute('id', id);
     return this;
 };
@@ -501,7 +502,7 @@ DOMElement.prototype.setId = function setId (id) {
  *
  * @return {DOMElement} this
  */
-DOMElement.prototype.addClass = function addClass (value) {
+addClass(value) {
     if (this._classes.indexOf(value) < 0) {
         if (this._initialized) this._changeQueue.push(Commands.ADD_CLASS, value);
         this._classes.push(value);
@@ -526,7 +527,7 @@ DOMElement.prototype.addClass = function addClass (value) {
  *
  * @return {DOMElement} this
  */
-DOMElement.prototype.removeClass = function removeClass (value) {
+removeClass(value) {
     var index = this._classes.indexOf(value);
 
     if (index < 0) return this;
@@ -549,7 +550,7 @@ DOMElement.prototype.removeClass = function removeClass (value) {
  *
  * @return {Boolean} Boolean value indicating whether the passed in class name is in the DOMElement's class list.
  */
-DOMElement.prototype.hasClass = function hasClass (value) {
+hasClass(value) {
     return this._classes.indexOf(value) !== -1;
 };
 
@@ -563,7 +564,7 @@ DOMElement.prototype.hasClass = function hasClass (value) {
  *
  * @return {DOMElement} this
  */
-DOMElement.prototype.setAttribute = function setAttribute (name, value) {
+setAttribute(name, value) {
     if (this._attributes[name] !== value || this._inDraw) {
         this._attributes[name] = value;
         if (this._initialized) this._changeQueue.push(Commands.CHANGE_ATTRIBUTE, name, value);
@@ -583,7 +584,7 @@ DOMElement.prototype.setAttribute = function setAttribute (name, value) {
  *
  * @return {DOMElement} this
  */
-DOMElement.prototype.setProperty = function setProperty (name, value) {
+setProperty(name, value) {
     if (this._styles[name] !== value || this._inDraw) {
         this._styles[name] = value;
         if (this._initialized) this._changeQueue.push(Commands.CHANGE_PROPERTY, name, value);
@@ -604,7 +605,7 @@ DOMElement.prototype.setProperty = function setProperty (name, value) {
  *
  * @return {DOMElement} this
  */
-DOMElement.prototype.setContent = function setContent (content) {
+setContent(content) {
     if (this._content !== content || this._inDraw) {
         this._content = content;
         if (this._initialized) this._changeQueue.push(Commands.CHANGE_CONTENT, content);
@@ -627,7 +628,7 @@ DOMElement.prototype.setContent = function setContent (content) {
  *
  * @return {Function} A function to call if you want to remove the callback
  */
-DOMElement.prototype.on = function on (event, listener) {
+on(event, listener) {
     return this._callbacks.on(event, listener);
 };
 
@@ -646,7 +647,7 @@ DOMElement.prototype.on = function on (event, listener) {
  *
  * @return {undefined} undefined
  */
-DOMElement.prototype.onReceive = function onReceive (event, payload) {
+onReceive(event, payload) {
     if (event === 'resize') {
         this._renderSize[0] = payload.val[0];
         this._renderSize[1] = payload.val[1];
@@ -664,7 +665,7 @@ DOMElement.prototype.onReceive = function onReceive (event, payload) {
  *
  * @return {undefined} undefined
  */
-DOMElement.prototype.draw = function draw() {
+draw() {
     var key;
     var i;
     var len;
@@ -692,4 +693,6 @@ DOMElement.prototype.draw = function draw() {
     this._inDraw = false;
 };
 
-module.exports = DOMElement;
+}
+
+export { DOMElement };

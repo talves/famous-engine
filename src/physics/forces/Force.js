@@ -33,7 +33,8 @@ var _ID = 0;
  * @param {Particle[]} targets The targets of the force.
  * @param {Object} options The options hash.
  */
-function Force(targets, options) {
+class Force {
+  constructor(targets, options) {
     if (targets) {
         if (targets instanceof Array) this.targets = targets;
         else this.targets = [targets];
@@ -53,7 +54,7 @@ function Force(targets, options) {
  * @param {Object} options The options hash.
  * @return {undefined} undefined
  */
-Force.prototype.setOptions = function setOptions(options) {
+setOptions(options) {
     for (var key in options) this[key] = options[key];
     this.init(options);
 };
@@ -65,7 +66,7 @@ Force.prototype.setOptions = function setOptions(options) {
  * @param {Particle} target The body to begin targetting.
  * @return {undefined} undefined
  */
-Force.prototype.addTarget = function addTarget(target) {
+addTarget(target) {
     this.targets.push(target);
 };
 
@@ -76,7 +77,7 @@ Force.prototype.addTarget = function addTarget(target) {
  * @param {Particle} target The body to stop targetting.
  * @return {undefined} undefined
  */
-Force.prototype.removeTarget = function removeTarget(target) {
+removeTarget(target) {
     var index = this.targets.indexOf(target);
     if (index < 0) return;
     this.targets.splice(index, 1);
@@ -89,7 +90,7 @@ Force.prototype.removeTarget = function removeTarget(target) {
  * @param {Object} options The options hash.
  * @return {undefined} undefined
  */
-Force.prototype.init = function init(options) {};
+init(options) {};
 
 /**
  * Apply forces on each target.
@@ -99,6 +100,8 @@ Force.prototype.init = function init(options) {};
  * @param {Number} dt The physics engine frame delta.
  * @return {undefined} undefined
  */
-Force.prototype.update = function update(time, dt) {};
+update(time, dt) {};
 
-module.exports = Force;
+}
+
+export { Force };

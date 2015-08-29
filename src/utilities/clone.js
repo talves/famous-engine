@@ -59,4 +59,4 @@ var clone = function clone(b) {
     return a;
 };
 
-module.exports = clone;
+export { clone };

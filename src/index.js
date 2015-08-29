@@ -21,22 +21,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+ import * as components from './components';
+ import * as core from './core';
+ import * as domRenderables from './dom-renderables';
+ import * as domRenderers from './dom-renderers';
+ import * as math from './math';
+ import * as physics from './physics';
+ import * as polyfills from './polyfills';
+ import * as renderLoops from './render-loops';
+ import * as renderers from './renderers';
+ import * as transitions from './transitions';
+ import * as utilities from './utilities';
+ import * as webglRenderables from './webgl-renderables';
+ import * as webglRenderers from './webgl-renderers';
+ import * as webglGeometries from './webgl-geometries';
+ import * as webglMaterials from './webgl-materials';
+ import * as webglShaders from './webgl-shaders';
 
-module.exports = {
-    components: require('./components'),
-    core: require('./core'),
-    renderLoops: require('./render-loops'),
-    domRenderables: require('./dom-renderables'),
-    domRenderers: require('./dom-renderers'),
-    math: require('./math'),
-    physics: require('./physics'),
-    renderers: require('./renderers'),
-    transitions: require('./transitions'),
-    utilities: require('./utilities'),
-    webglRenderables: require('./webgl-renderables'),
-    webglRenderers: require('./webgl-renderers'),
-    webglGeometries: require('./webgl-geometries'),
-    webglMaterials: require('./webgl-materials'),
-    webglShaders: require('./webgl-shaders'),
-    polyfills: require('./polyfills')
-};
+ export { components };
+ export { core };
+ export { domRenderables };
+ export { domRenderers };
+ export { math };
+ export { physics };
+ export { polyfills };
+ export { renderers };
+ export { renderLoops };
+ export { transitions };
+ export { utilities };
+ export { webglRenderables };
+ export { webglRenderers };
+ export { webglGeometries };
+ export { webglMaterials };
+ export { webglShaders };

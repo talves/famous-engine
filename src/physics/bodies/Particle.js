@@ -24,11 +24,10 @@
 
 'use strict';
 
-var Vec3 = require('../../math/Vec3');
-var Quaternion = require('../../math/Quaternion');
-var Mat33 = require('../../math/Mat33');
-
-var CallbackStore = require('../../utilities/CallbackStore');
+import { Vec3 } from '../../math/Vec3';
+import { Quaternion } from '../../math/Quaternion';
+import { Mat33 } from '../../math/Mat33';
+import { CallbackStore } from '../../utilities/CallbackStore';
 
 var ZERO_VECTOR = new Vec3();
 
@@ -42,7 +41,8 @@ var _ID = 0;
  * @class Particle
  * @param {Object} options Initial state of the body.
  */
-function Particle(options) {
+class Particle {
+  constructor(options) {
     this.events = new CallbackStore();
 
     options = options || {};
@@ -93,7 +93,7 @@ function Particle(options) {
  * @param {Function} callback Callback to register for the event.
  * @return {Particle} this
  */
-Particle.prototype.on = function on(key, callback) {
+on(key, callback) {
     this.events.on(key, callback);
     return this;
 };
@@ -106,7 +106,7 @@ Particle.prototype.on = function on(key, callback) {
  * @param {Function} callback Callback to deregister for the event.
  * @return {Particle} this
  */
-Particle.prototype.off = function off(key, callback) {
+off(key, callback) {
     this.events.off(key, callback);
     return this;
 };
@@ -119,7 +119,7 @@ Particle.prototype.off = function off(key, callback) {
  * @param {Object} payload Payload to pass to the event listeners.
  * @return {Particle} this
  */
-Particle.prototype.trigger = function trigger(key, payload) {
+trigger(key, payload) {
     this.events.trigger(key, payload);
     return this;
 };
@@ -130,7 +130,7 @@ Particle.prototype.trigger = function trigger(key, payload) {
  * @method
  * @return {String[]} restrictions
  */
-Particle.prototype.getRestrictions = function getRestrictions() {
+getRestrictions() {
     var linear = '';
     var angular = '';
     var restrictions = this.restrictions;
@@ -152,7 +152,7 @@ Particle.prototype.getRestrictions = function getRestrictions() {
  * @param {String} rotRestrictions The restrictions to rotational motion.
  * @return {Particle} this
  */
-Particle.prototype.setRestrictions = function setRestrictions(transRestrictions, rotRestrictions) {
+setRestrictions(transRestrictions, rotRestrictions) {
     transRestrictions = transRestrictions || '';
     rotRestrictions = rotRestrictions || '';
     this.restrictions = 0;
@@ -171,7 +171,7 @@ Particle.prototype.setRestrictions = function setRestrictions(transRestrictions,
  * @method
  * @return {Number} mass
  */
-Particle.prototype.getMass = function getMass() {
+getMass() {
     return this.mass;
 };
 
@@ -182,7 +182,7 @@ Particle.prototype.getMass = function getMass() {
  * @param {Number} mass The mass.
  * @return {Particle} this
  */
-Particle.prototype.setMass = function setMass(mass) {
+setMass(mass) {
     this.mass = mass;
     this.inverseMass = 1 / mass;
     return this;
@@ -194,7 +194,7 @@ Particle.prototype.setMass = function setMass(mass) {
  * @method
  * @return {Number} inverse mass
  */
-Particle.prototype.getInverseMass = function() {
+getInverseMass() {
     return this.inverseMass;
 };
 
@@ -204,7 +204,7 @@ Particle.prototype.getInverseMass = function() {
  * @method
  * @return {Particle} this
  */
-Particle.prototype.updateLocalInertia = function updateLocalInertia() {
+updateLocalInertia() {
     this.localInertia.set([0,0,0,0,0,0,0,0,0]);
     this.localInverseInertia.set([0,0,0,0,0,0,0,0,0]);
     return this;
@@ -216,7 +216,7 @@ Particle.prototype.updateLocalInertia = function updateLocalInertia() {
  * @method
  * @return {Particle} this
  */
-Particle.prototype.updateInertia = function updateInertia() {
+updateInertia() {
     var localInvI = this.localInverseInertia;
     var q = this.orientation;
     if ((localInvI[0] === localInvI[4] && localInvI[4] === localInvI[8]) || q.w === 1) return this;
@@ -232,7 +232,7 @@ Particle.prototype.updateInertia = function updateInertia() {
  * @method
  * @return {Vec3} position
  */
-Particle.prototype.getPosition = function getPosition() {
+getPosition() {
     return this.position;
 };
 
@@ -246,7 +246,7 @@ Particle.prototype.getPosition = function getPosition() {
  * @return {Particle} this
  * @return {Particle} this
  */
-Particle.prototype.setPosition = function setPosition(x, y, z) {
+setPosition(x, y, z) {
     this.position.set(x, y, z);
     return this;
 };
@@ -257,7 +257,7 @@ Particle.prototype.setPosition = function setPosition(x, y, z) {
  * @method
  * @return {Vec3} velocity
  */
-Particle.prototype.getVelocity = function getVelocity() {
+getVelocity() {
     return this.velocity;
 };
 
@@ -270,7 +270,7 @@ Particle.prototype.getVelocity = function getVelocity() {
  * @param {Number} z the z coordinate for velocity
  * @return {Particle} this
  */
-Particle.prototype.setVelocity = function setVelocity(x, y, z) {
+setVelocity(x, y, z) {
     this.velocity.set(x, y, z);
     Vec3.scale(this.velocity, this.mass, this.momentum);
     return this;
@@ -282,7 +282,7 @@ Particle.prototype.setVelocity = function setVelocity(x, y, z) {
  * @method
  * @return {Vec3} momentum
  */
-Particle.prototype.getMomentum = function getMomentum() {
+getMomentum() {
     return this.momentum;
 };
 
@@ -295,7 +295,7 @@ Particle.prototype.getMomentum = function getMomentum() {
  * @param {Number} z the z coordinate for momentum
  * @return {Particle} this
  */
-Particle.prototype.setMomentum = function setMomentum(x, y, z) {
+setMomentum(x, y, z) {
     this.momentum.set(x, y, z);
     Vec3.scale(this.momentum, this.inverseMass, this.velocity);
     return this;
@@ -307,7 +307,7 @@ Particle.prototype.setMomentum = function setMomentum(x, y, z) {
  * @method
  * @return {Quaternion} orientation
  */
-Particle.prototype.getOrientation = function getOrientation() {
+getOrientation() {
     return this.orientation;
 };
 
@@ -321,7 +321,7 @@ Particle.prototype.getOrientation = function getOrientation() {
  * @param {Number} z The z component.
  * @return {Particle} this
  */
-Particle.prototype.setOrientation = function setOrientation(w,x,y,z) {
+setOrientation(w,x,y,z) {
     this.orientation.set(w,x,y,z).normalize();
     this.updateInertia();
     return this;
@@ -333,7 +333,7 @@ Particle.prototype.setOrientation = function setOrientation(w,x,y,z) {
  * @method
  * @return {Vec3} angularVelocity
  */
-Particle.prototype.getAngularVelocity = function getAngularVelocity() {
+getAngularVelocity() {
     return this.angularVelocity;
 };
 
@@ -346,7 +346,7 @@ Particle.prototype.getAngularVelocity = function getAngularVelocity() {
  * @param {Number} z The z component.
  * @return {Particle} this
  */
-Particle.prototype.setAngularVelocity = function setAngularVelocity(x,y,z) {
+setAngularVelocity(x,y,z) {
     this.angularVelocity.set(x,y,z);
     var I = Mat33.inverse(this.inverseInertia, MAT1_REGISTER);
     if (I) I.vectorMultiply(this.angularVelocity, this.angularMomentum);
@@ -360,7 +360,7 @@ Particle.prototype.setAngularVelocity = function setAngularVelocity(x,y,z) {
  * @method
  * @return {Vec3} angular momentum
  */
-Particle.prototype.getAngularMomentum = function getAngularMomentum() {
+getAngularMomentum() {
     return this.angularMomentum;
 };
 
@@ -373,7 +373,7 @@ Particle.prototype.getAngularMomentum = function getAngularMomentum() {
  * @param {Number} z The z component.
  * @return {Particle} this
  */
-Particle.prototype.setAngularMomentum = function setAngularMomentum(x,y,z) {
+setAngularMomentum(x,y,z) {
     this.angularMomentum.set(x,y,z);
     this.inverseInertia.vectorMultiply(this.angularMomentum, this.angularVelocity);
     return this;
@@ -385,7 +385,7 @@ Particle.prototype.setAngularMomentum = function setAngularMomentum(x,y,z) {
  * @method
  * @return {Vec3} force
  */
-Particle.prototype.getForce = function getForce() {
+getForce() {
     return this.force;
 };
 
@@ -398,7 +398,7 @@ Particle.prototype.getForce = function getForce() {
  * @param {Number} z The z component.
  * @return {Particle} this
  */
-Particle.prototype.setForce = function setForce(x, y, z) {
+setForce(x, y, z) {
     this.force.set(x, y, z);
     return this;
 };
@@ -409,7 +409,7 @@ Particle.prototype.setForce = function setForce(x, y, z) {
  * @method
  * @return {Vec3} torque
  */
-Particle.prototype.getTorque = function getTorque() {
+getTorque() {
     return this.torque;
 };
 
@@ -422,7 +422,7 @@ Particle.prototype.getTorque = function getTorque() {
  * @param {Number} z The z component.
  * @return {Particle} this
  */
-Particle.prototype.setTorque = function setTorque(x, y, z) {
+setTorque(x, y, z) {
     this.torque.set(x, y, z);
     return this;
 };
@@ -435,7 +435,7 @@ Particle.prototype.setTorque = function setTorque(x, y, z) {
  * @param {Vec3} force Force to apply.
  * @return {Particle} this
  */
-Particle.prototype.applyForce = function applyForce(force) {
+applyForce(force) {
     this.force.add(force);
     return this;
 };
@@ -447,7 +447,7 @@ Particle.prototype.applyForce = function applyForce(force) {
  * @param {Vec3} torque Torque to apply.
  * @return {Particle} this
  */
-Particle.prototype.applyTorque = function applyTorque(torque) {
+applyTorque(torque) {
     this.torque.add(torque);
     return this;
 };
@@ -459,7 +459,7 @@ Particle.prototype.applyTorque = function applyTorque(torque) {
  * @param {Vec3} impulse Impulse to apply.
  * @return {Particle} this
  */
-Particle.prototype.applyImpulse = function applyImpulse(impulse) {
+applyImpulse(impulse) {
     this.momentum.add(impulse);
     Vec3.scale(this.momentum, this.inverseMass, this.velocity);
     return this;
@@ -472,7 +472,7 @@ Particle.prototype.applyImpulse = function applyImpulse(impulse) {
  * @param {Vec3} angularImpulse Angular impulse to apply.
  * @return {Particle} this
  */
-Particle.prototype.applyAngularImpulse = function applyAngularImpulse(angularImpulse) {
+applyAngularImpulse(angularImpulse) {
     this.angularMomentum.add(angularImpulse);
     this.inverseInertia.vectorMultiply(this.angularMomentum, this.angularVelocity);
     return this;
@@ -486,7 +486,7 @@ Particle.prototype.applyAngularImpulse = function applyAngularImpulse(angularImp
  * @method
  * @return {Vec3} The zero vector.
  */
-Particle.prototype.support = function support() {
+support() {
     return ZERO_VECTOR;
 };
 
@@ -497,6 +497,8 @@ Particle.prototype.support = function support() {
  * @method
  * @return {undefined} undefined
  */
-Particle.prototype.updateShape = function updateShape() {};
+updateShape() {};
 
-module.exports = Particle;
+}
+
+export { Particle };

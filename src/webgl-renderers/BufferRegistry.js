@@ -26,7 +26,7 @@
 
 var INDICES = 'indices';
 
-var Buffer = require('./Buffer');
+import { Buffer } from './Buffer';
 
 /**
  * BufferRegistry is a class that manages allocation of buffers to
@@ -39,7 +39,8 @@ var Buffer = require('./Buffer');
  *
  * @return {undefined} undefined
  */
-function BufferRegistry(context) {
+class BufferRegistry {
+  constructor(context) {
     this.gl = context;
 
     this.registry = {};
@@ -67,7 +68,7 @@ function BufferRegistry(context) {
  *
  * @return {undefined} undefined
  */
-BufferRegistry.prototype.allocate = function allocate(geometryId, name, value, spacing, dynamic) {
+allocate(geometryId, name, value, spacing, dynamic) {
     var vertexBuffers = this.registry[geometryId] || (this.registry[geometryId] = { keys: [], values: [], spacing: [], offset: [], length: [] });
 
     var j = vertexBuffers.keys.indexOf(name);
@@ -142,4 +143,6 @@ BufferRegistry.prototype.allocate = function allocate(geometryId, name, value, s
     vertexBuffers.values[j].subData();
 };
 
-module.exports = BufferRegistry;
+}
+
+export { BufferRegistry };

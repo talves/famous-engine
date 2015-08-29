@@ -26,12 +26,12 @@
 
 'use strict';
 
-var Node = require('./Node');
-var Dispatch = require('./Dispatch');
-var Commands = require('./Commands');
-var TransformSystem = require('./TransformSystem');
-var OpacitySystem = require('./OpacitySystem');
-var SizeSystem = require('./SizeSystem');
+import { Node } from './Node';
+import { Dispatch } from './Dispatch';
+import { Commands } from './Commands';
+import { TransformSystem } from './TransformSystem';
+import { OpacitySystem } from './OpacitySystem';
+import { SizeSystem } from './SizeSystem';
 
 /**
  * Scene is the bottom of the scene graph. It is its own
@@ -48,11 +48,13 @@ var SizeSystem = require('./SizeSystem');
  *                 it needs to be able to send methods to
  *                 the renderers and update nodes in the scene graph
  */
-function Scene (selector, updater) {
+class Scene extends Node {
+  constructor(selector, updater) {
+
     if (!selector) throw new Error('Scene needs to be created with a DOM selector');
     if (!updater) throw new Error('Scene needs to be created with a class like Famous');
 
-    Node.call(this);         // Scene inherits from node
+    super();         // Scene inherits from node
 
     this._globalUpdater = updater; // The updater that will both
                                    // send messages to the renderers
@@ -73,17 +75,12 @@ function Scene (selector, updater) {
     this.show(); // the context begins shown (it's already present in the dom)
 }
 
-// Scene inherits from node
-Scene.prototype = Object.create(Node.prototype);
-Scene.prototype.constructor = Scene;
-Scene.NO_DEFAULT_COMPONENTS = true;
-
 /**
  * Scene getUpdater function returns the passed in updater
  *
  * @return {Famous} the updater for this Scene
  */
-Scene.prototype.getUpdater = function getUpdater () {
+getUpdater() {
     return this._updater;
 };
 
@@ -92,7 +89,7 @@ Scene.prototype.getUpdater = function getUpdater () {
  *
  * @return {String} dom selector
  */
-Scene.prototype.getSelector = function getSelector () {
+getSelector() {
     return this._selector;
 };
 
@@ -103,7 +100,7 @@ Scene.prototype.getSelector = function getSelector () {
  * @return {Dispatch} the Scene's Dispatch
  * @deprecated
  */
-Scene.prototype.getDispatch = function getDispatch () {
+getDispatch() {
     console.warn('Scene#getDispatch is deprecated, require the dispatch directly');
     return Dispatch;
 };
@@ -118,7 +115,7 @@ Scene.prototype.getDispatch = function getDispatch () {
  *
  * @return {undefined} undefined
  */
-Scene.prototype.onReceive = function onReceive (event, payload) {
+onReceive(event, payload) {
     // TODO: In the future the dom element that the context is attached to
     // should have a representation as a component. It would be render sized
     // and the context would receive its size the same way that any render size
@@ -140,7 +137,7 @@ Scene.prototype.onReceive = function onReceive (event, payload) {
 };
 
 
-Scene.prototype.mount = function mount (path) {
+mount(path) {
     if (this.isMounted())
         throw new Error('Scene is already mounted at: ' + this.getLocation());
     Dispatch.mount(path, this);
@@ -152,4 +149,8 @@ Scene.prototype.mount = function mount (path) {
     SizeSystem.registerSizeAtPath(path);
 };
 
-module.exports = Scene;
+}
+
+Scene.NO_DEFAULT_COMPONENTS = true;
+
+export { Scene };

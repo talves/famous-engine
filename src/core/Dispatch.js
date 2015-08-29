@@ -24,8 +24,8 @@
 
 'use strict';
 
-var Event = require('./Event');
-var PathUtils = require('./Path');
+import  { Event } from './Event';
+import { Path as PathUtils } from './Path';
 
 /**
  * The Dispatch class is used to propogate events down the
@@ -35,7 +35,8 @@ var PathUtils = require('./Path');
  * @param {Scene} context The context on which it operates
  * @constructor
  */
-function Dispatch () {
+class Dispatch {
+  constructor() {
     this._nodes = {}; // a container for constant time lookup of nodes
 
                       // The queue is used for two purposes
@@ -45,6 +46,9 @@ function Dispatch () {
                       // 2. It is used to assist dispatching
                       //    such that it is possible to do a breadth first
                       //    traversal of the scene graph.
+
+    this.queues = [];
+
 }
 
 /**
@@ -58,7 +62,7 @@ function Dispatch () {
  *
  * @return {undefined} undefined
  */
-Dispatch.prototype._setUpdater = function _setUpdater (updater) {
+_setUpdater(updater) {
     this._updater = updater;
 
     for (var key in this._nodes) this._nodes[key]._setUpdater(updater);
@@ -77,7 +81,7 @@ Dispatch.prototype._setUpdater = function _setUpdater (updater) {
  *
  * @return {void}
  */
-Dispatch.prototype.mount = function mount (path, node) {
+mount(path, node) {
     if (!node) throw new Error('Dispatch: no node passed to mount at: ' + path);
     if (this._nodes[path])
         throw new Error('Dispatch: there is a node already registered at: ' + path);
@@ -134,7 +138,7 @@ Dispatch.prototype.mount = function mount (path, node) {
  *
  * @param {String} path at which to begin dismounting
  */
-Dispatch.prototype.dismount = function dismount (path) {
+dismount(path) {
     var node = this._nodes[path];
 
     if (!node)
@@ -182,7 +186,7 @@ Dispatch.prototype.dismount = function dismount (path) {
  *
  * @param {String} path at which to look up the node
  */
-Dispatch.prototype.getNode = function getNode (path) {
+getNode(path) {
     return this._nodes[path];
 };
 
@@ -196,7 +200,7 @@ Dispatch.prototype.getNode = function getNode (path) {
  *
  * @param {String} path the path of the node to show
  */
-Dispatch.prototype.show = function show (path) {
+show(path) {
     var node = this._nodes[path];
 
     if (!node)
@@ -232,7 +236,7 @@ Dispatch.prototype.show = function show (path) {
  *
  * @param {String} path the path of the node to hide
  */
-Dispatch.prototype.hide = function hide (path) {
+hide(path) {
     var node = this._nodes[path];
 
     if (!node)
@@ -266,7 +270,7 @@ Dispatch.prototype.hide = function hide (path) {
  *
  * @return {Node | undefined} The node at the requested path
  */
-Dispatch.prototype.lookupNode = function lookupNode (location) {
+lookupNode(location) {
     if (!location) throw new Error('lookupNode must be called with a path');
 
     var path = allocQueue();
@@ -294,7 +298,7 @@ Dispatch.prototype.lookupNode = function lookupNode (location) {
  *
  * @return {undefined} undefined
  */
-Dispatch.prototype.dispatch = function dispatch (path, event, payload) {
+dispatch(path, event, payload) {
     if (!path) throw new Error('dispatch requires a path as it\'s first argument');
     if (!event) throw new Error('dispatch requires an event name as it\'s second argument');
 
@@ -338,7 +342,7 @@ Dispatch.prototype.dispatch = function dispatch (path, event, payload) {
  *
  * @return {undefined} undefined
  */
-Dispatch.prototype.dispatchUIEvent = function dispatchUIEvent (path, event, payload) {
+dispatchUIEvent(path, event, payload) {
     if (!path) throw new Error('dispatchUIEvent needs a valid path to dispatch to');
     if (!event) throw new Error('dispatchUIEvent needs an event name as its second argument');
     var node;
@@ -369,6 +373,7 @@ Dispatch.prototype.dispatchUIEvent = function dispatchUIEvent (path, event, payl
     }
 };
 
+}
 var queues = [];
 
 /**
@@ -459,5 +464,5 @@ function breadthFirstNext (queue) {
     return child;
 }
 
-
-module.exports = new Dispatch();
+var newDispatch = new Dispatch();
+export { newDispatch as Dispatch };

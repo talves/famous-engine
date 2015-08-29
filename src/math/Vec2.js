@@ -32,7 +32,8 @@
  * @param {Number} x The x component.
  * @param {Number} y The y component.
  */
-var Vec2 = function(x, y) {
+class Vec2 {
+  constructor(x, y) {
     if (x instanceof Array || x instanceof Float32Array) {
         this.x = x[0] || 0;
         this.y = x[1] || 0;
@@ -53,7 +54,7 @@ var Vec2 = function(x, y) {
  *
  * @return {Vec2} this
  */
-Vec2.prototype.set = function set(x, y) {
+set(x, y) {
     if (x != null) this.x = x;
     if (y != null) this.y = y;
     return this;
@@ -68,7 +69,7 @@ Vec2.prototype.set = function set(x, y) {
  *
  * @return {Vec2} this
  */
-Vec2.prototype.add = function add(v) {
+add(v) {
     this.x += v.x;
     this.y += v.y;
     return this;
@@ -83,7 +84,7 @@ Vec2.prototype.add = function add(v) {
  *
  * @return {Vec2} this
  */
-Vec2.prototype.subtract = function subtract(v) {
+subtract(v) {
     this.x -= v.x;
     this.y -= v.y;
     return this;
@@ -98,7 +99,7 @@ Vec2.prototype.subtract = function subtract(v) {
  *
  * @return {Vec2} this
  */
-Vec2.prototype.scale = function scale(s) {
+scale(s) {
     if (s instanceof Vec2) {
         this.x *= s.x;
         this.y *= s.y;
@@ -119,7 +120,7 @@ Vec2.prototype.scale = function scale(s) {
  *
  * @return {Vec2} this
  */
-Vec2.prototype.rotate = function(theta) {
+rotate(theta) {
     var x = this.x;
     var y = this.y;
 
@@ -141,7 +142,7 @@ Vec2.prototype.rotate = function(theta) {
  *
  * @return {Vec2} this
  */
-Vec2.prototype.dot = function(v) {
+dot(v) {
     return this.x * v.x + this.y * v.y;
 };
 
@@ -154,7 +155,7 @@ Vec2.prototype.dot = function(v) {
  *
  * @return {Vec2} this
  */
-Vec2.prototype.cross = function(v) {
+cross(v) {
     return this.x * v.y - this.y * v.x;
 };
 
@@ -165,7 +166,7 @@ Vec2.prototype.cross = function(v) {
  *
  * @return {Vec2} this
  */
-Vec2.prototype.invert = function invert() {
+invert() {
     this.x *= -1;
     this.y *= -1;
     return this;
@@ -180,7 +181,7 @@ Vec2.prototype.invert = function invert() {
  *
  * @return {Vec2} this
  */
-Vec2.prototype.map = function map(fn) {
+map(fn) {
     this.x = fn(this.x);
     this.y = fn(this.y);
     return this;
@@ -193,7 +194,7 @@ Vec2.prototype.map = function map(fn) {
  *
  * @return {Number} the length of the vector
  */
-Vec2.prototype.length = function length() {
+length() {
     var x = this.x;
     var y = this.y;
 
@@ -209,7 +210,7 @@ Vec2.prototype.length = function length() {
  *
  * @return {Vec2} this
  */
-Vec2.prototype.copy = function copy(v) {
+copy(v) {
     this.x = v.x;
     this.y = v.y;
     return this;
@@ -222,7 +223,7 @@ Vec2.prototype.copy = function copy(v) {
  *
  * @return {Vec2} this
  */
-Vec2.prototype.clear = function clear() {
+clear() {
     this.x = 0;
     this.y = 0;
     return this;
@@ -235,7 +236,7 @@ Vec2.prototype.clear = function clear() {
  *
  * @return {Boolean} whether or not the length is 0
  */
-Vec2.prototype.isZero = function isZero() {
+isZero() {
     if (this.x !== 0 || this.y !== 0) return false;
     else return true;
 };
@@ -247,9 +248,11 @@ Vec2.prototype.isZero = function isZero() {
  *
  * @return {Array} the Vec to as an array
  */
-Vec2.prototype.toArray = function toArray() {
+toArray() {
     return [this.x, this.y];
 };
+
+}
 
 /**
  * Normalize the input Vec2.
@@ -366,4 +369,4 @@ Vec2.cross = function(v1,v2) {
     return v1.x * v2.y - v1.y * v2.x;
 };
 
-module.exports = Vec2;
+export { Vec2 };

@@ -24,8 +24,8 @@
 
 'use strict';
 
-var Light = require('./Light');
-var TransformSystem = require('../../core/TransformSystem');
+import { Light } from './Light';
+import { TransformSystem } from '../../core/TransformSystem';
 
 /**
  * PointLight extends the functionality of Light. PointLight is a light source
@@ -39,19 +39,10 @@ var TransformSystem = require('../../core/TransformSystem');
  *
  * @return {undefined} undefined
  */
-function PointLight(node) {
-    Light.call(this, node);
+class PointLight extends Light {
+  constructor(node) {
+    super(node);
 }
-
-/**
- * Extends Light constructor
- */
-PointLight.prototype = Object.create(Light.prototype);
-
-/**
- * Sets PointLight as the constructor
- */
-PointLight.prototype.constructor = PointLight;
 
 /**
  * Receive the notice that the node you are on has been mounted.
@@ -61,7 +52,7 @@ PointLight.prototype.constructor = PointLight;
  *
  * @return {undefined} undefined
  */
-PointLight.prototype.onMount = function onMount(node, id) {
+onMount(node, id) {
     this._id = id;
     TransformSystem.makeBreakPointAt(this._node.getLocation());
     this.onTransformChange(TransformSystem.get(this._node.getLocation()));
@@ -76,7 +67,7 @@ PointLight.prototype.onMount = function onMount(node, id) {
  *
  * @return {undefined} undefined
  */
-PointLight.prototype.onTransformChange = function onTransformChange (transform) {
+onTransformChange(transform) {
     if (!this._requestingUpdate) {
         this._node.requestUpdate(this._id);
         this._requestingUpdate = true;
@@ -88,4 +79,6 @@ PointLight.prototype.onTransformChange = function onTransformChange (transform) 
     this.queue.push(transform[14]);
 };
 
-module.exports = PointLight;
+}
+
+export { PointLight };

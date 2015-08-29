@@ -92,4 +92,4 @@ function _processErrors(errors, source) {
     }
 }
 
-module.exports = Debug;
+export { Debug };

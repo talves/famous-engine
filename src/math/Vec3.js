@@ -33,11 +33,12 @@
  * @param {Number} y The y component.
  * @param {Number} z The z component.
  */
-var Vec3 = function(x ,y, z){
+class Vec3 {
+  constructor(x ,y, z) {
     this.x = x || 0;
     this.y = y || 0;
     this.z = z || 0;
-};
+}
 
 /**
  * Set the components of the current Vec3.
@@ -50,7 +51,7 @@ var Vec3 = function(x ,y, z){
  *
  * @return {Vec3} this
  */
-Vec3.prototype.set = function set(x, y, z) {
+set(x, y, z) {
     if (x != null) this.x = x;
     if (y != null) this.y = y;
     if (z != null) this.z = z;
@@ -67,7 +68,7 @@ Vec3.prototype.set = function set(x, y, z) {
  *
  * @return {Vec3} this
  */
-Vec3.prototype.add = function add(v) {
+add(v) {
     this.x += v.x;
     this.y += v.y;
     this.z += v.z;
@@ -84,7 +85,7 @@ Vec3.prototype.add = function add(v) {
  *
  * @return {Vec3} this
  */
-Vec3.prototype.subtract = function subtract(v) {
+subtract(v) {
     this.x -= v.x;
     this.y -= v.y;
     this.z -= v.z;
@@ -101,7 +102,7 @@ Vec3.prototype.subtract = function subtract(v) {
  *
  * @return {Vec3} this
  */
-Vec3.prototype.rotateX = function rotateX(theta) {
+rotateX(theta) {
     var y = this.y;
     var z = this.z;
 
@@ -123,7 +124,7 @@ Vec3.prototype.rotateX = function rotateX(theta) {
  *
  * @return {Vec3} this
  */
-Vec3.prototype.rotateY = function rotateY(theta) {
+rotateY(theta) {
     var x = this.x;
     var z = this.z;
 
@@ -145,7 +146,7 @@ Vec3.prototype.rotateY = function rotateY(theta) {
  *
  * @return {Vec3} this
  */
-Vec3.prototype.rotateZ = function rotateZ(theta) {
+rotateZ(theta) {
     var x = this.x;
     var y = this.y;
 
@@ -167,7 +168,7 @@ Vec3.prototype.rotateZ = function rotateZ(theta) {
  *
  * @return {Vec3} this
  */
-Vec3.prototype.dot = function dot(v) {
+dot(v) {
     return this.x*v.x + this.y*v.y + this.z*v.z;
 };
 
@@ -181,7 +182,7 @@ Vec3.prototype.dot = function dot(v) {
  *
  * @return {Vec3} this
  */
-Vec3.prototype.cross = function cross(v) {
+cross(v) {
     var x = this.x;
     var y = this.y;
     var z = this.z;
@@ -205,7 +206,7 @@ Vec3.prototype.cross = function cross(v) {
  *
  * @return {Vec3} this
  */
-Vec3.prototype.scale = function scale(s) {
+scale(s) {
     this.x *= s;
     this.y *= s;
     this.z *= s;
@@ -220,7 +221,7 @@ Vec3.prototype.scale = function scale(s) {
  *
  * @return {Vec3} this
  */
-Vec3.prototype.invert = function invert() {
+invert() {
     this.x = -this.x;
     this.y = -this.y;
     this.z = -this.z;
@@ -237,7 +238,7 @@ Vec3.prototype.invert = function invert() {
  *
  * @return {Vec3} this
  */
-Vec3.prototype.map = function map(fn) {
+map(fn) {
     this.x = fn(this.x);
     this.y = fn(this.y);
     this.z = fn(this.z);
@@ -252,7 +253,7 @@ Vec3.prototype.map = function map(fn) {
  *
  * @return {Number} the magnitude of the Vec3
  */
-Vec3.prototype.length = function length() {
+length() {
     var x = this.x;
     var y = this.y;
     var z = this.z;
@@ -267,7 +268,7 @@ Vec3.prototype.length = function length() {
  *
  * @return {Number} magnitude of the Vec3 squared
  */
-Vec3.prototype.lengthSq = function lengthSq() {
+lengthSq() {
     var x = this.x;
     var y = this.y;
     var z = this.z;
@@ -284,7 +285,7 @@ Vec3.prototype.lengthSq = function lengthSq() {
  *
  * @return {Vec3} this
  */
-Vec3.prototype.copy = function copy(v) {
+copy(v) {
     this.x = v.x;
     this.y = v.y;
     this.z = v.z;
@@ -298,7 +299,7 @@ Vec3.prototype.copy = function copy(v) {
  *
  * @return {Vec3} this
  */
-Vec3.prototype.clear = function clear() {
+clear() {
     this.x = 0;
     this.y = 0;
     this.z = 0;
@@ -312,7 +313,7 @@ Vec3.prototype.clear = function clear() {
  *
  * @return {Boolean} whether or not the magnitude is zero
  */
-Vec3.prototype.isZero = function isZero() {
+isZero() {
     return this.x === 0 && this.y === 0 && this.z === 0;
 };
 
@@ -323,7 +324,7 @@ Vec3.prototype.isZero = function isZero() {
  *
  * @return {Array} a three element array representing the components of the Vec3
  */
-Vec3.prototype.toArray = function toArray() {
+toArray() {
     return [this.x, this.y, this.z];
 };
 
@@ -334,7 +335,7 @@ Vec3.prototype.toArray = function toArray() {
  *
  * @return {Vec3} this
  */
-Vec3.prototype.normalize = function normalize() {
+normalize() {
     var x = this.x;
     var y = this.y;
     var z = this.z;
@@ -358,7 +359,7 @@ Vec3.prototype.normalize = function normalize() {
  *
  * @return {Vec3} this
  */
-Vec3.prototype.applyRotation = function applyRotation(q) {
+applyRotation(q) {
     var cw = q.w;
     var cx = -q.x;
     var cy = -q.y;
@@ -393,7 +394,7 @@ Vec3.prototype.applyRotation = function applyRotation(q) {
  *
  * @return {Vec3} this
  */
-Vec3.prototype.applyMatrix = function applyMatrix(matrix) {
+applyMatrix(matrix) {
     var M = matrix.get();
 
     var x = this.x;
@@ -405,6 +406,8 @@ Vec3.prototype.applyMatrix = function applyMatrix(matrix) {
     this.z = M[6]*x + M[7]*y + M[8]*z;
     return this;
 };
+
+}
 
 /**
  * Normalize the input Vec3.
@@ -583,7 +586,7 @@ Vec3.cross = function cross(v1, v2, output) {
  * @param {Vec3} v2 The right Vec3.
  * @param {Vec3} output Vec3 in which to place the result.
  *
- * @return {Object} the object the result of the cross product was placed into 
+ * @return {Object} the object the result of the cross product was placed into
  */
 Vec3.project = function project(v1, v2, output) {
     var x1 = v1.x;
@@ -603,4 +606,4 @@ Vec3.project = function project(v1, v2, output) {
     return output;
 };
 
-module.exports = Vec3;
+export { Vec3 };

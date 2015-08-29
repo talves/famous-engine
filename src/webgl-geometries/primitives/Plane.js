@@ -24,8 +24,8 @@
 
 'use strict';
 
-var Geometry = require('../Geometry');
-var GeometryHelper = require('../GeometryHelper');
+import { Geometry } from '../Geometry';
+import { GeometryHelper } from '../GeometryHelper';
 
 /**
  * This function returns a new static geometry, which is passed
@@ -39,8 +39,10 @@ var GeometryHelper = require('../GeometryHelper');
  *
  * @return {Object} constructed geometry
  */
-function Plane(options) {
-    if (!(this instanceof Plane)) return new Plane(options);
+ class Plane extends Geometry {
+   constructor(options) {
+     //handled by es6 transpiler
+    //if (!(this instanceof Plane)) return new Plane(options);
 
     options = options || {};
     var detailX = options.detailX || options.detail || 1;
@@ -85,10 +87,9 @@ function Plane(options) {
         { name: 'indices', data: indices, size: 1 }
     ];
 
-    Geometry.call(this, options);
+    super(options);
 }
 
-Plane.prototype = Object.create(Geometry.prototype);
-Plane.prototype.constructor = Plane;
+}
 
-module.exports = Plane;
+export { Plane };

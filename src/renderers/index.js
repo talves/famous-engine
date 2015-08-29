@@ -24,9 +24,12 @@
 
 'use strict';
 
-module.exports = {
-    Compositor: require('./Compositor'),
-    Context: require('./Context'),
-    UIManager: require('./UIManager'),
-    injectCSS: require('./inject-css')
-};
+import { Compositor } from './Compositor';
+import { Context } from './Context';
+import { UIManager } from './UIManager';
+import { injectCSS } from './inject-css';
+
+export { Compositor };
+export { Context };
+export { UIManager };
+export { injectCSS };

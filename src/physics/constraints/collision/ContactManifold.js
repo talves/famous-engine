@@ -24,15 +24,9 @@
 
 'use strict';
 
-var Vec3 = require('../../../math/Vec3');
-var ObjectManager = require('../../../utilities/ObjectManager');
-
-ObjectManager.register('Manifold', Manifold);
-ObjectManager.register('Contact', Contact);
-var oMRequestManifold = ObjectManager.requestManifold;
-var oMRequestContact = ObjectManager.requestContact;
-var oMFreeManifold = ObjectManager.freeManifold;
-var oMFreeContact = ObjectManager.freeContact;
+import { Vec3 } from '../../../math/Vec3';
+import { Collision } from '../Collision';
+import { ObjectManager } from '../../../utilities/ObjectManager';
 
 /**
  * Helper function to clamp a value to a given range.
@@ -65,322 +59,6 @@ var DRIFTA_REGISTER = new Vec3();
 var DRIFTB_REGISTER = new Vec3();
 
 /**
- * Table maintaining and managing current contact manifolds.
- *
- * @class ContactManifoldTable
- */
-function ContactManifoldTable() {
-    this.manifolds = [];
-    this.collisionMatrix = {};
-    this._IDPool = [];
-}
-
-/**
- * Create a new contact manifold. Tracked by the collisionMatrix according to
- * its low-high ordered ID pair.
- *
- * @method
- * @param {Number} lowID The lower id of the pair of bodies.
- * @param {Number} highID The higher id of the pair of bodies.
- * @param {Particle} bodyA The first body.
- * @param {Particle} bodyB The second body.
- * @return {ContactManifold} The new manifold.
- */
-ContactManifoldTable.prototype.addManifold = function addManifold(lowID, highID, bodyA, bodyB) {
-    var collisionMatrix = this.collisionMatrix;
-    collisionMatrix[lowID] = collisionMatrix[lowID] || {};
-
-    var index = this._IDPool.length ? this._IDPool.pop() : this.manifolds.length;
-    this.collisionMatrix[lowID][highID] = index;
-    var manifold = oMRequestManifold().reset(lowID, highID, bodyA, bodyB);
-    this.manifolds[index] = manifold;
-
-    return manifold;
-};
-
-/**
- * Remove a manifold and free it for later reuse.
- *
- * @method
- * @param {ContactManifold} manifold The manifold to remove.
- * @param {Number} index The index of the manifold.
- * @return {undefined} undefined
- */
-ContactManifoldTable.prototype.removeManifold = function removeManifold(manifold, index) {
-    var collisionMatrix = this.collisionMatrix;
-
-    this.manifolds[index] = null;
-    collisionMatrix[manifold.lowID][manifold.highID] = null;
-    this._IDPool.push(index);
-
-    oMFreeManifold(manifold);
-};
-
-/**
- * Update each of the manifolds, removing those that no longer contain contact points.
- *
- * @method
- * @param {Number} dt Delta time.
- * @return {undefined} undefined
- */
-ContactManifoldTable.prototype.update = function update(dt) {
-    var manifolds = this.manifolds;
-    for (var i = 0, len = manifolds.length; i < len; i++) {
-        var manifold = manifolds[i];
-        if (!manifold) continue;
-        var persists = manifold.update(dt);
-        if (!persists) {
-            this.removeManifold(manifold, i);
-            manifold.bodyA.events.trigger('collision:end', manifold);
-            manifold.bodyB.events.trigger('collision:end', manifold);
-        }
-    }
-};
-
-/**
- * Warm start all Contacts, and perform precalculations needed in the iterative solver.
- *
- * @method
- * @param {Number} dt Delta time.
- * @return {undefined} undefined
- */
-ContactManifoldTable.prototype.prepContacts = function prepContacts(dt) {
-    var manifolds = this.manifolds;
-    for (var i = 0, len = manifolds.length; i < len; i++) {
-        var manifold = manifolds[i];
-        if (!manifold) continue;
-        var contacts = manifold.contacts;
-        for (var j = 0, lenj = contacts.length; j < lenj; j++) {
-            var contact = contacts[j];
-            if (!contact) continue;
-            contact.update(dt);
-        }
-    }
-};
-
-/**
- * Resolve all contact manifolds.
- *
- * @method
- * @return {undefined} undefined
- */
-ContactManifoldTable.prototype.resolveManifolds = function resolveManifolds() {
-    var manifolds = this.manifolds;
-    for (var i = 0, len = manifolds.length; i < len; i++) {
-        var manifold = manifolds[i];
-        if (!manifold) continue;
-        manifold.resolveContacts();
-    }
-};
-
-/**
- * Create a new Contact, also creating a new Manifold if one does not already exist for that pair.
- *
- * @method
- * @param {Body} bodyA The first body.
- * @param {Body} bodyB The second body.
- * @param {CollisionData} collisionData The data for the collision.
- * @return {undefined} undefined
- */
-ContactManifoldTable.prototype.registerContact = function registerContact(bodyA, bodyB, collisionData) {
-    var lowID;
-    var highID;
-
-    if (bodyA._ID < bodyB._ID) {
-        lowID = bodyA._ID;
-        highID = bodyB._ID;
-    }
-    else {
-        lowID = bodyB._ID;
-        highID = bodyA._ID;
-    }
-
-    var manifolds = this.manifolds;
-    var collisionMatrix = this.collisionMatrix;
-    var manifold;
-    if (!collisionMatrix[lowID] || collisionMatrix[lowID][highID] == null) {
-        manifold = this.addManifold(lowID, highID, bodyA, bodyB);
-        manifold.addContact(bodyA, bodyB, collisionData);
-        bodyA.events.trigger('collision:start', manifold);
-        bodyB.events.trigger('collision:start', manifold);
-    }
-    else {
-        manifold = manifolds[ collisionMatrix[lowID][highID] ];
-        manifold.contains(collisionData);
-        manifold.addContact(bodyA, bodyB, collisionData);
-    }
-};
-
-var THRESHOLD = 10;
-
-/**
- * Class to keep track of Contact points.
- * @class manifold
- * @param {Number} lowID The lower id of the pair of bodies.
- * @param {Number} highID The higher id of the pair of bodies.
- * @param {Particle} bodyA The first body.
- * @param {Particle} bodyB The second body.
- */
-function Manifold(lowID, highID, bodyA, bodyB) {
-    this.lowID = lowID;
-    this.highID = highID;
-
-    this.contacts = [];
-    this.numContacts = 0;
-
-    this.bodyA = bodyA;
-    this.bodyB = bodyB;
-
-    this.lru = 0;
-}
-
-/**
- * Used by ObjectManager to reset the object with different data.
- *
- * @method
- * @param {Number} lowID The lower id of the pair of bodies.
- * @param {Number} highID The higher id of the pair of bodies.
- * @param {Particle} bodyA The first body.
- * @param {Particle} bodyB The second body.
- * @return {Manifold} this
- */
-Manifold.prototype.reset = function reset(lowID, highID, bodyA, bodyB) {
-    this.lowID = lowID;
-    this.highID = highID;
-
-    this.contacts = [];
-    this.numContacts = 0;
-
-    this.bodyA = bodyA;
-    this.bodyB = bodyB;
-
-    this.lru = 0;
-
-    return this;
-};
-
-/**
- * Create a new Contact point and add it to the Manifold.
- *
- * @method
- * @param {Body} bodyA The first body.
- * @param {Body} bodyB The second body.
- * @param {CollisionData} collisionData The data for the collision.
- * @return {undefined} undefined
- */
-Manifold.prototype.addContact = function addContact(bodyA, bodyB, collisionData) {
-    var index = this.lru;
-    if (this.contacts[index]) this.removeContact(this.contacts[index], index);
-    this.contacts[index] = oMRequestContact().reset(bodyA, bodyB, collisionData);
-    this.lru = (this.lru + 1) % 4;
-    this.numContacts++;
-};
-
-/**
- * Remove and free a Contact for later reuse.
- *
- * @method
- * @param {Contact} contact The Contact to remove.
- * @param {Number} index The index of the Contact.
- * @return {undefined} undefined
- */
-Manifold.prototype.removeContact = function removeContact(contact, index) {
-    this.contacts[index] = null;
-    this.numContacts--;
-
-    ObjectManager.freeCollisionData(contact.data);
-    contact.data = null;
-    oMFreeContact(contact);
-};
-
-/**
- * Check if a Contact already exists for the collision data within a certain tolerance.
- * If found, remove the Contact.
- *
- * @method
- * @param {CollisionData} collisionData The data for the collision.
- * @return {Boolean} The containment check.
- */
-Manifold.prototype.contains = function contains(collisionData) {
-    var wA = collisionData.worldContactA;
-    var wB = collisionData.worldContactB;
-
-    var contacts = this.contacts;
-    for (var i = 0, len = contacts.length; i < len; i++) {
-        var contact = contacts[i];
-        if (!contact) continue;
-        var data = contact.data;
-        var distA = Vec3.subtract(data.worldContactA, wA, DRIFTA_REGISTER).length();
-        var distB = Vec3.subtract(data.worldContactB, wB, DRIFTB_REGISTER).length();
-
-        if (distA < THRESHOLD || distB < THRESHOLD) {
-            this.removeContact(contact, i);
-            return true;
-        }
-    }
-
-    return false;
-};
-
-/**
- * Remove Contacts the local points of which have drifted above a certain tolerance.
- * Return true or false to indicate that the Manifold still contains at least one Contact.
- *
- * @method
- * @return {Boolean} Whether or not the manifold persists.
- */
-Manifold.prototype.update = function update() {
-    var contacts = this.contacts;
-    var bodyA = this.bodyA;
-    var bodyB = this.bodyB;
-
-    var posA = bodyA.position;
-    var posB = bodyB.position;
-
-    for (var i = 0, len = contacts.length; i < len; i++) {
-        var contact = contacts[i];
-        if (!contact) continue;
-        var data = contact.data;
-        var n = data.normal;
-        var rA = data.localContactA;
-        var rB = data.localContactB;
-
-        var cached_wA = data.worldContactA;
-        var cached_wB = data.worldContactB;
-
-        var wA = Vec3.add(posA, rA, WA_REGISTER);
-        var wB = Vec3.add(posB, rB, WB_REGISTER);
-
-        var notPenetrating = Vec3.dot(Vec3.subtract(wB, wA, PENETRATING_REGISTER), n) > 0;
-
-        var driftA = Vec3.subtract(cached_wA, wA, DRIFTA_REGISTER);
-        var driftB = Vec3.subtract(cached_wB, wB, DRIFTB_REGISTER);
-
-
-        if (driftA.length() >= THRESHOLD || driftB.length() >= THRESHOLD || notPenetrating) {
-            this.removeContact(contact, i);
-        }
-    }
-
-    if (this.numContacts) return true;
-    else return false;
-};
-
-/**
- * Resolve all contacts.
- *
- * @method
- * @return {undefined} undefined
- */
-Manifold.prototype.resolveContacts = function resolveContacts() {
-    var contacts = this.contacts;
-    for (var i = 0, len = contacts.length; i < len; i++) {
-        if (!contacts[i]) continue;
-        contacts[i].resolve();
-    }
-};
-
-/**
  * Class to maintain collision data between two bodies.
  * The end of the resolve chain, and where the actual impulses are applied.
  *
@@ -389,7 +67,8 @@ Manifold.prototype.resolveContacts = function resolveContacts() {
  * @param {Body} bodyB The second body.
  * @param {CollisionData} collisionData The data for the collision.
  */
-function Contact(bodyA, bodyB, collisionData) {
+class Contact {
+  constructor(bodyA, bodyB, collisionData) {
     this.bodyA = bodyA;
     this.bodyB = bodyB;
     this.data = collisionData;
@@ -414,7 +93,7 @@ function Contact(bodyA, bodyB, collisionData) {
  * @param {CollisionData} collisionData The data for the collision.
  * @return {Contact} this
  */
-Contact.prototype.reset = function reset(bodyA, bodyB, collisionData) {
+reset(bodyA, bodyB, collisionData) {
     this.bodyA = bodyA;
     this.bodyB = bodyB;
     this.data = collisionData;
@@ -439,7 +118,7 @@ Contact.prototype.reset = function reset(bodyA, bodyB, collisionData) {
  * @method
  * @return {undefined} undefined
  */
-Contact.prototype.init = function init() {
+init() {
     var data = this.data;
     var n = data.normal;
     var t1 = new Vec3();
@@ -492,7 +171,7 @@ Contact.prototype.init = function init() {
  * @param {Number} dt Delta time.
  * @return {undefined} undefined
  */
-Contact.prototype.update = function update(dt) {
+update(dt) {
     var data = this.data;
     var bodyA = this.bodyA;
     var bodyB = this.bodyB;
@@ -540,7 +219,7 @@ Contact.prototype.update = function update(dt) {
  * @method
  * @return {undefined} undefined
  */
-Contact.prototype.resolve = function resolve() {
+resolve() {
     var data = this.data;
     var bodyA = this.bodyA;
     var bodyB = this.bodyB;
@@ -593,5 +272,336 @@ Contact.prototype.resolve = function resolve() {
     this.angImpulseA.add(angImpulseA);
     this.angImpulseB.add(angImpulseB);
 };
+}
 
-module.exports = ContactManifoldTable;
+ObjectManager.register('Contact', Contact);
+var oMRequestContact = ObjectManager.requestContact;
+var oMFreeContact = ObjectManager.freeContact;
+
+/**
+ * Table maintaining and managing current contact manifolds.
+ *
+ * @class ContactManifoldTable
+ */
+class ContactManifoldTable {
+  constructor() {
+    this.manifolds = [];
+    this.collisionMatrix = {};
+    this._IDPool = [];
+  }
+
+/**
+ * Create a new contact manifold. Tracked by the collisionMatrix according to
+ * its low-high ordered ID pair.
+ *
+ * @method
+ * @param {Number} lowID The lower id of the pair of bodies.
+ * @param {Number} highID The higher id of the pair of bodies.
+ * @param {Particle} bodyA The first body.
+ * @param {Particle} bodyB The second body.
+ * @return {ContactManifold} The new manifold.
+ */
+addManifold(lowID, highID, bodyA, bodyB) {
+    var collisionMatrix = this.collisionMatrix;
+    collisionMatrix[lowID] = collisionMatrix[lowID] || {};
+
+    var index = this._IDPool.length ? this._IDPool.pop() : this.manifolds.length;
+    this.collisionMatrix[lowID][highID] = index;
+    var manifold = oMRequestManifold().reset(lowID, highID, bodyA, bodyB);
+    this.manifolds[index] = manifold;
+
+    return manifold;
+};
+
+/**
+ * Remove a manifold and free it for later reuse.
+ *
+ * @method
+ * @param {ContactManifold} manifold The manifold to remove.
+ * @param {Number} index The index of the manifold.
+ * @return {undefined} undefined
+ */
+removeManifold(manifold, index) {
+    var collisionMatrix = this.collisionMatrix;
+
+    this.manifolds[index] = null;
+    collisionMatrix[manifold.lowID][manifold.highID] = null;
+    this._IDPool.push(index);
+
+    oMFreeManifold(manifold);
+};
+
+/**
+ * Update each of the manifolds, removing those that no longer contain contact points.
+ *
+ * @method
+ * @param {Number} dt Delta time.
+ * @return {undefined} undefined
+ */
+update(dt) {
+    var manifolds = this.manifolds;
+    for (var i = 0, len = manifolds.length; i < len; i++) {
+        var manifold = manifolds[i];
+        if (!manifold) continue;
+        var persists = manifold.update(dt);
+        if (!persists) {
+            this.removeManifold(manifold, i);
+            manifold.bodyA.events.trigger('collision:end', manifold);
+            manifold.bodyB.events.trigger('collision:end', manifold);
+        }
+    }
+};
+
+/**
+ * Warm start all Contacts, and perform precalculations needed in the iterative solver.
+ *
+ * @method
+ * @param {Number} dt Delta time.
+ * @return {undefined} undefined
+ */
+prepContacts(dt) {
+    var manifolds = this.manifolds;
+    for (var i = 0, len = manifolds.length; i < len; i++) {
+        var manifold = manifolds[i];
+        if (!manifold) continue;
+        var contacts = manifold.contacts;
+        for (var j = 0, lenj = contacts.length; j < lenj; j++) {
+            var contact = contacts[j];
+            if (!contact) continue;
+            contact.update(dt);
+        }
+    }
+};
+
+/**
+ * Resolve all contact manifolds.
+ *
+ * @method
+ * @return {undefined} undefined
+ */
+resolveManifolds() {
+    var manifolds = this.manifolds;
+    for (var i = 0, len = manifolds.length; i < len; i++) {
+        var manifold = manifolds[i];
+        if (!manifold) continue;
+        manifold.resolveContacts();
+    }
+};
+
+/**
+ * Create a new Contact, also creating a new Manifold if one does not already exist for that pair.
+ *
+ * @method
+ * @param {Body} bodyA The first body.
+ * @param {Body} bodyB The second body.
+ * @param {CollisionData} collisionData The data for the collision.
+ * @return {undefined} undefined
+ */
+registerContact(bodyA, bodyB, collisionData) {
+    var lowID;
+    var highID;
+
+    if (bodyA._ID < bodyB._ID) {
+        lowID = bodyA._ID;
+        highID = bodyB._ID;
+    }
+    else {
+        lowID = bodyB._ID;
+        highID = bodyA._ID;
+    }
+
+    var manifolds = this.manifolds;
+    var collisionMatrix = this.collisionMatrix;
+    var manifold;
+    if (!collisionMatrix[lowID] || collisionMatrix[lowID][highID] == null) {
+        manifold = this.addManifold(lowID, highID, bodyA, bodyB);
+        manifold.addContact(bodyA, bodyB, collisionData);
+        bodyA.events.trigger('collision:start', manifold);
+        bodyB.events.trigger('collision:start', manifold);
+    }
+    else {
+        manifold = manifolds[ collisionMatrix[lowID][highID] ];
+        manifold.contains(collisionData);
+        manifold.addContact(bodyA, bodyB, collisionData);
+    }
+};
+
+}
+
+var THRESHOLD = 10;
+
+/**
+ * Class to keep track of Contact points.
+ * @class manifold
+ * @param {Number} lowID The lower id of the pair of bodies.
+ * @param {Number} highID The higher id of the pair of bodies.
+ * @param {Particle} bodyA The first body.
+ * @param {Particle} bodyB The second body.
+ */
+class Manifold {
+  constructor(lowID, highID, bodyA, bodyB) {
+    this.lowID = lowID;
+    this.highID = highID;
+
+    this.contacts = [];
+    this.numContacts = 0;
+
+    this.bodyA = bodyA;
+    this.bodyB = bodyB;
+
+    this.lru = 0;
+}
+
+/**
+ * Used by ObjectManager to reset the object with different data.
+ *
+ * @method
+ * @param {Number} lowID The lower id of the pair of bodies.
+ * @param {Number} highID The higher id of the pair of bodies.
+ * @param {Particle} bodyA The first body.
+ * @param {Particle} bodyB The second body.
+ * @return {Manifold} this
+ */
+reset(lowID, highID, bodyA, bodyB) {
+    this.lowID = lowID;
+    this.highID = highID;
+
+    this.contacts = [];
+    this.numContacts = 0;
+
+    this.bodyA = bodyA;
+    this.bodyB = bodyB;
+
+    this.lru = 0;
+
+    return this;
+};
+
+/**
+ * Create a new Contact point and add it to the Manifold.
+ *
+ * @method
+ * @param {Body} bodyA The first body.
+ * @param {Body} bodyB The second body.
+ * @param {CollisionData} collisionData The data for the collision.
+ * @return {undefined} undefined
+ */
+addContact(bodyA, bodyB, collisionData) {
+    var index = this.lru;
+    if (this.contacts[index]) this.removeContact(this.contacts[index], index);
+    this.contacts[index] = oMRequestContact().reset(bodyA, bodyB, collisionData);
+    this.lru = (this.lru + 1) % 4;
+    this.numContacts++;
+};
+
+/**
+ * Remove and free a Contact for later reuse.
+ *
+ * @method
+ * @param {Contact} contact The Contact to remove.
+ * @param {Number} index The index of the Contact.
+ * @return {undefined} undefined
+ */
+removeContact(contact, index) {
+    this.contacts[index] = null;
+    this.numContacts--;
+
+    ObjectManager.freeCollisionData(contact.data);
+    contact.data = null;
+    oMFreeContact(contact);
+};
+
+/**
+ * Check if a Contact already exists for the collision data within a certain tolerance.
+ * If found, remove the Contact.
+ *
+ * @method
+ * @param {CollisionData} collisionData The data for the collision.
+ * @return {Boolean} The containment check.
+ */
+contains(collisionData) {
+    var wA = collisionData.worldContactA;
+    var wB = collisionData.worldContactB;
+
+    var contacts = this.contacts;
+    for (var i = 0, len = contacts.length; i < len; i++) {
+        var contact = contacts[i];
+        if (!contact) continue;
+        var data = contact.data;
+        var distA = Vec3.subtract(data.worldContactA, wA, DRIFTA_REGISTER).length();
+        var distB = Vec3.subtract(data.worldContactB, wB, DRIFTB_REGISTER).length();
+
+        if (distA < THRESHOLD || distB < THRESHOLD) {
+            this.removeContact(contact, i);
+            return true;
+        }
+    }
+
+    return false;
+};
+
+/**
+ * Remove Contacts the local points of which have drifted above a certain tolerance.
+ * Return true or false to indicate that the Manifold still contains at least one Contact.
+ *
+ * @method
+ * @return {Boolean} Whether or not the manifold persists.
+ */
+update() {
+    var contacts = this.contacts;
+    var bodyA = this.bodyA;
+    var bodyB = this.bodyB;
+
+    var posA = bodyA.position;
+    var posB = bodyB.position;
+
+    for (var i = 0, len = contacts.length; i < len; i++) {
+        var contact = contacts[i];
+        if (!contact) continue;
+        var data = contact.data;
+        var n = data.normal;
+        var rA = data.localContactA;
+        var rB = data.localContactB;
+
+        var cached_wA = data.worldContactA;
+        var cached_wB = data.worldContactB;
+
+        var wA = Vec3.add(posA, rA, WA_REGISTER);
+        var wB = Vec3.add(posB, rB, WB_REGISTER);
+
+        var notPenetrating = Vec3.dot(Vec3.subtract(wB, wA, PENETRATING_REGISTER), n) > 0;
+
+        var driftA = Vec3.subtract(cached_wA, wA, DRIFTA_REGISTER);
+        var driftB = Vec3.subtract(cached_wB, wB, DRIFTB_REGISTER);
+
+
+        if (driftA.length() >= THRESHOLD || driftB.length() >= THRESHOLD || notPenetrating) {
+            this.removeContact(contact, i);
+        }
+    }
+
+    if (this.numContacts) return true;
+    else return false;
+};
+
+/**
+ * Resolve all contacts.
+ *
+ * @method
+ * @return {undefined} undefined
+ */
+resolveContacts() {
+    var contacts = this.contacts;
+    for (var i = 0, len = contacts.length; i < len; i++) {
+        if (!contacts[i]) continue;
+        contacts[i].resolve();
+    }
+};
+
+}
+
+ObjectManager.register('Manifold', Manifold);
+var oMRequestManifold = ObjectManager.requestManifold;
+var oMFreeManifold = ObjectManager.freeManifold;
+
+export { ContactManifoldTable };

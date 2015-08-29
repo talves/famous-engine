@@ -24,10 +24,10 @@
 
 'use strict';
 
-var PathUtils = require('./Path');
-var Opacity = require('./Opacity');
-var Dispatch = require('./Dispatch');
-var PathStore = require('./PathStore');
+import { Path as PathUtils } from './Path';
+import { Opacity } from './Opacity';
+import { Dispatch } from './Dispatch';
+import { PathStore } from './PathStore';
 
 /**
  * The opacity class is responsible for calculating the opacity of a particular
@@ -35,7 +35,8 @@ var PathStore = require('./PathStore');
  *
  * @constructor {OpacitySystem}
  */
-function OpacitySystem () {
+class OpacitySystem {
+  constructor() {
     this.pathStore = new PathStore();
 }
 
@@ -49,7 +50,7 @@ function OpacitySystem () {
  * @param {Opacity} [opacity] opacity to register.
  * @return {undefined} undefined
  */
-OpacitySystem.prototype.registerOpacityAtPath = function registerOpacityAtPath (path, opacity) {
+registerOpacityAtPath(path, opacity) {
     if (!PathUtils.depth(path)) return this.pathStore.insert(path, opacity ? opacity : new Opacity());
 
     var parent = this.pathStore.get(PathUtils.parent(path));
@@ -71,7 +72,7 @@ OpacitySystem.prototype.registerOpacityAtPath = function registerOpacityAtPath (
  *
  * @param {String} path at which to register the opacity
  */
-OpacitySystem.prototype.deregisterOpacityAtPath = function deregisterOpacityAtPath (path) {
+deregisterOpacityAtPath(path) {
     this.pathStore.remove(path);
 };
 
@@ -88,7 +89,7 @@ OpacitySystem.prototype.deregisterOpacityAtPath = function deregisterOpacityAtPa
  *
  * @return {undefined} undefined
  */
-OpacitySystem.prototype.makeBreakPointAt = function makeBreakPointAt (path) {
+makeBreakPointAt(path) {
     var opacity = this.pathStore.get(path);
     if (!opacity) throw new Error('No opacity Registered at path: ' + path);
     opacity.setBreakPoint();
@@ -103,7 +104,7 @@ OpacitySystem.prototype.makeBreakPointAt = function makeBreakPointAt (path) {
  *
  * @return {undefined} undefined
  */
-OpacitySystem.prototype.makeCalculateWorldOpacityAt = function makeCalculateWorldOpacityAt (path) {
+makeCalculateWorldOpacityAt(path) {
         var opacity = this.pathStore.get(path);
         if (!opacity) throw new Error('No opacity opacity at path: ' + path);
         opacity.setCalculateWorldOpacity();
@@ -119,7 +120,7 @@ OpacitySystem.prototype.makeCalculateWorldOpacityAt = function makeCalculateWorl
  *
  * @return {Opacity | undefined} the opacity at that path is available, else undefined.
  */
-OpacitySystem.prototype.get = function get (path) {
+get(path) {
     return this.pathStore.get(path);
 };
 
@@ -132,7 +133,7 @@ OpacitySystem.prototype.get = function get (path) {
  * @method update
  * @return {undefined} undefined
  */
-OpacitySystem.prototype.update = function update () {
+update() {
     var opacities = this.pathStore.getItems();
     var paths = this.pathStore.getPaths();
     var opacity;
@@ -147,12 +148,14 @@ OpacitySystem.prototype.update = function update () {
         opacity = opacities[i];
 
         if ((changed = opacity.calculate())) {
-            opacityChanged(node, components, opacity);
-            if (changed & Opacity.LOCAL_CHANGED) localOpacityChanged(node, components, opacity.getLocalOpacity());
-            if (changed & Opacity.WORLD_CHANGED) worldOpacityChanged(node, components, opacity.getWorldOpacity());
+            _opacityChanged(node, components, opacity);
+            if (changed & Opacity.LOCAL_CHANGED) _localOpacityChanged(node, components, opacity.getLocalOpacity());
+            if (changed & Opacity.WORLD_CHANGED) _worldOpacityChanged(node, components, opacity.getWorldOpacity());
         }
     }
 };
+
+}
 
 /**
  * Private method to call when either the Local or World Opacity changes.
@@ -167,7 +170,7 @@ OpacitySystem.prototype.update = function update () {
  *
  * @return {undefined} undefined
  */
-function opacityChanged (node, components, opacity) {
+function _opacityChanged(node, components, opacity) {
     if (node.onOpacityChange) node.onOpacityChange(opacity);
     for (var i = 0, len = components.length ; i < len ; i++)
         if (components[i] && components[i].onOpacityChange)
@@ -187,7 +190,7 @@ function opacityChanged (node, components, opacity) {
  *
  * @return {undefined} undefined
  */
-function localOpacityChanged (node, components, opacity) {
+function _localOpacityChanged(node, components, opacity) {
     if (node.onLocalOpacityChange) node.onLocalOpacityChange(opacity);
     for (var i = 0, len = components.length ; i < len ; i++)
         if (components[i] && components[i].onLocalOpacityChange)
@@ -207,11 +210,12 @@ function localOpacityChanged (node, components, opacity) {
  *
  * @return {undefined} undefined
  */
-function worldOpacityChanged (node, components, opacity) {
+function _worldOpacityChanged(node, components, opacity) {
     if (node.onWorldOpacityChange) node.onWorldOpacityChange(opacity);
     for (var i = 0, len = components.length ; i < len ; i++)
         if (components[i] && components[i].onWorldOpacityChange)
             components[i].onWorldOpacityChange(opacity);
 }
 
-module.exports = new OpacitySystem();
+var newOpacitySystem = new OpacitySystem();
+export { newOpacitySystem as OpacitySystem };

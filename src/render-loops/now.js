@@ -28,4 +28,4 @@ var now = (window.performance && window.performance.now) ? function() {
     return window.performance.now();
 } : Date.now;
 
-module.exports = now;
+export { now };

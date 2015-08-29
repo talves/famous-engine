@@ -24,12 +24,14 @@
 
 'use strict';
 
-var clone = require('../utilities/clone');
-var keyValueToArrays = require('../utilities/keyValueToArrays');
+import { clone } from '../utilities/clone';
+import { keyValueToArrays } from '../utilities/keyValueToArrays';
 
-var vertexWrapper = require('../webgl-shaders').vertex;
-var fragmentWrapper = require('../webgl-shaders').fragment;
-var Debug = require('./Debug');
+import { webglShaders } from '../webgl-shaders';
+import { Debug } from './Debug';
+
+var vertexWrapper = webglShaders.vertex;
+var fragmentWrapper = webglShaders.fragment;
 
 var identityMatrix = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 
@@ -114,7 +116,8 @@ var varyings = keyValueToArrays({
  *
  * @return {undefined} undefined
  */
-function Program(gl, options) {
+class Program {
+  constructor(gl, options) {
     this.gl = gl;
     this.options = options || {};
 
@@ -149,7 +152,7 @@ function Program(gl, options) {
  *
  * @return {Program} this Current program.
  */
-Program.prototype.registerMaterial = function registerMaterial(name, material) {
+registerMaterial(name, material) {
     var compiled = material;
     var type = inputTypes[name];
     var mask = masks[type];
@@ -218,7 +221,7 @@ Program.prototype.registerMaterial = function registerMaterial(name, material) {
  *
  * @return {Program} Current program.
  */
-Program.prototype.resetProgram = function resetProgram() {
+resetProgram() {
     var vertexHeader = [header];
     var fragmentHeader = [header];
 
@@ -324,7 +327,7 @@ Program.prototype.resetProgram = function resetProgram() {
  *
  * @return {Boolean} boolean Indicating whether the uniform being set is cached.
  */
-Program.prototype.uniformIsCached = function(targetName, value) {
+uniformIsCached(targetName, value) {
     if(this.cachedUniforms[targetName] == null) {
         if (value.length) {
             this.cachedUniforms[targetName] = new Float32Array(value);
@@ -367,7 +370,7 @@ Program.prototype.uniformIsCached = function(targetName, value) {
  *
  * @return {Program} Current program.
  */
-Program.prototype.setUniforms = function (uniformNames, uniformValue) {
+setUniforms(uniformNames, uniformValue) {
     var gl = this.gl;
     var location;
     var value;
@@ -430,7 +433,7 @@ Program.prototype.setUniforms = function (uniformNames, uniformValue) {
  *
  * @return {String} Name of uniform function for given value.
  */
-Program.prototype.getUniformTypeFromValue = function getUniformTypeFromValue(value) {
+getUniformTypeFromValue(value) {
     if (Array.isArray(value) || value instanceof Float32Array) {
         switch (value.length) {
             case 1:  return 'uniform1fv';
@@ -459,7 +462,7 @@ Program.prototype.getUniformTypeFromValue = function getUniformTypeFromValue(val
  *
  * @return {Object} Compiled shader.
  */
-Program.prototype.compileShader = function compileShader(shader, source) {
+compileShader(shader, source) {
     var i = 1;
 
     this.gl.shaderSource(shader, source);
@@ -474,4 +477,6 @@ Program.prototype.compileShader = function compileShader(shader, source) {
     return shader;
 };
 
-module.exports = Program;
+}
+
+export { Program };

@@ -132,4 +132,4 @@ function radixSort(list, registry) {
     return out;
 }
 
-module.exports = radixSort;
+export { radixSort };
