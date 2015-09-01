@@ -34,8 +34,8 @@ import { UIEvent } from './UIEvent';
  *
  * @param {Event} ev The native DOM event.
  */
- class KeyboardEvent extends UIEvent {
-   constructor(ev) {
+class KeyboardEvent extends UIEvent {
+  constructor(ev) {
     // [Constructor(DOMString typeArg, optional KeyboardEventInit keyboardEventInitDict)]
     // interface KeyboardEvent : UIEvent {
     //     // KeyLocationCode
@@ -141,18 +141,18 @@ import { UIEvent } from './UIEvent';
      * @deprecated
      */
     this.keyCode = ev.keyCode;
-}
+  }
 
-/**
- * Return the name of the event type
- *
- * @method
- *
- * @return {String} Name of the event type
- */
-toString() {
+  /**
+   * Return the name of the event type
+   *
+   * @method
+   *
+   * @return {String} Name of the event type
+   */
+  toString() {
     return 'KeyboardEvent';
-};
+  };
 
 }
 

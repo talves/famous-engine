@@ -39,7 +39,7 @@ import { ObjectManager } from '../../../utilities/ObjectManager';
  * @return {Number} The clamped value.
  */
 function clamp(value, lower, upper) {
-    return value < lower ? lower : value > upper ? upper : value;
+  return value < lower ? lower : value > upper ? upper : value;
 }
 
 var VEC1_REGISTER = new Vec3();
@@ -82,18 +82,18 @@ class Contact {
     this.angImpulseB = new Vec3();
 
     if (collisionData) this.init();
-}
+  }
 
-/**
- * Used by ObjectManager to reset the object with different data.
- *
- * @method
- * @param {Body} bodyA The first body.
- * @param {Body} bodyB The second body.
- * @param {CollisionData} collisionData The data for the collision.
- * @return {Contact} this
- */
-reset(bodyA, bodyB, collisionData) {
+  /**
+   * Used by ObjectManager to reset the object with different data.
+   *
+   * @method
+   * @param {Body} bodyA The first body.
+   * @param {Body} bodyB The second body.
+   * @param {CollisionData} collisionData The data for the collision.
+   * @return {Contact} this
+   */
+  reset(bodyA, bodyB, collisionData) {
     this.bodyA = bodyA;
     this.bodyB = bodyB;
     this.data = collisionData;
@@ -109,24 +109,23 @@ reset(bodyA, bodyB, collisionData) {
     this.init();
 
     return this;
-};
+  };
 
-/**
- * Initialization method called on instantiantion or reset of the Contact. Performs
- * precalculations that will not change over the life of the Contact.
- *
- * @method
- * @return {undefined} undefined
- */
-init() {
+  /**
+   * Initialization method called on instantiantion or reset of the Contact. Performs
+   * precalculations that will not change over the life of the Contact.
+   *
+   * @method
+   * @return {undefined} undefined
+   */
+  init() {
     var data = this.data;
     var n = data.normal;
     var t1 = new Vec3();
     if (n.x >= 0.57735) {
-        t1.set(n.y, -n.x, 0);
-    }
-    else {
-        t1.set(0, n.z, -n.y);
+      t1.set(n.y, -n.x, 0);
+    } else {
+      t1.set(0, n.z, -n.y);
     }
     t1.normalize();
     var t2 = Vec3.cross(n, t1, new Vec3());
@@ -145,33 +144,33 @@ init() {
     var r1n = Vec3.cross(rBodyA, n, R1_REGISTER);
     var r2n = Vec3.cross(rBodyB, n, R2_REGISTER);
     this.effNormalMass = 1 / (invEffectiveMass +
-        Vec3.dot(r1n, bodyA.inverseInertia.vectorMultiply(r1n, VEC1_REGISTER)) +
-        Vec3.dot(r2n, bodyB.inverseInertia.vectorMultiply(r2n, VEC1_REGISTER)));
+      Vec3.dot(r1n, bodyA.inverseInertia.vectorMultiply(r1n, VEC1_REGISTER)) +
+      Vec3.dot(r2n, bodyB.inverseInertia.vectorMultiply(r2n, VEC1_REGISTER)));
 
     var r1t1 = Vec3.cross(rBodyA, t1, R1_REGISTER);
     var r2t1 = Vec3.cross(rBodyB, t1, R2_REGISTER);
     this.effTangentialMass1 = 1 / (invEffectiveMass +
-        Vec3.dot(r1t1, bodyA.inverseInertia.vectorMultiply(r1t1, VEC1_REGISTER)) +
-         Vec3.dot(r2t1, bodyB.inverseInertia.vectorMultiply(r2t1, VEC1_REGISTER)));
+      Vec3.dot(r1t1, bodyA.inverseInertia.vectorMultiply(r1t1, VEC1_REGISTER)) +
+      Vec3.dot(r2t1, bodyB.inverseInertia.vectorMultiply(r2t1, VEC1_REGISTER)));
 
     var r1t2 = Vec3.cross(rBodyA, t2, R1_REGISTER);
     var r2t2 = Vec3.cross(rBodyB, t2, R2_REGISTER);
     this.effTangentialMass2 = 1 / (invEffectiveMass +
-        Vec3.dot(r1t2, bodyA.inverseInertia.vectorMultiply(r1t2, VEC1_REGISTER)) +
-         Vec3.dot(r2t2, bodyB.inverseInertia.vectorMultiply(r2t2, VEC1_REGISTER)));
+      Vec3.dot(r1t2, bodyA.inverseInertia.vectorMultiply(r1t2, VEC1_REGISTER)) +
+      Vec3.dot(r2t2, bodyB.inverseInertia.vectorMultiply(r2t2, VEC1_REGISTER)));
 
     this.restitution = Math.min(bodyA.restitution, bodyB.restitution);
     this.friction = bodyA.friction * bodyB.friction;
-};
+  };
 
-/**
- * Warm start the Contact, prepare for the iterative solver, and reset impulses.
- *
- * @method
- * @param {Number} dt Delta time.
- * @return {undefined} undefined
- */
-update(dt) {
+  /**
+   * Warm start the Contact, prepare for the iterative solver, and reset impulses.
+   *
+   * @method
+   * @param {Number} dt Delta time.
+   * @return {undefined} undefined
+   */
+  update(dt) {
     var data = this.data;
     var bodyA = this.bodyA;
     var bodyB = this.bodyB;
@@ -211,15 +210,15 @@ update(dt) {
     impulse.clear();
     angImpulseA.clear();
     angImpulseB.clear();
-};
+  };
 
-/**
- * Apply impulses to resolve the contact and simulate friction.
- *
- * @method
- * @return {undefined} undefined
- */
-resolve() {
+  /**
+   * Apply impulses to resolve the contact and simulate friction.
+   *
+   * @method
+   * @return {undefined} undefined
+   */
+  resolve() {
     var data = this.data;
     var bodyA = this.bodyA;
     var bodyB = this.bodyB;
@@ -271,7 +270,7 @@ resolve() {
     this.impulse.add(impulse);
     this.angImpulseA.add(angImpulseA);
     this.angImpulseB.add(angImpulseB);
-};
+  };
 }
 
 ObjectManager.register('Contact', Contact);
@@ -290,18 +289,18 @@ class ContactManifoldTable {
     this._IDPool = [];
   }
 
-/**
- * Create a new contact manifold. Tracked by the collisionMatrix according to
- * its low-high ordered ID pair.
- *
- * @method
- * @param {Number} lowID The lower id of the pair of bodies.
- * @param {Number} highID The higher id of the pair of bodies.
- * @param {Particle} bodyA The first body.
- * @param {Particle} bodyB The second body.
- * @return {ContactManifold} The new manifold.
- */
-addManifold(lowID, highID, bodyA, bodyB) {
+  /**
+   * Create a new contact manifold. Tracked by the collisionMatrix according to
+   * its low-high ordered ID pair.
+   *
+   * @method
+   * @param {Number} lowID The lower id of the pair of bodies.
+   * @param {Number} highID The higher id of the pair of bodies.
+   * @param {Particle} bodyA The first body.
+   * @param {Particle} bodyB The second body.
+   * @return {ContactManifold} The new manifold.
+   */
+  addManifold(lowID, highID, bodyA, bodyB) {
     var collisionMatrix = this.collisionMatrix;
     collisionMatrix[lowID] = collisionMatrix[lowID] || {};
 
@@ -311,17 +310,17 @@ addManifold(lowID, highID, bodyA, bodyB) {
     this.manifolds[index] = manifold;
 
     return manifold;
-};
+  };
 
-/**
- * Remove a manifold and free it for later reuse.
- *
- * @method
- * @param {ContactManifold} manifold The manifold to remove.
- * @param {Number} index The index of the manifold.
- * @return {undefined} undefined
- */
-removeManifold(manifold, index) {
+  /**
+   * Remove a manifold and free it for later reuse.
+   *
+   * @method
+   * @param {ContactManifold} manifold The manifold to remove.
+   * @param {Number} index The index of the manifold.
+   * @return {undefined} undefined
+   */
+  removeManifold(manifold, index) {
     var collisionMatrix = this.collisionMatrix;
 
     this.manifolds[index] = null;
@@ -329,102 +328,100 @@ removeManifold(manifold, index) {
     this._IDPool.push(index);
 
     oMFreeManifold(manifold);
-};
+  };
 
-/**
- * Update each of the manifolds, removing those that no longer contain contact points.
- *
- * @method
- * @param {Number} dt Delta time.
- * @return {undefined} undefined
- */
-update(dt) {
+  /**
+   * Update each of the manifolds, removing those that no longer contain contact points.
+   *
+   * @method
+   * @param {Number} dt Delta time.
+   * @return {undefined} undefined
+   */
+  update(dt) {
     var manifolds = this.manifolds;
     for (var i = 0, len = manifolds.length; i < len; i++) {
-        var manifold = manifolds[i];
-        if (!manifold) continue;
-        var persists = manifold.update(dt);
-        if (!persists) {
-            this.removeManifold(manifold, i);
-            manifold.bodyA.events.trigger('collision:end', manifold);
-            manifold.bodyB.events.trigger('collision:end', manifold);
-        }
+      var manifold = manifolds[i];
+      if (!manifold) continue;
+      var persists = manifold.update(dt);
+      if (!persists) {
+        this.removeManifold(manifold, i);
+        manifold.bodyA.events.trigger('collision:end', manifold);
+        manifold.bodyB.events.trigger('collision:end', manifold);
+      }
     }
-};
+  };
 
-/**
- * Warm start all Contacts, and perform precalculations needed in the iterative solver.
- *
- * @method
- * @param {Number} dt Delta time.
- * @return {undefined} undefined
- */
-prepContacts(dt) {
+  /**
+   * Warm start all Contacts, and perform precalculations needed in the iterative solver.
+   *
+   * @method
+   * @param {Number} dt Delta time.
+   * @return {undefined} undefined
+   */
+  prepContacts(dt) {
     var manifolds = this.manifolds;
     for (var i = 0, len = manifolds.length; i < len; i++) {
-        var manifold = manifolds[i];
-        if (!manifold) continue;
-        var contacts = manifold.contacts;
-        for (var j = 0, lenj = contacts.length; j < lenj; j++) {
-            var contact = contacts[j];
-            if (!contact) continue;
-            contact.update(dt);
-        }
+      var manifold = manifolds[i];
+      if (!manifold) continue;
+      var contacts = manifold.contacts;
+      for (var j = 0, lenj = contacts.length; j < lenj; j++) {
+        var contact = contacts[j];
+        if (!contact) continue;
+        contact.update(dt);
+      }
     }
-};
+  };
 
-/**
- * Resolve all contact manifolds.
- *
- * @method
- * @return {undefined} undefined
- */
-resolveManifolds() {
+  /**
+   * Resolve all contact manifolds.
+   *
+   * @method
+   * @return {undefined} undefined
+   */
+  resolveManifolds() {
     var manifolds = this.manifolds;
     for (var i = 0, len = manifolds.length; i < len; i++) {
-        var manifold = manifolds[i];
-        if (!manifold) continue;
-        manifold.resolveContacts();
+      var manifold = manifolds[i];
+      if (!manifold) continue;
+      manifold.resolveContacts();
     }
-};
+  };
 
-/**
- * Create a new Contact, also creating a new Manifold if one does not already exist for that pair.
- *
- * @method
- * @param {Body} bodyA The first body.
- * @param {Body} bodyB The second body.
- * @param {CollisionData} collisionData The data for the collision.
- * @return {undefined} undefined
- */
-registerContact(bodyA, bodyB, collisionData) {
+  /**
+   * Create a new Contact, also creating a new Manifold if one does not already exist for that pair.
+   *
+   * @method
+   * @param {Body} bodyA The first body.
+   * @param {Body} bodyB The second body.
+   * @param {CollisionData} collisionData The data for the collision.
+   * @return {undefined} undefined
+   */
+  registerContact(bodyA, bodyB, collisionData) {
     var lowID;
     var highID;
 
     if (bodyA._ID < bodyB._ID) {
-        lowID = bodyA._ID;
-        highID = bodyB._ID;
-    }
-    else {
-        lowID = bodyB._ID;
-        highID = bodyA._ID;
+      lowID = bodyA._ID;
+      highID = bodyB._ID;
+    } else {
+      lowID = bodyB._ID;
+      highID = bodyA._ID;
     }
 
     var manifolds = this.manifolds;
     var collisionMatrix = this.collisionMatrix;
     var manifold;
     if (!collisionMatrix[lowID] || collisionMatrix[lowID][highID] == null) {
-        manifold = this.addManifold(lowID, highID, bodyA, bodyB);
-        manifold.addContact(bodyA, bodyB, collisionData);
-        bodyA.events.trigger('collision:start', manifold);
-        bodyB.events.trigger('collision:start', manifold);
+      manifold = this.addManifold(lowID, highID, bodyA, bodyB);
+      manifold.addContact(bodyA, bodyB, collisionData);
+      bodyA.events.trigger('collision:start', manifold);
+      bodyB.events.trigger('collision:start', manifold);
+    } else {
+      manifold = manifolds[collisionMatrix[lowID][highID]];
+      manifold.contains(collisionData);
+      manifold.addContact(bodyA, bodyB, collisionData);
     }
-    else {
-        manifold = manifolds[ collisionMatrix[lowID][highID] ];
-        manifold.contains(collisionData);
-        manifold.addContact(bodyA, bodyB, collisionData);
-    }
-};
+  };
 
 }
 
@@ -450,19 +447,19 @@ class Manifold {
     this.bodyB = bodyB;
 
     this.lru = 0;
-}
+  }
 
-/**
- * Used by ObjectManager to reset the object with different data.
- *
- * @method
- * @param {Number} lowID The lower id of the pair of bodies.
- * @param {Number} highID The higher id of the pair of bodies.
- * @param {Particle} bodyA The first body.
- * @param {Particle} bodyB The second body.
- * @return {Manifold} this
- */
-reset(lowID, highID, bodyA, bodyB) {
+  /**
+   * Used by ObjectManager to reset the object with different data.
+   *
+   * @method
+   * @param {Number} lowID The lower id of the pair of bodies.
+   * @param {Number} highID The higher id of the pair of bodies.
+   * @param {Particle} bodyA The first body.
+   * @param {Particle} bodyB The second body.
+   * @return {Manifold} this
+   */
+  reset(lowID, highID, bodyA, bodyB) {
     this.lowID = lowID;
     this.highID = highID;
 
@@ -475,79 +472,79 @@ reset(lowID, highID, bodyA, bodyB) {
     this.lru = 0;
 
     return this;
-};
+  };
 
-/**
- * Create a new Contact point and add it to the Manifold.
- *
- * @method
- * @param {Body} bodyA The first body.
- * @param {Body} bodyB The second body.
- * @param {CollisionData} collisionData The data for the collision.
- * @return {undefined} undefined
- */
-addContact(bodyA, bodyB, collisionData) {
+  /**
+   * Create a new Contact point and add it to the Manifold.
+   *
+   * @method
+   * @param {Body} bodyA The first body.
+   * @param {Body} bodyB The second body.
+   * @param {CollisionData} collisionData The data for the collision.
+   * @return {undefined} undefined
+   */
+  addContact(bodyA, bodyB, collisionData) {
     var index = this.lru;
     if (this.contacts[index]) this.removeContact(this.contacts[index], index);
     this.contacts[index] = oMRequestContact().reset(bodyA, bodyB, collisionData);
     this.lru = (this.lru + 1) % 4;
     this.numContacts++;
-};
+  };
 
-/**
- * Remove and free a Contact for later reuse.
- *
- * @method
- * @param {Contact} contact The Contact to remove.
- * @param {Number} index The index of the Contact.
- * @return {undefined} undefined
- */
-removeContact(contact, index) {
+  /**
+   * Remove and free a Contact for later reuse.
+   *
+   * @method
+   * @param {Contact} contact The Contact to remove.
+   * @param {Number} index The index of the Contact.
+   * @return {undefined} undefined
+   */
+  removeContact(contact, index) {
     this.contacts[index] = null;
     this.numContacts--;
 
     ObjectManager.freeCollisionData(contact.data);
     contact.data = null;
     oMFreeContact(contact);
-};
+  };
 
-/**
- * Check if a Contact already exists for the collision data within a certain tolerance.
- * If found, remove the Contact.
- *
- * @method
- * @param {CollisionData} collisionData The data for the collision.
- * @return {Boolean} The containment check.
- */
-contains(collisionData) {
+  /**
+   * Check if a Contact already exists for the collision data within a certain tolerance.
+   * If found, remove the Contact.
+   *
+   * @method
+   * @param {CollisionData} collisionData The data for the collision.
+   * @return {Boolean} The containment check.
+   */
+  contains(collisionData) {
     var wA = collisionData.worldContactA;
     var wB = collisionData.worldContactB;
 
     var contacts = this.contacts;
     for (var i = 0, len = contacts.length; i < len; i++) {
-        var contact = contacts[i];
-        if (!contact) continue;
-        var data = contact.data;
-        var distA = Vec3.subtract(data.worldContactA, wA, DRIFTA_REGISTER).length();
-        var distB = Vec3.subtract(data.worldContactB, wB, DRIFTB_REGISTER).length();
+      var contact = contacts[i];
+      if (!contact) continue;
+      var data = contact.data;
+      var distA = Vec3.subtract(data.worldContactA, wA, DRIFTA_REGISTER).length();
+      var distB = Vec3.subtract(data.worldContactB, wB, DRIFTB_REGISTER).length();
 
-        if (distA < THRESHOLD || distB < THRESHOLD) {
-            this.removeContact(contact, i);
-            return true;
-        }
+      if (distA < THRESHOLD || distB < THRESHOLD) {
+        this.removeContact(contact, i);
+        return true;
+      }
     }
 
     return false;
-};
+  };
 
-/**
- * Remove Contacts the local points of which have drifted above a certain tolerance.
- * Return true or false to indicate that the Manifold still contains at least one Contact.
- *
- * @method
- * @return {Boolean} Whether or not the manifold persists.
- */
-update() {
+  /**
+   * Remove Contacts the local points of which have drifted above a certain tolerance.
+   * Return true or false to indicate that the Manifold still contains at least one Contact.
+   *
+   * @method
+   * @return {Boolean} Whether or not the manifold persists.
+   */
+  update() {
     var contacts = this.contacts;
     var bodyA = this.bodyA;
     var bodyB = this.bodyB;
@@ -556,47 +553,47 @@ update() {
     var posB = bodyB.position;
 
     for (var i = 0, len = contacts.length; i < len; i++) {
-        var contact = contacts[i];
-        if (!contact) continue;
-        var data = contact.data;
-        var n = data.normal;
-        var rA = data.localContactA;
-        var rB = data.localContactB;
+      var contact = contacts[i];
+      if (!contact) continue;
+      var data = contact.data;
+      var n = data.normal;
+      var rA = data.localContactA;
+      var rB = data.localContactB;
 
-        var cached_wA = data.worldContactA;
-        var cached_wB = data.worldContactB;
+      var cached_wA = data.worldContactA;
+      var cached_wB = data.worldContactB;
 
-        var wA = Vec3.add(posA, rA, WA_REGISTER);
-        var wB = Vec3.add(posB, rB, WB_REGISTER);
+      var wA = Vec3.add(posA, rA, WA_REGISTER);
+      var wB = Vec3.add(posB, rB, WB_REGISTER);
 
-        var notPenetrating = Vec3.dot(Vec3.subtract(wB, wA, PENETRATING_REGISTER), n) > 0;
+      var notPenetrating = Vec3.dot(Vec3.subtract(wB, wA, PENETRATING_REGISTER), n) > 0;
 
-        var driftA = Vec3.subtract(cached_wA, wA, DRIFTA_REGISTER);
-        var driftB = Vec3.subtract(cached_wB, wB, DRIFTB_REGISTER);
+      var driftA = Vec3.subtract(cached_wA, wA, DRIFTA_REGISTER);
+      var driftB = Vec3.subtract(cached_wB, wB, DRIFTB_REGISTER);
 
 
-        if (driftA.length() >= THRESHOLD || driftB.length() >= THRESHOLD || notPenetrating) {
-            this.removeContact(contact, i);
-        }
+      if (driftA.length() >= THRESHOLD || driftB.length() >= THRESHOLD || notPenetrating) {
+        this.removeContact(contact, i);
+      }
     }
 
     if (this.numContacts) return true;
     else return false;
-};
+  };
 
-/**
- * Resolve all contacts.
- *
- * @method
- * @return {undefined} undefined
- */
-resolveContacts() {
+  /**
+   * Resolve all contacts.
+   *
+   * @method
+   * @return {undefined} undefined
+   */
+  resolveContacts() {
     var contacts = this.contacts;
     for (var i = 0, len = contacts.length; i < len; i++) {
-        if (!contacts[i]) continue;
-        contacts[i].resolve();
+      if (!contacts[i]) continue;
+      contacts[i].resolve();
     }
-};
+  };
 
 }
 

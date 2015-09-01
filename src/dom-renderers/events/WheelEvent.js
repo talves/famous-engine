@@ -34,8 +34,8 @@ import { MouseEvent } from './MouseEvent';
  *
  * @param {Event} ev The native DOM event.
  */
- class WheelEvent extends MouseEvent {
-   constructor(ev) {
+class WheelEvent extends MouseEvent {
+  constructor(ev) {
     // [Constructor(DOMString typeArg, optional WheelEventInit wheelEventInitDict)]
     // interface WheelEvent : MouseEvent {
     //     // DeltaModeCode
@@ -91,18 +91,18 @@ import { MouseEvent } from './MouseEvent';
      * @type Number
      */
     this.deltaMode = ev.deltaMode;
-}
+  }
 
-/**
- * Return the name of the event type
- *
- * @method
- *
- * @return {String} Name of the event type
- */
-toString() {
+  /**
+   * Return the name of the event type
+   *
+   * @method
+   *
+   * @return {String} Name of the event type
+   */
+  toString() {
     return 'WheelEvent';
-};
+  };
 
 }
 

@@ -48,9 +48,9 @@ var DELTA_REGISTER = new Vec3();
  * @param {Options} options The options hash.
  *
  */
- class Hinge extends Constraint {
-   constructor(a, b, options) {
-     super(options);
+class Hinge extends Constraint {
+  constructor(a, b, options) {
+    super(options);
 
     this.a = a;
     this.b = b;
@@ -59,28 +59,28 @@ var DELTA_REGISTER = new Vec3();
     this.angImpulseA = new Vec3();
     this.angImpulseB = new Vec3();
     this.error = new Vec3();
-    this.errorRot = [0,0];
+    this.errorRot = [0, 0];
     this.effMassMatrix = new Mat33();
     this.effMassMatrixRot = [];
 
-        this.initLocals();
-    }
+    this.initLocals();
+  }
 
-    /**
-     * Initialize passing the Options.
-     *
-     * @method
-     * @return {undefined} undefined
-     */
-    init(options) {};
+  /**
+   * Initialize passing the Options.
+   *
+   * @method
+   * @return {undefined} undefined
+   */
+  init(options) {};
 
-/**
- * Initialize the Hinge. Sets defaults if a property was not already set.
- *
- * @method
- * @return {undefined} undefined
- */
-initLocals() {
+  /**
+   * Initialize the Hinge. Sets defaults if a property was not already set.
+   *
+   * @method
+   * @return {undefined} undefined
+   */
+  initLocals() {
     var w = this.anchor;
 
     var u = this.axis.normalize();
@@ -108,17 +108,17 @@ initLocals() {
 
     this.bodyAxisA = q1t.rotateVector(u, new Vec3());
     this.bodyAxisB = q2t.rotateVector(u, new Vec3());
-};
+  };
 
-/**
- * Detect violations of the constraint. Warm start the constraint, if possible.
- *
- * @method
- * @param {Number} time The current time in the physics engine.
- * @param {Number} dt The physics engine frame delta.
- * @return {undefined} undefined
- */
-update(time, dt) {
+  /**
+   * Detect violations of the constraint. Warm start the constraint, if possible.
+   *
+   * @method
+   * @param {Number} time The current time in the physics engine.
+   * @param {Number} dt The physics engine frame delta.
+   * @return {undefined} undefined
+   */
+  update(time, dt) {
     var a = this.a;
     var b = this.b;
 
@@ -131,10 +131,9 @@ update(time, dt) {
     var t2 = this.axisBTangent2;
 
     if (n.x >= 0.57735) {
-        t1.set(n.y, -n.x, 0);
-    }
-    else {
-        t1.set(0, n.z, -n.y);
+      t1.set(n.y, -n.x, 0);
+    } else {
+      t1.set(0, n.z, -n.y);
     }
     t1.normalize();
     Vec3.cross(n, t1, t2);
@@ -145,8 +144,8 @@ update(time, dt) {
     var rA = a.orientation.rotateVector(this.bodyRA, this.rA);
     var rB = b.orientation.rotateVector(this.bodyRB, this.rB);
 
-    var xRA = new Mat33([0,rA.z,-rA.y,-rA.z,0,rA.x,rA.y,-rA.x,0]);
-    var xRB = new Mat33([0,rB.z,-rB.y,-rB.z,0,rB.x,rB.y,-rB.x,0]);
+    var xRA = new Mat33([0, rA.z, -rA.y, -rA.z, 0, rA.x, rA.y, -rA.x, 0]);
+    var xRB = new Mat33([0, rB.z, -rB.y, -rB.z, 0, rB.x, rB.y, -rB.x, 0]);
 
     var RIaRt = Mat33.multiply(xRA, a.inverseInertia, new Mat33()).multiply(xRA.transpose());
     var RIbRt = Mat33.multiply(xRB, b.inverseInertia, new Mat33()).multiply(xRB.transpose());
@@ -156,14 +155,14 @@ update(time, dt) {
     var worldA = Vec3.add(a.position, this.rA, this.anchor);
     var worldB = Vec3.add(b.position, this.rB, VEC1_REGISTER);
 
-    var invDt = 1/dt;
+    var invDt = 1 / dt;
     Vec3.subtract(worldB, worldA, this.error);
-    this.error.scale(0.2*invDt);
+    this.error.scale(0.2 * invDt);
 
     var imA = a.inverseMass;
     var imB = b.inverseMass;
 
-    var invEffMass = new Mat33([imA + imB,0,0,0,imA + imB,0,0,0,imA + imB]);
+    var invEffMass = new Mat33([imA + imB, 0, 0, 0, imA + imB, 0, 0, 0, imA + imB]);
 
     Mat33.add(invEffInertia, invEffMass, this.effMassMatrix);
     this.effMassMatrix.inverse();
@@ -178,15 +177,15 @@ update(time, dt) {
     var a21 = Vec3.dot(t2xA, invIAt1xA) + Vec3.dot(t2xA, invIBt1xA);
     var a22 = Vec3.dot(t2xA, invIAt2xA) + Vec3.dot(t2xA, invIBt2xA);
 
-    var det = 1 / (a11*a22 - a12*a21);
+    var det = 1 / (a11 * a22 - a12 * a21);
 
     this.effMassMatrixRot[0] = a22 * det;
     this.effMassMatrixRot[1] = -a21 * det;
     this.effMassMatrixRot[2] = -a12 * det;
     this.effMassMatrixRot[3] = a11 * det;
 
-    this.errorRot[0] = Vec3.dot(axisA, t1) * 0.2*invDt;
-    this.errorRot[1] = Vec3.dot(axisA, t2) * 0.2*invDt;
+    this.errorRot[0] = Vec3.dot(axisA, t1) * 0.2 * invDt;
+    this.errorRot[1] = Vec3.dot(axisA, t2) * 0.2 * invDt;
 
     var impulse = this.impulse.scale(0.5);
     var angImpulseA = this.angImpulseA.scale(0.5);
@@ -201,15 +200,15 @@ update(time, dt) {
     impulse.clear();
     angImpulseA.clear();
     angImpulseB.clear();
-};
+  };
 
-/**
- * Apply impulses to resolve the constraint.
- *
- * @method
- * @return {undefined} undefined
- */
-resolve() {
+  /**
+   * Apply impulses to resolve the constraint.
+   *
+   * @method
+   * @return {undefined} undefined
+   */
+  resolve() {
     var a = this.a;
     var b = this.b;
 
@@ -235,8 +234,8 @@ resolve() {
 
     var K = this.effMassMatrixRot;
 
-    var l1 = -(K[0]*jv1 + K[1]*jv2);
-    var l2 = -(K[2]*jv1 + K[3]*jv2);
+    var l1 = -(K[0] * jv1 + K[1] * jv2);
+    var l2 = -(K[2] * jv1 + K[3] * jv2);
 
     var angImpulse = Vec3.scale(t1xA, l1, VEC2_REGISTER).add(Vec3.scale(t2xA, l2, VEC3_REGISTER));
 
@@ -253,7 +252,7 @@ resolve() {
     this.impulse.add(impulse);
     this.angImpulseA.add(angImpulseA);
     this.angImpulseB.add(angImpulseB);
-};
+  };
 
 }
 

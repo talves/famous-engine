@@ -34,8 +34,8 @@ import { UIEvent } from './UIEvent';
  *
  * @param {Event} ev The native DOM event.
  */
- class MouseEvent extends UIEvent {
-   constructor(ev) {
+class MouseEvent extends UIEvent {
+  constructor(ev) {
     // [Constructor(DOMString typeArg, optional MouseEventInit mouseEventInitDict)]
     // interface MouseEvent : UIEvent {
     //     readonly    attribute long           screenX;
@@ -150,18 +150,18 @@ import { UIEvent } from './UIEvent';
      * @type Number
      */
     this.offsetY = ev.offsetY;
-}
+  }
 
-/**
- * Return the name of the event type
- *
- * @method
- *
- * @return {String} Name of the event type
- */
-toString() {
+  /**
+   * Return the name of the event type
+   *
+   * @method
+   *
+   * @return {String} Name of the event type
+   */
+  toString() {
     return 'MouseEvent';
-};
+  };
 
 }
 

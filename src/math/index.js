@@ -22,12 +22,12 @@
  * THE SOFTWARE.
  */
 
- import { Mat33 } from './Mat33';
- import { Quaternion } from './Quaternion';
- import { Vec2 } from './Vec2';
- import { Vec3 } from './Vec3';
+import { Mat33 } from './Mat33';
+import { Quaternion } from './Quaternion';
+import { Vec2 } from './Vec2';
+import { Vec3 } from './Vec3';
 
- export { Mat33 };
- export { Quaternion };
- export { Vec2 };
- export { Vec3 };
+export { Mat33 };
+export { Quaternion };
+export { Vec2 };
+export { Vec3 };

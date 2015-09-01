@@ -49,34 +49,37 @@ class Curve extends Constraint {
     super(options);
 
     if (targets) {
-        if (targets instanceof Array) this.targets = targets;
-        else this.targets = [targets];
+      if (targets instanceof Array)
+        this.targets = targets;
+      else
+        this.targets = [targets];
     }
-    else this.targets = [];
+    else
+      this.targets = [];
 
     this.impulses = {};
     this.normals = {};
     this.velocityBiases = {};
     this.divisors = {};
 
-        this.initLocals();
-    }
+    this.initLocals();
+  }
 
-    /**
-     * Initialize passing the Options.
-     *
-     * @method
-     * @return {undefined} undefined
-     */
-    init(options) {};
+  /**
+   * Initialize passing the Options.
+   *
+   * @method
+   * @return {undefined} undefined
+   */
+  init(options) {};
 
-/**
- * Initialize the Curve. Sets defaults if a property was not already set.
- *
- * @method
- * @return {undefined} undefined
- */
-initLocals() {
+  /**
+   * Initialize the Curve. Sets defaults if a property was not already set.
+   *
+   * @method
+   * @return {undefined} undefined
+   */
+  initLocals() {
     this.equation1 = this.equation1 || function() {
         return 0;
     };
@@ -88,17 +91,17 @@ initLocals() {
 
     this.stiffness = 4 * PI * PI / (this.period * this.period);
     this.damping = 4 * PI * this.dampingRatio / this.period;
-};
+  };
 
-/**
- * Warmstart the constraint and prepare calculations used in the .resolve step.
- *
- * @method
- * @param {Number} time The current time in the physics engine.
- * @param {Number} dt The physics engine frame delta.
- * @return {undefined} undefined
- */
-update(time, dt) {
+  /**
+   * Warmstart the constraint and prepare calculations used in the .resolve step.
+   *
+   * @method
+   * @param {Number} time The current time in the physics engine.
+   * @param {Number} dt The physics engine frame delta.
+   * @return {undefined} undefined
+   */
+  update(time, dt) {
     var targets = this.targets;
 
     var normals = this.normals;
@@ -116,67 +119,66 @@ update(time, dt) {
     var _k = this.stiffness;
 
     for (var i = 0, len = targets.length; i < len; i++) {
-        var body = targets[i];
-        var ID = body._ID;
-        if (body.immune) continue;
+      var body = targets[i];
+      var ID = body._ID;
+      if (body.immune) continue;
 
-        var p = body.position;
-        var m = body.mass;
+      var p = body.position;
+      var m = body.mass;
 
-        var gamma;
-        var beta;
+      var gamma;
+      var beta;
 
-        if (this.period === 0) {
-            gamma = 0;
-            beta = 1;
-        }
-        else {
-            var c = _c * m;
-            var k = _k * m;
+      if (this.period === 0) {
+        gamma = 0;
+        beta = 1;
+      } else {
+        var c = _c * m;
+        var k = _k * m;
 
-            gamma = 1 / (dt*(c + dt*k));
-            beta  = dt*k / (c + dt*k);
-        }
+        gamma = 1 / (dt * (c + dt * k));
+        beta = dt * k / (c + dt * k);
+      }
 
-        var x = p.x;
-        var y = p.y;
-        var z = p.z;
+      var x = p.x;
+      var y = p.y;
+      var z = p.z;
 
-        var f0 = f(x, y, z);
-        var dfx = (f(x + EPSILSON, y, z) - f0) / EPSILSON;
-        var dfy = (f(x, y + EPSILSON, z) - f0) / EPSILSON;
-        var dfz = (f(x, y, z + EPSILSON) - f0) / EPSILSON;
+      var f0 = f(x, y, z);
+      var dfx = (f(x + EPSILSON, y, z) - f0) / EPSILSON;
+      var dfy = (f(x, y + EPSILSON, z) - f0) / EPSILSON;
+      var dfz = (f(x, y, z + EPSILSON) - f0) / EPSILSON;
 
-        var g0 = g(x, y, z);
-        var dgx = (g(x + EPSILSON, y, z) - g0) / EPSILSON;
-        var dgy = (g(x, y + EPSILSON, z) - g0) / EPSILSON;
-        var dgz = (g(x, y, z + EPSILSON) - g0) / EPSILSON;
+      var g0 = g(x, y, z);
+      var dgx = (g(x + EPSILSON, y, z) - g0) / EPSILSON;
+      var dgy = (g(x, y + EPSILSON, z) - g0) / EPSILSON;
+      var dgz = (g(x, y, z + EPSILSON) - g0) / EPSILSON;
 
-        n.set(dfx + dgx, dfy + dgy, dfz + dgz);
-        n.normalize();
+      n.set(dfx + dgx, dfy + dgy, dfz + dgz);
+      n.normalize();
 
-        var baumgarte = beta * (f0 + g0) / dt;
-        var divisor = gamma + 1 / m;
+      var baumgarte = beta * (f0 + g0) / dt;
+      var divisor = gamma + 1 / m;
 
-        var lambda = impulses[ID] || 0;
-        Vec3.scale(n, lambda, impulse);
-        body.applyImpulse(impulse);
+      var lambda = impulses[ID] || 0;
+      Vec3.scale(n, lambda, impulse);
+      body.applyImpulse(impulse);
 
-        normals[ID] = normals[ID] || new Vec3();
-        normals[ID].copy(n);
-        velocityBiases[ID] = baumgarte;
-        divisors[ID] = divisor;
-        impulses[ID] = 0;
+      normals[ID] = normals[ID] || new Vec3();
+      normals[ID].copy(n);
+      velocityBiases[ID] = baumgarte;
+      divisors[ID] = divisor;
+      impulses[ID] = 0;
     }
-};
+  };
 
-/**
- * Adds a curve impulse to a physics body.
- *
- * @method
- * @return {undefined} undefined
- */
-resolve() {
+  /**
+   * Adds a curve impulse to a physics body.
+   *
+   * @method
+   * @return {undefined} undefined
+   */
+  resolve() {
     var targets = this.targets;
 
     var normals = this.normals;
@@ -187,22 +189,22 @@ resolve() {
     var impulse = IMPULSE_REGISTER;
 
     for (var i = 0, len = targets.length; i < len; i++) {
-        var body = targets[i];
-        var ID = body._ID;
-        if (body.immune) continue;
+      var body = targets[i];
+      var ID = body._ID;
+      if (body.immune) continue;
 
-        var v = body.velocity;
-        var n = normals[ID];
+      var v = body.velocity;
+      var n = normals[ID];
 
-        var lambda = -(Vec3.dot(n, v) + velocityBiases[ID]) / divisors[ID];
+      var lambda = -(Vec3.dot(n, v) + velocityBiases[ID]) / divisors[ID];
 
-        Vec3.scale(n, lambda, impulse);
-        body.applyImpulse(impulse);
+      Vec3.scale(n, lambda, impulse);
+      body.applyImpulse(impulse);
 
 
-        impulses[ID] += lambda;
+      impulses[ID] += lambda;
     }
-};
+  };
 
 }
 

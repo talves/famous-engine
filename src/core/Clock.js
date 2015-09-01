@@ -41,158 +41,158 @@ class Clock {
 
     this._scale = 1;
     this._scaledTime = this._time;
-}
+  }
 
-/**
- * Sets the scale at which the clock time is passing.
- * Useful for slow-motion or fast-forward effects.
- *
- * `1` means no time scaling ("realtime"),
- * `2` means the clock time is passing twice as fast,
- * `0.5` means the clock time is passing two times slower than the "actual"
- * time at which the Clock is being updated via `.step`.
- *
- * Initally the clock time is not being scaled (factor `1`).
- *
- * @method  setScale
- * @chainable
- *
- * @param {Number} scale    The scale at which the clock time is passing.
- *
- * @return {Clock} this
- */
-setScale(scale) {
+  /**
+   * Sets the scale at which the clock time is passing.
+   * Useful for slow-motion or fast-forward effects.
+   *
+   * `1` means no time scaling ("realtime"),
+   * `2` means the clock time is passing twice as fast,
+   * `0.5` means the clock time is passing two times slower than the "actual"
+   * time at which the Clock is being updated via `.step`.
+   *
+   * Initally the clock time is not being scaled (factor `1`).
+   *
+   * @method  setScale
+   * @chainable
+   *
+   * @param {Number} scale    The scale at which the clock time is passing.
+   *
+   * @return {Clock} this
+   */
+  setScale(scale) {
     this._scale = scale;
     return this;
-};
+  };
 
-/**
- * @method  getScale
- *
- * @return {Number} scale    The scale at which the clock time is passing.
- */
-getScale() {
+  /**
+   * @method  getScale
+   *
+   * @return {Number} scale    The scale at which the clock time is passing.
+   */
+  getScale() {
     return this._scale;
-};
+  };
 
-/**
- * Updates the internal clock time.
- *
- * @method  step
- * @chainable
- *
- * @param  {Number} time high resolution timestamp used for invoking the
- *                       `update` method on all registered objects
- * @return {Clock}       this
- */
-step(time) {
+  /**
+   * Updates the internal clock time.
+   *
+   * @method  step
+   * @chainable
+   *
+   * @param  {Number} time high resolution timestamp used for invoking the
+   *                       `update` method on all registered objects
+   * @return {Clock}       this
+   */
+  step(time) {
     this._frame++;
 
-    this._scaledTime = this._scaledTime + (time - this._time)*this._scale;
+    this._scaledTime = this._scaledTime + (time - this._time) * this._scale;
     this._time = time;
 
     for (var i = 0; i < this._timerQueue.length; i++) {
-        if (this._timerQueue[i](this._scaledTime)) {
-            this._timerQueue.splice(i, 1);
-        }
+      if (this._timerQueue[i](this._scaledTime)) {
+        this._timerQueue.splice(i, 1);
+      }
     }
     return this;
-};
+  };
 
-/**
- * Returns the internal clock time.
- *
- * @method  now
- *
- * @return  {Number} time high resolution timestamp used for invoking the
- *                       `update` method on all registered objects
- */
-now() {
+  /**
+   * Returns the internal clock time.
+   *
+   * @method  now
+   *
+   * @return  {Number} time high resolution timestamp used for invoking the
+   *                       `update` method on all registered objects
+   */
+  now() {
     return this._scaledTime;
-};
+  };
 
-/**
- * Returns the number of frames elapsed so far.
- *
- * @method getFrame
- *
- * @return {Number} frames
- */
-getFrame() {
+  /**
+   * Returns the number of frames elapsed so far.
+   *
+   * @method getFrame
+   *
+   * @return {Number} frames
+   */
+  getFrame() {
     return this._frame;
-};
+  };
 
-/**
- * Wraps a function to be invoked after a certain amount of time.
- * After a set duration has passed, it executes the function and
- * removes it as a listener to 'prerender'.
- *
- * @method setTimeout
- *
- * @param {Function} callback function to be run after a specified duration
- * @param {Number} delay milliseconds from now to execute the function
- *
- * @return {Function} timer function used for Clock#clearTimer
- */
-setTimeout(callback, delay) {
+  /**
+   * Wraps a function to be invoked after a certain amount of time.
+   * After a set duration has passed, it executes the function and
+   * removes it as a listener to 'prerender'.
+   *
+   * @method setTimeout
+   *
+   * @param {Function} callback function to be run after a specified duration
+   * @param {Number} delay milliseconds from now to execute the function
+   *
+   * @return {Function} timer function used for Clock#clearTimer
+   */
+  setTimeout(callback, delay) {
     var params = Array.prototype.slice.call(arguments, 2);
     var startedAt = this._time;
     var timer = function(time) {
-        if (time - startedAt >= delay) {
-            callback.apply(null, params);
-            return true;
-        }
-        return false;
+      if (time - startedAt >= delay) {
+        callback.apply(null, params);
+        return true;
+      }
+      return false;
     };
     this._timerQueue.push(timer);
     return timer;
-};
+  };
 
 
-/**
- * Wraps a function to be invoked after a certain amount of time.
- *  After a set duration has passed, it executes the function and
- *  resets the execution time.
- *
- * @method setInterval
- *
- * @param {Function} callback function to be run after a specified duration
- * @param {Number} delay interval to execute function in milliseconds
- *
- * @return {Function} timer function used for Clock#clearTimer
- */
-setInterval(callback, delay) {
+  /**
+   * Wraps a function to be invoked after a certain amount of time.
+   *  After a set duration has passed, it executes the function and
+   *  resets the execution time.
+   *
+   * @method setInterval
+   *
+   * @param {Function} callback function to be run after a specified duration
+   * @param {Number} delay interval to execute function in milliseconds
+   *
+   * @return {Function} timer function used for Clock#clearTimer
+   */
+  setInterval(callback, delay) {
     var params = Array.prototype.slice.call(arguments, 2);
     var startedAt = this._time;
     var timer = function(time) {
-        if (time - startedAt >= delay) {
-            callback.apply(null, params);
-            startedAt = time;
-        }
-        return false;
+      if (time - startedAt >= delay) {
+        callback.apply(null, params);
+        startedAt = time;
+      }
+      return false;
     };
     this._timerQueue.push(timer);
     return timer;
-};
+  };
 
-/**
- * Removes previously via `Clock#setTimeout` or `Clock#setInterval`
- * registered callback function
- *
- * @method clearTimer
- * @chainable
- *
- * @param  {Function} timer  previously by `Clock#setTimeout` or
- *                              `Clock#setInterval` returned callback function
- * @return {Clock}              this
- */
-clearTimer(timer) {
+  /**
+   * Removes previously via `Clock#setTimeout` or `Clock#setInterval`
+   * registered callback function
+   *
+   * @method clearTimer
+   * @chainable
+   *
+   * @param  {Function} timer  previously by `Clock#setTimeout` or
+   *                              `Clock#setInterval` returned callback function
+   * @return {Clock}              this
+   */
+  clearTimer(timer) {
     var index = this._timerQueue.indexOf(timer);
     if (index !== -1) {
-        this._timerQueue.splice(index, 1);
+      this._timerQueue.splice(index, 1);
     }
     return this;
-};
+  };
 
 }
 

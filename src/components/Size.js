@@ -46,211 +46,212 @@ class Size {
     var initialAbsoluteSize = node.getAbsoluteSize();
 
     this._proportional = {
-        x: new Transitionable(initialProportionalSize[0]),
-        y: new Transitionable(initialProportionalSize[1]),
-        z: new Transitionable(initialProportionalSize[2])
+      x: new Transitionable(initialProportionalSize[0]),
+      y: new Transitionable(initialProportionalSize[1]),
+      z: new Transitionable(initialProportionalSize[2])
     };
     this._differential = {
-        x: new Transitionable(initialDifferentialSize[0]),
-        y: new Transitionable(initialDifferentialSize[1]),
-        z: new Transitionable(initialDifferentialSize[2])
+      x: new Transitionable(initialDifferentialSize[0]),
+      y: new Transitionable(initialDifferentialSize[1]),
+      z: new Transitionable(initialDifferentialSize[2])
     };
     this._absolute = {
-        x: new Transitionable(initialAbsoluteSize[0]),
-        y: new Transitionable(initialAbsoluteSize[1]),
-        z: new Transitionable(initialAbsoluteSize[2])
+      x: new Transitionable(initialAbsoluteSize[0]),
+      y: new Transitionable(initialAbsoluteSize[1]),
+      z: new Transitionable(initialAbsoluteSize[2])
     };
-}
+  }
 
-/**
- * Set which mode each axis of Size will have its dimensions
- * calculated by.  Size can be calculated by absolute pixel definitions,
- * relative to its parent, or by the size of its renderables
- *
- * @method
- *
- * @param {Number} x the mode of size for the width
- * @param {Number} y the mode of size for the height
- * @param {Number} z the mode of size for the depth
- *
- * @return {Size} this
- */
-setMode(x, y, z) {
+  /**
+   * Set which mode each axis of Size will have its dimensions
+   * calculated by.  Size can be calculated by absolute pixel definitions,
+   * relative to its parent, or by the size of its renderables
+   *
+   * @method
+   *
+   * @param {Number} x the mode of size for the width
+   * @param {Number} y the mode of size for the height
+   * @param {Number} z the mode of size for the depth
+   *
+   * @return {Size} this
+   */
+  setMode(x, y, z) {
     this._node.setSizeMode(x, y, z);
     return this;
-};
+  };
 
-/**
- * Return the name of the Size component
- *
- * @method
- *
- * @return {String} Name of the component
- */
-toString() {
+  /**
+   * Return the name of the Size component
+   *
+   * @method
+   *
+   * @return {String} Name of the component
+   */
+  toString() {
     return 'Size';
-};
+  };
 
-/**
- * @typedef absoluteSizeValue
- * @type {Object}
- * @property {String} type current type of sizing being applied ('absolute')
- * @property {String} component component name ('Size')
- * @property {number} x
- * @property {number} y
- * @property {number} z
- */
+  /**
+   * @typedef absoluteSizeValue
+   * @type {Object}
+   * @property {String} type current type of sizing being applied ('absolute')
+   * @property {String} component component name ('Size')
+   * @property {number} x
+   * @property {number} y
+   * @property {number} z
+   */
 
-/**
- * @typedef relativeSizeValue
- * @type {Object}
- * @property {String} type current type of sizing being applied ('relative')
- * @property {String} component component name ('Size')
- * @property {Object} differential
- * @property {number} differential.x
- * @property {number} differential.y
- * @property {number} differential.z
- * @property {Object} proportional
- * @property {number} proportional.x
- * @property {number} proportional.y
- * @property {number} proportional.z
- */
+  /**
+   * @typedef relativeSizeValue
+   * @type {Object}
+   * @property {String} type current type of sizing being applied ('relative')
+   * @property {String} component component name ('Size')
+   * @property {Object} differential
+   * @property {number} differential.x
+   * @property {number} differential.y
+   * @property {number} differential.z
+   * @property {Object} proportional
+   * @property {number} proportional.x
+   * @property {number} proportional.y
+   * @property {number} proportional.z
+   */
 
-/**
- * Returns serialized state of the component.
- *
- * @method
- *
- * @return {Object} the internal state of the component
- */
-getValue() {
+  /**
+   * Returns serialized state of the component.
+   *
+   * @method
+   *
+   * @return {Object} the internal state of the component
+   */
+  getValue() {
     return {
-        sizeMode: SizeSystem.get(this._node.getLocation()).getSizeMode(),
-        absolute: {
-            x: this._absolute.x.get(),
-            y: this._absolute.y.get(),
-            z: this._absolute.z.get()
-        },
-        differential: {
-            x: this._differential.x.get(),
-            y: this._differential.y.get(),
-            z: this._differential.z.get()
-        },
-        proportional: {
-            x: this._proportional.x.get(),
-            y: this._proportional.y.get(),
-            z: this._proportional.z.get()
-        }
+      sizeMode: SizeSystem.get(this._node.getLocation()).getSizeMode(),
+      absolute: {
+        x: this._absolute.x.get(),
+        y: this._absolute.y.get(),
+        z: this._absolute.z.get()
+      },
+      differential: {
+        x: this._differential.x.get(),
+        y: this._differential.y.get(),
+        z: this._differential.z.get()
+      },
+      proportional: {
+        x: this._proportional.x.get(),
+        y: this._proportional.y.get(),
+        z: this._proportional.z.get()
+      }
     };
-};
+  };
 
-/**
- * Updates state of component.
- *
- * @method
- *
- * @param {Object} state state encoded in same format as state retrieved through `getValue`
- *
- * @return {Boolean} boolean indicating whether the new state has been applied
- */
-setValue(state) {
+  /**
+   * Updates state of component.
+   *
+   * @method
+   *
+   * @param {Object} state state encoded in same format as state retrieved through `getValue`
+   *
+   * @return {Boolean} boolean indicating whether the new state has been applied
+   */
+  setValue(state) {
     if (this.toString() === state.component) {
-        this.setMode.apply(this, state.sizeMode);
-        if (state.absolute) {
-            this.setAbsolute(state.absolute.x, state.absolute.y, state.absolute.z);
-        }
-        if (state.differential) {
-            this.setAbsolute(state.differential.x, state.differential.y, state.differential.z);
-        }
-        if (state.proportional) {
-            this.setAbsolute(state.proportional.x, state.proportional.y, state.proportional.z);
-        }
+      this.setMode.apply(this, state.sizeMode);
+      if (state.absolute) {
+        this.setAbsolute(state.absolute.x, state.absolute.y, state.absolute.z);
+      }
+      if (state.differential) {
+        this.setAbsolute(state.differential.x, state.differential.y, state.differential.z);
+      }
+      if (state.proportional) {
+        this.setAbsolute(state.proportional.x, state.proportional.y, state.proportional.z);
+      }
     }
     return false;
-};
+  };
 
-/**
- * Helper function that grabs the activity of a certain type of size.
- *
- * @method
- * @private
- *
- * @param {Object} type Representation of a type of the sizing model
- *
- * @return {Boolean} boolean indicating whether the new state has been applied
- */
-_isActive(type) {
+  /**
+   * Helper function that grabs the activity of a certain type of size.
+   *
+   * @method
+   * @private
+   *
+   * @param {Object} type Representation of a type of the sizing model
+   *
+   * @return {Boolean} boolean indicating whether the new state has been applied
+   */
+  _isActive(type) {
     return type.x.isActive() || type.y.isActive() || type.z.isActive();
-};
+  };
 
-/**
- * Helper function that grabs the activity of a certain type of size.
- *
- * @method
- *
- * @param {String} type Type of size
- *
- * @return {Boolean} boolean indicating whether the new state has been applied
- */
+  /**
+   * Helper function that grabs the activity of a certain type of size.
+   *
+   * @method
+   *
+   * @param {String} type Type of size
+   *
+   * @return {Boolean} boolean indicating whether the new state has been applied
+   */
 
-isActive(){
+  isActive() {
     return (
-        this._isActive(this._absolute) ||
-        this._isActive(this._proportional) ||
-        this._isActive(this._differential)
+      this._isActive(this._absolute) ||
+      this._isActive(this._proportional) ||
+      this._isActive(this._differential)
     );
-};
+  };
 
-/**
- * When the node this component is attached to updates, update the value
- * of the Node's size.
- *
- * @method
- *
- * @return {undefined} undefined
- */
-onUpdate() {
+  /**
+   * When the node this component is attached to updates, update the value
+   * of the Node's size.
+   *
+   * @method
+   *
+   * @return {undefined} undefined
+   */
+  onUpdate() {
     var abs = this._absolute;
     this._node.setAbsoluteSize(
-        abs.x.get(),
-        abs.y.get(),
-        abs.z.get()
+      abs.x.get(),
+      abs.y.get(),
+      abs.z.get()
     );
     var prop = this._proportional;
     var diff = this._differential;
     this._node.setProportionalSize(
-        prop.x.get(),
-        prop.y.get(),
-        prop.z.get()
+      prop.x.get(),
+      prop.y.get(),
+      prop.z.get()
     );
     this._node.setDifferentialSize(
-        diff.x.get(),
-        diff.y.get(),
-        diff.z.get()
+      diff.x.get(),
+      diff.y.get(),
+      diff.z.get()
     );
 
     if (this.isActive()) this._node.requestUpdateOnNextTick(this._id);
-    else this._requestingUpdate = false;
-};
+    else
+      this._requestingUpdate = false;
+  };
 
 
-/**
-* Applies absolute size.
-*
-* @method
-*
-* @param {Number} x used to set absolute size in x-direction (width)
-* @param {Number} y used to set absolute size in y-direction (height)
-* @param {Number} z used to set absolute size in z-direction (depth)
-* @param {Object} options options hash
-* @param {Function} callback callback function to be executed after the
-*                            transitions have been completed
-* @return {Size} this
-*/
-setAbsolute(x, y, z, options, callback) {
+  /**
+  * Applies absolute size.
+  *
+  * @method
+  *
+  * @param {Number} x used to set absolute size in x-direction (width)
+  * @param {Number} y used to set absolute size in y-direction (height)
+  * @param {Number} z used to set absolute size in z-direction (depth)
+  * @param {Object} options options hash
+  * @param {Function} callback callback function to be executed after the
+  *                            transitions have been completed
+  * @return {Size} this
+  */
+  setAbsolute(x, y, z, options, callback) {
     if (!this._requestingUpdate) {
-        this._node.requestUpdate(this._id);
-        this._requestingUpdate = true;
+      this._node.requestUpdate(this._id);
+      this._requestingUpdate = true;
     }
 
     var xCallback;
@@ -258,44 +259,42 @@ setAbsolute(x, y, z, options, callback) {
     var zCallback;
 
     if (z != null) {
-        zCallback = callback;
-    }
-    else if (y != null) {
-        yCallback = callback;
-    }
-    else if (x != null) {
-        xCallback = callback;
+      zCallback = callback;
+    } else if (y != null) {
+      yCallback = callback;
+    } else if (x != null) {
+      xCallback = callback;
     }
 
     var abs = this._absolute;
     if (x != null) {
-        abs.x.set(x, options, xCallback);
+      abs.x.set(x, options, xCallback);
     }
     if (y != null) {
-        abs.y.set(y, options, yCallback);
+      abs.y.set(y, options, yCallback);
     }
     if (z != null) {
-        abs.z.set(z, options, zCallback);
+      abs.z.set(z, options, zCallback);
     }
-};
+  };
 
-/**
-* Applies proportional size.
-*
-* @method
-*
-* @param {Number} x used to set proportional size in x-direction (width)
-* @param {Number} y used to set proportional size in y-direction (height)
-* @param {Number} z used to set proportional size in z-direction (depth)
-* @param {Object} options options hash
-* @param {Function} callback callback function to be executed after the
-*                            transitions have been completed
-* @return {Size} this
-*/
-setProportional(x, y, z, options, callback) {
+  /**
+  * Applies proportional size.
+  *
+  * @method
+  *
+  * @param {Number} x used to set proportional size in x-direction (width)
+  * @param {Number} y used to set proportional size in y-direction (height)
+  * @param {Number} z used to set proportional size in z-direction (depth)
+  * @param {Object} options options hash
+  * @param {Function} callback callback function to be executed after the
+  *                            transitions have been completed
+  * @return {Size} this
+  */
+  setProportional(x, y, z, options, callback) {
     if (!this._requestingUpdate) {
-        this._node.requestUpdate(this._id);
-        this._requestingUpdate = true;
+      this._node.requestUpdate(this._id);
+      this._requestingUpdate = true;
     }
 
     var xCallback;
@@ -303,45 +302,43 @@ setProportional(x, y, z, options, callback) {
     var zCallback;
 
     if (z != null) {
-        zCallback = callback;
-    }
-    else if (y != null) {
-        yCallback = callback;
-    }
-    else if (x != null) {
-        xCallback = callback;
+      zCallback = callback;
+    } else if (y != null) {
+      yCallback = callback;
+    } else if (x != null) {
+      xCallback = callback;
     }
 
     var prop = this._proportional;
     if (x != null) {
-        prop.x.set(x, options, xCallback);
+      prop.x.set(x, options, xCallback);
     }
     if (y != null) {
-        prop.y.set(y, options, yCallback);
+      prop.y.set(y, options, yCallback);
     }
     if (z != null) {
-        prop.z.set(z, options, zCallback);
+      prop.z.set(z, options, zCallback);
     }
     return this;
-};
+  };
 
-/**
-* Applies differential size to Size component.
-*
-* @method
-*
-* @param {Number} x used to set differential size in x-direction (width)
-* @param {Number} y used to set differential size in y-direction (height)
-* @param {Number} z used to set differential size in z-direction (depth)
-* @param {Object} options options hash
-* @param {Function} callback callback function to be executed after the
-*                            transitions have been completed
-* @return {Size} this
-*/
-setDifferential(x, y, z, options, callback) {
+  /**
+  * Applies differential size to Size component.
+  *
+  * @method
+  *
+  * @param {Number} x used to set differential size in x-direction (width)
+  * @param {Number} y used to set differential size in y-direction (height)
+  * @param {Number} z used to set differential size in z-direction (depth)
+  * @param {Object} options options hash
+  * @param {Function} callback callback function to be executed after the
+  *                            transitions have been completed
+  * @return {Size} this
+  */
+  setDifferential(x, y, z, options, callback) {
     if (!this._requestingUpdate) {
-        this._node.requestUpdate(this._id);
-        this._requestingUpdate = true;
+      this._node.requestUpdate(this._id);
+      this._requestingUpdate = true;
     }
 
     var xCallback;
@@ -349,47 +346,45 @@ setDifferential(x, y, z, options, callback) {
     var zCallback;
 
     if (z != null) {
-        zCallback = callback;
-    }
-    else if (y != null) {
-        yCallback = callback;
-    }
-    else if (x != null) {
-        xCallback = callback;
+      zCallback = callback;
+    } else if (y != null) {
+      yCallback = callback;
+    } else if (x != null) {
+      xCallback = callback;
     }
 
     var diff = this._differential;
     if (x != null) {
-        diff.x.set(x, options, xCallback);
+      diff.x.set(x, options, xCallback);
     }
     if (y != null) {
-        diff.y.set(y, options, yCallback);
+      diff.y.set(y, options, yCallback);
     }
     if (z != null) {
-        diff.z.set(z, options, zCallback);
+      diff.z.set(z, options, zCallback);
     }
     return this;
-};
+  };
 
-/**
- * Retrieves the computed size applied to the underlying Node.
- *
- * @method
- *
- * @return {Array} size three dimensional computed size
- */
-get() {
+  /**
+   * Retrieves the computed size applied to the underlying Node.
+   *
+   * @method
+   *
+   * @return {Array} size three dimensional computed size
+   */
+  get() {
     return this._node.getSize();
-};
+  };
 
-/**
- * Halts all currently active size transitions.
- *
- * @method
- *
- * @return {Size} this
- */
-halt() {
+  /**
+   * Halts all currently active size transitions.
+   *
+   * @method
+   *
+   * @return {Size} this
+   */
+  halt() {
     this._proportional.x.halt();
     this._proportional.y.halt();
     this._proportional.z.halt();
@@ -400,7 +395,7 @@ halt() {
     this._absolute.y.halt();
     this._absolute.z.halt();
     return this;
-};
+  };
 
 }
 

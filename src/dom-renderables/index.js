@@ -24,6 +24,6 @@
 
 'use strict';
 
-import  { DOMElement } from './DOMElement';
+import { DOMElement } from './DOMElement';
 
 export { DOMElement };

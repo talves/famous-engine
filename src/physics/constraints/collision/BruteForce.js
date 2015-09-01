@@ -38,48 +38,48 @@ class BruteForceAABB {
     this._volumes = [];
     this._entityRegistry = {};
     for (var i = 0; i < targets.length; i++) {
-        this.add(targets[i]);
+      this.add(targets[i]);
     }
-}
+  }
 
-/**
- * Start tracking a Particle.
- *
- * @method
- * @param {Particle} body The body to track.
- * @return {undefined} undefined
- */
-add(body) {
+  /**
+   * Start tracking a Particle.
+   *
+   * @method
+   * @param {Particle} body The body to track.
+   * @return {undefined} undefined
+   */
+  add(body) {
     var boundingVolume = new AABB(body);
 
     this._entityRegistry[body._ID] = body;
     this._volumes.push(boundingVolume);
-};
+  };
 
-/**
- * Return an array of possible collision pairs, culled by an AABB intersection test.
- *
- * @method
- * @return {Array.<Particle[]>} Results.
- */
-update() {
+  /**
+   * Return an array of possible collision pairs, culled by an AABB intersection test.
+   *
+   * @method
+   * @return {Array.<Particle[]>} Results.
+   */
+  update() {
     var _volumes = this._volumes;
     var _entityRegistry = this._entityRegistry;
 
     for (var k = 0, len = _volumes.length; k < len; k++) {
-        _volumes[k].update();
+      _volumes[k].update();
     }
 
     var result = [];
     for (var i = 0, numTargets = _volumes.length; i < numTargets; i++) {
-        for (var j = i + 1; j < numTargets; j++) {
-            if (AABB.checkOverlap(_volumes[i], _volumes[j])) {
-                result.push([_entityRegistry[i], _entityRegistry[j]]);
-            }
+      for (var j = i + 1; j < numTargets; j++) {
+        if (AABB.checkOverlap(_volumes[i], _volumes[j])) {
+          result.push([_entityRegistry[i], _entityRegistry[j]]);
         }
+      }
     }
     return result;
-};
+  };
 
 }
 
@@ -95,26 +95,26 @@ class BruteForce {
     this.targets = targets;
   }
 
-/**
- * Start tracking a Particle.
- *
- * @method
- * @param {Particle} body The body to track.
- * @return {undefined} undefined
- */
-add(body) {
+  /**
+   * Start tracking a Particle.
+   *
+   * @method
+   * @param {Particle} body The body to track.
+   * @return {undefined} undefined
+   */
+  add(body) {
     this.targets.push(body);
-};
+  };
 
-/**
- * Immediately returns an array of possible collisions.
- *
- * @method
- * @return {Array.<Particle[]>} Results.
- */
-update() {
+  /**
+   * Immediately returns an array of possible collisions.
+   *
+   * @method
+   * @return {Array.<Particle[]>} Results.
+   */
+  update() {
     return [this.targets];
-};
+  };
 
 }
 

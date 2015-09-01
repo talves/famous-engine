@@ -30,10 +30,10 @@
  *
  * @constructor Event
  */
- function Event () {
-     this.propagationStopped = false;
-     this.stopPropagation = stopPropagation;
- }
+function Event() {
+  this.propagationStopped = false;
+  this.stopPropagation = stopPropagation;
+}
 
 /**
  * stopPropagation ends the bubbling of the event in the
@@ -44,7 +44,7 @@
  * @return {undefined} undefined
  */
 function stopPropagation() {
-    this.propagationStopped = true;
+  this.propagationStopped = true;
 }
 
 export { Event };

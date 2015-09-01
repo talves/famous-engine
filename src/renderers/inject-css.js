@@ -25,65 +25,63 @@
 'use strict';
 
 var css = '.famous-dom-renderer {' +
-    'width:100%;' +
-    'height:100%;' +
-    'transform-style:preserve-3d;' +
-    '-webkit-transform-style:preserve-3d;' +
-'}' +
+  'width:100%;' +
+  'height:100%;' +
+  'transform-style:preserve-3d;' +
+  '-webkit-transform-style:preserve-3d;' +
+  '}' +
 
-'.famous-dom-element {' +
-    '-webkit-transform-origin:0% 0%;' +
-    'transform-origin:0% 0%;' +
-    '-webkit-backface-visibility:visible;' +
-    'backface-visibility:visible;' +
-    '-webkit-transform-style:preserve-3d;' +
-    'transform-style:preserve-3d;' +
-    '-webkit-tap-highlight-color:transparent;' +
-    'pointer-events:auto;' +
-    'z-index:1;' +
-'}' +
+  '.famous-dom-element {' +
+  '-webkit-transform-origin:0% 0%;' +
+  'transform-origin:0% 0%;' +
+  '-webkit-backface-visibility:visible;' +
+  'backface-visibility:visible;' +
+  '-webkit-transform-style:preserve-3d;' +
+  'transform-style:preserve-3d;' +
+  '-webkit-tap-highlight-color:transparent;' +
+  'pointer-events:auto;' +
+  'z-index:1;' +
+  '}' +
 
-'.famous-dom-element-content,' +
-'.famous-dom-element {' +
-    'position:absolute;' +
-    'box-sizing:border-box;' +
-    '-moz-box-sizing:border-box;' +
-    '-webkit-box-sizing:border-box;' +
-'}' +
+  '.famous-dom-element-content,' +
+  '.famous-dom-element {' +
+  'position:absolute;' +
+  'box-sizing:border-box;' +
+  '-moz-box-sizing:border-box;' +
+  '-webkit-box-sizing:border-box;' +
+  '}' +
 
-'.famous-webgl-renderer {' +
-    '-webkit-transform:translateZ(1000000px);' +  /* TODO: Fix when Safari Fixes*/
-    'transform:translateZ(1000000px);' +
-    'pointer-events:none;' +
-    'position:absolute;' +
-    'z-index:1;' +
-    'top:0;' +
-    'width:100%;' +
-    'height:100%;' +
-'}';
+  '.famous-webgl-renderer {' +
+  '-webkit-transform:translateZ(1000000px);' + /* TODO: Fix when Safari Fixes*/
+  'transform:translateZ(1000000px);' +
+  'pointer-events:none;' +
+  'position:absolute;' +
+  'z-index:1;' +
+  'top:0;' +
+  'width:100%;' +
+  'height:100%;' +
+  '}';
 
 var INJECTED = typeof document === 'undefined';
 
 var injectCSS = function() {
-    if (INJECTED) return;
-    INJECTED = true;
-    if (document.createStyleSheet) {
-        var sheet = document.createStyleSheet();
-        sheet.cssText = css;
-    }
-    else {
-        var head = document.getElementsByTagName('head')[0];
-        var style = document.createElement('style');
+  if (INJECTED) return;
+  INJECTED = true;
+  if (document.createStyleSheet) {
+    var sheet = document.createStyleSheet();
+    sheet.cssText = css;
+  } else {
+    var head = document.getElementsByTagName('head')[0];
+    var style = document.createElement('style');
 
-        if (style.styleSheet) {
-            style.styleSheet.cssText = css;
-        }
-        else {
-            style.appendChild(document.createTextNode(css));
-        }
-
-        (head ? head : document.documentElement).appendChild(style);
+    if (style.styleSheet) {
+      style.styleSheet.cssText = css;
+    } else {
+      style.appendChild(document.createTextNode(css));
     }
+
+    (head ? head : document.documentElement).appendChild(style);
+  }
 }
 
 export { injectCSS };

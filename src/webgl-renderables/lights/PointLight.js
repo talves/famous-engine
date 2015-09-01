@@ -42,42 +42,42 @@ import { TransformSystem } from '../../core/TransformSystem';
 class PointLight extends Light {
   constructor(node) {
     super(node);
-}
+  }
 
-/**
- * Receive the notice that the node you are on has been mounted.
- *
- * @param {Node} node Node that the component has been associated with
- * @param {Number} id ID associated with the node
- *
- * @return {undefined} undefined
- */
-onMount(node, id) {
+  /**
+   * Receive the notice that the node you are on has been mounted.
+   *
+   * @param {Node} node Node that the component has been associated with
+   * @param {Number} id ID associated with the node
+   *
+   * @return {undefined} undefined
+   */
+  onMount(node, id) {
     this._id = id;
     TransformSystem.makeBreakPointAt(this._node.getLocation());
     this.onTransformChange(TransformSystem.get(this._node.getLocation()));
-};
+  };
 
-/**
- * Receives transform change updates from the scene graph.
- *
- * @private
- *
- * @param {Array} transform Transform matrix
- *
- * @return {undefined} undefined
- */
-onTransformChange(transform) {
+  /**
+   * Receives transform change updates from the scene graph.
+   *
+   * @private
+   *
+   * @param {Array} transform Transform matrix
+   *
+   * @return {undefined} undefined
+   */
+  onTransformChange(transform) {
     if (!this._requestingUpdate) {
-        this._node.requestUpdate(this._id);
-        this._requestingUpdate = true;
+      this._node.requestUpdate(this._id);
+      this._requestingUpdate = true;
     }
     transform = transform.getWorldTransform();
     this.queue.push(this.commands.position);
     this.queue.push(transform[12]);
     this.queue.push(transform[13]);
     this.queue.push(transform[14]);
-};
+  };
 
 }
 

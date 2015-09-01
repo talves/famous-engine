@@ -44,9 +44,9 @@ const PI = Math.PI;
  * @param {Particle} b The other body.
  * @param {Object} options An object of configurable options.
  */
- class Distance extends Constraint {
-   constructor(a, b, options) {
-     super(options);
+class Distance extends Constraint {
+  constructor(a, b, options) {
+    super(options);
 
     this.a = a;
     this.b = b;
@@ -57,24 +57,24 @@ const PI = Math.PI;
     this.velocityBias = 0;
     this.divisor = 0;
 
-        this.initLocals();
-    }
+    this.initLocals();
+  }
 
-    /**
-     * Initialize passing the Options.
-     *
-     * @method
-     * @return {undefined} undefined
-     */
-    init(options) {};
+  /**
+   * Initialize passing the Options.
+   *
+   * @method
+   * @return {undefined} undefined
+   */
+  init(options) {};
 
-/**
- * Initialize the Distance. Sets defaults if a property was not already set.
- *
- * @method
- * @return {undefined} undefined
- */
-initLocals() {
+  /**
+   * Initialize the Distance. Sets defaults if a property was not already set.
+   *
+   * @method
+   * @return {undefined} undefined
+   */
+  initLocals() {
     this.length = this.length || Vec3.subtract(this.b.position, this.a.position, P_REGISTER).length();
     this.minLength = this.minLength || 0;
     this.period = this.period || 0.2;
@@ -82,17 +82,17 @@ initLocals() {
 
     this.stiffness = 4 * PI * PI / (this.period * this.period);
     this.damping = 4 * PI * this.dampingRatio / this.period;
-};
+  };
 
-/**
- * Detect violations of the constraint. Warm start the constraint, if possible.
- *
- * @method
- * @param {Number} time The current time in the physics engine.
- * @param {Number} dt The physics engine frame delta.
- * @return {undefined} undefined
- */
-update(time, dt) {
+  /**
+   * Detect violations of the constraint. Warm start the constraint, if possible.
+   *
+   * @method
+   * @param {Number} time The current time in the physics engine.
+   * @param {Number} dt The physics engine frame delta.
+   * @return {undefined} undefined
+   */
+  update(time, dt) {
     var a = this.a;
     var b = this.b;
 
@@ -122,15 +122,14 @@ update(time, dt) {
     var beta;
 
     if (this.period === 0) {
-        gamma = 0;
-        beta  = 1;
-    }
-    else {
-        var c = this.damping * effectiveMass;
-        var k = this.stiffness * effectiveMass;
+      gamma = 0;
+      beta = 1;
+    } else {
+      var c = this.damping * effectiveMass;
+      var k = this.stiffness * effectiveMass;
 
-        gamma = 1 / (dt*(c + dt*k));
-        beta  = dt*k / (c + dt*k);
+      gamma = 1 / (dt * (c + dt * k));
+      beta = dt * k / (c + dt * k);
     }
 
     var baumgarte = beta * dist / dt;
@@ -146,15 +145,15 @@ update(time, dt) {
     this.velocityBias = baumgarte;
     this.divisor = divisor;
     this.impulse = 0;
-};
+  };
 
-/**
- * Apply impulses to resolve the constraint.
- *
- * @method
- * @return {undefined} undefined
- */
-resolve() {
+  /**
+   * Apply impulses to resolve the constraint.
+   *
+   * @method
+   * @return {undefined} undefined
+   */
+  resolve() {
     var a = this.a;
     var b = this.b;
 
@@ -178,7 +177,7 @@ resolve() {
     a.applyImpulse(impulse.invert());
 
     this.impulse += lambda;
-};
+  };
 
 }
 

@@ -35,72 +35,73 @@ import { Path as PathUtils } from './Path';
  *
  * @constructor
  */
- class SizeSystem {
-   constructor() {
+class SizeSystem {
+  constructor() {
     this.pathStore = new PathStore();
-}
+  }
 
-/**
- * Registers a size component to a give path. A size component can be passed as the second argument
- * or a default one will be created. Throws if no size component has been added at the parent path.
- *
- * @method
- *
- * @param {String} path The path at which to register the size component
- * @param {Size | undefined} size The size component to be registered or undefined.
- *
- * @return {undefined} undefined
- */
-registerSizeAtPath(path, size) {
+  /**
+   * Registers a size component to a give path. A size component can be passed as the second argument
+   * or a default one will be created. Throws if no size component has been added at the parent path.
+   *
+   * @method
+   *
+   * @param {String} path The path at which to register the size component
+   * @param {Size | undefined} size The size component to be registered or undefined.
+   *
+   * @return {undefined} undefined
+   */
+  registerSizeAtPath(path, size) {
     if (!PathUtils.depth(path)) return this.pathStore.insert(path, size ? size : new Size());
 
     var parent = this.pathStore.get(PathUtils.parent(path));
 
-    if (!parent) throw new Error(
-            'No parent size registered at expected path: ' + PathUtils.parent(path)
-    );
+    if (!parent)
+      throw new Error(
+        'No parent size registered at expected path: ' + PathUtils.parent(path)
+      );
 
     if (size) size.setParent(parent);
 
     this.pathStore.insert(path, size ? size : new Size(parent));
-};
+  };
 
-/**
- * Removes the size component from the given path. Will throw if no component is at that
- * path
- *
- * @method
- *
- * @param {String} path The path at which to remove the size.
- *
- * @return {undefined} undefined
- */
-deregisterSizeAtPath(path) {
+  /**
+   * Removes the size component from the given path. Will throw if no component is at that
+   * path
+   *
+   * @method
+   *
+   * @param {String} path The path at which to remove the size.
+   *
+   * @return {undefined} undefined
+   */
+  deregisterSizeAtPath(path) {
     this.pathStore.remove(path);
-};
+  };
 
-/**
- * Returns the size component stored at a given path. Returns undefined if no
- * size component is registered to that path.
- *
- * @method
- *
- * @param {String} path The path at which to get the size component.
- *
- * @return {undefined} undefined
- */
-get(path) {
+  /**
+   * Returns the size component stored at a given path. Returns undefined if no
+   * size component is registered to that path.
+   *
+   * @method
+   *
+   * @param {String} path The path at which to get the size component.
+   *
+   * @return {undefined} undefined
+   */
+  get(path) {
     return this.pathStore.get(path);
-};
+  };
 
-/**
- * Updates the sizes in the scene graph. Called internally by the famous engine.
- *
- * @method
- *
- * @return {undefined} undefined
- */
-update() {
+  /**
+   * Updates the sizes in the scene graph. Called internally by the famous engine.
+   *
+   * @method
+   *
+   * @return {undefined} undefined
+   */
+  update() {
     var sizes = this.pathStore.getItems();
     var paths = this.pathStore.getPaths();
     var node;
@@ -109,19 +110,19 @@ update() {
     var len;
     var components;
 
-    for (i = 0, len = sizes.length ; i < len ; i++) {
-        node = Dispatch.getNode(paths[i]);
-        components = node.getComponents();
-        if (!node) continue;
-        size = sizes[i];
-        if (size.sizeModeChanged) _sizeModeChanged(node, components, size);
-        if (size.absoluteSizeChanged) _absoluteSizeChanged(node, components, size);
-        if (size.proportionalSizeChanged) _proportionalSizeChanged(node, components, size);
-        if (size.differentialSizeChanged) _differentialSizeChanged(node, components, size);
-        if (size.renderSizeChanged) _renderSizeChanged(node, components, size);
-        if (size.fromComponents(components)) _sizeChanged(node, components, size);
+    for (i = 0, len = sizes.length; i < len; i++) {
+      node = Dispatch.getNode(paths[i]);
+      components = node.getComponents();
+      if (!node) continue;
+      size = sizes[i];
+      if (size.sizeModeChanged) _sizeModeChanged(node, components, size);
+      if (size.absoluteSizeChanged) _absoluteSizeChanged(node, components, size);
+      if (size.proportionalSizeChanged) _proportionalSizeChanged(node, components, size);
+      if (size.differentialSizeChanged) _differentialSizeChanged(node, components, size);
+      if (size.renderSizeChanged) _renderSizeChanged(node, components, size);
+      if (size.fromComponents(components)) _sizeChanged(node, components, size);
     }
-};
+  };
 
 }
 // private methods
@@ -139,15 +140,15 @@ update() {
  * @return {undefined} undefined
  */
 function _sizeModeChanged(node, components, size) {
-    var sizeMode = size.getSizeMode();
-    var x = sizeMode[0];
-    var y = sizeMode[1];
-    var z = sizeMode[2];
-    if (node.onSizeModeChange) node.onSizeModeChange(x, y, z);
-    for (var i = 0, len = components.length ; i < len ; i++)
-        if (components[i] && components[i].onSizeModeChange)
-            components[i].onSizeModeChange(x, y, z);
-    size.sizeModeChanged = false;
+  var sizeMode = size.getSizeMode();
+  var x = sizeMode[0];
+  var y = sizeMode[1];
+  var z = sizeMode[2];
+  if (node.onSizeModeChange) node.onSizeModeChange(x, y, z);
+  for (var i = 0, len = components.length; i < len; i++)
+    if (components[i] && components[i].onSizeModeChange)
+      components[i].onSizeModeChange(x, y, z);
+  size.sizeModeChanged = false;
 }
 
 /**
@@ -163,15 +164,15 @@ function _sizeModeChanged(node, components, size) {
  * @return {undefined} undefined
  */
 function _absoluteSizeChanged(node, components, size) {
-    var absoluteSize = size.getAbsolute();
-    var x = absoluteSize[0];
-    var y = absoluteSize[1];
-    var z = absoluteSize[2];
-    if (node.onAbsoluteSizeChange) node.onAbsoluteSizeChange(x, y, z);
-    for (var i = 0, len = components.length ; i < len ; i++)
-        if (components[i] && components[i].onAbsoluteSizeChange)
-            components[i].onAbsoluteSizeChange(x, y, z);
-    size.absoluteSizeChanged = false;
+  var absoluteSize = size.getAbsolute();
+  var x = absoluteSize[0];
+  var y = absoluteSize[1];
+  var z = absoluteSize[2];
+  if (node.onAbsoluteSizeChange) node.onAbsoluteSizeChange(x, y, z);
+  for (var i = 0, len = components.length; i < len; i++)
+    if (components[i] && components[i].onAbsoluteSizeChange)
+      components[i].onAbsoluteSizeChange(x, y, z);
+  size.absoluteSizeChanged = false;
 }
 
 /**
@@ -187,15 +188,15 @@ function _absoluteSizeChanged(node, components, size) {
  * @return {undefined} undefined
  */
 function _proportionalSizeChanged(node, components, size) {
-    var proportionalSize = size.getProportional();
-    var x = proportionalSize[0];
-    var y = proportionalSize[1];
-    var z = proportionalSize[2];
-    if (node.onProportionalSizeChange) node.onProportionalSizeChange(x, y, z);
-    for (var i = 0, len = components.length ; i < len ; i++)
-        if (components[i] && components[i].onProportionalSizeChange)
-            components[i].onProportionalSizeChange(x, y, z);
-    size.proportionalSizeChanged = false;
+  var proportionalSize = size.getProportional();
+  var x = proportionalSize[0];
+  var y = proportionalSize[1];
+  var z = proportionalSize[2];
+  if (node.onProportionalSizeChange) node.onProportionalSizeChange(x, y, z);
+  for (var i = 0, len = components.length; i < len; i++)
+    if (components[i] && components[i].onProportionalSizeChange)
+      components[i].onProportionalSizeChange(x, y, z);
+  size.proportionalSizeChanged = false;
 }
 
 /**
@@ -211,15 +212,15 @@ function _proportionalSizeChanged(node, components, size) {
  * @return {undefined} undefined
  */
 function _differentialSizeChanged(node, components, size) {
-    var differentialSize = size.getDifferential();
-    var x = differentialSize[0];
-    var y = differentialSize[1];
-    var z = differentialSize[2];
-    if (node.onDifferentialSizeChange) node.onDifferentialSizeChange(x, y, z);
-    for (var i = 0, len = components.length ; i < len ; i++)
-        if (components[i] && components[i].onDifferentialSizeChange)
-            components[i].onDifferentialSizeChange(x, y, z);
-    size.differentialSizeChanged = false;
+  var differentialSize = size.getDifferential();
+  var x = differentialSize[0];
+  var y = differentialSize[1];
+  var z = differentialSize[2];
+  if (node.onDifferentialSizeChange) node.onDifferentialSizeChange(x, y, z);
+  for (var i = 0, len = components.length; i < len; i++)
+    if (components[i] && components[i].onDifferentialSizeChange)
+      components[i].onDifferentialSizeChange(x, y, z);
+  size.differentialSizeChanged = false;
 }
 
 /**
@@ -235,15 +236,15 @@ function _differentialSizeChanged(node, components, size) {
  * @return {undefined} undefined
  */
 function _renderSizeChanged(node, components, size) {
-    var renderSize = size.getRenderSize();
-    var x = renderSize[0];
-    var y = renderSize[1];
-    var z = renderSize[2];
-    if (node.onRenderSizeChange) node.onRenderSizeChange(x, y, z);
-    for (var i = 0, len = components.length ; i < len ; i++)
-        if (components[i] && components[i].onRenderSizeChange)
-            components[i].onRenderSizeChange(x, y, z);
-    size.renderSizeChanged = false;
+  var renderSize = size.getRenderSize();
+  var x = renderSize[0];
+  var y = renderSize[1];
+  var z = renderSize[2];
+  if (node.onRenderSizeChange) node.onRenderSizeChange(x, y, z);
+  for (var i = 0, len = components.length; i < len; i++)
+    if (components[i] && components[i].onRenderSizeChange)
+      components[i].onRenderSizeChange(x, y, z);
+  size.renderSizeChanged = false;
 }
 
 /**
@@ -259,15 +260,15 @@ function _renderSizeChanged(node, components, size) {
  * @return {undefined} undefined
  */
 function _sizeChanged(node, components, size) {
-    var finalSize = size.get();
-    var x = finalSize[0];
-    var y = finalSize[1];
-    var z = finalSize[2];
-    if (node.onSizeChange) node.onSizeChange(x, y, z);
-    for (var i = 0, len = components.length ; i < len ; i++)
-        if (components[i] && components[i].onSizeChange)
-            components[i].onSizeChange(x, y, z);
-    size.sizeChanged = false;
+  var finalSize = size.get();
+  var x = finalSize[0];
+  var y = finalSize[1];
+  var z = finalSize[2];
+  if (node.onSizeChange) node.onSizeChange(x, y, z);
+  for (var i = 0, len = components.length; i < len; i++)
+    if (components[i] && components[i].onSizeChange)
+      components[i].onSizeChange(x, y, z);
+  size.sizeChanged = false;
 }
 
 var newSizeSystem = new SizeSystem();

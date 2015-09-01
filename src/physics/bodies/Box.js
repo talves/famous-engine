@@ -28,18 +28,18 @@ import { Vec3 } from '../../math/Vec3';
 import { convexBodyFactory } from './convexBodyFactory';
 
 var _Box = convexBodyFactory([
-            // Order: back-left, back-right, front-left, front-right
-            // Top half
-            new Vec3(-100, -100, -100),
-            new Vec3(100, -100, -100),
-            new Vec3(-100, -100, 100),
-            new Vec3(100, -100, 100),
-            // Bottom half
-            new Vec3(-100, 100, -100),
-            new Vec3(100, 100, -100),
-            new Vec3(-100, 100, 100),
-            new Vec3(100, 100, 100)
-        ]);
+  // Order: back-left, back-right, front-left, front-right
+  // Top half
+  new Vec3(-100, -100, -100),
+  new Vec3(100, -100, -100),
+  new Vec3(-100, -100, 100),
+  new Vec3(100, -100, 100),
+  // Bottom half
+  new Vec3(-100, 100, -100),
+  new Vec3(100, 100, -100),
+  new Vec3(-100, 100, 100),
+  new Vec3(100, 100, 100)
+]);
 
 /**
  * @class Box
@@ -52,14 +52,14 @@ class Box extends _Box {
     super(options);
 
     this.normals = [
-        // Order: top, right, front
-        new Vec3(0, 1, 0),
-        new Vec3(1, 0, 0),
-        new Vec3(0, 0, 1)
+      // Order: top, right, front
+      new Vec3(0, 1, 0),
+      new Vec3(1, 0, 0),
+      new Vec3(0, 0, 1)
     ];
 
     this.type = 1 << 1;
-}
+  }
 
 }
 

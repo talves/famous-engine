@@ -39,56 +39,70 @@ import { GeometryHelper } from '../GeometryHelper';
  *
  * @return {Object} constructed geometry
  */
- class Plane extends Geometry {
-   constructor(options) {
-     //handled by es6 transpiler
+class Plane extends Geometry {
+  constructor(options) {
+    //handled by es6 transpiler
     //if (!(this instanceof Plane)) return new Plane(options);
 
     options = options || {};
     var detailX = options.detailX || options.detail || 1;
     var detailY = options.detailY || options.detail || 1;
 
-    var vertices      = [];
+    var vertices = [];
     var textureCoords = [];
-    var normals       = [];
-    var indices       = [];
+    var normals = [];
+    var indices = [];
 
     var i;
 
     for (var y = 0; y <= detailY; y++) {
-        var t = y / detailY;
-        for (var x = 0; x <= detailX; x++) {
-            var s = x / detailX;
-            vertices.push(2. * (s - .5), 2 * (t - .5), 0);
-            textureCoords.push(s, 1 - t);
-            if (x < detailX && y < detailY) {
-                i = x + y * (detailX + 1);
-                indices.push(i, i + 1, i + detailX + 1);
-                indices.push(i + detailX + 1, i + 1, i + detailX + 2);
-            }
+      var t = y / detailY;
+      for (var x = 0; x <= detailX; x++) {
+        var s = x / detailX;
+        vertices.push(2. * (s - .5), 2 * (t - .5), 0);
+        textureCoords.push(s, 1 - t);
+        if (x < detailX && y < detailY) {
+          i = x + y * (detailX + 1);
+          indices.push(i, i + 1, i + detailX + 1);
+          indices.push(i + detailX + 1, i + 1, i + detailX + 2);
         }
+      }
     }
 
     if (options.backface !== false) {
-        GeometryHelper.addBackfaceTriangles(vertices, indices);
+      GeometryHelper.addBackfaceTriangles(vertices, indices);
 
-        // duplicate texture coordinates as well
+      // duplicate texture coordinates as well
 
-        var len = textureCoords.length;
-        for (i = 0; i < len; i++) textureCoords.push(textureCoords[i]);
+      var len = textureCoords.length;
+      for (i = 0; i < len; i++) textureCoords.push(textureCoords[i]);
     }
 
     normals = GeometryHelper.computeNormals(vertices, indices);
 
     options.buffers = [
-        { name: 'a_pos', data: vertices },
-        { name: 'a_texCoord', data: textureCoords, size: 2 },
-        { name: 'a_normals', data: normals },
-        { name: 'indices', data: indices, size: 1 }
+      {
+        name: 'a_pos',
+        data: vertices
+      },
+      {
+        name: 'a_texCoord',
+        data: textureCoords,
+        size: 2
+      },
+      {
+        name: 'a_normals',
+        data: normals
+      },
+      {
+        name: 'indices',
+        data: indices,
+        size: 1
+      }
     ];
 
     super(options);
-}
+  }
 
 }
 

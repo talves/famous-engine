@@ -48,18 +48,18 @@ class UIEvent extends Event {
      * @type Number
      */
     this.detail = ev.detail;
-}
+  }
 
-/**
- * Return the name of the event type
- *
- * @method
- *
- * @return {String} Name of the event type
- */
-toString (){
+  /**
+   * Return the name of the event type
+   *
+   * @method
+   *
+   * @return {String} Name of the event type
+   */
+  toString() {
     return 'UIEvent';
-};
+  };
 
 }
 

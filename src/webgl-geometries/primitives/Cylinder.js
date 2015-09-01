@@ -40,35 +40,49 @@ import { GeometryHelper } from '../GeometryHelper';
  *
  * @return {Object} constructed geometry
  */
- class Cylinder extends Geometry {
-   constructor(options) {
-     //handled by es6 transpiler
+class Cylinder extends Geometry {
+  constructor(options) {
+    //handled by es6 transpiler
     //if (!(this instanceof Cylinder)) return new Cylinder(options);
 
-    options  = options || {};
-    var radius   = options.radius || 1;
-    var detail   = options.detail || 15;
+    options = options || {};
+    var radius = options.radius || 1;
+    var detail = options.detail || 15;
     var buffers;
 
     buffers = GeometryHelper.generateParametric(
-        detail,
-        detail,
-        Cylinder.generator.bind(null, radius)
+      detail,
+      detail,
+      Cylinder.generator.bind(null, radius)
     );
 
     if (options.backface !== false) {
-        GeometryHelper.addBackfaceTriangles(buffers.vertices, buffers.indices);
+      GeometryHelper.addBackfaceTriangles(buffers.vertices, buffers.indices);
     }
 
     options.buffers = [
-        { name: 'a_pos', data: buffers.vertices },
-        { name: 'a_texCoord', data: GeometryHelper.getSpheroidUV(buffers.vertices), size: 2 },
-        { name: 'a_normals', data: GeometryHelper.computeNormals(buffers.vertices, buffers.indices) },
-        { name: 'indices', data: buffers.indices, size: 1 }
+      {
+        name: 'a_pos',
+        data: buffers.vertices
+      },
+      {
+        name: 'a_texCoord',
+        data: GeometryHelper.getSpheroidUV(buffers.vertices),
+        size: 2
+      },
+      {
+        name: 'a_normals',
+        data: GeometryHelper.computeNormals(buffers.vertices, buffers.indices)
+      },
+      {
+        name: 'indices',
+        data: buffers.indices,
+        size: 1
+      }
     ];
 
     super(options);
-}
+  }
 
 }
 
@@ -85,9 +99,9 @@ import { GeometryHelper } from '../GeometryHelper';
  * @return {undefined} undefined
  */
 Cylinder.generator = function generator(r, u, v, pos) {
-    pos[1] = r * Math.sin(v);
-    pos[0] = r * Math.cos(v);
-    pos[2] = r * (-1 + u / Math.PI * 2);
+  pos[1] = r * Math.sin(v);
+  pos[0] = r * Math.cos(v);
+  pos[2] = r * (-1 + u / Math.PI * 2);
 };
 
 export { Cylinder };

@@ -34,26 +34,26 @@ import { UIEvent } from './UIEvent';
  *
  * @param {Event} ev The native DOM event.
  */
- class FocusEvent extends UIEvent {
-   constructor(ev) {
+class FocusEvent extends UIEvent {
+  constructor(ev) {
     // [Constructor(DOMString typeArg, optional FocusEventInit focusEventInitDict)]
     // interface FocusEvent : UIEvent {
     //     readonly    attribute EventTarget? relatedTarget;
     // };
 
     super(ev);
-}
+  }
 
-/**
- * Return the name of the event type
- *
- * @method
- *
- * @return {String} Name of the event type
- */
-toString() {
+  /**
+   * Return the name of the event type
+   *
+   * @method
+   *
+   * @return {String} Name of the event type
+   */
+  toString() {
     return 'FocusEvent';
-};
+  };
 
 }
 

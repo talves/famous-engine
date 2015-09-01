@@ -52,34 +52,34 @@ class Angle extends Constraint {
     this.error = 0;
 
     this.initLocals();
-}
+  }
 
-/**
- * Initialize passing the Options.
- *
- * @method
- * @return {undefined} undefined
- */
-init(options) {};
+  /**
+   * Initialize passing the Options.
+   *
+   * @method
+   * @return {undefined} undefined
+   */
+  init(options) {};
 
-/**
- * Initialize the Angle. Sets defaults if a property was not already set.
- *
- * @method
- * @param {Object} options The options hash.
- * @return {undefined} undefined
- */
-initLocals() {
+  /**
+   * Initialize the Angle. Sets defaults if a property was not already set.
+   *
+   * @method
+   * @param {Object} options The options hash.
+   * @return {undefined} undefined
+   */
+  initLocals() {
     this.cosAngle = this.cosAngle || this.a.orientation.dot(this.b.orientation);
-};
+  };
 
-/**
- * Warmstart the constraint and prepare calculations used in .resolve.
- *
- * @method
- * @return {undefined} undefined
- */
-update() {
+  /**
+   * Warmstart the constraint and prepare calculations used in .resolve.
+   *
+   * @method
+   * @return {undefined} undefined
+   */
+  update() {
     var a = this.a;
     var b = this.b;
 
@@ -87,7 +87,7 @@ update() {
     var q2 = b.orientation;
 
     var cosTheta = q1.dot(q2);
-    var diff = 2*(cosTheta - this.cosAngle);
+    var diff = 2 * (cosTheta - this.cosAngle);
 
     this.error = diff;
 
@@ -99,15 +99,15 @@ update() {
     this.effectiveInertia.inverse();
 
     angularImpulse.clear();
-};
+  };
 
-/**
- * Adds an angular impulse to a physics body's angular velocity.
- *
- * @method
- * @return {undefined} undefined
- */
-resolve() {
+  /**
+   * Adds an angular impulse to a physics body's angular velocity.
+   *
+   * @method
+   * @return {undefined} undefined
+   */
+  resolve() {
     var a = this.a;
     var b = this.b;
 
@@ -125,7 +125,7 @@ resolve() {
     a.applyAngularImpulse(angularImpulse.invert());
     angularImpulse.invert();
     this.angularImpulse.add(angularImpulse);
-};
+  };
 
 }
 

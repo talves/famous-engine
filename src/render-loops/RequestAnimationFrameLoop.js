@@ -40,26 +40,23 @@ var cAF = polyfills.cancelAnimationFrame;
 var DOCUMENT_ACCESS = typeof document !== 'undefined';
 
 if (DOCUMENT_ACCESS) {
-    var VENDOR_HIDDEN;
-    var VENDOR_VISIBILITY_CHANGE;
+  var VENDOR_HIDDEN;
+  var VENDOR_VISIBILITY_CHANGE;
 
-    // Opera 12.10 and Firefox 18 and later support
-    if (typeof document.hidden !== 'undefined') {
-        VENDOR_HIDDEN = 'hidden';
-        VENDOR_VISIBILITY_CHANGE = 'visibilitychange';
-    }
-    else if (typeof document.mozHidden !== 'undefined') {
-        VENDOR_HIDDEN = 'mozHidden';
-        VENDOR_VISIBILITY_CHANGE = 'mozvisibilitychange';
-    }
-    else if (typeof document.msHidden !== 'undefined') {
-        VENDOR_HIDDEN = 'msHidden';
-        VENDOR_VISIBILITY_CHANGE = 'msvisibilitychange';
-    }
-    else if (typeof document.webkitHidden !== 'undefined') {
-        VENDOR_HIDDEN = 'webkitHidden';
-        VENDOR_VISIBILITY_CHANGE = 'webkitvisibilitychange';
-    }
+  // Opera 12.10 and Firefox 18 and later support
+  if (typeof document.hidden !== 'undefined') {
+    VENDOR_HIDDEN = 'hidden';
+    VENDOR_VISIBILITY_CHANGE = 'visibilitychange';
+  } else if (typeof document.mozHidden !== 'undefined') {
+    VENDOR_HIDDEN = 'mozHidden';
+    VENDOR_VISIBILITY_CHANGE = 'mozvisibilitychange';
+  } else if (typeof document.msHidden !== 'undefined') {
+    VENDOR_HIDDEN = 'msHidden';
+    VENDOR_VISIBILITY_CHANGE = 'msvisibilitychange';
+  } else if (typeof document.webkitHidden !== 'undefined') {
+    VENDOR_HIDDEN = 'webkitHidden';
+    VENDOR_VISIBILITY_CHANGE = 'webkitvisibilitychange';
+  }
 }
 
 /**
@@ -78,7 +75,7 @@ class RequestAnimationFrameLoop {
     this._updates = [];
 
     this._looper = function(time) {
-        _this.loop(time);
+      _this.loop(time);
     };
     this._time = 0;
     this._stoppedAt = 0;
@@ -100,214 +97,213 @@ class RequestAnimationFrameLoop {
     // The RequestAnimationFrameLoop supports running in a non-browser
     // environment (e.g. Worker).
     if (DOCUMENT_ACCESS) {
-        document.addEventListener(VENDOR_VISIBILITY_CHANGE, function() {
-            _this._onVisibilityChange();
-        });
+      document.addEventListener(VENDOR_VISIBILITY_CHANGE, function() {
+        _this._onVisibilityChange();
+      });
     }
-}
+  }
 
-/**
- * Handle the switching of tabs.
- *
- * @method
- * @private
- *
- * @return {undefined} undefined
- */
-_onVisibilityChange() {
+  /**
+   * Handle the switching of tabs.
+   *
+   * @method
+   * @private
+   *
+   * @return {undefined} undefined
+   */
+  _onVisibilityChange() {
     if (document[VENDOR_HIDDEN]) {
-        this._onUnfocus();
+      this._onUnfocus();
+    } else {
+      this._onFocus();
     }
-    else {
-        this._onFocus();
-    }
-};
+  };
 
-/**
- * Internal helper function to be invoked as soon as the window/ tab is being
- * focused after a visibiltiy change.
- *
- * @method
- * @private
- *
- * @return {undefined} undefined
- */
-_onFocus() {
+  /**
+   * Internal helper function to be invoked as soon as the window/ tab is being
+   * focused after a visibiltiy change.
+   *
+   * @method
+   * @private
+   *
+   * @return {undefined} undefined
+   */
+  _onFocus() {
     if (this._startOnVisibilityChange) {
-        this._start();
+      this._start();
     }
-};
+  };
 
-/**
- * Internal helper function to be invoked as soon as the window/ tab is being
- * unfocused (hidden) after a visibiltiy change.
- *
- * @method  _onFocus
- * @private
- *
- * @return {undefined} undefined
- */
-_onUnfocus() {
+  /**
+   * Internal helper function to be invoked as soon as the window/ tab is being
+   * unfocused (hidden) after a visibiltiy change.
+   *
+   * @method  _onFocus
+   * @private
+   *
+   * @return {undefined} undefined
+   */
+  _onUnfocus() {
     this._stop();
-};
+  };
 
-/**
- * Starts the RequestAnimationFrameLoop. When switching to a differnt tab/
- * window (changing the visibiltiy), the engine will be retarted when switching
- * back to a visible state.
- *
- * @method
- *
- * @return {RequestAnimationFrameLoop} this
- */
-start() {
+  /**
+   * Starts the RequestAnimationFrameLoop. When switching to a differnt tab/
+   * window (changing the visibiltiy), the engine will be retarted when switching
+   * back to a visible state.
+   *
+   * @method
+   *
+   * @return {RequestAnimationFrameLoop} this
+   */
+  start() {
     if (!this._running) {
-        this._startOnVisibilityChange = true;
-        this._start();
+      this._startOnVisibilityChange = true;
+      this._start();
     }
     return this;
-};
+  };
 
-/**
- * Internal version of RequestAnimationFrameLoop's start function, not affecting
- * behavior on visibilty change.
- *
- * @method
- * @private
-*
- * @return {undefined} undefined
- */
-_start() {
+  /**
+   * Internal version of RequestAnimationFrameLoop's start function, not affecting
+   * behavior on visibilty change.
+   *
+   * @method
+   * @private
+  *
+   * @return {undefined} undefined
+   */
+  _start() {
     this._running = true;
     this._sleepDiff = true;
     this._rAF = rAF(this._looper);
-};
+  };
 
-/**
- * Stops the RequestAnimationFrameLoop.
- *
- * @method
- * @private
- *
- * @return {RequestAnimationFrameLoop} this
- */
-stop() {
+  /**
+   * Stops the RequestAnimationFrameLoop.
+   *
+   * @method
+   * @private
+   *
+   * @return {RequestAnimationFrameLoop} this
+   */
+  stop() {
     if (this._running) {
-        this._startOnVisibilityChange = false;
-        this._stop();
+      this._startOnVisibilityChange = false;
+      this._stop();
     }
     return this;
-};
+  };
 
-/**
- * Internal version of RequestAnimationFrameLoop's stop function, not affecting
- * behavior on visibilty change.
- *
- * @method
- * @private
- *
- * @return {undefined} undefined
- */
-_stop() {
+  /**
+   * Internal version of RequestAnimationFrameLoop's stop function, not affecting
+   * behavior on visibilty change.
+   *
+   * @method
+   * @private
+   *
+   * @return {undefined} undefined
+   */
+  _stop() {
     this._running = false;
     this._stoppedAt = this._time;
 
     // Bug in old versions of Fx. Explicitly cancel.
     cAF(this._rAF);
-};
+  };
 
-/**
- * Determines whether the RequestAnimationFrameLoop is currently running or not.
- *
- * @method
- *
- * @return {Boolean} boolean value indicating whether the
- * RequestAnimationFrameLoop is currently running or not
- */
-isRunning() {
+  /**
+   * Determines whether the RequestAnimationFrameLoop is currently running or not.
+   *
+   * @method
+   *
+   * @return {Boolean} boolean value indicating whether the
+   * RequestAnimationFrameLoop is currently running or not
+   */
+  isRunning() {
     return this._running;
-};
+  };
 
-/**
- * Updates all registered objects.
- *
- * @method
- *
- * @param {Number} time high resolution timstamp used for invoking the `update`
- * method on all registered objects
- *
- * @return {RequestAnimationFrameLoop} this
- */
-step(time) {
+  /**
+   * Updates all registered objects.
+   *
+   * @method
+   *
+   * @param {Number} time high resolution timstamp used for invoking the `update`
+   * method on all registered objects
+   *
+   * @return {RequestAnimationFrameLoop} this
+   */
+  step(time) {
     this._time = time;
     if (this._sleepDiff) {
-        this._sleep += time - this._stoppedAt;
-        this._sleepDiff = false;
+      this._sleep += time - this._stoppedAt;
+      this._sleepDiff = false;
     }
 
     // The same timetamp will be emitted immediately before and after visibility
     // change.
     var normalizedTime = time - this._sleep;
-    for (var i = 0, len = this._updates.length ; i < len ; i++) {
-        this._updates[i].update(normalizedTime);
+    for (var i = 0, len = this._updates.length; i < len; i++) {
+      this._updates[i].update(normalizedTime);
     }
     return this;
-};
+  };
 
-/**
- * Method being called by `requestAnimationFrame` on every paint. Indirectly
- * recursive by scheduling a future invocation of itself on the next paint.
- *
- * @method
- *
- * @param {Number} time high resolution timstamp used for invoking the `update`
- * method on all registered objects
- * @return {RequestAnimationFrameLoop} this
- */
-loop(time) {
+  /**
+   * Method being called by `requestAnimationFrame` on every paint. Indirectly
+   * recursive by scheduling a future invocation of itself on the next paint.
+   *
+   * @method
+   *
+   * @param {Number} time high resolution timstamp used for invoking the `update`
+   * method on all registered objects
+   * @return {RequestAnimationFrameLoop} this
+   */
+  loop(time) {
     this.step(time);
     this._rAF = rAF(this._looper);
     return this;
-};
+  };
 
-/**
- * Registeres an updateable object which `update` method should be invoked on
- * every paint, starting on the next paint (assuming the
- * RequestAnimationFrameLoop is running).
- *
- * @method
- *
- * @param {Object} updateable object to be updated
- * @param {Function} updateable.update update function to be called on the
- * registered object
- *
- * @return {RequestAnimationFrameLoop} this
- */
-update(updateable) {
+  /**
+   * Registeres an updateable object which `update` method should be invoked on
+   * every paint, starting on the next paint (assuming the
+   * RequestAnimationFrameLoop is running).
+   *
+   * @method
+   *
+   * @param {Object} updateable object to be updated
+   * @param {Function} updateable.update update function to be called on the
+   * registered object
+   *
+   * @return {RequestAnimationFrameLoop} this
+   */
+  update(updateable) {
     if (this._updates.indexOf(updateable) === -1) {
-        this._updates.push(updateable);
+      this._updates.push(updateable);
     }
     return this;
-};
+  };
 
-/**
- * Deregisters an updateable object previously registered using `update` to be
- * no longer updated.
- *
- * @method
- *
- * @param {Object} updateable updateable object previously registered using
- * `update`
- *
- * @return {RequestAnimationFrameLoop} this
- */
-noLongerUpdate(updateable) {
+  /**
+   * Deregisters an updateable object previously registered using `update` to be
+   * no longer updated.
+   *
+   * @method
+   *
+   * @param {Object} updateable updateable object previously registered using
+   * `update`
+   *
+   * @return {RequestAnimationFrameLoop} this
+   */
+  noLongerUpdate(updateable) {
     var index = this._updates.indexOf(updateable);
     if (index > -1) {
-        this._updates.splice(index, 1);
+      this._updates.splice(index, 1);
     }
     return this;
-};
+  };
 
 }
 

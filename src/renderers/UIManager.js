@@ -63,97 +63,96 @@ class UIManager {
     this._renderLoop.update(this);
 
     var _this = this;
-    this._thread.onmessage = function (ev) {
-        var message = ev.data ? ev.data : ev;
-        if (message[0] === Commands.ENGINE) {
-            switch (message[1]) {
-                case Commands.START:
-                    _this._engine.start();
-                    break;
-                case Commands.STOP:
-                    _this._engine.stop();
-                    break;
-                default:
-                    console.error(
-                        'Unknown ENGINE command "' + message[1] + '"'
-                    );
-                    break;
-            }
+    this._thread.onmessage = function(ev) {
+      var message = ev.data ? ev.data : ev;
+      if (message[0] === Commands.ENGINE) {
+        switch (message[1]) {
+          case Commands.START:
+            _this._engine.start();
+            break;
+          case Commands.STOP:
+            _this._engine.stop();
+            break;
+          default:
+            console.error(
+              'Unknown ENGINE command "' + message[1] + '"'
+            );
+            break;
         }
-        else {
-            _this._compositor.receiveCommands(message);
-        }
+      } else {
+        _this._compositor.receiveCommands(message);
+      }
     };
-    this._thread.onerror = function (error) {
-        console.error(error);
+    this._thread.onerror = function(error) {
+      console.error(error);
     };
-}
+  }
 
-/**
- * Returns the thread being used by the UIManager.
- * This could either be an an actual web worker or a `FamousEngine` singleton.
- *
- * @method
- *
- * @return {Worker|FamousEngine} Either a web worker or a `FamousEngine` singleton.
- */
-getThread() {
+  /**
+   * Returns the thread being used by the UIManager.
+   * This could either be an an actual web worker or a `FamousEngine` singleton.
+   *
+   * @method
+   *
+   * @return {Worker|FamousEngine} Either a web worker or a `FamousEngine` singleton.
+   */
+  getThread() {
     return this._thread;
-};
+  };
 
-/**
- * Returns the compositor being used by this UIManager.
- *
- * @method
- *
- * @return {Compositor} The compositor used by the UIManager.
- */
-getCompositor() {
+  /**
+   * Returns the compositor being used by this UIManager.
+   *
+   * @method
+   *
+   * @return {Compositor} The compositor used by the UIManager.
+   */
+  getCompositor() {
     return this._compositor;
-};
+  };
 
-/**
- * Returns the engine being used by this UIManager.
- *
- * @method
- * @deprecated Use {@link UIManager#getRenderLoop instead!}
- *
- * @return {Engine} The engine used by the UIManager.
- */
-getEngine() {
+  /**
+   * Returns the engine being used by this UIManager.
+   *
+   * @method
+   * @deprecated Use {@link UIManager#getRenderLoop instead!}
+   *
+   * @return {Engine} The engine used by the UIManager.
+   */
+  getEngine() {
     return this._renderLoop;
-};
+  };
 
 
-/**
- * Returns the render loop currently being used by the UIManager.
- *
- * @method
- *
- * @return {RenderLoop}  The registered render loop used for updating the
- * UIManager.
- */
-getRenderLoop() {
+  /**
+   * Returns the render loop currently being used by the UIManager.
+   *
+   * @method
+   *
+   * @return {RenderLoop}  The registered render loop used for updating the
+   * UIManager.
+   */
+  getRenderLoop() {
     return this._renderLoop;
-};
+  };
 
-/**
- * Update method being invoked by the Engine on every `requestAnimationFrame`.
- * Used for updating the notion of time within the managed thread by sending
- * a FRAME command and sending messages to
- *
- * @method
- *
- * @param  {Number} time unix timestamp to be passed down to the worker as a
- * FRAME command
- * @return {undefined} undefined
- */
-update(time) {
+  /**
+   * Update method being invoked by the Engine on every `requestAnimationFrame`.
+   * Used for updating the notion of time within the managed thread by sending
+   * a FRAME command and sending messages to
+   *
+   * @method
+   *
+   * @param  {Number} time unix timestamp to be passed down to the worker as a
+   * FRAME command
+   * @return {undefined} undefined
+   */
+  update(time) {
     this._thread.postMessage([Commands.FRAME, time]);
     var threadMessages = this._compositor.drawCommands();
     this._thread.postMessage(threadMessages);
     this._compositor.clearCommands();
-};
+  };
 
 }
 

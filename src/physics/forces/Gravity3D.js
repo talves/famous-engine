@@ -38,30 +38,30 @@ var FORCE_REGISTER = new Vec3();
  * @param {Particle[]} targets The targets to affect.
  * @param {Object} options The options hash.
  */
- class Gravity3D extends Force {
-   constructor(source, targets, options) {
-     super(targets, options);
-     this.source = source || null;
- }
+class Gravity3D extends Force {
+  constructor(source, targets, options) {
+    super(targets, options);
+    this.source = source || null;
+  }
 
-/**
- * Initialize the Force. Sets defaults if a property was not already set.
- *
- * @method
- * @return {undefined} undefined
- */
-init() {
+  /**
+   * Initialize the Force. Sets defaults if a property was not already set.
+   *
+   * @method
+   * @return {undefined} undefined
+   */
+  init() {
     this.max = this.max || Infinity;
     this.strength = this.strength || 200;
-};
+  };
 
-/**
- * Apply the force.
- *
- * @method
- * @return {undefined} undefined
- */
-update() {
+  /**
+   * Apply the force.
+   *
+   * @method
+   * @return {undefined} undefined
+   */
+  update() {
     var source = this.source;
     var targets = this.targets;
 
@@ -72,22 +72,21 @@ update() {
     var anchor = this.anchor || source.position;
     var sourceMass = this.anchor ? 1 : source.mass;
     for (var i = 0, len = targets.length; i < len; i++) {
-        var target = targets[i];
-        Vec3.subtract(anchor, target.position, force);
-        var dist = force.length();
-        var invDistance = dist ? 1 / dist : 0;
-        var magnitude = strength * sourceMass * target.mass * invDistance * invDistance;
-        if (magnitude < 0) {
-            magnitude = magnitude < -max ? -max : magnitude;
-        }
-        else {
-            magnitude = magnitude > max ? max : magnitude;
-        }
-        force.scale(magnitude * invDistance);
-        target.applyForce(force);
-        if (source) source.applyForce(force.invert());
+      var target = targets[i];
+      Vec3.subtract(anchor, target.position, force);
+      var dist = force.length();
+      var invDistance = dist ? 1 / dist : 0;
+      var magnitude = strength * sourceMass * target.mass * invDistance * invDistance;
+      if (magnitude < 0) {
+        magnitude = magnitude < -max ? -max : magnitude;
+      } else {
+        magnitude = magnitude > max ? max : magnitude;
+      }
+      force.scale(magnitude * invDistance);
+      target.applyForce(force);
+      if (source) source.applyForce(force.invert());
     }
-};
+  };
 
 }
 

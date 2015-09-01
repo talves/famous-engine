@@ -46,8 +46,8 @@ class ElementCache {
     var constructor = element.constructor;
 
     this.formElement = constructor === HTMLInputElement ||
-        constructor === HTMLTextAreaElement ||
-        constructor === HTMLSelectElement;
+      constructor === HTMLTextAreaElement ||
+      constructor === HTMLSelectElement;
 
     this.element = element;
     this.path = path;
@@ -59,7 +59,7 @@ class ElementCache {
     this.listeners = {};
     this.preventDefault = {};
     this.subscribe = {};
-}
+  }
 
 }
 

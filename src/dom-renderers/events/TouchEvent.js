@@ -36,8 +36,8 @@ var EMPTY_ARRAY = [];
  *
  * @param {Touch} touch The native Touch object.
  */
- class Touch {
-   constructor(touch) {
+class Touch {
+  constructor(touch) {
     // interface Touch {
     //     readonly    attribute long        identifier;
     //     readonly    attribute EventTarget target;
@@ -105,17 +105,17 @@ var EMPTY_ARRAY = [];
  * @return {Array.<Touch>}          An array of normalized Touch objects.
  */
 function cloneTouchList(touchList) {
-    if (!touchList) return EMPTY_ARRAY;
-    // interface TouchList {
-    //     readonly    attribute unsigned long length;
-    //     getter Touch? item (unsigned long index);
-    // };
+  if (!touchList) return EMPTY_ARRAY;
+  // interface TouchList {
+  //     readonly    attribute unsigned long length;
+  //     getter Touch? item (unsigned long index);
+  // };
 
-    var touchListArray = [];
-    for (var i = 0; i < touchList.length; i++) {
-        touchListArray[i] = new Touch(touchList[i]);
-    }
-    return touchListArray;
+  var touchListArray = [];
+  for (var i = 0; i < touchList.length; i++) {
+    touchListArray[i] = new Touch(touchList[i]);
+  }
+  return touchListArray;
 }
 
 /**
@@ -126,8 +126,8 @@ function cloneTouchList(touchList) {
  *
  * @param {Event} ev The native DOM event.
  */
- class TouchEvent extends UIEvent {
-   constructor(ev) {
+class TouchEvent extends UIEvent {
+  constructor(ev) {
     // interface TouchEvent : UIEvent {
     //     readonly    attribute TouchList touches;
     //     readonly    attribute TouchList targetTouches;
@@ -181,18 +181,18 @@ function cloneTouchList(touchList) {
      */
     this.shiftKey = ev.shiftKey;
 
-}
+  }
 
-/**
- * Return the name of the event type
- *
- * @method
- *
- * @return {String} Name of the event type
- */
-toString() {
+  /**
+   * Return the name of the event type
+   *
+   * @method
+   *
+   * @return {String} Name of the event type
+   */
+  toString() {
     return 'TouchEvent';
-};
+  };
 
 }
 

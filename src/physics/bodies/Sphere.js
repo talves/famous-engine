@@ -39,9 +39,9 @@ var SUPPORT_REGISTER = new Vec3();
 class Sphere extends Particle {
   constructor(options) {
     super(options);
-    var r  = options.radius || 1;
+    var r = options.radius || 1;
     this.radius = r;
-    this.size = [2*r, 2*r, 2*r];
+    this.size = [2 * r, 2 * r, 2 * r];
     this.updateLocalInertia();
     this.inverseInertia.copy(this.localInverseInertia);
 
@@ -49,68 +49,68 @@ class Sphere extends Particle {
     if (w) this.setAngularVelocity(w.x, w.y, w.z);
 
     this.type = 1 << 2;
-}
+  }
 
-/**
- * Getter for radius.
- *
- * @method
- * @return {Number} radius
- */
-getRadius() {
+  /**
+   * Getter for radius.
+   *
+   * @method
+   * @return {Number} radius
+   */
+  getRadius() {
     return this.radius;
-};
+  };
 
-/**
- * Setter for radius.
- *
- * @method
- * @param {Number} radius The intended radius of the sphere.
- * @return {Sphere} this
- */
-setRadius(radius) {
+  /**
+   * Setter for radius.
+   *
+   * @method
+   * @param {Number} radius The intended radius of the sphere.
+   * @return {Sphere} this
+   */
+  setRadius(radius) {
     this.radius = radius;
-    this.size = [2*this.radius, 2*this.radius, 2*this.radius];
+    this.size = [2 * this.radius, 2 * this.radius, 2 * this.radius];
     return this;
-};
+  };
 
-/**
- * Infers the inertia tensor.
- *
- * @override
- * @method
- * @return {undefined} undefined
- */
+  /**
+   * Infers the inertia tensor.
+   *
+   * @override
+   * @method
+   * @return {undefined} undefined
+   */
 
-updateInertia() {
+  updateInertia() {
     var m = this.mass;
     var r = this.radius;
 
     var mrr = m * r * r;
 
     this.localInertia.set([
-        0.4 * mrr, 0, 0,
-        0, 0.4 * mrr, 0,
-        0, 0, 0.4 * mrr
+      0.4 * mrr, 0, 0,
+      0, 0.4 * mrr, 0,
+      0, 0, 0.4 * mrr
     ]);
 
     this.localInverseInertia.set([
-        2.5 / mrr, 0, 0,
-        0, 2.5 / mrr, 0,
-        0, 0, 2.5 / mrr
+      2.5 / mrr, 0, 0,
+      0, 2.5 / mrr, 0,
+      0, 0, 2.5 / mrr
     ]);
-};
+  };
 
-/**
- * Returns the point on the sphere furthest in a given direction.
- *
- * @method
- * @param {Vec3} direction The direction in which to search.
- * @return {Vec3} The support point.
- */
-support(direction) {
+  /**
+   * Returns the point on the sphere furthest in a given direction.
+   *
+   * @method
+   * @param {Vec3} direction The direction in which to search.
+   * @return {Vec3} The support point.
+   */
+  support(direction) {
     return Vec3.scale(direction, this.radius, SUPPORT_REGISTER);
-};
+  };
 
 }
 

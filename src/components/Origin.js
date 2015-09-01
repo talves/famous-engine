@@ -47,31 +47,31 @@ class Origin extends Position {
 
 
     this.onUpdate = this.constructor.update;
-}
+  }
 
-/**
- * Return the name of the Origin component
- *
- * @method
- *
- * @return {String} Name of the component
- */
-toString() {
+  /**
+   * Return the name of the Origin component
+   *
+   * @method
+   *
+   * @return {String} Name of the component
+   */
+  toString() {
     return 'Origin';
-};
+  };
 
-/**
- * When the node this component is attached to updates, update the value
- * of the Node's origin
- *
- * @method
- *
- * @return {undefined} undefined
- */
-update() {
+  /**
+   * When the node this component is attached to updates, update the value
+   * of the Node's origin
+   *
+   * @method
+   *
+   * @return {undefined} undefined
+   */
+  update() {
     this._node.setOrigin(this._x.get(), this._y.get(), this._z.get());
     this._checkUpdate();
-};
+  };
 
 }
 

@@ -31,7 +31,7 @@ import { GeometryHelper } from '../GeometryHelper';
  * This function returns a new static geometry, which is passed
  * custom buffer data.
  *
- * @class ParametricSphere
+ * @class Sphere
  * @constructor
  *
  * @param {Object} options Parameters that alter the
@@ -39,9 +39,9 @@ import { GeometryHelper } from '../GeometryHelper';
  *
  * @return {Object} constructed geometry
  */
- class Sphere extends Geometry {
-   constructor(options) {
-     //handled by es6 transpiler
+class Sphere extends Geometry {
+  constructor(options) {
+    //handled by es6 transpiler
     //if (!(this instanceof Sphere)) return new Sphere(options);
 
     options = options || {};
@@ -50,21 +50,35 @@ import { GeometryHelper } from '../GeometryHelper';
     var detailY = options.detailY || detail;
 
     var buffers = GeometryHelper.generateParametric(
-        detailX,
-        detailY,
-        ParametricSphere.generator,
-        true
+      detailX,
+      detailY,
+      Sphere.generator,
+      true
     );
 
     options.buffers = [
-        { name: 'a_pos', data: buffers.vertices },
-        { name: 'a_texCoord', data: GeometryHelper.getSpheroidUV(buffers.vertices), size: 2 },
-        { name: 'a_normals', data: GeometryHelper.getSpheroidNormals(buffers.vertices) },
-        { name: 'indices', data: buffers.indices, size: 1 }
+      {
+        name: 'a_pos',
+        data: buffers.vertices
+      },
+      {
+        name: 'a_texCoord',
+        data: GeometryHelper.getSpheroidUV(buffers.vertices),
+        size: 2
+      },
+      {
+        name: 'a_normals',
+        data: GeometryHelper.getSpheroidNormals(buffers.vertices)
+      },
+      {
+        name: 'indices',
+        data: buffers.indices,
+        size: 1
+      }
     ];
 
     super(options);
-}
+  }
 
 }
 
@@ -80,13 +94,13 @@ import { GeometryHelper } from '../GeometryHelper';
  * @return {undefined} undefined
  */
 Sphere.generator = function generator(u, v, pos) {
-    var x = Math.sin(u) * Math.cos(v);
-    var y = Math.cos(u);
-    var z = -Math.sin(u) * Math.sin(v);
+  var x = Math.sin(u) * Math.cos(v);
+  var y = Math.cos(u);
+  var z = -Math.sin(u) * Math.sin(v);
 
-    pos[0] = x;
-    pos[1] = y;
-    pos[2] = z;
+  pos[0] = x;
+  pos[1] = y;
+  pos[2] = z;
 };
 
 export { Sphere };

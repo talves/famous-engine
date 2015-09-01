@@ -48,18 +48,18 @@ class CompositionEvent extends UIEvent {
      * @type String
      */
     this.data = ev.data;
-}
+  }
 
-/**
- * Return the name of the event type
- *
- * @method
- *
- * @return {String} Name of the event type
- */
-toString() {
+  /**
+   * Return the name of the event type
+   *
+   * @method
+   *
+   * @return {String} Name of the event type
+   */
+  toString() {
     return 'CompositionEvent';
-};
+  };
 
 }
 

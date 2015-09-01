@@ -43,98 +43,96 @@ const PI = Math.PI;
  * @param {Particle[]} targets The targets to affect.
  * @param {Object} options The options hash.
  */
- class Spring extends Force {
-   constructor(source, targets, options) {
-     super(targets, options);
-     this.source = source || null;
- }
+class Spring extends Force {
+  constructor(source, targets, options) {
+    super(targets, options);
+    this.source = source || null;
+  }
 
- /**
-  * Initialize the Force. Sets defaults if a property was not already set.
-  *
-  * @method
-  * @param {Object} options The options hash.
-  * @return {undefined} undefined
-  */
- init(options) {
-     this.max = this.max || Infinity;
-     this.length = this.length || 0;
-     this.type = this.type || Spring.HOOKE;
-     this.maxLength = this.maxLength || Infinity;
-     if (options.stiffness || options.damping) {
-         this.stiffness = this.stiffness || 100;
-         this.damping = this.damping || 0;
-         this.period = null;
-         this.dampingRatio = null;
-     }
-     else if (options.period || options.dampingRatio) {
-         this.period = this.period || 1;
-         this.dampingRatio = this.dampingRatio || 0;
+  /**
+   * Initialize the Force. Sets defaults if a property was not already set.
+   *
+   * @method
+   * @param {Object} options The options hash.
+   * @return {undefined} undefined
+   */
+  init(options) {
+    this.max = this.max || Infinity;
+    this.length = this.length || 0;
+    this.type = this.type || Spring.HOOKE;
+    this.maxLength = this.maxLength || Infinity;
+    if (options.stiffness || options.damping) {
+      this.stiffness = this.stiffness || 100;
+      this.damping = this.damping || 0;
+      this.period = null;
+      this.dampingRatio = null;
+    } else if (options.period || options.dampingRatio) {
+      this.period = this.period || 1;
+      this.dampingRatio = this.dampingRatio || 0;
 
-         this.stiffness = 2 * PI / this.period;
-         this.stiffness *= this.stiffness;
-         this.damping = 4 * PI * this.dampingRatio / this.period;
-     }
- };
+      this.stiffness = 2 * PI / this.period;
+      this.stiffness *= this.stiffness;
+      this.damping = 4 * PI * this.dampingRatio / this.period;
+    }
+  };
 
- /**
-  * Apply the force.
-  *
-  * @method
-  * @return {undefined} undefined
-  */
- update() {
-     var source = this.source;
-     var targets = this.targets;
+  /**
+   * Apply the force.
+   *
+   * @method
+   * @return {undefined} undefined
+   */
+  update() {
+    var source = this.source;
+    var targets = this.targets;
 
-     var force = FORCE_REGISTER;
-     var dampingForce = DAMPING_REGISTER;
+    var force = FORCE_REGISTER;
+    var dampingForce = DAMPING_REGISTER;
 
-     var max = this.max;
-     var stiffness = this.stiffness;
-     var damping = this.damping;
-     var restLength = this.length;
-     var maxLength = this.maxLength;
-     var anchor = this.anchor || source.position;
-     var invSourceMass = this.anchor ? 0 : source.inverseMass;
-     var type = this.type;
+    var max = this.max;
+    var stiffness = this.stiffness;
+    var damping = this.damping;
+    var restLength = this.length;
+    var maxLength = this.maxLength;
+    var anchor = this.anchor || source.position;
+    var invSourceMass = this.anchor ? 0 : source.inverseMass;
+    var type = this.type;
 
-     for (var i = 0, len = targets.length; i < len; i++) {
-         var target = targets[i];
-         Vec3.subtract(anchor, target.position, force);
-         var dist = force.length();
-         var stretch = dist - restLength;
+    for (var i = 0, len = targets.length; i < len; i++) {
+      var target = targets[i];
+      Vec3.subtract(anchor, target.position, force);
+      var dist = force.length();
+      var stretch = dist - restLength;
 
-         if (Math.abs(stretch) < 1e-6) continue;
+      if (Math.abs(stretch) < 1e-6) continue;
 
-         var effMass = 1 / (target.inverseMass + invSourceMass);
-         if (this.period !== null) {
-             stiffness *= effMass;
-             damping *= effMass;
-         }
+      var effMass = 1 / (target.inverseMass + invSourceMass);
+      if (this.period !== null) {
+        stiffness *= effMass;
+        damping *= effMass;
+      }
 
-         force.scale(stiffness * type(stretch, maxLength) / stretch);
+      force.scale(stiffness * type(stretch, maxLength) / stretch);
 
-         if (damping !== 0) {
-             if (source) {
-                 force.add(Vec3.subtract(target.velocity, source.velocity, dampingForce).scale(-damping));
-             }
-             else {
-                 force.add(Vec3.scale(target.velocity, -damping, dampingForce));
-             }
-         }
+      if (damping !== 0) {
+        if (source) {
+          force.add(Vec3.subtract(target.velocity, source.velocity, dampingForce).scale(-damping));
+        } else {
+          force.add(Vec3.scale(target.velocity, -damping, dampingForce));
+        }
+      }
 
-         var magnitude = force.length();
-         var invMag = magnitude ? 1 / magnitude : 0;
+      var magnitude = force.length();
+      var invMag = magnitude ? 1 / magnitude : 0;
 
-         Vec3.scale(force, (magnitude > max ? max : magnitude) * invMag, force);
+      Vec3.scale(force, (magnitude > max ? max : magnitude) * invMag, force);
 
-         target.applyForce(force);
-         if (source) source.applyForce(force.invert());
-     }
- };
+      target.applyForce(force);
+      if (source) source.applyForce(force.invert());
+    }
+  };
 
- }
+}
 
 /**
  * A FENE (Finitely Extensible Nonlinear Elastic) spring force. See: http://en.wikipedia.org/wiki/FENE
@@ -145,9 +143,9 @@ const PI = Math.PI;
  * @return {Number} unscaled force
  */
 Spring.FENE = function(dist, rMax) {
-    var rMaxSmall = rMax * 0.99;
-    var r = Math.max(Math.min(dist, rMaxSmall), -rMaxSmall);
-    return r / (1 - r * r/(rMax * rMax));
+  var rMaxSmall = rMax * 0.99;
+  var r = Math.max(Math.min(dist, rMaxSmall), -rMaxSmall);
+  return r / (1 - r * r / (rMax * rMax));
 };
 
 /**
@@ -158,7 +156,7 @@ Spring.FENE = function(dist, rMax) {
  * @return {Number} unscaled force
  */
 Spring.HOOKE = function(dist) {
-    return dist;
+  return dist;
 };
 
 export { Spring };

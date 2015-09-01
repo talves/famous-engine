@@ -44,118 +44,118 @@ class ContainerLoop {
 
     var _this = this;
     window.addEventListener('message', function(ev) {
-        _this._onWindowMessage(ev);
+      _this._onWindowMessage(ev);
     });
-}
+  }
 
-/**
- * When there is a `FRAME` message passed into the window
- *
- * @method
- * @private
- *
- * @param {Object} ev event payload from the window
- *
- * @return {ContainerLoop} this
- */
-_onWindowMessage(ev) {
+  /**
+   * When there is a `FRAME` message passed into the window
+   *
+   * @method
+   * @private
+   *
+   * @param {Object} ev event payload from the window
+   *
+   * @return {ContainerLoop} this
+   */
+  _onWindowMessage(ev) {
     if (
-        this._running &&
-        ev.data.constructor === Array &&
-        ev.data[0] === 'FRAME'
+      this._running &&
+      ev.data.constructor === Array &&
+      ev.data[0] === 'FRAME'
     ) {
-        this.step(ev.data[1] - this._sleep);
+      this.step(ev.data[1] - this._sleep);
     }
-};
+  };
 
-/**
- * Starts the ContainerLoop.
- *
- * @method
- *
- * @return {ContainerLoop} this
- */
-start() {
+  /**
+   * Starts the ContainerLoop.
+   *
+   * @method
+   *
+   * @return {ContainerLoop} this
+   */
+  start() {
     this._running = true;
     this._sleep += now() - this._stoppedAt;
     return this;
-};
+  };
 
-/**
- * Stops the ContainerLoop.
- *
- * @method
- *
- * @return {ContainerLoop} this
- */
-stop() {
+  /**
+   * Stops the ContainerLoop.
+   *
+   * @method
+   *
+   * @return {ContainerLoop} this
+   */
+  stop() {
     this._running = false;
     this._stoppedAt = now();
     return this;
-};
+  };
 
-/**
- * Determines whether the ContainerLoop is currently running or not.
- *
- * @method
- *
- * @return {Boolean} boolean value indicating whether the ContainerLoop is currently running or not
- */
-isRunning() {
+  /**
+   * Determines whether the ContainerLoop is currently running or not.
+   *
+   * @method
+   *
+   * @return {Boolean} boolean value indicating whether the ContainerLoop is currently running or not
+   */
+  isRunning() {
     return this._running;
-};
+  };
 
-/**
- * Updates all registered objects.
- *
- * @method
- *
- * @param {Number} time high resolution timstamp used for invoking the `update` method on all registered objects
- *
- * @return {ContainerLoop} this
- */
-step(time) {
-    for (var i = 0, len = this._updates.length ; i < len ; i++) {
-        this._updates[i].update(time);
+  /**
+   * Updates all registered objects.
+   *
+   * @method
+   *
+   * @param {Number} time high resolution timstamp used for invoking the `update` method on all registered objects
+   *
+   * @return {ContainerLoop} this
+   */
+  step(time) {
+    for (var i = 0, len = this._updates.length; i < len; i++) {
+      this._updates[i].update(time);
     }
     return this;
-};
+  };
 
-/**
- * Registeres an updateable object which `update` method should be invoked on
- * every paint, starting on the next paint (assuming the ContainerLoop is running).
- *
- * @method
- *
- * @param {Object} updateable object to be updated
- * @param {Function} updateable.update update function to be called on the registered object
- *
- * @return {ContainerLoop} this
- */
-update(updateable) {
+  /**
+   * Registeres an updateable object which `update` method should be invoked on
+   * every paint, starting on the next paint (assuming the ContainerLoop is running).
+   *
+   * @method
+   *
+   * @param {Object} updateable object to be updated
+   * @param {Function} updateable.update update function to be called on the registered object
+   *
+   * @return {ContainerLoop} this
+   */
+  update(updateable) {
     if (this._updates.indexOf(updateable) === -1) {
-        this._updates.push(updateable);
+      this._updates.push(updateable);
     }
     return this;
-};
+  };
 
-/**
- * Deregisters an updateable object previously registered using `update` to be
- * no longer updated.
- *
- * @method
- *
- * @param {Object} updateable updateable object previously registered using `update`
- *
- * @return {ContainerLoop} this
- */
-noLongerUpdate(updateable) {
+  /**
+   * Deregisters an updateable object previously registered using `update` to be
+   * no longer updated.
+   *
+   * @method
+   *
+   * @param {Object} updateable updateable object previously registered using `update`
+   *
+   * @return {ContainerLoop} this
+   */
+  noLongerUpdate(updateable) {
     var index = this._updates.indexOf(updateable);
     if (index > -1) {
-        this._updates.splice(index, 1);
+      this._updates.splice(index, 1);
     }
     return this;
-};
+  };
 
 }
 

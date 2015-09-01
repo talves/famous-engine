@@ -97,24 +97,24 @@ class Event {
     var targetConstructor = ev.target.constructor;
     // TODO Support HTMLKeygenElement
     if (
-        targetConstructor === HTMLInputElement ||
-        targetConstructor === HTMLTextAreaElement ||
-        targetConstructor === HTMLSelectElement
+      targetConstructor === HTMLInputElement ||
+      targetConstructor === HTMLTextAreaElement ||
+      targetConstructor === HTMLSelectElement
     ) {
-        this.value = ev.target.value;
+      this.value = ev.target.value;
     }
-}
+  }
 
-/**
- * Return the name of the event type
- *
- * @method
- *
- * @return {String} Name of the event type
- */
-toString (){
+  /**
+   * Return the name of the event type
+   *
+   * @method
+   *
+   * @return {String} Name of the event type
+   */
+  toString() {
     return 'Event';
-};
+  };
 
 }
 

@@ -62,31 +62,31 @@ class Rotation extends Position {
     this._z.set(rz);
 
     this.onUpdate = this.constructor.update;
-}
+  }
 
-/**
- * Return the name of the Rotation component
- *
- * @method
- *
- * @return {String} Name of the component
- */
-toString() {
+  /**
+   * Return the name of the Rotation component
+   *
+   * @method
+   *
+   * @return {String} Name of the component
+   */
+  toString() {
     return 'Rotation';
-};
+  };
 
-/**
- * When the node this component is attached to updates, update the value
- * of the Node's rotation
- *
- * @method
- *
- * @return {undefined} undefined
- */
-update() {
+  /**
+   * When the node this component is attached to updates, update the value
+   * of the Node's rotation
+   *
+   * @method
+   *
+   * @return {undefined} undefined
+   */
+  update() {
     this._node.setRotation(this._x.get(), this._y.get(), this._z.get());
     this._checkUpdate();
-};
+  };
 
 }
 

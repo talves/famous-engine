@@ -35,7 +35,7 @@
  * @return {Number}       value between [lower, upper]
  */
 var clamp = function(value, lower, upper) {
-    return value < lower ? lower : value > upper ? upper : value;
+  return value < lower ? lower : value > upper ? upper : value;
 }
 
 export { clamp };

@@ -27,16 +27,16 @@
 import { Geometry } from '../Geometry';
 
 function pickOctant(i) {
-    return [(i & 1) * 2 - 1, (i & 2) - 1, (i & 4) / 2 - 1];
+  return [(i & 1) * 2 - 1, (i & 2) - 1, (i & 4) / 2 - 1];
 }
 
 var boxData = [
-    [0, 4, 2, 6, -1, 0, 0],
-    [1, 3, 5, 7, +1, 0, 0],
-    [0, 1, 4, 5, 0, -1, 0],
-    [2, 6, 3, 7, 0, +1, 0],
-    [0, 2, 1, 3, 0, 0, -1],
-    [4, 5, 6, 7, 0, 0, +1]
+  [0, 4, 2, 6, -1, 0, 0],
+  [1, 3, 5, 7, +1, 0, 0],
+  [0, 1, 4, 5, 0, -1, 0],
+  [2, 6, 3, 7, 0, +1, 0],
+  [0, 2, 1, 3, 0, 0, -1],
+  [4, 5, 6, 7, 0, 0, +1]
 ];
 
 /**
@@ -51,17 +51,17 @@ var boxData = [
  *
  * @return {Object} constructed geometry
  */
-class BoxGeometry extends Geometry {
+class Box extends Geometry {
   constructor(options) {
     //handled by es6 transpiler
     //if (!(this instanceof BoxGeometry)) return new BoxGeometry(options);
 
     options = options || {};
 
-    var vertices      = [];
+    var vertices = [];
     var textureCoords = [];
-    var normals       = [];
-    var indices       = [];
+    var normals = [];
+    var indices = [];
 
     var data;
     var d;
@@ -70,30 +70,44 @@ class BoxGeometry extends Geometry {
     var j;
 
     for (i = 0; i < boxData.length; i++) {
-        data = boxData[i];
-        v = i * 4;
-        for (j = 0; j < 4; j++) {
-            d = data[j];
-            var octant = pickOctant(d);
-            vertices.push(octant[0], octant[1], octant[2]);
-            textureCoords.push(j & 1, (j & 2) / 2);
-            normals.push(data[4], data[5], data[6]);
-        }
-        indices.push(v, v + 1, v + 2);
-        indices.push(v + 2, v + 1, v + 3);
+      data = boxData[i];
+      v = i * 4;
+      for (j = 0; j < 4; j++) {
+        d = data[j];
+        var octant = pickOctant(d);
+        vertices.push(octant[0], octant[1], octant[2]);
+        textureCoords.push(j & 1, (j & 2) / 2);
+        normals.push(data[4], data[5], data[6]);
+      }
+      indices.push(v, v + 1, v + 2);
+      indices.push(v + 2, v + 1, v + 3);
 
     }
 
     options.buffers = [
-        { name: 'a_pos', data: vertices },
-        { name: 'a_texCoord', data: textureCoords, size: 2 },
-        { name: 'a_normals', data: normals },
-        { name: 'indices', data: indices, size: 1 }
+      {
+        name: 'a_pos',
+        data: vertices
+      },
+      {
+        name: 'a_texCoord',
+        data: textureCoords,
+        size: 2
+      },
+      {
+        name: 'a_normals',
+        data: normals
+      },
+      {
+        name: 'indices',
+        data: indices,
+        size: 1
+      }
     ];
 
     super(options);
-}
+  }
 
 }
 
-export { BoxGeometry };
+export { Box };

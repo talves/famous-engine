@@ -39,34 +39,48 @@ import { GeometryHelper } from '../GeometryHelper';
  *
  * @return {Object} constructed geometry
  */
- class ParametricCone extends Geometry {
-   constructor(options) {
-     //handled by es6 transpiler
+class ParametricCone extends Geometry {
+  constructor(options) {
+    //handled by es6 transpiler
     //if (!(this instanceof ParametricCone)) return new ParametricCone(options);
 
     options = options || {};
-    var detail   = options.detail || 15;
-    var radius   = options.radius || 1 / Math.PI;
+    var detail = options.detail || 15;
+    var radius = options.radius || 1 / Math.PI;
 
     var buffers = GeometryHelper.generateParametric(
-        detail,
-        detail,
-        ParametricCone.generator.bind(null, radius)
+      detail,
+      detail,
+      ParametricCone.generator.bind(null, radius)
     );
 
     if (options.backface !== false) {
-        GeometryHelper.addBackfaceTriangles(buffers.vertices, buffers.indices);
+      GeometryHelper.addBackfaceTriangles(buffers.vertices, buffers.indices);
     }
 
     options.buffers = [
-        { name: 'a_pos', data: buffers.vertices },
-        { name: 'a_texCoord', data: GeometryHelper.getSpheroidUV( buffers.vertices ), size: 2 },
-        { name: 'a_normals', data: GeometryHelper.computeNormals( buffers.vertices, buffers.indices ) },
-        { name: 'indices', data: buffers.indices, size: 1 }
+      {
+        name: 'a_pos',
+        data: buffers.vertices
+      },
+      {
+        name: 'a_texCoord',
+        data: GeometryHelper.getSpheroidUV(buffers.vertices),
+        size: 2
+      },
+      {
+        name: 'a_normals',
+        data: GeometryHelper.computeNormals(buffers.vertices, buffers.indices)
+      },
+      {
+        name: 'indices',
+        data: buffers.indices,
+        size: 1
+      }
     ];
 
     super(options);
-}
+  }
 
 }
 
@@ -82,9 +96,9 @@ import { GeometryHelper } from '../GeometryHelper';
  */
 
 ParametricCone.generator = function generator(r, u, v, pos) {
-    pos[0] = -r * u * Math.cos(v);
-    pos[1] = r * u * Math.sin(v);
-    pos[2] = -u / (Math.PI / 2) + 1;
+  pos[0] = -r * u * Math.cos(v);
+  pos[1] = r * u * Math.sin(v);
+  pos[2] = -u / (Math.PI / 2) + 1;
 };
 
 export { ParametricCone };

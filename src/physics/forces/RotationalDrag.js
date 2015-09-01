@@ -37,51 +37,30 @@ var TORQUE_REGISTER = new Vec3();
  * @param {Particle[]} targets The targets to affect.
  * @param {Object} options options to set on drag
  */
- class RotationalDrag extends Force {
-   constructor(targets, options) {
-     super(targets, options);
- }
+class RotationalDrag extends Force {
+  constructor(targets, options) {
+    super(targets, options);
+  }
 
-/**
- * Used to scale angular velocity in the computation of the drag torque.
- *
- * @property {Function} QUADRATIC
- * @param {Vec3} omega The angular velocity.
- * @return {Number} The scale by which to multiply.
- */
-QUADRATIC(omega) {
-    return omega.length();
-};
-
-/**
- * Used to scale angular velocity in the computation of the drag torque.
- *
- * @property {Function} LINEAR
- * @return {Number} The scale by which to multiply.
- */
-LINEAR() {
-    return 1;
-};
-
-/**
- * Initialize the Force. Sets defaults if a property was not already set.
- *
- * @method
- * @return {undefined} undefined
- */
-init() {
+  /**
+   * Initialize the Force. Sets defaults if a property was not already set.
+   *
+   * @method
+   * @return {undefined} undefined
+   */
+  init() {
     this.max = this.max || Infinity;
     this.strength = this.strength || 1;
     this.type = this.type || RotationalDrag.LINEAR;
-};
+  };
 
-/**
- * Adds a rotational drag force to a physics body's torque accumulator.
- *
- * @method
- * @return {undefined} undefined
- */
-update() {
+  /**
+   * Adds a rotational drag force to a physics body's torque accumulator.
+   *
+   * @method
+   * @return {undefined} undefined
+   */
+  update() {
     var targets = this.targets;
     var type = this.type;
 
@@ -90,14 +69,36 @@ update() {
     var max = this.max;
     var strength = this.strength;
     for (var i = 0, len = targets.length; i < len; i++) {
-        var target = targets[i];
-        var omega = target.angularVelocity;
-        var magnitude = -strength * type(omega);
-        Vec3.scale(omega, magnitude < -max ? -max : magnitude, torque);
-        target.applyTorque(torque);
+      var target = targets[i];
+      var omega = target.angularVelocity;
+      var magnitude = -strength * type(omega);
+      Vec3.scale(omega, magnitude < -max ? -max : magnitude, torque);
+      target.applyTorque(torque);
     }
-};
+  };
 
 }
+
+/**
+ * Used to scale angular velocity in the computation of the drag torque.
+ *
+ * @property {Function} QUADRATIC
+ * @param {Vec3} omega The angular velocity.
+ * @return {Number} The scale by which to multiply.
+ */
+RotationalDrag.QUADRATIC = function QUADRATIC(omega) {
+  return omega.length();
+};
+
+/**
+ * Used to scale angular velocity in the computation of the drag torque.
+ *
+ * @property {Function} LINEAR
+ * @return {Number} The scale by which to multiply.
+ */
+RotationalDrag.LINEAR = function LINEAR() {
+  return 1;
+};
+
 
 export { RotationalDrag };

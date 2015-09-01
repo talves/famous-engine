@@ -39,9 +39,9 @@ import { GeometryHelper } from '../GeometryHelper';
  *
  * @return {Object} constructed geometry
  */
- class Tetrahedron extends Geometry {
-   constructor(options) {
-     //handled by es6 transpiler
+class Tetrahedron extends Geometry {
+  constructor(options) {
+    //handled by es6 transpiler
     //if (!(this instanceof Tetrahedron)) return new Tetrahedron(options);
 
     var textureCoords = [];
@@ -51,56 +51,70 @@ import { GeometryHelper } from '../GeometryHelper';
     var t = Math.sqrt(3);
 
     var vertices = [
-        // Back
-         1, -1, -1 / t,
-        -1, -1, -1 / t,
-         0,  1,  0,
+      // Back
+      1, -1, -1 / t,
+      -1, -1, -1 / t,
+      0, 1, 0,
 
-        // Right
-         0,  1,  0,
-         0, -1, t - 1 / t,
-         1, -1, -1 / t,
+      // Right
+      0, 1, 0,
+      0, -1, t - 1 / t,
+      1, -1, -1 / t,
 
-        // Left
-         0,  1,  0,
-        -1, -1, -1 / t,
-         0, -1,  t - 1 / t,
+      // Left
+      0, 1, 0,
+      -1, -1, -1 / t,
+      0, -1, t - 1 / t,
 
-        // Bottom
-         0, -1,  t - 1 / t,
-        -1, -1, -1 / t,
-         1, -1, -1 / t
+      // Bottom
+      0, -1, t - 1 / t,
+      -1, -1, -1 / t,
+      1, -1, -1 / t
     ];
 
     var indices = [
-        0, 1, 2,
-        3, 4, 5,
-        6, 7, 8,
-        9, 10, 11
+      0, 1, 2,
+      3, 4, 5,
+      6, 7, 8,
+      9, 10, 11
     ];
 
     for (i = 0; i < 4; i++) {
-        textureCoords.push(
-            0.0, 0.0,
-            0.5, 1.0,
-            1.0, 0.0
-        );
+      textureCoords.push(
+        0.0, 0.0,
+        0.5, 1.0,
+        1.0, 0.0
+      );
     }
 
-    options       = options || {};
+    options = options || {};
 
-    while(--detail) GeometryHelper.subdivide(indices, vertices, textureCoords);
-    normals       = GeometryHelper.computeNormals(vertices, indices);
+    while (--detail) GeometryHelper.subdivide(indices, vertices, textureCoords);
+    normals = GeometryHelper.computeNormals(vertices, indices);
 
     options.buffers = [
-        { name: 'a_pos', data: vertices },
-        { name: 'a_texCoord', data: textureCoords, size: 2 },
-        { name: 'a_normals', data: normals },
-        { name: 'indices', data: indices, size: 1 }
+      {
+        name: 'a_pos',
+        data: vertices
+      },
+      {
+        name: 'a_texCoord',
+        data: textureCoords,
+        size: 2
+      },
+      {
+        name: 'a_normals',
+        data: normals
+      },
+      {
+        name: 'indices',
+        data: indices,
+        size: 1
+      }
     ];
 
     super(options);
-}
+  }
 
 }
 

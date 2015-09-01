@@ -40,9 +40,9 @@ import { GeometryHelper } from '../GeometryHelper';
  * @return {Object} constructed geometry
  */
 
- class Torus extends Geometry {
-   constructor(options) {
-     //handled by es6 transpiler
+class Torus extends Geometry {
+  constructor(options) {
+    //handled by es6 transpiler
     //if (!(this instanceof Torus)) return new Torus(options);
 
     options = options || {};
@@ -51,20 +51,34 @@ import { GeometryHelper } from '../GeometryHelper';
     var tubeRadius = options.tubeRadius || 0.20;
 
     var buffers = GeometryHelper.generateParametric(
-        detail,
-        detail,
-        Torus.generator.bind(null, holeRadius, tubeRadius)
+      detail,
+      detail,
+      Torus.generator.bind(null, holeRadius, tubeRadius)
     );
 
     options.buffers = [
-        { name: 'a_pos', data: buffers.vertices },
-        { name: 'a_texCoord', data: GeometryHelper.getSpheroidUV(buffers.vertices), size: 2 },
-        { name: 'a_normals', data: GeometryHelper.computeNormals(buffers.vertices, buffers.indices) },
-        { name: 'indices', data: buffers.indices, size: 1 }
+      {
+        name: 'a_pos',
+        data: buffers.vertices
+      },
+      {
+        name: 'a_texCoord',
+        data: GeometryHelper.getSpheroidUV(buffers.vertices),
+        size: 2
+      },
+      {
+        name: 'a_normals',
+        data: GeometryHelper.computeNormals(buffers.vertices, buffers.indices)
+      },
+      {
+        name: 'indices',
+        data: buffers.indices,
+        size: 1
+      }
     ];
 
     super(options);
-}
+  }
 
 }
 
@@ -82,9 +96,9 @@ import { GeometryHelper } from '../GeometryHelper';
  * @return {undefined} undefined
  */
 Torus.generator = function generator(c, a, u, v, pos) {
-    pos[0] = (c + a * Math.cos(2 * v)) * Math.sin(2 * u);
-    pos[1] = -(c + a * Math.cos(2 * v)) * Math.cos(2 * u);
-    pos[2] = a * Math.sin(2 * v);
+  pos[0] = (c + a * Math.cos(2 * v)) * Math.sin(2 * u);
+  pos[1] = -(c + a * Math.cos(2 * v)) * Math.cos(2 * u);
+  pos[2] = a * Math.sin(2 * v);
 };
 
 export { Torus };

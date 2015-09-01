@@ -44,7 +44,7 @@ class AmbientLight extends Light {
   constructor(node) {
     super(node);
     this.commands.color = Commands.GL_AMBIENT_LIGHT;
-}
+  }
 
 }
 

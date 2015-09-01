@@ -35,40 +35,40 @@ import { Position } from './Position';
  *
  * @param {Node} node Node that the Scale component will be attached to
  */
- class Scale extends Position {
-   constructor(node) {
-     super(node);
+class Scale extends Position {
+  constructor(node) {
+    super(node);
 
     this._x.set(1);
     this._y.set(1);
     this._z.set(1);
 
     this.onUpdate = this.constructor.update;
-}
+  }
 
-/**
- * Return the name of the Scale component
- *
- * @method
- *
- * @return {String} Name of the component
- */
-toString() {
+  /**
+   * Return the name of the Scale component
+   *
+   * @method
+   *
+   * @return {String} Name of the component
+   */
+  toString() {
     return 'Scale';
-};
+  };
 
-/**
- * When the node this component is attached to updates, update the value
- * of the Node's scale.
- *
- * @method
- *
- * @return {undefined} undefined
- */
-update() {
+  /**
+   * When the node this component is attached to updates, update the value
+   * of the Node's scale.
+   *
+   * @method
+   *
+   * @return {undefined} undefined
+   */
+  update() {
     this._node.setScale(this._x.get(), this._y.get(), this._z.get());
     this._checkUpdate();
-};
+  };
 
 }
 

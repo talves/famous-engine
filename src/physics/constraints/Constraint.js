@@ -39,48 +39,48 @@ class Constraint {
     this.setOptions(options);
 
     this._ID = _ID++;
-}
+  }
 
-/**
- * Decorates the Constraint with the options object.
- *
- * @method
- * @param {Object} options The options hash.
- * @return {undefined} undefined
- */
-setOptions(options) {
+  /**
+   * Decorates the Constraint with the options object.
+   *
+   * @method
+   * @param {Object} options The options hash.
+   * @return {undefined} undefined
+   */
+  setOptions(options) {
     for (var key in options) this[key] = options[key];
     this.init(options);
-};
+  };
 
-/**
- * Method invoked upon instantiation and the setting of options.
- *
- * @method
- * @param {Object} options The options hash.
- * @return {undefined} undefined
- */
-init(options) {};
+  /**
+   * Method invoked upon instantiation and the setting of options.
+   *
+   * @method
+   * @param {Object} options The options hash.
+   * @return {undefined} undefined
+   */
+  init(options) {};
 
-/**
- * Detect violations of the constraint. Warm start the constraint, if possible.
- *
- * @method
- * @param {Number} time The current time in the physics engine.
- * @param {Number} dt The physics engine frame delta.
- * @return {undefined} undefined
- */
-update(time, dt) {};
+  /**
+   * Detect violations of the constraint. Warm start the constraint, if possible.
+   *
+   * @method
+   * @param {Number} time The current time in the physics engine.
+   * @param {Number} dt The physics engine frame delta.
+   * @return {undefined} undefined
+   */
+  update(time, dt) {};
 
-/**
- * Apply impulses to resolve the constraint.
- *
- * @method
- * @param {Number} time The current time in the physics engine.
- * @param {Number} dt The physics engine frame delta.
- * @return {undefined} undefined
- */
-resolve(time, dt) {};
+  /**
+   * Apply impulses to resolve the constraint.
+   *
+   * @method
+   * @param {Number} time The current time in the physics engine.
+   * @param {Number} dt The physics engine frame delta.
+   * @return {undefined} undefined
+   */
+  resolve(time, dt) {};
 
 }
 

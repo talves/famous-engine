@@ -25,7 +25,7 @@
 
 // Polyfill for performance.now()
 var now = (window.performance && window.performance.now) ? function() {
-    return window.performance.now();
+  return window.performance.now();
 } : Date.now;
 
 export { now };

@@ -60,5 +60,11 @@
     "transform": [
       "babelify"
     ]
+  },
+  "esformatter": {
+    "plugins": ["esformatter-quotes"],
+    "quotes": {
+      "type": "single"
+    }
   }
 }

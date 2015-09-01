@@ -34,34 +34,34 @@ import { Vec3 } from '../../math/Vec3';
  * @extends Particle
  * @param {Object} options The initial state of the body.
  */
- class Wall extends Particle {
-   constructor(options) {
-     super(options);
+class Wall extends Particle {
+  constructor(options) {
+    super(options);
 
     var n = this.normal = new Vec3();
 
     var d = this.direction = options.direction;
     switch (d) {
-        case Wall.DOWN:
-            n.set(0, 1, 0);
-            break;
-        case Wall.UP:
-            n.set(0, -1, 0);
-            break;
-        case Wall.LEFT:
-            n.set(-1, 0, 0);
-            break;
-        case Wall.RIGHT:
-            n.set(1, 0, 0);
-            break;
-        case Wall.FORWARD:
-            n.set(0, 0, -1);
-            break;
-        case Wall.BACKWARD:
-            n.set(0, 0, 1);
-            break;
-        default:
-            break;
+      case Wall.DOWN:
+        n.set(0, 1, 0);
+        break;
+      case Wall.UP:
+        n.set(0, -1, 0);
+        break;
+      case Wall.LEFT:
+        n.set(-1, 0, 0);
+        break;
+      case Wall.RIGHT:
+        n.set(1, 0, 0);
+        break;
+      case Wall.FORWARD:
+        n.set(0, 0, -1);
+        break;
+      case Wall.BACKWARD:
+        n.set(0, 0, 1);
+        break;
+      default:
+        break;
     }
 
     this.invNormal = Vec3.clone(n, new Vec3()).invert();
@@ -70,7 +70,7 @@ import { Vec3 } from '../../math/Vec3';
     this.inverseMass = 0;
 
     this.type = 1 << 3;
-}
+  }
 
 }
 

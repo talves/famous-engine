@@ -34,8 +34,8 @@ import { UIEvent } from './UIEvent';
  *
  * @param {Event} ev The native DOM event.
  */
- class InputEvent extends UIEvent {
-   constructor(ev) {
+class InputEvent extends UIEvent {
+  constructor(ev) {
     // [Constructor(DOMString typeArg, optional InputEventInit inputEventInitDict)]
     // interface InputEvent : UIEvent {
     //     readonly    attribute DOMString inputType;
@@ -71,18 +71,18 @@ import { UIEvent } from './UIEvent';
      * @type    Boolean
      */
     this.targetRange = ev.targetRange;
-}
+  }
 
-/**
- * Return the name of the event type
- *
- * @method
- *
- * @return {String} Name of the event type
- */
-toString() {
+  /**
+   * Return the name of the event type
+   *
+   * @method
+   *
+   * @return {String} Name of the event type
+   */
+  toString() {
     return 'InputEvent';
-};
+  };
 
 }
 

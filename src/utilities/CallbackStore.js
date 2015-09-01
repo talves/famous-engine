@@ -33,66 +33,67 @@
 class CallbackStore {
   constructor() {
     this._events = {};
-}
+  }
 
-/**
- * Adds a listener for the specified event (= key).
- *
- * @method on
- * @chainable
- *
- * @param  {String}   key       The event type (e.g. `click`).
- * @param  {Function} callback  A callback function to be invoked whenever `key`
- *                              event is being triggered.
- * @return {Function} destroy   A function to call if you want to remove the
- *                              callback.
- */
-on(key, callback) {
-    if (!this._events[key]) this._events[key] = [];
+  /**
+   * Adds a listener for the specified event (= key).
+   *
+   * @method on
+   * @chainable
+   *
+   * @param  {String}   key       The event type (e.g. `click`).
+   * @param  {Function} callback  A callback function to be invoked whenever `key`
+   *                              event is being triggered.
+   * @return {Function} destroy   A function to call if you want to remove the
+   *                              callback.
+   */
+  on(key, callback) {
+    if (!this._events[key])
+      this._events[key] = [];
     var callbackList = this._events[key];
     callbackList.push(callback);
-    return function () {
-        callbackList.splice(callbackList.indexOf(callback), 1);
+    return function() {
+      callbackList.splice(callbackList.indexOf(callback), 1);
     };
-};
+  };
 
-/**
- * Removes a previously added event listener.
- *
- * @method off
- * @chainable
- *
- * @param  {String} key         The event type from which the callback function
- *                              should be removed.
- * @param  {Function} callback  The callback function to be removed from the
- *                              listeners for key.
- * @return {CallbackStore} this
- */
-off(key, callback) {
+  /**
+   * Removes a previously added event listener.
+   *
+   * @method off
+   * @chainable
+   *
+   * @param  {String} key         The event type from which the callback function
+   *                              should be removed.
+   * @param  {Function} callback  The callback function to be removed from the
+   *                              listeners for key.
+   * @return {CallbackStore} this
+   */
+  off(key, callback) {
     var events = this._events[key];
     if (events) events.splice(events.indexOf(callback), 1);
     return this;
-};
+  };
 
-/**
- * Invokes all the previously for this key registered callbacks.
- *
- * @method trigger
- * @chainable
- *
- * @param  {String}        key      The event type.
- * @param  {Object}        payload  The event payload (event object).
- * @return {CallbackStore} this
- */
-trigger(key, payload) {
+  /**
+   * Invokes all the previously for this key registered callbacks.
+   *
+   * @method trigger
+   * @chainable
+   *
+   * @param  {String}        key      The event type.
+   * @param  {Object}        payload  The event payload (event object).
+   * @return {CallbackStore} this
+   */
+  trigger(key, payload) {
     var events = this._events[key];
     if (events) {
-        var i = 0;
-        var len = events.length;
-        for (; i < len ; i++) events[i](payload);
+      var i = 0;
+      var len = events.length;
+      for (; i < len; i++) events[i](payload);
     }
     return this;
-};
+  };
 
 }
 

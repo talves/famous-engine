@@ -26,104 +26,103 @@
 
 class Opacity {
   constructor(parent) {
-      this.local = 1;
-      this.global = 1;
-      this.opacity = 1;
-      this.parent = parent ? parent : null;
-      this.breakPoint = false;
-      this.calculatingWorldOpacity = false;
+    this.local = 1;
+    this.global = 1;
+    this.opacity = 1;
+    this.parent = parent ? parent : null;
+    this.breakPoint = false;
+    this.calculatingWorldOpacity = false;
   }
 
-reset() {
+  reset() {
     this.parent = null;
     this.breakPoint = false;
-};
+  };
 
-setParent(parent) {
+  setParent(parent) {
     this.parent = parent;
-};
+  };
 
-getParent() {
+  getParent() {
     return this.parent;
-};
+  };
 
-setBreakPoint() {
+  setBreakPoint() {
     this.breakPoint = true;
     this.calculatingWorldOpacity = true;
-};
+  };
 
-/**
- * Set this node to calculate the world opacity.
- *
- * @method
- *
- * @return {undefined} undefined
- */
-setCalculateWorldOpacity() {
+  /**
+   * Set this node to calculate the world opacity.
+   *
+   * @method
+   *
+   * @return {undefined} undefined
+   */
+  setCalculateWorldOpacity() {
     this.calculatingWorldOpacity = true;
-};
+  };
 
-isBreakPoint() {
+  isBreakPoint() {
     return this.breakPoint;
-};
+  };
 
-getLocalOpacity() {
+  getLocalOpacity() {
     return this.local;
-};
+  };
 
-getWorldOpacity() {
+  getWorldOpacity() {
     if (!this.isBreakPoint() && !this.calculatingWorldOpacity)
-        throw new Error('This opacity is not calculating world transforms');
+      throw new Error('This opacity is not calculating world transforms');
     return this.global;
-};
+  };
 
-calculate(node) {
+  calculate(node) {
     if (!this.parent || this.parent.isBreakPoint())
-        return this.fromNode(node);
+      return this.fromNode(node);
     else return this.fromNodeWithParent(node);
-};
+  };
 
-getOpacity() {
+  getOpacity() {
     return this.opacity;
-};
+  };
 
-setOpacity (opacity) {
+  setOpacity(opacity) {
     this.opacity = opacity;
-};
+  };
 
-calculateWorldOpacity() {
+  calculateWorldOpacity() {
     var nearestBreakPoint = this.parent;
 
     var previousGlobal = this.global;
 
     while (nearestBreakPoint && !nearestBreakPoint.isBreakPoint())
-        nearestBreakPoint = nearestBreakPoint.parent;
+    nearestBreakPoint = nearestBreakPoint.parent;
 
     if (nearestBreakPoint) {
-        this.global = nearestBreakPoint.getWorldOpacity() * this.local;
-    }
-    else {
-        this.global = this.local;
+      this.global = nearestBreakPoint.getWorldOpacity() * this.local;
+    } else {
+      this.global = this.local;
     }
 
     return previousGlobal !== this.global;
-};
+  };
 
-fromNode() {
+  fromNode() {
     var changed = 0;
 
     if (this.opacity !== this.local)
-        changed |= Opacity.LOCAL_CHANGED;
+      changed |= Opacity.LOCAL_CHANGED;
 
     this.local = this.opacity;
 
     if (this.calculatingWorldOpacity && this.calculateWorldOpacity())
-        changed |= Opacity.WORLD_CHANGED;
+      changed |= Opacity.WORLD_CHANGED;
 
     return changed;
-};
+  };
 
-fromNodeWithParent() {
+  fromNodeWithParent() {
     var changed = 0;
 
     var previousLocal = this.local;
@@ -131,13 +130,13 @@ fromNodeWithParent() {
     this.local = this.parent.getLocalOpacity() * this.opacity;
 
     if (this.calculatingWorldOpacity && this.calculateWorldOpacity())
-        changed |= Opacity.WORLD_CHANGED;
+      changed |= Opacity.WORLD_CHANGED;
 
     if (previousLocal !== this.local)
-        changed |= Opacity.LOCAL_CHANGED;
+      changed |= Opacity.LOCAL_CHANGED;
 
     return changed;
-};
+  };
 
 }
 

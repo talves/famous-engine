@@ -44,124 +44,123 @@ class Opacity {
     this._requestingUpdate = false;
 
     this.onUpdate = this.constructor.update;
-}
+  }
 
-/**
- * Return the name of the Opacity component
- *
- * @method
- *
- * @return {String} Name of the component
- */
-toString() {
+  /**
+   * Return the name of the Opacity component
+   *
+   * @method
+   *
+   * @return {String} Name of the component
+   */
+  toString() {
     return 'Opacity';
-};
+  };
 
-/**
- * Retrieves internal state of Opacity component
- *
- * @method
- *
- * @return {Object} contains component key which holds the stringified constructor
- * and value key which contains the numeric value
- */
-getValue() {
+  /**
+   * Retrieves internal state of Opacity component
+   *
+   * @method
+   *
+   * @return {Object} contains component key which holds the stringified constructor
+   * and value key which contains the numeric value
+   */
+  getValue() {
     return {
-        component: this.toString(),
-        value: this._value.get()
+      component: this.toString(),
+      value: this._value.get()
     };
-};
+  };
 
-/**
- * Set the internal state of the Opacity component
- *
- * @method
- *
- * @param {Object} value Object containing the component key, which holds stringified constructor, and a value key, which contains a numeric value used to set opacity if the constructor value matches
- *
- * @return {Boolean} true if set is successful, false otherwise
- */
-setValue(value) {
+  /**
+   * Set the internal state of the Opacity component
+   *
+   * @method
+   *
+   * @param {Object} value Object containing the component key, which holds stringified constructor, and a value key, which contains a numeric value used to set opacity if the constructor value matches
+   *
+   * @return {Boolean} true if set is successful, false otherwise
+   */
+  setValue(value) {
     if (this.toString() === value.component) {
-        this.set(value.value);
-        return true;
+      this.set(value.value);
+      return true;
     }
     return false;
-};
+  };
 
-/**
- * Set the opacity of the Node
- *
- * @method
- *
- * @param {Number} value value used to set Opacity
- * @param {Object} transition options for the transition
- * @param {Function} callback to be called following Opacity set completion
- *
- * @return {Opacity} this
- */
-set(value, transition, callback) {
+  /**
+   * Set the opacity of the Node
+   *
+   * @method
+   *
+   * @param {Number} value value used to set Opacity
+   * @param {Object} transition options for the transition
+   * @param {Function} callback to be called following Opacity set completion
+   *
+   * @return {Opacity} this
+   */
+  set(value, transition, callback) {
     if (!this._requestingUpdate) {
-        this._node.requestUpdate(this._id);
-        this._requestingUpdate = true;
+      this._node.requestUpdate(this._id);
+      this._requestingUpdate = true;
     }
 
     this._value.set(value, transition, callback);
     return this;
-};
+  };
 
-/**
- * Get the current opacity for the component
- *
- * @method
- *
- * @return {Number} opacity as known by the component
- */
-get() {
+  /**
+   * Get the current opacity for the component
+   *
+   * @method
+   *
+   * @return {Number} opacity as known by the component
+   */
+  get() {
     return this._value.get();
-};
+  };
 
-/**
- * Stops Opacity transition
- *
- * @method
- *
- * @return {Opacity} this
- */
-halt() {
+  /**
+   * Stops Opacity transition
+   *
+   * @method
+   *
+   * @return {Opacity} this
+   */
+  halt() {
     this._value.halt();
     return this;
-};
+  };
 
-/**
- * Tells whether or not the opacity is in a transition
- *
- * @method
- *
- * @return {Boolean} whether or not the opacity is transitioning
- */
-isActive(){
+  /**
+   * Tells whether or not the opacity is in a transition
+   *
+   * @method
+   *
+   * @return {Boolean} whether or not the opacity is transitioning
+   */
+  isActive() {
     return this._value.isActive();
-};
+  };
 
-/**
- * When the node this component is attached to updates, update the value
- * of the Node's opacity.
- *
- * @method
- *
- * @return {undefined} undefined
- */
-update() {
+  /**
+   * When the node this component is attached to updates, update the value
+   * of the Node's opacity.
+   *
+   * @method
+   *
+   * @return {undefined} undefined
+   */
+  update() {
     this._node.setOpacity(this._value.get());
 
     if (this._value.isActive()) {
       this._node.requestUpdateOnNextTick(this._id);
-    }
-    else {
+    } else {
       this._requestingUpdate = false;
     }
-};
+  };
 
 }
 

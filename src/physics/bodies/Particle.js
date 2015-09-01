@@ -64,10 +64,10 @@ class Particle {
     this.restitution = options.restitution != null ? options.restitution : 0.4;
     this.friction = options.friction != null ? options.friction : 0.2;
 
-    this.inverseInertia = new Mat33([0,0,0,0,0,0,0,0,0]);
+    this.inverseInertia = new Mat33([0, 0, 0, 0, 0, 0, 0, 0, 0]);
 
-    this.localInertia = new Mat33([0,0,0,0,0,0,0,0,0]);
-    this.localInverseInertia = new Mat33([0,0,0,0,0,0,0,0,0]);
+    this.localInertia = new Mat33([0, 0, 0, 0, 0, 0, 0, 0, 0]);
+    this.localInverseInertia = new Mat33([0, 0, 0, 0, 0, 0, 0, 0, 0]);
 
     this.size = options.size || [0, 0, 0];
 
@@ -83,140 +83,152 @@ class Particle {
     this.type = 1 << 0;
 
     this._ID = _ID++;
-}
+  }
 
-/**
- * Listen for a specific event.
- *
- * @method
- * @param {String} key Name of the event.
- * @param {Function} callback Callback to register for the event.
- * @return {Particle} this
- */
-on(key, callback) {
+  /**
+   * Listen for a specific event.
+   *
+   * @method
+   * @param {String} key Name of the event.
+   * @param {Function} callback Callback to register for the event.
+   * @return {Particle} this
+   */
+  on(key, callback) {
     this.events.on(key, callback);
     return this;
-};
+  };
 
-/**
- * Stop listening for a specific event.
- *
- * @method
- * @param {String} key Name of the event.
- * @param {Function} callback Callback to deregister for the event.
- * @return {Particle} this
- */
-off(key, callback) {
+  /**
+   * Stop listening for a specific event.
+   *
+   * @method
+   * @param {String} key Name of the event.
+   * @param {Function} callback Callback to deregister for the event.
+   * @return {Particle} this
+   */
+  off(key, callback) {
     this.events.off(key, callback);
     return this;
-};
+  };
 
-/**
- * Trigger an event.
- *
- * @method
- * @param {String} key Name of the event.
- * @param {Object} payload Payload to pass to the event listeners.
- * @return {Particle} this
- */
-trigger(key, payload) {
+  /**
+   * Trigger an event.
+   *
+   * @method
+   * @param {String} key Name of the event.
+   * @param {Object} payload Payload to pass to the event listeners.
+   * @return {Particle} this
+   */
+  trigger(key, payload) {
     this.events.trigger(key, payload);
     return this;
-};
+  };
 
-/**
- * Getter for the restriction bitmask. Converts the restrictions to their string representation.
- *
- * @method
- * @return {String[]} restrictions
- */
-getRestrictions() {
+  /**
+   * Getter for the restriction bitmask. Converts the restrictions to their string representation.
+   *
+   * @method
+   * @return {String[]} restrictions
+   */
+  getRestrictions() {
     var linear = '';
     var angular = '';
     var restrictions = this.restrictions;
-    if (restrictions & 32) linear += 'x';
-    if (restrictions & 16) linear += 'y';
-    if (restrictions & 8) linear += 'z';
-    if (restrictions & 4) angular += 'x';
-    if (restrictions & 2) angular += 'y';
-    if (restrictions & 1) angular += 'z';
+    if (restrictions & 32)
+      linear += 'x';
+    if (restrictions & 16)
+      linear += 'y';
+    if (restrictions & 8)
+      linear += 'z';
+    if (restrictions & 4)
+      angular += 'x';
+    if (restrictions & 2)
+      angular += 'y';
+    if (restrictions & 1)
+      angular += 'z';
 
     return [linear, angular];
-};
+  };
 
-/**
- * Setter for the particle restriction bitmask.
- *
- * @method
- * @param {String} transRestrictions The restrictions to linear motion.
- * @param {String} rotRestrictions The restrictions to rotational motion.
- * @return {Particle} this
- */
-setRestrictions(transRestrictions, rotRestrictions) {
+  /**
+   * Setter for the particle restriction bitmask.
+   *
+   * @method
+   * @param {String} transRestrictions The restrictions to linear motion.
+   * @param {String} rotRestrictions The restrictions to rotational motion.
+   * @return {Particle} this
+   */
+  setRestrictions(transRestrictions, rotRestrictions) {
     transRestrictions = transRestrictions || '';
     rotRestrictions = rotRestrictions || '';
     this.restrictions = 0;
-    if (transRestrictions.indexOf('x') > -1) this.restrictions |= 32;
-    if (transRestrictions.indexOf('y') > -1) this.restrictions |= 16;
-    if (transRestrictions.indexOf('z') > -1) this.restrictions |= 8;
-    if (rotRestrictions.indexOf('x') > -1) this.restrictions |= 4;
-    if (rotRestrictions.indexOf('y') > -1) this.restrictions |= 2;
-    if (rotRestrictions.indexOf('z') > -1) this.restrictions |= 1;
+    if (transRestrictions.indexOf('x') > -1)
+      this.restrictions |= 32;
+    if (transRestrictions.indexOf('y') > -1)
+      this.restrictions |= 16;
+    if (transRestrictions.indexOf('z') > -1)
+      this.restrictions |= 8;
+    if (rotRestrictions.indexOf('x') > -1)
+      this.restrictions |= 4;
+    if (rotRestrictions.indexOf('y') > -1)
+      this.restrictions |= 2;
+    if (rotRestrictions.indexOf('z') > -1)
+      this.restrictions |= 1;
     return this;
-};
+  };
 
-/**
- * Getter for mass
- *
- * @method
- * @return {Number} mass
- */
-getMass() {
+  /**
+   * Getter for mass
+   *
+   * @method
+   * @return {Number} mass
+   */
+  getMass() {
     return this.mass;
-};
+  };
 
-/**
- * Set the mass of the Particle.
- *
- * @method
- * @param {Number} mass The mass.
- * @return {Particle} this
- */
-setMass(mass) {
+  /**
+   * Set the mass of the Particle.
+   *
+   * @method
+   * @param {Number} mass The mass.
+   * @return {Particle} this
+   */
+  setMass(mass) {
     this.mass = mass;
     this.inverseMass = 1 / mass;
     return this;
-};
+  };
 
-/**
- * Getter for inverse mass
- *
- * @method
- * @return {Number} inverse mass
- */
-getInverseMass() {
+  /**
+   * Getter for inverse mass
+   *
+   * @method
+   * @return {Number} inverse mass
+   */
+  getInverseMass() {
     return this.inverseMass;
-};
+  };
 
-/**
- * Resets the inertia tensor and its inverse to reflect the current shape.
- *
- * @method
- * @return {Particle} this
- */
-updateLocalInertia() {
-    this.localInertia.set([0,0,0,0,0,0,0,0,0]);
-    this.localInverseInertia.set([0,0,0,0,0,0,0,0,0]);
+  /**
+   * Resets the inertia tensor and its inverse to reflect the current shape.
+   *
+   * @method
+   * @return {Particle} this
+   */
+  updateLocalInertia() {
+    this.localInertia.set([0, 0, 0, 0, 0, 0, 0, 0, 0]);
+    this.localInverseInertia.set([0, 0, 0, 0, 0, 0, 0, 0, 0]);
     return this;
-};
+  };
 
-/**
- * Updates the world inverse inertia tensor.
- *
- * @method
- * @return {Particle} this
- */
-updateInertia() {
+  /**
+   * Updates the world inverse inertia tensor.
+   *
+   * @method
+   * @return {Particle} this
+   */
+  updateInertia() {
     var localInvI = this.localInverseInertia;
     var q = this.orientation;
     if ((localInvI[0] === localInvI[4] && localInvI[4] === localInvI[8]) || q.w === 1) return this;
@@ -224,280 +236,280 @@ updateInertia() {
     Mat33.multiply(R, this.inverseInertia, this.inverseInertia);
     Mat33.multiply(this.localInverseInertia, R.transpose(), this.inverseInertia);
     return this;
-};
+  };
 
-/**
- * Getter for position
- *
- * @method
- * @return {Vec3} position
- */
-getPosition() {
+  /**
+   * Getter for position
+   *
+   * @method
+   * @return {Vec3} position
+   */
+  getPosition() {
     return this.position;
-};
+  };
 
-/**
- * Setter for position
- *
- * @method
- * @param {Number} x the x coordinate for position
- * @param {Number} y the y coordinate for position
- * @param {Number} z the z coordinate for position
- * @return {Particle} this
- * @return {Particle} this
- */
-setPosition(x, y, z) {
+  /**
+   * Setter for position
+   *
+   * @method
+   * @param {Number} x the x coordinate for position
+   * @param {Number} y the y coordinate for position
+   * @param {Number} z the z coordinate for position
+   * @return {Particle} this
+   * @return {Particle} this
+   */
+  setPosition(x, y, z) {
     this.position.set(x, y, z);
     return this;
-};
+  };
 
-/**
- * Getter for velocity
- *
- * @method
- * @return {Vec3} velocity
- */
-getVelocity() {
+  /**
+   * Getter for velocity
+   *
+   * @method
+   * @return {Vec3} velocity
+   */
+  getVelocity() {
     return this.velocity;
-};
+  };
 
-/**
- * Setter for velocity
- *
- * @method
- * @param {Number} x the x coordinate for velocity
- * @param {Number} y the y coordinate for velocity
- * @param {Number} z the z coordinate for velocity
- * @return {Particle} this
- */
-setVelocity(x, y, z) {
+  /**
+   * Setter for velocity
+   *
+   * @method
+   * @param {Number} x the x coordinate for velocity
+   * @param {Number} y the y coordinate for velocity
+   * @param {Number} z the z coordinate for velocity
+   * @return {Particle} this
+   */
+  setVelocity(x, y, z) {
     this.velocity.set(x, y, z);
     Vec3.scale(this.velocity, this.mass, this.momentum);
     return this;
-};
+  };
 
-/**
- * Getter for momenutm
- *
- * @method
- * @return {Vec3} momentum
- */
-getMomentum() {
+  /**
+   * Getter for momenutm
+   *
+   * @method
+   * @return {Vec3} momentum
+   */
+  getMomentum() {
     return this.momentum;
-};
+  };
 
-/**
- * Setter for momentum
- *
- * @method
- * @param {Number} x the x coordinate for momentum
- * @param {Number} y the y coordinate for momentum
- * @param {Number} z the z coordinate for momentum
- * @return {Particle} this
- */
-setMomentum(x, y, z) {
+  /**
+   * Setter for momentum
+   *
+   * @method
+   * @param {Number} x the x coordinate for momentum
+   * @param {Number} y the y coordinate for momentum
+   * @param {Number} z the z coordinate for momentum
+   * @return {Particle} this
+   */
+  setMomentum(x, y, z) {
     this.momentum.set(x, y, z);
     Vec3.scale(this.momentum, this.inverseMass, this.velocity);
     return this;
-};
+  };
 
-/**
- * Getter for orientation
- *
- * @method
- * @return {Quaternion} orientation
- */
-getOrientation() {
+  /**
+   * Getter for orientation
+   *
+   * @method
+   * @return {Quaternion} orientation
+   */
+  getOrientation() {
     return this.orientation;
-};
+  };
 
-/**
- * Setter for orientation
- *
- * @method
- * @param {Number} w The w component.
- * @param {Number} x The x component.
- * @param {Number} y The y component.
- * @param {Number} z The z component.
- * @return {Particle} this
- */
-setOrientation(w,x,y,z) {
-    this.orientation.set(w,x,y,z).normalize();
+  /**
+   * Setter for orientation
+   *
+   * @method
+   * @param {Number} w The w component.
+   * @param {Number} x The x component.
+   * @param {Number} y The y component.
+   * @param {Number} z The z component.
+   * @return {Particle} this
+   */
+  setOrientation(w, x, y, z) {
+    this.orientation.set(w, x, y, z).normalize();
     this.updateInertia();
     return this;
-};
+  };
 
-/**
- * Getter for angular velocity
- *
- * @method
- * @return {Vec3} angularVelocity
- */
-getAngularVelocity() {
+  /**
+   * Getter for angular velocity
+   *
+   * @method
+   * @return {Vec3} angularVelocity
+   */
+  getAngularVelocity() {
     return this.angularVelocity;
-};
+  };
 
-/**
- * Setter for angular velocity
- *
- * @method
- * @param {Number} x The x component.
- * @param {Number} y The y component.
- * @param {Number} z The z component.
- * @return {Particle} this
- */
-setAngularVelocity(x,y,z) {
-    this.angularVelocity.set(x,y,z);
+  /**
+   * Setter for angular velocity
+   *
+   * @method
+   * @param {Number} x The x component.
+   * @param {Number} y The y component.
+   * @param {Number} z The z component.
+   * @return {Particle} this
+   */
+  setAngularVelocity(x, y, z) {
+    this.angularVelocity.set(x, y, z);
     var I = Mat33.inverse(this.inverseInertia, MAT1_REGISTER);
     if (I) I.vectorMultiply(this.angularVelocity, this.angularMomentum);
     else this.angularMomentum.clear();
     return this;
-};
+  };
 
-/**
- * Getter for angular momentum
- *
- * @method
- * @return {Vec3} angular momentum
- */
-getAngularMomentum() {
+  /**
+   * Getter for angular momentum
+   *
+   * @method
+   * @return {Vec3} angular momentum
+   */
+  getAngularMomentum() {
     return this.angularMomentum;
-};
+  };
 
-/**
- * Setter for angular momentum
- *
- * @method
- * @param {Number} x The x component.
- * @param {Number} y The y component.
- * @param {Number} z The z component.
- * @return {Particle} this
- */
-setAngularMomentum(x,y,z) {
-    this.angularMomentum.set(x,y,z);
+  /**
+   * Setter for angular momentum
+   *
+   * @method
+   * @param {Number} x The x component.
+   * @param {Number} y The y component.
+   * @param {Number} z The z component.
+   * @return {Particle} this
+   */
+  setAngularMomentum(x, y, z) {
+    this.angularMomentum.set(x, y, z);
     this.inverseInertia.vectorMultiply(this.angularMomentum, this.angularVelocity);
     return this;
-};
+  };
 
-/**
- * Getter for the force on the Particle
- *
- * @method
- * @return {Vec3} force
- */
-getForce() {
+  /**
+   * Getter for the force on the Particle
+   *
+   * @method
+   * @return {Vec3} force
+   */
+  getForce() {
     return this.force;
-};
+  };
 
-/**
- * Setter for the force on the Particle
- *
- * @method
- * @param {Number} x The x component.
- * @param {Number} y The y component.
- * @param {Number} z The z component.
- * @return {Particle} this
- */
-setForce(x, y, z) {
+  /**
+   * Setter for the force on the Particle
+   *
+   * @method
+   * @param {Number} x The x component.
+   * @param {Number} y The y component.
+   * @param {Number} z The z component.
+   * @return {Particle} this
+   */
+  setForce(x, y, z) {
     this.force.set(x, y, z);
     return this;
-};
+  };
 
-/**
- * Getter for torque.
- *
- * @method
- * @return {Vec3} torque
- */
-getTorque() {
+  /**
+   * Getter for torque.
+   *
+   * @method
+   * @return {Vec3} torque
+   */
+  getTorque() {
     return this.torque;
-};
+  };
 
-/**
- * Setter for torque.
- *
- * @method
- * @param {Number} x The x component.
- * @param {Number} y The y component.
- * @param {Number} z The z component.
- * @return {Particle} this
- */
-setTorque(x, y, z) {
+  /**
+   * Setter for torque.
+   *
+   * @method
+   * @param {Number} x The x component.
+   * @param {Number} y The y component.
+   * @param {Number} z The z component.
+   * @return {Particle} this
+   */
+  setTorque(x, y, z) {
     this.torque.set(x, y, z);
     return this;
-};
+  };
 
-/**
- * Extends Particle.applyForce with an optional argument
- * to apply the force at an off-centered location, resulting in a torque.
- *
- * @method
- * @param {Vec3} force Force to apply.
- * @return {Particle} this
- */
-applyForce(force) {
+  /**
+   * Extends Particle.applyForce with an optional argument
+   * to apply the force at an off-centered location, resulting in a torque.
+   *
+   * @method
+   * @param {Vec3} force Force to apply.
+   * @return {Particle} this
+   */
+  applyForce(force) {
     this.force.add(force);
     return this;
-};
+  };
 
-/**
- * Applied a torque force to a Particle, inducing a rotation.
- *
- * @method
- * @param {Vec3} torque Torque to apply.
- * @return {Particle} this
- */
-applyTorque(torque) {
+  /**
+   * Applied a torque force to a Particle, inducing a rotation.
+   *
+   * @method
+   * @param {Vec3} torque Torque to apply.
+   * @return {Particle} this
+   */
+  applyTorque(torque) {
     this.torque.add(torque);
     return this;
-};
+  };
 
-/**
- * Applies an impulse to momentum and updates velocity.
- *
- * @method
- * @param {Vec3} impulse Impulse to apply.
- * @return {Particle} this
- */
-applyImpulse(impulse) {
+  /**
+   * Applies an impulse to momentum and updates velocity.
+   *
+   * @method
+   * @param {Vec3} impulse Impulse to apply.
+   * @return {Particle} this
+   */
+  applyImpulse(impulse) {
     this.momentum.add(impulse);
     Vec3.scale(this.momentum, this.inverseMass, this.velocity);
     return this;
-};
+  };
 
-/**
- * Applies an angular impulse to angular momentum and updates angular velocity.
- *
- * @method
- * @param {Vec3} angularImpulse Angular impulse to apply.
- * @return {Particle} this
- */
-applyAngularImpulse(angularImpulse) {
+  /**
+   * Applies an angular impulse to angular momentum and updates angular velocity.
+   *
+   * @method
+   * @param {Vec3} angularImpulse Angular impulse to apply.
+   * @return {Particle} this
+   */
+  applyAngularImpulse(angularImpulse) {
     this.angularMomentum.add(angularImpulse);
     this.inverseInertia.vectorMultiply(this.angularMomentum, this.angularVelocity);
     return this;
-};
+  };
 
-/**
- * Used in collision detection. The support function should accept a Vec3 direction
- * and return the point on the body's shape furthest in that direction. For point particles,
- * this returns the zero vector.
- *
- * @method
- * @return {Vec3} The zero vector.
- */
-support() {
+  /**
+   * Used in collision detection. The support function should accept a Vec3 direction
+   * and return the point on the body's shape furthest in that direction. For point particles,
+   * this returns the zero vector.
+   *
+   * @method
+   * @return {Vec3} The zero vector.
+   */
+  support() {
     return ZERO_VECTOR;
-};
+  };
 
-/**
- * Update the body's shape to reflect current orientation. Called in Collision.
- * Noop for point particles.
- *
- * @method
- * @return {undefined} undefined
- */
-updateShape() {};
+  /**
+   * Update the body's shape to reflect current orientation. Called in Collision.
+   * Noop for point particles.
+   *
+   * @method
+   * @return {undefined} undefined
+   */
+  updateShape() {};
 
 }
 

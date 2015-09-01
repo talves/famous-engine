@@ -24,7 +24,7 @@
 
 'use strict';
 
-import { expressions as Material } from './Material';
+import { Material } from './Material';
 import { TextureRegistry } from './TextureRegistry';
 
 export { Material };

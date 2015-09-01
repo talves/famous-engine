@@ -26,7 +26,7 @@
 
 // TODO This will be removed once `Mesh#setGeometry` no longer accepts
 // geometries defined by name.
-import { Geometry } from '../webgl-geometries';
+import * as Geometry from '../webgl-geometries/primitives';
 
 import { Commands } from '../core/Commands';
 import { TransformSystem } from '../core/TransformSystem';
@@ -59,453 +59,448 @@ class Mesh {
     this._requestingUpdate = false;
     this._inDraw = false;
     this.value = {
-        geometry: new Plane(),
-        drawOptions: null,
-        color: null,
-        expressions: {},
-        flatShading: null,
-        glossiness: null,
-        positionOffset: null,
-        normals: null
+      geometry: new Plane(),
+      drawOptions: null,
+      color: null,
+      expressions: {},
+      flatShading: null,
+      glossiness: null,
+      positionOffset: null,
+      normals: null
     };
     if (node) node.addComponent(this);
     if (options) this.setDrawOptions(options);
-}
-/**
- * Pass custom options to Mesh, such as a 3 element map
- * which displaces the position of each vertex in world space.
- *
- * @method
- *
- * @param {Object} options Draw options
- * @return {Mesh} Current mesh
- */
-setDrawOptions(options) {
+  }
+  /**
+   * Pass custom options to Mesh, such as a 3 element map
+   * which displaces the position of each vertex in world space.
+   *
+   * @method
+   *
+   * @param {Object} options Draw options
+   * @return {Mesh} Current mesh
+   */
+  setDrawOptions(options) {
     this._changeQueue.push(Commands.GL_SET_DRAW_OPTIONS);
     this._changeQueue.push(options);
 
     this.value.drawOptions = options;
     return this;
-};
+  };
 
-/**
- * Get the mesh's custom options.
- *
- * @method
- *
- * @returns {Object} Options
- */
-getDrawOptions() {
+  /**
+   * Get the mesh's custom options.
+   *
+   * @method
+   *
+   * @returns {Object} Options
+   */
+  getDrawOptions() {
     return this.value.drawOptions;
-};
+  };
 
-/**
- * Assigns a geometry to be used for this mesh. Sets the geometry from either
- * a 'Geometry' or a valid primitive (string) name. Queues the set command for this
- * geometry and looks for buffers to send to the renderer to update geometry.
- *
- * @method
- *
- * @param {Geometry|String} geometry Geometry to be associated with the mesh.
- * @param {Object} options Various configurations for geometries.
- *
- * @return {Mesh} Mesh
- */
-setGeometry(geometry, options) {
+  /**
+   * Assigns a geometry to be used for this mesh. Sets the geometry from either
+   * a 'Geometry' or a valid primitive (string) name. Queues the set command for this
+   * geometry and looks for buffers to send to the renderer to update geometry.
+   *
+   * @method
+   *
+   * @param {Geometry|String} geometry Geometry to be associated with the mesh.
+   * @param {Object} options Various configurations for geometries.
+   *
+   * @return {Mesh} Mesh
+   */
+  setGeometry(geometry, options) {
     if (typeof geometry === 'string') {
-        if (!Geometry[geometry]) throw 'Invalid geometry: "' + geometry + '".';
-        else {
-            console.warn(
-                'Mesh#setGeometry using the geometry registry is deprecated!\n' +
-                'Instantiate the geometry directly via `new ' + geometry +
-                '(options)` instead!'
-            );
+      if (!Geometry[geometry])
+        throw 'Invalid geometry: "' + geometry + '".'; else {
+        console.warn(
+          'Mesh#setGeometry using the geometry registry is deprecated!\n' +
+          'Instantiate the geometry directly via `new ' + geometry +
+          '(options)` instead!'
+        );
 
-            geometry = new Geometry[geometry](options);
-        }
+        geometry = new Geometry[geometry](options);
+      }
     }
 
     if (this.value.geometry !== geometry || this._inDraw) {
-        if (this._initialized) {
-            this._changeQueue.push(Commands.GL_SET_GEOMETRY);
-            this._changeQueue.push(geometry.spec.id);
-            this._changeQueue.push(geometry.spec.type);
-            this._changeQueue.push(geometry.spec.dynamic);
-        }
-        this._requestUpdate();
-        this.value.geometry = geometry;
+      if (this._initialized) {
+        this._changeQueue.push(Commands.GL_SET_GEOMETRY);
+        this._changeQueue.push(geometry.spec.id);
+        this._changeQueue.push(geometry.spec.type);
+        this._changeQueue.push(geometry.spec.dynamic);
+      }
+      this._requestUpdate();
+      this.value.geometry = geometry;
     }
 
     if (this._initialized) {
-        if (this._node) {
-            var i = this.value.geometry.spec.invalidations.length;
-            if (i) this._requestUpdate();
-            while (i--) {
-                this.value.geometry.spec.invalidations.pop();
-                this._changeQueue.push(Commands.GL_BUFFER_DATA);
-                this._changeQueue.push(this.value.geometry.spec.id);
-                this._changeQueue.push(this.value.geometry.spec.bufferNames[i]);
-                this._changeQueue.push(this.value.geometry.spec.bufferValues[i]);
-                this._changeQueue.push(this.value.geometry.spec.bufferSpacings[i]);
-                this._changeQueue.push(this.value.geometry.spec.dynamic);
-            }
+      if (this._node) {
+        var i = this.value.geometry.spec.invalidations.length;
+        if (i) this._requestUpdate();
+        while (i--) {
+          this.value.geometry.spec.invalidations.pop();
+          this._changeQueue.push(Commands.GL_BUFFER_DATA);
+          this._changeQueue.push(this.value.geometry.spec.id);
+          this._changeQueue.push(this.value.geometry.spec.bufferNames[i]);
+          this._changeQueue.push(this.value.geometry.spec.bufferValues[i]);
+          this._changeQueue.push(this.value.geometry.spec.bufferSpacings[i]);
+          this._changeQueue.push(this.value.geometry.spec.dynamic);
         }
+      }
     }
     return this;
-};
+  };
 
-/**
- * Gets the geometry of a mesh.
- *
- * @method
- *
- * @returns {Geometry} Geometry
- */
-getGeometry() {
+  /**
+   * Gets the geometry of a mesh.
+   *
+   * @method
+   *
+   * @returns {Geometry} Geometry
+   */
+  getGeometry() {
     return this.value.geometry;
-};
+  };
 
-/**
-* Changes the color of Mesh, passing either a material expression or
-* color using the 'Color' utility component.
-*
-* @method
-*
-* @param {Object|Color} color Material, image, vec3, or Color instance
-*
-* @return {Mesh} Mesh
-*/
-setBaseColor(color) {
+  /**
+  * Changes the color of Mesh, passing either a material expression or
+  * color using the 'Color' utility component.
+  *
+  * @method
+  *
+  * @param {Object|Color} color Material, image, vec3, or Color instance
+  *
+  * @return {Mesh} Mesh
+  */
+  setBaseColor(color) {
     var uniformValue;
     var isMaterial = color.__isAMaterial__;
     var isColor = !!color.getNormalizedRGBA;
 
     if (isMaterial) {
-        addMeshToMaterial(this, color, 'baseColor');
-        this.value.color = null;
-        this.value.expressions.baseColor = color;
-        uniformValue = color;
-    }
-    else if (isColor) {
-        this.value.expressions.baseColor = null;
-        this.value.color = color;
-        uniformValue = color.getNormalizedRGBA();
+      addMeshToMaterial(this, color, 'baseColor');
+      this.value.color = null;
+      this.value.expressions.baseColor = color;
+      uniformValue = color;
+    } else if (isColor) {
+      this.value.expressions.baseColor = null;
+      this.value.color = color;
+      uniformValue = color.getNormalizedRGBA();
     }
 
     if (this._initialized) {
 
-        // If a material expression
+      // If a material expression
 
-        if (color.__isAMaterial__) {
-            this._changeQueue.push(Commands.MATERIAL_INPUT);
-        }
+      if (color.__isAMaterial__) {
+        this._changeQueue.push(Commands.MATERIAL_INPUT);
+      }
 
-        // If a color component
+      // If a color component
+      else if (color.getNormalizedRGB) {
+        this._changeQueue.push(Commands.GL_UNIFORMS);
+      }
 
-        else if (color.getNormalizedRGB) {
-            this._changeQueue.push(Commands.GL_UNIFORMS);
-        }
-
-        this._changeQueue.push('u_baseColor');
-        this._changeQueue.push(uniformValue);
+      this._changeQueue.push('u_baseColor');
+      this._changeQueue.push(uniformValue);
     }
 
     this._requestUpdate();
 
     return this;
-};
+  };
 
-/**
- * Returns either the material expression or the color instance of Mesh.
- *
- * @method
- *
- * @returns {MaterialExpress|Color} MaterialExpress or Color instance
- */
-getBaseColor() {
+  /**
+   * Returns either the material expression or the color instance of Mesh.
+   *
+   * @method
+   *
+   * @returns {MaterialExpress|Color} MaterialExpress or Color instance
+   */
+  getBaseColor() {
     return this.value.expressions.baseColor || this.value.color;
-};
+  };
 
-/**
- * Change whether the Mesh is affected by light. Default is true.
- *
- * @method
- *
- * @param {boolean} bool Boolean for setting flat shading
- *
- * @return {Mesh} Mesh
- */
-setFlatShading(bool) {
+  /**
+   * Change whether the Mesh is affected by light. Default is true.
+   *
+   * @method
+   *
+   * @param {boolean} bool Boolean for setting flat shading
+   *
+   * @return {Mesh} Mesh
+   */
+  setFlatShading(bool) {
     if (this._inDraw || this.value.flatShading !== bool) {
-        this.value.flatShading = bool;
-        if (this._initialized) {
-            this._changeQueue.push(Commands.GL_UNIFORMS);
-            this._changeQueue.push('u_flatShading');
-            this._changeQueue.push(bool ? 1 : 0);
-        }
-        this._requestUpdate();
+      this.value.flatShading = bool;
+      if (this._initialized) {
+        this._changeQueue.push(Commands.GL_UNIFORMS);
+        this._changeQueue.push('u_flatShading');
+        this._changeQueue.push(bool ? 1 : 0);
+      }
+      this._requestUpdate();
     }
 
     return this;
-};
+  };
 
-/**
- * Returns a boolean for whether Mesh is affected by light.
- *
- * @method
- *
- * @returns {Boolean} Boolean
- */
-getFlatShading() {
+  /**
+   * Returns a boolean for whether Mesh is affected by light.
+   *
+   * @method
+   *
+   * @returns {Boolean} Boolean
+   */
+  getFlatShading() {
     return this.value.flatShading;
-};
+  };
 
 
-/**
- * Defines a 3-element map which is used to provide significant physical
- * detail to the surface by perturbing the facing direction of each individual
- * pixel.
- *
- * @method
- *
- * @param {Object|Array} materialExpression Material, Image or vec3
- *
- * @return {Mesh} Mesh
- */
-setNormals(materialExpression) {
+  /**
+   * Defines a 3-element map which is used to provide significant physical
+   * detail to the surface by perturbing the facing direction of each individual
+   * pixel.
+   *
+   * @method
+   *
+   * @param {Object|Array} materialExpression Material, Image or vec3
+   *
+   * @return {Mesh} Mesh
+   */
+  setNormals(materialExpression) {
     var isMaterial = materialExpression.__isAMaterial__;
 
     if (isMaterial) {
-        addMeshToMaterial(this, materialExpression, 'normals');
-        this.value.expressions.normals = materialExpression;
+      addMeshToMaterial(this, materialExpression, 'normals');
+      this.value.expressions.normals = materialExpression;
     }
 
     if (this._initialized) {
-        this._changeQueue.push(materialExpression.__isAMaterial__ ? Commands.MATERIAL_INPUT : Commands.GL_UNIFORMS);
-        this._changeQueue.push('u_normals');
-        this._changeQueue.push(materialExpression);
+      this._changeQueue.push(materialExpression.__isAMaterial__ ? Commands.MATERIAL_INPUT : Commands.GL_UNIFORMS);
+      this._changeQueue.push('u_normals');
+      this._changeQueue.push(materialExpression);
     }
 
     this._requestUpdate();
 
     return this;
-};
+  };
 
-/**
- * Returns the Normals expression of Mesh
- *
- * @method
- *
- * @param {materialExpression} materialExpression Normals Material Expression
- *
- * @returns {Array} The normals expression for Mesh
- */
-getNormals(materialExpression) {
+  /**
+   * Returns the Normals expression of Mesh
+   *
+   * @method
+   *
+   * @param {materialExpression} materialExpression Normals Material Expression
+   *
+   * @returns {Array} The normals expression for Mesh
+   */
+  getNormals(materialExpression) {
     return this.value.expressions.normals;
-};
+  };
 
-/**
- * Defines the glossiness of the mesh from either a material expression or a
- * scalar value
- *
- * @method
- *
- * @param {MaterialExpression|Color} glossiness Accepts either a material expression or Color instance
- * @param {Number} strength Optional value for changing the strength of the glossiness
- *
- * @return {Mesh} Mesh
- */
-setGlossiness(glossiness, strength) {
+  /**
+   * Defines the glossiness of the mesh from either a material expression or a
+   * scalar value
+   *
+   * @method
+   *
+   * @param {MaterialExpression|Color} glossiness Accepts either a material expression or Color instance
+   * @param {Number} strength Optional value for changing the strength of the glossiness
+   *
+   * @return {Mesh} Mesh
+   */
+  setGlossiness(glossiness, strength) {
     var isMaterial = glossiness.__isAMaterial__;
     var isColor = !!glossiness.getNormalizedRGB;
 
     if (isMaterial) {
-        addMeshToMaterial(this, glossiness, 'glossiness');
-        this.value.glossiness = [null, null];
-        this.value.expressions.glossiness = glossiness;
-    }
-    else if (isColor) {
-        this.value.expressions.glossiness = null;
-        this.value.glossiness = [glossiness, strength || 20];
-        glossiness = glossiness ? glossiness.getNormalizedRGB() : [0, 0, 0];
-        glossiness.push(strength || 20);
+      addMeshToMaterial(this, glossiness, 'glossiness');
+      this.value.glossiness = [null, null];
+      this.value.expressions.glossiness = glossiness;
+    } else if (isColor) {
+      this.value.expressions.glossiness = null;
+      this.value.glossiness = [glossiness, strength || 20];
+      glossiness = glossiness ? glossiness.getNormalizedRGB() : [0, 0, 0];
+      glossiness.push(strength || 20);
     }
 
     if (this._initialized) {
-        this._changeQueue.push(glossiness.__isAMaterial__ ? Commands.MATERIAL_INPUT : Commands.GL_UNIFORMS);
-        this._changeQueue.push('u_glossiness');
-        this._changeQueue.push(glossiness);
+      this._changeQueue.push(glossiness.__isAMaterial__ ? Commands.MATERIAL_INPUT : Commands.GL_UNIFORMS);
+      this._changeQueue.push('u_glossiness');
+      this._changeQueue.push(glossiness);
     }
 
     this._requestUpdate();
     return this;
-};
+  };
 
-/**
- * Returns material expression or scalar value for glossiness.
- *
- * @method
- *
- * @returns {MaterialExpress|Number} MaterialExpress or Number
- */
-getGlossiness() {
+  /**
+   * Returns material expression or scalar value for glossiness.
+   *
+   * @method
+   *
+   * @returns {MaterialExpress|Number} MaterialExpress or Number
+   */
+  getGlossiness() {
     return this.value.expressions.glossiness || this.value.glossiness;
-};
+  };
 
-/**
- * Defines 3 element map which displaces the position of each vertex in world
- * space.
- *
- * @method
- *
- * @param {MaterialExpression|Array} materialExpression Position offset expression
- *
- * @return {Mesh} Mesh
- */
-setPositionOffset(materialExpression) {
+  /**
+   * Defines 3 element map which displaces the position of each vertex in world
+   * space.
+   *
+   * @method
+   *
+   * @param {MaterialExpression|Array} materialExpression Position offset expression
+   *
+   * @return {Mesh} Mesh
+   */
+  setPositionOffset(materialExpression) {
     var uniformValue;
     var isMaterial = materialExpression.__isAMaterial__;
 
     if (isMaterial) {
-        addMeshToMaterial(this, materialExpression, 'positionOffset');
-        this.value.expressions.positionOffset = materialExpression;
-        uniformValue = materialExpression;
-    }
-    else {
-        this.value.expressions.positionOffset = null;
-        this.value.positionOffset = materialExpression;
-        uniformValue = this.value.positionOffset;
+      addMeshToMaterial(this, materialExpression, 'positionOffset');
+      this.value.expressions.positionOffset = materialExpression;
+      uniformValue = materialExpression;
+    } else {
+      this.value.expressions.positionOffset = null;
+      this.value.positionOffset = materialExpression;
+      uniformValue = this.value.positionOffset;
     }
 
     if (this._initialized) {
-        this._changeQueue.push(materialExpression.__isAMaterial__ ? Commands.MATERIAL_INPUT : Commands.GL_UNIFORMS);
-        this._changeQueue.push('u_positionOffset');
-        this._changeQueue.push(uniformValue);
+      this._changeQueue.push(materialExpression.__isAMaterial__ ? Commands.MATERIAL_INPUT : Commands.GL_UNIFORMS);
+      this._changeQueue.push('u_positionOffset');
+      this._changeQueue.push(uniformValue);
     }
 
     this._requestUpdate();
 
     return this;
-};
+  };
 
-/**
- * Returns position offset.
- *
- * @method
- *
- * @returns {MaterialExpress|Number} MaterialExpress or Number
- */
-getPositionOffset() {
+  /**
+   * Returns position offset.
+   *
+   * @method
+   *
+   * @returns {MaterialExpress|Number} MaterialExpress or Number
+   */
+  getPositionOffset() {
     return this.value.expressions.positionOffset || this.value.positionOffset;
-};
+  };
 
-/**
- * Get the mesh's expressions
- *
- * @method
- *
- * @returns {Object} Object
- */
-getMaterialExpressions() {
+  /**
+   * Get the mesh's expressions
+   *
+   * @method
+   *
+   * @returns {Object} Object
+   */
+  getMaterialExpressions() {
     return this.value.expressions;
-};
+  };
 
-/**
- * Get the mesh's value
- *
- * @method
- *
- * @returns {Number} Value
- */
-getValue() {
+  /**
+   * Get the mesh's value
+   *
+   * @method
+   *
+   * @returns {Number} Value
+   */
+  getValue() {
     return this.value;
-};
+  };
 
-/**
- * Queues the invalidations for Mesh
- *
- * @param {String} expressionName Expression Name
- *
- * @return {Mesh} Mesh
- */
-_pushInvalidations(expressionName) {
+  /**
+   * Queues the invalidations for Mesh
+   *
+   * @param {String} expressionName Expression Name
+   *
+   * @return {Mesh} Mesh
+   */
+  _pushInvalidations(expressionName) {
     var uniformKey;
     var expression = this.value.expressions[expressionName];
     var sender = this._node;
     if (expression) {
-        expression.traverse(function (node) {
-            var i = node.invalidations.length;
-            while (i--) {
-                uniformKey = node.invalidations.pop();
-                sender.sendDrawCommand(Commands.GL_UNIFORMS);
-                sender.sendDrawCommand(uniformKey);
-                sender.sendDrawCommand(node.uniforms[uniformKey]);
-            }
-        });
+      expression.traverse(function(node) {
+        var i = node.invalidations.length;
+        while (i--) {
+          uniformKey = node.invalidations.pop();
+          sender.sendDrawCommand(Commands.GL_UNIFORMS);
+          sender.sendDrawCommand(uniformKey);
+          sender.sendDrawCommand(node.uniforms[uniformKey]);
+        }
+      });
     }
     return this;
-};
+  };
 
-/**
-* Sends draw commands to the renderer
-*
-* @private
-* @method
-*
-* @return {undefined} undefined
-*/
-onUpdate() {
+  /**
+  * Sends draw commands to the renderer
+  *
+  * @private
+  * @method
+  *
+  * @return {undefined} undefined
+  */
+  onUpdate() {
     var node = this._node;
     var queue = this._changeQueue;
 
     if (node && node.isMounted()) {
-        node.sendDrawCommand(Commands.WITH);
-        node.sendDrawCommand(node.getLocation());
+      node.sendDrawCommand(Commands.WITH);
+      node.sendDrawCommand(node.getLocation());
 
-        // If any invalidations exist, push them into the queue
-        if (this.value.color && this.value.color.isActive()) {
-            this._node.sendDrawCommand(Commands.GL_UNIFORMS);
-            this._node.sendDrawCommand('u_baseColor');
-            this._node.sendDrawCommand(this.value.color.getNormalizedRGBA());
-            this._node.requestUpdateOnNextTick(this._id);
-        }
-        if (this.value.glossiness && this.value.glossiness[0] && this.value.glossiness[0].isActive()) {
-            this._node.sendDrawCommand(Commands.GL_UNIFORMS);
-            this._node.sendDrawCommand('u_glossiness');
-            var glossiness = this.value.glossiness[0].getNormalizedRGB();
-            glossiness.push(this.value.glossiness[1]);
-            this._node.sendDrawCommand(glossiness);
-            this._node.requestUpdateOnNextTick(this._id);
-        }
-        else {
-            this._requestingUpdate = false;
-        }
+      // If any invalidations exist, push them into the queue
+      if (this.value.color && this.value.color.isActive()) {
+        this._node.sendDrawCommand(Commands.GL_UNIFORMS);
+        this._node.sendDrawCommand('u_baseColor');
+        this._node.sendDrawCommand(this.value.color.getNormalizedRGBA());
+        this._node.requestUpdateOnNextTick(this._id);
+      }
+      if (this.value.glossiness && this.value.glossiness[0] && this.value.glossiness[0].isActive()) {
+        this._node.sendDrawCommand(Commands.GL_UNIFORMS);
+        this._node.sendDrawCommand('u_glossiness');
+        var glossiness = this.value.glossiness[0].getNormalizedRGB();
+        glossiness.push(this.value.glossiness[1]);
+        this._node.sendDrawCommand(glossiness);
+        this._node.requestUpdateOnNextTick(this._id);
+      } else {
+        this._requestingUpdate = false;
+      }
 
-        // If any invalidations exist, push them into the queue
-        this._pushInvalidations('baseColor');
-        this._pushInvalidations('positionOffset');
-        this._pushInvalidations('normals');
-        this._pushInvalidations('glossiness');
+      // If any invalidations exist, push them into the queue
+      this._pushInvalidations('baseColor');
+      this._pushInvalidations('positionOffset');
+      this._pushInvalidations('normals');
+      this._pushInvalidations('glossiness');
 
-        for (var i = 0; i < queue.length; i++) {
-            node.sendDrawCommand(queue[i]);
-        }
+      for (var i = 0; i < queue.length; i++) {
+        node.sendDrawCommand(queue[i]);
+      }
 
-        queue.length = 0;
+      queue.length = 0;
     }
-};
+  };
 
-/**
- * Save reference to node, set its ID and call draw on Mesh.
- *
- * @method
- *
- * @param {Node} node Node
- * @param {Number} id Identifier for Mesh
- *
- * @return {undefined} undefined
- */
-onMount(node, id) {
+  /**
+   * Save reference to node, set its ID and call draw on Mesh.
+   *
+   * @method
+   *
+   * @param {Node} node Node
+   * @param {Number} id Identifier for Mesh
+   *
+   * @return {undefined} undefined
+   */
+  onMount(node, id) {
     this._node = node;
     this._id = id;
 
@@ -513,16 +508,16 @@ onMount(node, id) {
     OpacitySystem.makeCalculateWorldOpacityAt(node.getLocation());
 
     this.draw();
-};
+  };
 
-/**
- * Queues the command for dismounting Mesh
- *
- * @method
- *
- * @return {undefined} undefined
- */
-onDismount() {
+  /**
+   * Queues the command for dismounting Mesh
+   *
+   * @method
+   *
+   * @return {undefined} undefined
+   */
+  onDismount() {
     this._initialized = false;
     this._inDraw = false;
 
@@ -532,147 +527,147 @@ onDismount() {
 
     this._node = null;
     this._id = null;
-};
+  };
 
-/**
- * Makes Mesh visible
- *
- * @method
- *
- * @return {undefined} undefined
- */
-onShow() {
+  /**
+   * Makes Mesh visible
+   *
+   * @method
+   *
+   * @return {undefined} undefined
+   */
+  onShow() {
     this._changeQueue.push(Commands.GL_MESH_VISIBILITY, true);
 
     this._requestUpdate();
-};
+  };
 
-/**
- * Makes Mesh hidden
- *
- * @method
- *
- * @return {undefined} undefined
- */
-onHide() {
+  /**
+   * Makes Mesh hidden
+   *
+   * @method
+   *
+   * @return {undefined} undefined
+   */
+  onHide() {
     this._changeQueue.push(Commands.GL_MESH_VISIBILITY, false);
 
     this._requestUpdate();
-};
+  };
 
-/**
- * Receives transform change updates from the scene graph.
- *
- * @method
- * @private
- *
- * @param {Array} transform Transform matric
- *
- * @return {undefined} undefined
- */
-onTransformChange(transform) {
+  /**
+   * Receives transform change updates from the scene graph.
+   *
+   * @method
+   * @private
+   *
+   * @param {Array} transform Transform matric
+   *
+   * @return {undefined} undefined
+   */
+  onTransformChange(transform) {
     if (this._initialized) {
-        this._changeQueue.push(Commands.GL_UNIFORMS);
-        this._changeQueue.push('u_transform');
-        this._changeQueue.push(transform.getWorldTransform());
+      this._changeQueue.push(Commands.GL_UNIFORMS);
+      this._changeQueue.push('u_transform');
+      this._changeQueue.push(transform.getWorldTransform());
     }
 
     this._requestUpdate();
-};
+  };
 
-/**
- * Receives size change updates from the scene graph.
- *
- * @method
- * @private
- *
- * @param {Number} x width of the Node the Mesh is attached to
- * @param {Number} y height of the Node the Mesh is attached to
- * @param {Number} z depth of the Node the Mesh is attached to
- *
- * @return {undefined} undefined
- */
-onSizeChange(x, y, z) {
+  /**
+   * Receives size change updates from the scene graph.
+   *
+   * @method
+   * @private
+   *
+   * @param {Number} x width of the Node the Mesh is attached to
+   * @param {Number} y height of the Node the Mesh is attached to
+   * @param {Number} z depth of the Node the Mesh is attached to
+   *
+   * @return {undefined} undefined
+   */
+  onSizeChange(x, y, z) {
     if (this._initialized) {
-        this._changeQueue.push(Commands.GL_UNIFORMS);
-        this._changeQueue.push('u_size');
-        this._changeQueue.push([x, y, z]);
+      this._changeQueue.push(Commands.GL_UNIFORMS);
+      this._changeQueue.push('u_size');
+      this._changeQueue.push([x, y, z]);
     }
 
     this._requestUpdate();
-};
+  };
 
-/**
- * Receives opacity change updates from the scene graph.
- *
- * @method
- * @private
- *
- * @param {Number} opacity Opacity
- *
- * @return {undefined} undefined
- */
-onOpacityChange(opacity) {
+  /**
+   * Receives opacity change updates from the scene graph.
+   *
+   * @method
+   * @private
+   *
+   * @param {Number} opacity Opacity
+   *
+   * @return {undefined} undefined
+   */
+  onOpacityChange(opacity) {
     if (this._initialized) {
-        this._changeQueue.push(Commands.GL_UNIFORMS);
-        this._changeQueue.push('u_opacity');
-        this._changeQueue.push(opacity.getWorldOpacity());
+      this._changeQueue.push(Commands.GL_UNIFORMS);
+      this._changeQueue.push('u_opacity');
+      this._changeQueue.push(opacity.getWorldOpacity());
     }
 
     this._requestUpdate();
-};
+  };
 
-/**
- * Adds functionality for UI events (TODO)
- *
- * @method
- *
- * @param {String} UIEvent UI Event
- *
- * @return {undefined} undefined
- */
-onAddUIEvent(UIEvent) {
+  /**
+   * Adds functionality for UI events (TODO)
+   *
+   * @method
+   *
+   * @param {String} UIEvent UI Event
+   *
+   * @return {undefined} undefined
+   */
+  onAddUIEvent(UIEvent) {
     //TODO
-};
+  };
 
-/**
- * Queues instance to be updated.
- *
- * @method
- *
- * @return {undefined} undefined
- */
-_requestUpdate() {
+  /**
+   * Queues instance to be updated.
+   *
+   * @method
+   *
+   * @return {undefined} undefined
+   */
+  _requestUpdate() {
     if (!this._requestingUpdate && this._node) {
-        this._node.requestUpdate(this._id);
-        this._requestingUpdate = true;
+      this._node.requestUpdate(this._id);
+      this._requestingUpdate = true;
     }
-};
+  };
 
-/**
- * Initializes the mesh with appropriate listeners.
- *
- * @method
- *
- * @return {undefined} undefined
- */
-init() {
+  /**
+   * Initializes the mesh with appropriate listeners.
+   *
+   * @method
+   *
+   * @return {undefined} undefined
+   */
+  init() {
     this._initialized = true;
     this.onTransformChange(TransformSystem.get(this._node.getLocation()));
     this.onOpacityChange(OpacitySystem.get(this._node.getLocation()));
     var size = this._node.getSize();
     this.onSizeChange(size[0], size[1], size[2]);
     this._requestUpdate();
-};
+  };
 
-/**
- * Draws given Mesh's current state.
- *
- * @method
- *
- * @return {undefined} undefined
- */
-draw() {
+  /**
+   * Draws given Mesh's current state.
+   *
+   * @method
+   *
+   * @return {undefined} undefined
+   */
+  draw() {
     this._inDraw = true;
 
     this.init();
@@ -691,29 +686,29 @@ draw() {
     if (value.expressions.positionOffset != null) this.setPositionOffset(value.expressions.positionOffset);
 
     this._inDraw = false;
-};
+  };
 
 }
 
 function addMeshToMaterial(mesh, material, name) {
-    var expressions = mesh.value.expressions;
-    var previous = expressions[name];
-    var shouldRemove = true;
-    var len = material.inputs;
+  var expressions = mesh.value.expressions;
+  var previous = expressions[name];
+  var shouldRemove = true;
+  var len = material.inputs;
 
-    while(len--)
-        addMeshToMaterial(mesh, material.inputs[len], name);
+  while (len--)
+  addMeshToMaterial(mesh, material.inputs[len], name);
 
-    len = INPUTS.length;
+  len = INPUTS.length;
 
-    while (len--)
-        shouldRemove |= (name !== INPUTS[len] && previous !== expressions[INPUTS[len]]);
+  while (len--)
+  shouldRemove |= (name !== INPUTS[len] && previous !== expressions[INPUTS[len]]);
 
-    if (shouldRemove)
-        material.meshes.splice(material.meshes.indexOf(previous), 1);
+  if (shouldRemove)
+    material.meshes.splice(material.meshes.indexOf(previous), 1);
 
-    if (material.meshes.indexOf(mesh) === -1)
-        material.meshes.push(mesh);
+  if (material.meshes.indexOf(mesh) === -1)
+    material.meshes.push(mesh);
 }
 
 export { Mesh };

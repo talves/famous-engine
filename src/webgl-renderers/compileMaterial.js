@@ -24,10 +24,10 @@
 'use strict';
 
 var types = {
-    1: 'float ',
-    2: 'vec2 ',
-    3: 'vec3 ',
-    4: 'vec4 '
+  1: 'float ',
+  2: 'vec2 ',
+  3: 'vec3 ',
+  4: 'vec4 '
 };
 
 /**
@@ -42,90 +42,90 @@ var types = {
  * @return {undefined} undefined
  */
 function compileMaterial(material, textureSlot) {
-    var glsl = '';
-    var uniforms = {};
-    var varyings = {};
-    var attributes = {};
-    var defines = [];
-    var textures = [];
+  var glsl = '';
+  var uniforms = {};
+  var varyings = {};
+  var attributes = {};
+  var defines = [];
+  var textures = [];
 
-    material.traverse(function (node, depth) {
-        if (! node.chunk) return;
+  material.traverse(function(node, depth) {
+    if (!node.chunk) return;
 
-        var type = types[_getOutputLength(node)];
-        var label = _makeLabel(node);
-        var output = _processGLSL(node.chunk.glsl, node.inputs, textures.length + textureSlot);
+    var type = types[_getOutputLength(node)];
+    var label = _makeLabel(node);
+    var output = _processGLSL(node.chunk.glsl, node.inputs, textures.length + textureSlot);
 
-        glsl += type + label + ' = ' + output + '\n ';
+    glsl += type + label + ' = ' + output + '\n ';
 
-        if (node.uniforms) _extend(uniforms, node.uniforms);
-        if (node.varyings) _extend(varyings, node.varyings);
-        if (node.attributes) _extend(attributes, node.attributes);
-        if (node.chunk.defines) defines.push(node.chunk.defines);
-        if (node.texture) textures.push(node.texture);
-    });
+    if (node.uniforms) _extend(uniforms, node.uniforms);
+    if (node.varyings) _extend(varyings, node.varyings);
+    if (node.attributes) _extend(attributes, node.attributes);
+    if (node.chunk.defines) defines.push(node.chunk.defines);
+    if (node.texture) textures.push(node.texture);
+  });
 
-    return {
-        _id: material._id,
-        glsl: glsl + 'return ' + _makeLabel(material) + ';',
-        defines: defines.join('\n'),
-        uniforms: uniforms,
-        varyings: varyings,
-        attributes: attributes,
-        textures: textures
-    };
+  return {
+    _id: material._id,
+    glsl: glsl + 'return ' + _makeLabel(material) + ';',
+    defines: defines.join('\n'),
+    uniforms: uniforms,
+    varyings: varyings,
+    attributes: attributes,
+    textures: textures
+  };
 }
 
 // Helper function used to infer length of the output
 // from a given material node.
 function _getOutputLength(node) {
 
-    // Handle constant values
+  // Handle constant values
 
-    if (typeof node === 'number') return 1;
-    if (Array.isArray(node)) return node.length;
+  if (typeof node === 'number') return 1;
+  if (Array.isArray(node)) return node.length;
 
-    // Handle materials
+  // Handle materials
 
-    var output = node.chunk.output;
-    if (typeof output === 'number') return output;
+  var output = node.chunk.output;
+  if (typeof output === 'number') return output;
 
-    // Handle polymorphic output
+  // Handle polymorphic output
 
-    var key = node.inputs.map(function recurse(node) {
-        return _getOutputLength(node);
-    }).join(',');
+  var key = node.inputs.map(function recurse(node) {
+    return _getOutputLength(node);
+  }).join(',');
 
-    return output[key];
+  return output[key];
 }
 
 // Helper function to run replace inputs and texture tags with
 // correct glsl.
 function _processGLSL(str, inputs, textureSlot) {
-    return str
-        .replace(/%\d/g, function (s) {
-            return _makeLabel(inputs[s[1]-1]);
-        })
-        .replace(/\$TEXTURE/, 'u_textures[' + textureSlot + ']');
+  return str
+    .replace(/%\d/g, function(s) {
+      return _makeLabel(inputs[s[1] - 1]);
+    })
+    .replace(/\$TEXTURE/, 'u_textures[' + textureSlot + ']');
 }
 
 // Helper function used to create glsl definition of the
 // input material node.
-function _makeLabel (n) {
-    if (Array.isArray(n)) return _arrayToVec(n);
-    if (typeof n === 'object') return 'fa_' + (n._id);
-    else return n.toFixed(6);
+function _makeLabel(n) {
+  if (Array.isArray(n)) return _arrayToVec(n);
+  if (typeof n === 'object') return 'fa_' + (n._id);
+  else return n.toFixed(6);
 }
 
 // Helper to copy the properties of an object onto another object.
-function _extend (a, b) {
-	for (var k in b) a[k] = b[k];
+function _extend(a, b) {
+  for (var k in b) a[k] = b[k];
 }
 
 // Helper to create glsl vector representation of a javascript array.
 function _arrayToVec(array) {
-    var len = array.length;
-    return 'vec' + len + '(' + array.join(',')  + ')';
+  var len = array.length;
+  return 'vec' + len + '(' + array.join(',') + ')';
 }
 
 export { compileMaterial };

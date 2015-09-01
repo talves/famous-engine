@@ -57,70 +57,70 @@ class Texture {
 
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl[options.wrapS] || gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl[options.wrapT] || gl.CLAMP_TO_EDGE);
-}
+  }
 
-/**
- * Binds this texture as the selected target.
- *
- * @method
- * @return {Object} Current texture instance.
- */
-bind() {
+  /**
+   * Binds this texture as the selected target.
+   *
+   * @method
+   * @return {Object} Current texture instance.
+   */
+  bind() {
     this.gl.bindTexture(this.gl.TEXTURE_2D, this.id);
     return this;
-};
+  };
 
-/**
- * Erases the texture data in the given texture slot.
- *
- * @method
- * @return {Object} Current texture instance.
- */
-unbind() {
+  /**
+   * Erases the texture data in the given texture slot.
+   *
+   * @method
+   * @return {Object} Current texture instance.
+   */
+  unbind() {
     this.gl.bindTexture(this.gl.TEXTURE_2D, null);
     return this;
-};
+  };
 
-/**
- * Replaces the image data in the texture with the given image.
- *
- * @method
- *
- * @param {Image}   img     The image object to upload pixel data from.
- * @return {Object}         Current texture instance.
- */
-setImage(img) {
+  /**
+   * Replaces the image data in the texture with the given image.
+   *
+   * @method
+   *
+   * @param {Image}   img     The image object to upload pixel data from.
+   * @return {Object}         Current texture instance.
+   */
+  setImage(img) {
     this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl[this.format], this.gl[this.format], this.gl[this.type], img);
     if (this.mipmap) this.gl.generateMipmap(this.gl.TEXTURE_2D);
     return this;
-};
+  };
 
-/**
- * Replaces the image data in the texture with an array of arbitrary data.
- *
- * @method
- *
- * @param {Array}   input   Array to be set as data to texture.
- * @return {Object}         Current texture instance.
- */
-setArray(input) {
+  /**
+   * Replaces the image data in the texture with an array of arbitrary data.
+   *
+   * @method
+   *
+   * @param {Array}   input   Array to be set as data to texture.
+   * @return {Object}         Current texture instance.
+   */
+  setArray(input) {
     this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl[this.format], this.width, this.height, 0, this.gl[this.format], this.gl[this.type], input);
     return this;
-};
+  };
 
-/**
- * Dumps the rgb-pixel contents of a texture into an array for debugging purposes
- *
- * @method
- *
- * @param {Number} x        x-offset between texture coordinates and snapshot
- * @param {Number} y        y-offset between texture coordinates and snapshot
- * @param {Number} width    x-depth of the snapshot
- * @param {Number} height   y-depth of the snapshot
- *
- * @return {Array}          An array of the pixels contained in the snapshot.
- */
-readBack(x, y, width, height) {
+  /**
+   * Dumps the rgb-pixel contents of a texture into an array for debugging purposes
+   *
+   * @method
+   *
+   * @param {Number} x        x-offset between texture coordinates and snapshot
+   * @param {Number} y        y-offset between texture coordinates and snapshot
+   * @param {Number} width    x-depth of the snapshot
+   * @param {Number} height   y-depth of the snapshot
+   *
+   * @return {Array}          An array of the pixels contained in the snapshot.
+   */
+  readBack(x, y, width, height) {
     var gl = this.gl;
     var pixels;
     x = x || 0;
@@ -131,11 +131,11 @@ readBack(x, y, width, height) {
     gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
     gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.id, 0);
     if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE) {
-        pixels = new Uint8Array(width * height * 4);
-        gl.readPixels(x, y, width, height, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+      pixels = new Uint8Array(width * height * 4);
+      gl.readPixels(x, y, width, height, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
     }
     return pixels;
-};
+  };
 
 }
 

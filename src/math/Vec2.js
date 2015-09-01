@@ -35,92 +35,92 @@
 class Vec2 {
   constructor(x, y) {
     if (x instanceof Array || x instanceof Float32Array) {
-        this.x = x[0] || 0;
-        this.y = x[1] || 0;
+      this.x = x[0] || 0;
+      this.y = x[1] || 0;
+    } else {
+      this.x = x || 0;
+      this.y = y || 0;
     }
-    else {
-        this.x = x || 0;
-        this.y = y || 0;
-    }
-};
+  };
 
-/**
- * Set the components of the current Vec2.
- *
- * @method
- *
- * @param {Number} x The x component.
- * @param {Number} y The y component.
- *
- * @return {Vec2} this
- */
-set(x, y) {
-    if (x != null) this.x = x;
-    if (y != null) this.y = y;
+  /**
+   * Set the components of the current Vec2.
+   *
+   * @method
+   *
+   * @param {Number} x The x component.
+   * @param {Number} y The y component.
+   *
+   * @return {Vec2} this
+   */
+  set(x, y) {
+    if (x != null)
+      this.x = x;
+    if (y != null)
+      this.y = y;
     return this;
-};
+  };
 
-/**
- * Add the input v to the current Vec2.
- *
- * @method
- *
- * @param {Vec2} v The Vec2 to add.
- *
- * @return {Vec2} this
- */
-add(v) {
+  /**
+   * Add the input v to the current Vec2.
+   *
+   * @method
+   *
+   * @param {Vec2} v The Vec2 to add.
+   *
+   * @return {Vec2} this
+   */
+  add(v) {
     this.x += v.x;
     this.y += v.y;
     return this;
-};
+  };
 
-/**
- * Subtract the input v from the current Vec2.
- *
- * @method
- *
- * @param {Vec2} v The Vec2 to subtract.
- *
- * @return {Vec2} this
- */
-subtract(v) {
+  /**
+   * Subtract the input v from the current Vec2.
+   *
+   * @method
+   *
+   * @param {Vec2} v The Vec2 to subtract.
+   *
+   * @return {Vec2} this
+   */
+  subtract(v) {
     this.x -= v.x;
     this.y -= v.y;
     return this;
-};
+  };
 
-/**
- * Scale the current Vec2 by a scalar or Vec2.
- *
- * @method
- *
- * @param {Number|Vec2} s The Number or vec2 by which to scale.
- *
- * @return {Vec2} this
- */
-scale(s) {
+  /**
+   * Scale the current Vec2 by a scalar or Vec2.
+   *
+   * @method
+   *
+   * @param {Number|Vec2} s The Number or vec2 by which to scale.
+   *
+   * @return {Vec2} this
+   */
+  scale(s) {
     if (s instanceof Vec2) {
-        this.x *= s.x;
-        this.y *= s.y;
-    }
-    else {
-        this.x *= s;
-        this.y *= s;
+      this.x *= s.x;
+      this.y *= s.y;
+    } else {
+      this.x *= s;
+      this.y *= s;
     }
     return this;
-};
+  };
 
-/**
- * Rotate the Vec2 counter-clockwise by theta about the z-axis.
- *
- * @method
- *
- * @param {Number} theta Angle by which to rotate.
- *
- * @return {Vec2} this
- */
-rotate(theta) {
+  /**
+   * Rotate the Vec2 counter-clockwise by theta about the z-axis.
+   *
+   * @method
+   *
+   * @param {Number} theta Angle by which to rotate.
+   *
+   * @return {Vec2} this
+   */
+  rotate(theta) {
     var x = this.x;
     var y = this.y;
 
@@ -131,126 +131,126 @@ rotate(theta) {
     this.y = x * sinTheta + y * cosTheta;
 
     return this;
-};
+  };
 
-/**
- * The dot product of of the current Vec2 with the input Vec2.
- *
- * @method
- *
- * @param {Number} v The other Vec2.
- *
- * @return {Vec2} this
- */
-dot(v) {
+  /**
+   * The dot product of of the current Vec2 with the input Vec2.
+   *
+   * @method
+   *
+   * @param {Number} v The other Vec2.
+   *
+   * @return {Vec2} this
+   */
+  dot(v) {
     return this.x * v.x + this.y * v.y;
-};
+  };
 
-/**
- * The cross product of of the current Vec2 with the input Vec2.
- *
- * @method
- *
- * @param {Number} v The other Vec2.
- *
- * @return {Vec2} this
- */
-cross(v) {
+  /**
+   * The cross product of of the current Vec2 with the input Vec2.
+   *
+   * @method
+   *
+   * @param {Number} v The other Vec2.
+   *
+   * @return {Vec2} this
+   */
+  cross(v) {
     return this.x * v.y - this.y * v.x;
-};
+  };
 
-/**
- * Preserve the magnitude but invert the orientation of the current Vec2.
- *
- * @method
- *
- * @return {Vec2} this
- */
-invert() {
+  /**
+   * Preserve the magnitude but invert the orientation of the current Vec2.
+   *
+   * @method
+   *
+   * @return {Vec2} this
+   */
+  invert() {
     this.x *= -1;
     this.y *= -1;
     return this;
-};
+  };
 
-/**
- * Apply a function component-wise to the current Vec2.
- *
- * @method
- *
- * @param {Function} fn Function to apply.
- *
- * @return {Vec2} this
- */
-map(fn) {
+  /**
+   * Apply a function component-wise to the current Vec2.
+   *
+   * @method
+   *
+   * @param {Function} fn Function to apply.
+   *
+   * @return {Vec2} this
+   */
+  map(fn) {
     this.x = fn(this.x);
     this.y = fn(this.y);
     return this;
-};
+  };
 
-/**
- * Get the magnitude of the current Vec2.
- *
- * @method
- *
- * @return {Number} the length of the vector
- */
-length() {
+  /**
+   * Get the magnitude of the current Vec2.
+   *
+   * @method
+   *
+   * @return {Number} the length of the vector
+   */
+  length() {
     var x = this.x;
     var y = this.y;
 
     return Math.sqrt(x * x + y * y);
-};
+  };
 
-/**
- * Copy the input onto the current Vec2.
- *
- * @method
- *
- * @param {Vec2} v Vec2 to copy
- *
- * @return {Vec2} this
- */
-copy(v) {
+  /**
+   * Copy the input onto the current Vec2.
+   *
+   * @method
+   *
+   * @param {Vec2} v Vec2 to copy
+   *
+   * @return {Vec2} this
+   */
+  copy(v) {
     this.x = v.x;
     this.y = v.y;
     return this;
-};
+  };
 
-/**
- * Reset the current Vec2.
- *
- * @method
- *
- * @return {Vec2} this
- */
-clear() {
+  /**
+   * Reset the current Vec2.
+   *
+   * @method
+   *
+   * @return {Vec2} this
+   */
+  clear() {
     this.x = 0;
     this.y = 0;
     return this;
-};
+  };
 
-/**
- * Check whether the magnitude of the current Vec2 is exactly 0.
- *
- * @method
- *
- * @return {Boolean} whether or not the length is 0
- */
-isZero() {
+  /**
+   * Check whether the magnitude of the current Vec2 is exactly 0.
+   *
+   * @method
+   *
+   * @return {Boolean} whether or not the length is 0
+   */
+  isZero() {
     if (this.x !== 0 || this.y !== 0) return false;
     else return true;
-};
+  };
 
-/**
- * The array form of the current Vec2.
- *
- * @method
- *
- * @return {Array} the Vec to as an array
- */
-toArray() {
+  /**
+   * The array form of the current Vec2.
+   *
+   * @method
+   *
+   * @return {Array} the Vec to as an array
+   */
+  toArray() {
     return [this.x, this.y];
-};
+  };
 
 }
 
@@ -265,15 +265,15 @@ toArray() {
  * @return {Vec2} The normalized Vec2.
  */
 Vec2.normalize = function normalize(v, output) {
-    var x = v.x;
-    var y = v.y;
+  var x = v.x;
+  var y = v.y;
 
-    var length = Math.sqrt(x * x + y * y) || 1;
-    length = 1 / length;
-    output.x = v.x * length;
-    output.y = v.y * length;
+  var length = Math.sqrt(x * x + y * y) || 1;
+  length = 1 / length;
+  output.x = v.x * length;
+  output.y = v.y * length;
 
-    return output;
+  return output;
 };
 
 /**
@@ -286,7 +286,7 @@ Vec2.normalize = function normalize(v, output) {
  * @return {Vec2} The cloned Vec2.
  */
 Vec2.clone = function clone(v) {
-    return new Vec2(v.x, v.y);
+  return new Vec2(v.x, v.y);
 };
 
 /**
@@ -301,10 +301,10 @@ Vec2.clone = function clone(v) {
  * @return {Vec2} The result of the addition.
  */
 Vec2.add = function add(v1, v2, output) {
-    output.x = v1.x + v2.x;
-    output.y = v1.y + v2.y;
+  output.x = v1.x + v2.x;
+  output.y = v1.y + v2.y;
 
-    return output;
+  return output;
 };
 
 /**
@@ -319,9 +319,9 @@ Vec2.add = function add(v1, v2, output) {
  * @return {Vec2} The result of the subtraction.
  */
 Vec2.subtract = function subtract(v1, v2, output) {
-    output.x = v1.x - v2.x;
-    output.y = v1.y - v2.y;
-    return output;
+  output.x = v1.x - v2.x;
+  output.y = v1.y - v2.y;
+  return output;
 };
 
 /**
@@ -336,9 +336,9 @@ Vec2.subtract = function subtract(v1, v2, output) {
  * @return {Vec2} The result of the scaling.
  */
 Vec2.scale = function scale(v, s, output) {
-    output.x = v.x * s;
-    output.y = v.y * s;
-    return output;
+  output.x = v.x * s;
+  output.y = v.y * s;
+  return output;
 };
 
 /**
@@ -352,7 +352,7 @@ Vec2.scale = function scale(v, s, output) {
  * @return {Number} The dot product.
  */
 Vec2.dot = function dot(v1, v2) {
-    return v1.x * v2.x + v1.y * v2.y;
+  return v1.x * v2.x + v1.y * v2.y;
 };
 
 /**
@@ -365,8 +365,8 @@ Vec2.dot = function dot(v1, v2) {
  *
  * @return {Number} The z-component of the cross product.
  */
-Vec2.cross = function(v1,v2) {
-    return v1.x * v2.y - v1.y * v2.x;
+Vec2.cross = function(v1, v2) {
+  return v1.x * v2.y - v1.y * v2.x;
 };
 
 export { Vec2 };

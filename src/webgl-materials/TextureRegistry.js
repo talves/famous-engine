@@ -32,8 +32,8 @@
  * @class TextureRegistry
  */
 var TextureRegistry = {
-    registry: {},
-    textureIds: 1
+  registry: {},
+  textureIds: 1
 };
 
 /*
@@ -52,13 +52,22 @@ var TextureRegistry = {
  * @return {Object} Newly generated texture object.
  */
 TextureRegistry.register = function register(accessor, data, options) {
-    if (accessor) {
-        this.registry[accessor] = { id: this.textureIds++, __isATexture__: true, data: data, options: options };
-        return this.registry[accessor];
-    }
-	else {
-        return { id: this.textureIds++, data: data, __isATexture__: true, options: options };
-    }
+  if (accessor) {
+    this.registry[accessor] = {
+      id: this.textureIds++,
+      __isATexture__: true,
+      data: data,
+      options: options
+    };
+    return this.registry[accessor];
+  } else {
+    return {
+      id: this.textureIds++,
+      data: data,
+      __isATexture__: true,
+      options: options
+    };
+  }
 };
 
 /*
@@ -72,12 +81,11 @@ TextureRegistry.register = function register(accessor, data, options) {
  * @return {Object} Desired texture object.
  */
 TextureRegistry.get = function get(accessor) {
-    if (!this.registry[accessor]) {
-        throw 'Texture "' + accessor + '" not found!';
-    }
-    else {
-        return this.registry[accessor];
-    }
+  if (!this.registry[accessor]) {
+    throw 'Texture "' + accessor + '" not found!';
+  } else {
+    return this.registry[accessor];
+  }
 };
 
 export { TextureRegistry };

@@ -35,13 +35,13 @@ import { Registry } from '../utilities/Registry';
 var identity = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 
 var globalUniforms = keyValueToArrays({
-    'u_numLights': 0,
-    'u_ambientLight': new Array(3),
-    'u_lightPosition': new Array(3),
-    'u_lightColor': new Array(3),
-    'u_perspective': new Array(16),
-    'u_time': 0,
-    'u_view': new Array(16)
+  'u_numLights': 0,
+  'u_ambientLight': new Array(3),
+  'u_lightPosition': new Array(3),
+  'u_lightColor': new Array(3),
+  'u_perspective': new Array(16),
+  'u_time': 0,
+  'u_view': new Array(16)
 });
 
 /**
@@ -90,14 +90,16 @@ class WebGLRenderer {
 
     this.textureManager = new TextureManager(gl);
     this.bufferRegistry = new BufferRegistry(gl);
-    this.program = new Program(gl, { debug: true });
+    this.program = new Program(gl, {
+      debug: true
+    });
 
     this.state = {
-        boundArrayBuffer: null,
-        boundElementBuffer: null,
-        lastDrawn: null,
-        enabledAttributes: {},
-        enabledAttributesKeys: []
+      boundArrayBuffer: null,
+      boundElementBuffer: null,
+      lastDrawn: null,
+      enabledAttributes: {},
+      enabledAttributesKeys: []
     };
 
     this.resolutionName = ['u_resolution'];
@@ -123,297 +125,297 @@ class WebGLRenderer {
     // TODO: remove this hack
 
     var cutout = this.cutoutGeometry = {
-        spec: {
-            id: -1,
-            bufferValues: [[-1, -1, 0, 1, -1, 0, -1, 1, 0, 1, 1, 0]],
-            bufferNames: ['a_pos'],
-            type: 'TRIANGLE_STRIP'
-        }
+      spec: {
+        id: -1,
+        bufferValues: [[-1, -1, 0, 1, -1, 0, -1, 1, 0, 1, 1, 0]],
+        bufferNames: ['a_pos'],
+        type: 'TRIANGLE_STRIP'
+      }
     };
 
     this.bufferRegistry.allocate(
-        this.cutoutGeometry.spec.id,
-        cutout.spec.bufferNames[0],
-        cutout.spec.bufferValues[0],
-        3
+      this.cutoutGeometry.spec.id,
+      cutout.spec.bufferNames[0],
+      cutout.spec.bufferValues[0],
+      3
     );
-}
+  }
 
-/**
- * Attempts to retreive the WebGLRenderer context using several
- * accessors. For browser compatability. Throws on error.
- *
- * @method
- *
- * @param {Object} canvas Canvas element from which the context is retreived
- *
- * @return {Object} WebGLContext WebGL context
- */
-getWebGLContext(canvas) {
+  /**
+   * Attempts to retreive the WebGLRenderer context using several
+   * accessors. For browser compatability. Throws on error.
+   *
+   * @method
+   *
+   * @param {Object} canvas Canvas element from which the context is retreived
+   *
+   * @return {Object} WebGLContext WebGL context
+   */
+  getWebGLContext(canvas) {
     if (this.gl) return this.gl;
 
     var names = ['webgl', 'experimental-webgl', 'webkit-3d', 'moz-webgl'];
 
     for (var i = 0, len = names.length; i < len && !this.gl; i++)
-        this.gl = canvas.getContext(names[i]);
+      this.gl = canvas.getContext(names[i]);
 
     if (!this.gl)
-        throw new Error('Could not retrieve WebGL context. Please refer to https://www.khronos.org/webgl/ for requirements');
+      throw new Error('Could not retrieve WebGL context. Please refer to https://www.khronos.org/webgl/ for requirements');
 
     return this.gl;
-};
+  };
 
-/**
- * Adds a new base spec to the light registry at a given path.
- *
- * @method
- *
- * @param {String} path Path used as id of new light in lightRegistry
- *
- * @return {Object} Newly created light spec
- */
-createLight(path) {
+  /**
+   * Adds a new base spec to the light registry at a given path.
+   *
+   * @method
+   *
+   * @param {String} path Path used as id of new light in lightRegistry
+   *
+   * @return {Object} Newly created light spec
+   */
+  createLight(path) {
     this.numLights++;
     var light = {
-        color: [0, 0, 0],
-        position: [0, 0, 0]
+      color: [0, 0, 0],
+      position: [0, 0, 0]
     };
     this.lightRegistry.register(path, light);
     return light;
-};
+  };
 
-/**
- * Adds a new base spec to the mesh registry at a given path.
- *
- * @method
- *
- * @param {String} path Path used as id of new mesh in meshRegistry.
- *
- * @return {Object} Newly created mesh spec.
- */
-createMesh(path) {
+  /**
+   * Adds a new base spec to the mesh registry at a given path.
+   *
+   * @method
+   *
+   * @param {String} path Path used as id of new mesh in meshRegistry.
+   *
+   * @return {Object} Newly created mesh spec.
+   */
+  createMesh(path) {
     var uniforms = keyValueToArrays({
-        u_opacity: 1,
-        u_transform: identity,
-        u_size: [0, 0, 0],
-        u_baseColor: [0.5, 0.5, 0.5, 1],
-        u_positionOffset: [0, 0, 0],
-        u_normals: [0, 0, 0],
-        u_flatShading: 0,
-        u_glossiness: [0, 0, 0, 0]
+      u_opacity: 1,
+      u_transform: identity,
+      u_size: [0, 0, 0],
+      u_baseColor: [0.5, 0.5, 0.5, 1],
+      u_positionOffset: [0, 0, 0],
+      u_normals: [0, 0, 0],
+      u_flatShading: 0,
+      u_glossiness: [0, 0, 0, 0]
     });
     var mesh = {
-        depth: null,
-        uniformKeys: uniforms.keys,
-        uniformValues: uniforms.values,
-        buffers: {},
-        geometry: null,
-        drawType: null,
-        textures: [],
-        visible: true
+      depth: null,
+      uniformKeys: uniforms.keys,
+      uniformValues: uniforms.values,
+      buffers: {},
+      geometry: null,
+      drawType: null,
+      textures: [],
+      visible: true
     };
 
     this.meshRegistry[path] = mesh;
     this.meshRegistryKeys.push(path);
     return mesh;
-};
+  };
 
-/**
- * Sets flag on indicating whether to do skip draw phase for
- * cutout mesh at given path.
- *
- * @method
- *
- * @param {String} path Path used as id of target cutout mesh.
- * @param {Boolean} usesCutout Indicates the presence of a cutout mesh
- *
- * @return {undefined} undefined
- */
-setCutoutState(path, usesCutout) {
+  /**
+   * Sets flag on indicating whether to do skip draw phase for
+   * cutout mesh at given path.
+   *
+   * @method
+   *
+   * @param {String} path Path used as id of target cutout mesh.
+   * @param {Boolean} usesCutout Indicates the presence of a cutout mesh
+   *
+   * @return {undefined} undefined
+   */
+  setCutoutState(path, usesCutout) {
     var cutout = this.getOrSetCutout(path);
 
     cutout.visible = usesCutout;
-};
+  };
 
-/**
- * Creates or retreives cutout
- *
- * @method
- *
- * @param {String} path Path used as id of target cutout mesh.
- *
- * @return {Object} Newly created cutout spec.
- */
-getOrSetCutout(path) {
+  /**
+   * Creates or retreives cutout
+   *
+   * @method
+   *
+   * @param {String} path Path used as id of target cutout mesh.
+   *
+   * @return {Object} Newly created cutout spec.
+   */
+  getOrSetCutout(path) {
     var cutout = this.cutoutRegistry.get(path);
 
     if (!cutout) {
-        var uniforms = keyValueToArrays({
-            u_opacity: 0,
-            u_transform: identity.slice(),
-            u_size: [0, 0, 0],
-            u_origin: [0, 0, 0],
-            u_baseColor: [0, 0, 0, 1]
-        });
+      var uniforms = keyValueToArrays({
+        u_opacity: 0,
+        u_transform: identity.slice(),
+        u_size: [0, 0, 0],
+        u_origin: [0, 0, 0],
+        u_baseColor: [0, 0, 0, 1]
+      });
 
-        cutout = {
-            uniformKeys: uniforms.keys,
-            uniformValues: uniforms.values,
-            geometry: this.cutoutGeometry.spec.id,
-            drawType: this.cutoutGeometry.spec.type,
-            visible: true
-        };
+      cutout = {
+        uniformKeys: uniforms.keys,
+        uniformValues: uniforms.values,
+        geometry: this.cutoutGeometry.spec.id,
+        drawType: this.cutoutGeometry.spec.type,
+        visible: true
+      };
 
-        this.cutoutRegistry.register(path, cutout);
+      this.cutoutRegistry.register(path, cutout);
     }
 
     return cutout;
-};
+  };
 
-/**
- * Sets flag on indicating whether to do skip draw phase for
- * mesh at given path.
- *
- * @method
- * @param {String} path Path used as id of target mesh.
- * @param {Boolean} visibility Indicates the visibility of target mesh.
- *
- * @return {undefined} undefined
- */
-setMeshVisibility(path, visibility) {
+  /**
+   * Sets flag on indicating whether to do skip draw phase for
+   * mesh at given path.
+   *
+   * @method
+   * @param {String} path Path used as id of target mesh.
+   * @param {Boolean} visibility Indicates the visibility of target mesh.
+   *
+   * @return {undefined} undefined
+   */
+  setMeshVisibility(path, visibility) {
     var mesh = this.meshRegistry[path] || this.createMesh(path);
 
     mesh.visible = visibility;
-};
+  };
 
-/**
- * Deletes a mesh from the meshRegistry.
- *
- * @method
- * @param {String} path Path used as id of target mesh.
- *
- * @return {undefined} undefined
- */
-removeMesh(path) {
-    delete this.meshRegistry[path];
+  /**
+   * Deletes a mesh from the meshRegistry.
+   *
+   * @method
+   * @param {String} path Path used as id of target mesh.
+   *
+   * @return {undefined} undefined
+   */
+  removeMesh(path) {
+    delete this.meshRegistry[path]
+    ;
     var index = this.meshRegistryKeys.indexOf(path);
 
     if (index !== -1) this.meshRegistryKeys.splice(index, 1);
-};
+  };
 
-/**
- * Creates or retreives cutout
- *
- * @method
- * @param {String} path Path used as id of cutout in cutout registry.
- * @param {String} uniformName Identifier used to upload value
- * @param {Array} uniformValue Value of uniform data
- *
- * @return {undefined} undefined
- */
-setCutoutUniform(path, uniformName, uniformValue) {
+  /**
+   * Creates or retreives cutout
+   *
+   * @method
+   * @param {String} path Path used as id of cutout in cutout registry.
+   * @param {String} uniformName Identifier used to upload value
+   * @param {Array} uniformValue Value of uniform data
+   *
+   * @return {undefined} undefined
+   */
+  setCutoutUniform(path, uniformName, uniformValue) {
     var cutout = this.getOrSetCutout(path);
 
     var index = cutout.uniformKeys.indexOf(uniformName);
 
     if (uniformValue.length) {
-        for (var i = 0, len = uniformValue.length; i < len; i++) {
-            cutout.uniformValues[index][i] = uniformValue[i];
-        }
+      for (var i = 0, len = uniformValue.length; i < len; i++) {
+        cutout.uniformValues[index][i] = uniformValue[i];
+      }
+    } else {
+      cutout.uniformValues[index] = uniformValue;
     }
-    else {
-        cutout.uniformValues[index] = uniformValue;
-    }
-};
+  };
 
-/**
- * Edits the options field on a mesh
- *
- * @method
- * @param {String} path Path used as id of target mesh
- * @param {Object} options Map of draw options for mesh
- *
- * @return {WebGLRenderer} this
- */
-setMeshOptions(path, options) {
+  /**
+   * Edits the options field on a mesh
+   *
+   * @method
+   * @param {String} path Path used as id of target mesh
+   * @param {Object} options Map of draw options for mesh
+   *
+   * @return {WebGLRenderer} this
+   */
+  setMeshOptions(path, options) {
     var mesh = this.meshRegistry[path] || this.createMesh(path);
 
     mesh.options = options;
     return this;
-};
+  };
 
-/**
- * Changes the color of the fixed intensity lighting in the scene
- *
- * @method
- *
- * @param {String} path Path used as id of light
- * @param {Number} r red channel
- * @param {Number} g green channel
- * @param {Number} b blue channel
- *
- * @return {WebGLRenderer} this
- */
-setAmbientLightColor(path, r, g, b) {
+  /**
+   * Changes the color of the fixed intensity lighting in the scene
+   *
+   * @method
+   *
+   * @param {String} path Path used as id of light
+   * @param {Number} r red channel
+   * @param {Number} g green channel
+   * @param {Number} b blue channel
+   *
+   * @return {WebGLRenderer} this
+   */
+  setAmbientLightColor(path, r, g, b) {
     this.ambientLightColor[0] = r;
     this.ambientLightColor[1] = g;
     this.ambientLightColor[2] = b;
     return this;
-};
+  };
 
-/**
- * Changes the location of the light in the scene
- *
- * @method
- *
- * @param {String} path Path used as id of light
- * @param {Number} x x position
- * @param {Number} y y position
- * @param {Number} z z position
- *
- * @return {WebGLRenderer} this
- */
-setLightPosition(path, x, y, z) {
+  /**
+   * Changes the location of the light in the scene
+   *
+   * @method
+   *
+   * @param {String} path Path used as id of light
+   * @param {Number} x x position
+   * @param {Number} y y position
+   * @param {Number} z z position
+   *
+   * @return {WebGLRenderer} this
+   */
+  setLightPosition(path, x, y, z) {
     var light = this.lightRegistry.get(path) || this.createLight(path);
     light.position[0] = x;
     light.position[1] = y;
     light.position[2] = z;
     return this;
-};
+  };
 
-/**
- * Changes the color of a dynamic intensity lighting in the scene
- *
- * @method
- *
- * @param {String} path Path used as id of light in light Registry.
- * @param {Number} r red channel
- * @param {Number} g green channel
- * @param {Number} b blue channel
- *
- * @return {WebGLRenderer} this
- */
-setLightColor(path, r, g, b) {
+  /**
+   * Changes the color of a dynamic intensity lighting in the scene
+   *
+   * @method
+   *
+   * @param {String} path Path used as id of light in light Registry.
+   * @param {Number} r red channel
+   * @param {Number} g green channel
+   * @param {Number} b blue channel
+   *
+   * @return {WebGLRenderer} this
+   */
+  setLightColor(path, r, g, b) {
     var light = this.lightRegistry.get(path) || this.createLight(path);
 
     light.color[0] = r;
     light.color[1] = g;
     light.color[2] = b;
     return this;
-};
+  };
 
-/**
- * Compiles material spec into program shader
- *
- * @method
- *
- * @param {String} path Path used as id of cutout in cutout registry.
- * @param {String} name Name that the rendering input the material is bound to
- * @param {Object} material Material spec
- *
- * @return {WebGLRenderer} this
- */
-handleMaterialInput(path, name, material) {
+  /**
+   * Compiles material spec into program shader
+   *
+   * @method
+   *
+   * @param {String} path Path used as id of cutout in cutout registry.
+   * @param {String} name Name that the rendering input the material is bound to
+   * @param {Object} material Material spec
+   *
+   * @return {WebGLRenderer} this
+   */
+  handleMaterialInput(path, name, material) {
     var mesh = this.meshRegistry[path] || this.createMesh(path);
     material = compileMaterial(material, mesh.textures.length);
 
@@ -425,9 +427,9 @@ handleMaterialInput(path, name, material) {
 
     var i = material.textures.length;
     while (i--) {
-        mesh.textures.push(
-            this.textureManager.register(material.textures[i], mesh.textures.length + i)
-        );
+      mesh.textures.push(
+        this.textureManager.register(material.textures[i], mesh.textures.length + i)
+      );
     }
 
     // Register material!
@@ -435,21 +437,21 @@ handleMaterialInput(path, name, material) {
     this.program.registerMaterial(name, material);
 
     return this.updateSize();
-};
+  };
 
-/**
- * Changes the geometry data of a mesh
- *
- * @method
- *
- * @param {String} path Path used as id of cutout in cutout registry.
- * @param {Object} geometry Geometry object containing vertex data to be drawn
- * @param {Number} drawType Primitive identifier
- * @param {Boolean} dynamic Whether geometry is dynamic
- *
- * @return {undefined} undefined
- */
-setGeometry(path, geometry, drawType, dynamic) {
+  /**
+   * Changes the geometry data of a mesh
+   *
+   * @method
+   *
+   * @param {String} path Path used as id of cutout in cutout registry.
+   * @param {Object} geometry Geometry object containing vertex data to be drawn
+   * @param {Number} drawType Primitive identifier
+   * @param {Boolean} dynamic Whether geometry is dynamic
+   *
+   * @return {undefined} undefined
+   */
+  setGeometry(path, geometry, drawType, dynamic) {
     var mesh = this.meshRegistry[path] || this.createMesh(path);
 
     mesh.geometry = geometry;
@@ -457,61 +459,60 @@ setGeometry(path, geometry, drawType, dynamic) {
     mesh.dynamic = dynamic;
 
     return this;
-};
+  };
 
-/**
- * Uploads a new value for the uniform data when the mesh is being drawn
- *
- * @method
- *
- * @param {String} path Path used as id of mesh in mesh registry
- * @param {String} uniformName Identifier used to upload value
- * @param {Array} uniformValue Value of uniform data
- *
- * @return {undefined} undefined
- */
-setMeshUniform(path, uniformName, uniformValue) {
+  /**
+   * Uploads a new value for the uniform data when the mesh is being drawn
+   *
+   * @method
+   *
+   * @param {String} path Path used as id of mesh in mesh registry
+   * @param {String} uniformName Identifier used to upload value
+   * @param {Array} uniformValue Value of uniform data
+   *
+   * @return {undefined} undefined
+   */
+  setMeshUniform(path, uniformName, uniformValue) {
     var mesh = this.meshRegistry[path] || this.createMesh(path);
 
     var index = mesh.uniformKeys.indexOf(uniformName);
 
     if (index === -1) {
-        mesh.uniformKeys.push(uniformName);
-        mesh.uniformValues.push(uniformValue);
+      mesh.uniformKeys.push(uniformName);
+      mesh.uniformValues.push(uniformValue);
+    } else {
+      mesh.uniformValues[index] = uniformValue;
     }
-    else {
-        mesh.uniformValues[index] = uniformValue;
-    }
-};
+  };
 
-/**
- * Allocates a new buffer using the internal BufferRegistry.
- *
- * @method
- *
- * @param {Number} geometryId Id of geometry in geometry registry
- * @param {String} bufferName Attribute location name
- * @param {Array} bufferValue Vertex data
- * @param {Number} bufferSpacing The dimensions of the vertex
- * @param {Boolean} isDynamic Whether geometry is dynamic
- *
- * @return {undefined} undefined
- */
-bufferData(geometryId, bufferName, bufferValue, bufferSpacing, isDynamic) {
+  /**
+   * Allocates a new buffer using the internal BufferRegistry.
+   *
+   * @method
+   *
+   * @param {Number} geometryId Id of geometry in geometry registry
+   * @param {String} bufferName Attribute location name
+   * @param {Array} bufferValue Vertex data
+   * @param {Number} bufferSpacing The dimensions of the vertex
+   * @param {Boolean} isDynamic Whether geometry is dynamic
+   *
+   * @return {undefined} undefined
+   */
+  bufferData(geometryId, bufferName, bufferValue, bufferSpacing, isDynamic) {
     this.bufferRegistry.allocate(geometryId, bufferName, bufferValue, bufferSpacing, isDynamic);
-};
+  };
 
-/**
- * Triggers the 'draw' phase of the WebGLRenderer. Iterates through registries
- * to set uniforms, set attributes and issue draw commands for renderables.
- *
- * @method
- *
- * @param {Object} renderState Parameters provided by the compositor, that affect the rendering of all renderables.
- *
- * @return {undefined} undefined
- */
-draw(renderState) {
+  /**
+   * Triggers the 'draw' phase of the WebGLRenderer. Iterates through registries
+   * to set uniforms, set attributes and issue draw commands for renderables.
+   *
+   * @method
+   *
+   * @param {Object} renderState Parameters provided by the compositor, that affect the rendering of all renderables.
+   *
+   * @return {undefined} undefined
+   */
+  draw(renderState) {
     var time = this.compositor.getTime();
 
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
@@ -522,65 +523,64 @@ draw(renderState) {
     this.setGlobalUniforms(renderState);
     this.drawCutouts();
     this.drawMeshes();
-};
+  };
 
-/**
- * Iterates through and draws all registered meshes. This includes
- * binding textures, handling draw options, setting mesh uniforms
- * and drawing mesh buffers.
- *
- * @method
- *
- * @return {undefined} undefined
- */
-drawMeshes() {
+  /**
+   * Iterates through and draws all registered meshes. This includes
+   * binding textures, handling draw options, setting mesh uniforms
+   * and drawing mesh buffers.
+   *
+   * @method
+   *
+   * @return {undefined} undefined
+   */
+  drawMeshes() {
     var gl = this.gl;
     var buffers;
     var mesh;
 
     var paths = this.meshRegistryKeys;
 
-    for(var i = 0; i < paths.length; i++) {
-        mesh = this.meshRegistry[paths[i]];
+    for (var i = 0; i < paths.length; i++) {
+      mesh = this.meshRegistry[paths[i]];
 
-        if (!mesh) continue;
+      if (!mesh) continue;
 
-        buffers = this.bufferRegistry.registry[mesh.geometry];
+      buffers = this.bufferRegistry.registry[mesh.geometry];
 
-        if (!mesh.visible) continue;
+      if (!mesh.visible) continue;
 
-        if (mesh.uniformValues[0] < 1) {
-            gl.depthMask(false);
-            gl.enable(gl.BLEND);
-        }
-        else {
-            gl.depthMask(true);
-            gl.disable(gl.BLEND);
-        }
+      if (mesh.uniformValues[0] < 1) {
+        gl.depthMask(false);
+        gl.enable(gl.BLEND);
+      } else {
+        gl.depthMask(true);
+        gl.disable(gl.BLEND);
+      }
 
-        if (!buffers) continue;
+      if (!buffers) continue;
 
-        var j = mesh.textures.length;
-        while (j--) this.textureManager.bindTexture(mesh.textures[j]);
+      var j = mesh.textures.length;
+      while (j--) this.textureManager.bindTexture(mesh.textures[j]);
 
-        if (mesh.options) this.handleOptions(mesh.options, mesh);
+      if (mesh.options) this.handleOptions(mesh.options, mesh);
 
-        this.program.setUniforms(mesh.uniformKeys, mesh.uniformValues);
-        this.drawBuffers(buffers, mesh.drawType, mesh.geometry);
+      this.program.setUniforms(mesh.uniformKeys, mesh.uniformValues);
+      this.drawBuffers(buffers, mesh.drawType, mesh.geometry);
 
-        if (mesh.options) this.resetOptions(mesh.options);
+      if (mesh.options) this.resetOptions(mesh.options);
     }
-};
+  };
 
-/**
- * Iterates through and draws all registered cutout meshes. Blending
- * is disabled, cutout uniforms are set and finally buffers are drawn.
- *
- * @method
- *
- * @return {undefined} undefined
- */
-drawCutouts() {
+  /**
+   * Iterates through and draws all registered cutout meshes. Blending
+   * is disabled, cutout uniforms are set and finally buffers are drawn.
+   *
+   * @method
+   *
+   * @return {undefined} undefined
+   */
+  drawCutouts() {
     var cutout;
     var buffers;
     var cutouts = this.cutoutRegistry.getValues();
@@ -591,54 +591,54 @@ drawCutouts() {
     this.gl.depthMask(true);
 
     for (var i = 0; i < len; i++) {
-        cutout = cutouts[i];
+      cutout = cutouts[i];
 
-        if (!cutout) continue;
+      if (!cutout) continue;
 
-        buffers = this.bufferRegistry.registry[cutout.geometry];
+      buffers = this.bufferRegistry.registry[cutout.geometry];
 
-        if (!cutout.visible) continue;
+      if (!cutout.visible) continue;
 
-        this.program.setUniforms(cutout.uniformKeys, cutout.uniformValues);
-        this.drawBuffers(buffers, cutout.drawType, cutout.geometry);
+      this.program.setUniforms(cutout.uniformKeys, cutout.uniformValues);
+      this.drawBuffers(buffers, cutout.drawType, cutout.geometry);
     }
 
     this.gl.enable(this.gl.CULL_FACE);
-};
+  };
 
-/**
- * Sets uniforms to be shared by all meshes.
- *
- * @method
- *
- * @param {Object} renderState Draw state options passed down from compositor.
- *
- * @return {undefined} undefined
- */
-setGlobalUniforms(renderState) {
+  /**
+   * Sets uniforms to be shared by all meshes.
+   *
+   * @method
+   *
+   * @param {Object} renderState Draw state options passed down from compositor.
+   *
+   * @return {undefined} undefined
+   */
+  setGlobalUniforms(renderState) {
     var light;
     var stride;
     var lights = this.lightRegistry.getValues();
     var len = lights.length;
 
     for (var i = 0; i < len; i++) {
-        light = lights[i];
+      light = lights[i];
 
-        if (!light) continue;
+      if (!light) continue;
 
-        stride = i * 4;
+      stride = i * 4;
 
-        // Build the light positions' 4x4 matrix
+      // Build the light positions' 4x4 matrix
 
-        this.lightPositions[0 + stride] = light.position[0];
-        this.lightPositions[1 + stride] = light.position[1];
-        this.lightPositions[2 + stride] = light.position[2];
+      this.lightPositions[0 + stride] = light.position[0];
+      this.lightPositions[1 + stride] = light.position[1];
+      this.lightPositions[2 + stride] = light.position[2];
 
-        // Build the light colors' 4x4 matrix
+      // Build the light colors' 4x4 matrix
 
-        this.lightColors[0 + stride] = light.color[0];
-        this.lightColors[1 + stride] = light.color[1];
-        this.lightColors[2 + stride] = light.color[2];
+      this.lightColors[0 + stride] = light.color[0];
+      this.lightColors[1 + stride] = light.color[1];
+      this.lightColors[2 + stride] = light.color[2];
     }
 
     globalUniforms.values[0] = this.numLights;
@@ -665,20 +665,20 @@ setGlobalUniforms(renderState) {
     globalUniforms.values[6] = renderState.viewTransform;
 
     this.program.setUniforms(globalUniforms.keys, globalUniforms.values);
-};
+  };
 
-/**
- * Loads the buffers and issues the draw command for a geometry.
- *
- * @method
- *
- * @param {Object} vertexBuffers All buffers used to draw the geometry.
- * @param {Number} mode Enumerator defining what primitive to draw
- * @param {Number} id ID of geometry being drawn.
- *
- * @return {undefined} undefined
- */
-drawBuffers(vertexBuffers, mode, id) {
+  /**
+   * Loads the buffers and issues the draw command for a geometry.
+   *
+   * @method
+   *
+   * @param {Object} vertexBuffers All buffers used to draw the geometry.
+   * @param {Number} mode Enumerator defining what primitive to draw
+   * @param {Number} id ID of geometry being drawn.
+   *
+   * @return {undefined} undefined
+   */
+  drawBuffers(vertexBuffers, mode, id) {
     var gl = this.gl;
     var length = 0;
     var attribute;
@@ -692,164 +692,163 @@ drawBuffers(vertexBuffers, mode, id) {
 
     iter = vertexBuffers.keys.length;
     for (i = 0; i < iter; i++) {
-        attribute = vertexBuffers.keys[i];
+      attribute = vertexBuffers.keys[i];
 
-        // Do not set vertexAttribPointer if index buffer.
+      // Do not set vertexAttribPointer if index buffer.
 
-        if (attribute === 'indices') {
-            j = i; continue;
-        }
+      if (attribute === 'indices') {
+        j = i; continue;
+      }
 
-        // Retreive the attribute location and make sure it is enabled.
+      // Retreive the attribute location and make sure it is enabled.
 
-        location = this.program.attributeLocations[attribute];
+      location = this.program.attributeLocations[attribute];
 
+      if (location === -1) continue;
+      if (location === undefined) {
+        location = gl.getAttribLocation(this.program.program, attribute);
+        this.program.attributeLocations[attribute] = location;
         if (location === -1) continue;
-        if (location === undefined) {
-            location = gl.getAttribLocation(this.program.program, attribute);
-            this.program.attributeLocations[attribute] = location;
-            if (location === -1) continue;
-        }
+      }
 
-        if (!this.state.enabledAttributes[attribute]) {
-            gl.enableVertexAttribArray(location);
-            this.state.enabledAttributes[attribute] = true;
-            this.state.enabledAttributesKeys.push(attribute);
-        }
+      if (!this.state.enabledAttributes[attribute]) {
+        gl.enableVertexAttribArray(location);
+        this.state.enabledAttributes[attribute] = true;
+        this.state.enabledAttributesKeys.push(attribute);
+      }
 
-        // Retreive buffer information used to set attribute pointer.
+      // Retreive buffer information used to set attribute pointer.
 
-        buffer = vertexBuffers.values[i];
-        spacing = vertexBuffers.spacing[i];
-        offset = vertexBuffers.offset[i];
-        length = vertexBuffers.length[i];
+      buffer = vertexBuffers.values[i];
+      spacing = vertexBuffers.spacing[i];
+      offset = vertexBuffers.offset[i];
+      length = vertexBuffers.length[i];
 
-        // Skip bindBuffer if buffer is currently bound.
+      // Skip bindBuffer if buffer is currently bound.
 
-        if (this.state.boundArrayBuffer !== buffer) {
-            gl.bindBuffer(buffer.target, buffer.buffer);
-            this.state.boundArrayBuffer = buffer;
-        }
+      if (this.state.boundArrayBuffer !== buffer) {
+        gl.bindBuffer(buffer.target, buffer.buffer);
+        this.state.boundArrayBuffer = buffer;
+      }
 
-        if (this.state.lastDrawn !== id) {
-            gl.vertexAttribPointer(location, spacing, gl.FLOAT, gl.FALSE, 0, 4 * offset);
-        }
+      if (this.state.lastDrawn !== id) {
+        gl.vertexAttribPointer(location, spacing, gl.FLOAT, gl.FALSE, 0, 4 * offset);
+      }
     }
 
     // Disable any attributes that not currently being used.
 
     var len = this.state.enabledAttributesKeys.length;
     for (i = 0; i < len; i++) {
-        var key = this.state.enabledAttributesKeys[i];
-        if (this.state.enabledAttributes[key] && vertexBuffers.keys.indexOf(key) === -1) {
-            gl.disableVertexAttribArray(this.program.attributeLocations[key]);
-            this.state.enabledAttributes[key] = false;
-        }
+      var key = this.state.enabledAttributesKeys[i];
+      if (this.state.enabledAttributes[key] && vertexBuffers.keys.indexOf(key) === -1) {
+        gl.disableVertexAttribArray(this.program.attributeLocations[key]);
+        this.state.enabledAttributes[key] = false;
+      }
     }
 
     if (length) {
 
-        // If index buffer, use drawElements.
+      // If index buffer, use drawElements.
 
-        if (j !== undefined) {
-            buffer = vertexBuffers.values[j];
-            offset = vertexBuffers.offset[j];
-            spacing = vertexBuffers.spacing[j];
-            length = vertexBuffers.length[j];
+      if (j !== undefined) {
+        buffer = vertexBuffers.values[j];
+        offset = vertexBuffers.offset[j];
+        spacing = vertexBuffers.spacing[j];
+        length = vertexBuffers.length[j];
 
-            // Skip bindBuffer if buffer is currently bound.
+        // Skip bindBuffer if buffer is currently bound.
 
-            if (this.state.boundElementBuffer !== buffer) {
-                gl.bindBuffer(buffer.target, buffer.buffer);
-                this.state.boundElementBuffer = buffer;
-            }
-
-            gl.drawElements(gl[mode], length, gl.UNSIGNED_SHORT, 2 * offset);
+        if (this.state.boundElementBuffer !== buffer) {
+          gl.bindBuffer(buffer.target, buffer.buffer);
+          this.state.boundElementBuffer = buffer;
         }
-        else {
-            gl.drawArrays(gl[mode], 0, length);
-        }
+
+        gl.drawElements(gl[mode], length, gl.UNSIGNED_SHORT, 2 * offset);
+      } else {
+        gl.drawArrays(gl[mode], 0, length);
+      }
     }
 
     this.state.lastDrawn = id;
-};
+  };
 
 
-/**
- * Updates the width and height of parent canvas, sets the viewport size on
- * the WebGL context and updates the resolution uniform for the shader program.
- * Size is retreived from the container object of the renderer.
- *
- * @method
- *
- * @param {Array} size width, height and depth of canvas
- *
- * @return {undefined} undefined
- */
-updateSize(size) {
+  /**
+   * Updates the width and height of parent canvas, sets the viewport size on
+   * the WebGL context and updates the resolution uniform for the shader program.
+   * Size is retreived from the container object of the renderer.
+   *
+   * @method
+   *
+   * @param {Array} size width, height and depth of canvas
+   *
+   * @return {undefined} undefined
+   */
+  updateSize(size) {
     if (size) {
-        var pixelRatio = window.devicePixelRatio || 1;
-        var displayWidth = ~~(size[0] * pixelRatio);
-        var displayHeight = ~~(size[1] * pixelRatio);
-        this.canvas.width = displayWidth;
-        this.canvas.height = displayHeight;
-        this.gl.viewport(0, 0, displayWidth, displayHeight);
+      var pixelRatio = window.devicePixelRatio || 1;
+      var displayWidth = ~~(size[0] * pixelRatio);
+      var displayHeight = ~~(size[1] * pixelRatio);
+      this.canvas.width = displayWidth;
+      this.canvas.height = displayHeight;
+      this.gl.viewport(0, 0, displayWidth, displayHeight);
 
-        this.cachedSize[0] = size[0];
-        this.cachedSize[1] = size[1];
-        this.cachedSize[2] = (size[0] > size[1]) ? size[0] : size[1];
-        this.resolutionValues[0] = this.cachedSize;
+      this.cachedSize[0] = size[0];
+      this.cachedSize[1] = size[1];
+      this.cachedSize[2] = (size[0] > size[1]) ? size[0] : size[1];
+      this.resolutionValues[0] = this.cachedSize;
     }
 
     this.program.setUniforms(this.resolutionName, this.resolutionValues);
 
     return this;
-};
+  };
 
-/**
- * Updates the state of the WebGL drawing context based on custom parameters
- * defined on a mesh.
- *
- * @method
- *
- * @param {Object} options Draw state options to be set to the context.
- * @param {Mesh} mesh Associated Mesh
- *
- * @return {undefined} undefined
- */
-handleOptions(options, mesh) {
+  /**
+   * Updates the state of the WebGL drawing context based on custom parameters
+   * defined on a mesh.
+   *
+   * @method
+   *
+   * @param {Object} options Draw state options to be set to the context.
+   * @param {Mesh} mesh Associated Mesh
+   *
+   * @return {undefined} undefined
+   */
+  handleOptions(options, mesh) {
     var gl = this.gl;
     if (!options) return;
 
     if (options.blending) gl.enable(gl.BLEND);
 
     switch (options.side) {
-        case 'double':
-            this.gl.cullFace(this.gl.FRONT);
-            this.drawBuffers(this.bufferRegistry.registry[mesh.geometry], mesh.drawType, mesh.geometry);
-            this.gl.cullFace(this.gl.BACK);
-            break;
-        case 'back':
-            gl.cullFace(gl.FRONT);
-            break;
+      case 'double':
+        this.gl.cullFace(this.gl.FRONT);
+        this.drawBuffers(this.bufferRegistry.registry[mesh.geometry], mesh.drawType, mesh.geometry);
+        this.gl.cullFace(this.gl.BACK);
+        break;
+      case 'back':
+        gl.cullFace(gl.FRONT);
+        break;
     }
-};
+  };
 
-/**
- * Resets the state of the WebGL drawing context to default values.
- *
- * @method
- *
- * @param {Object} options Draw state options to be set to the context.
- *
- * @return {undefined} undefined
- */
-resetOptions(options) {
+  /**
+   * Resets the state of the WebGL drawing context to default values.
+   *
+   * @method
+   *
+   * @param {Object} options Draw state options to be set to the context.
+   *
+   * @return {undefined} undefined
+   */
+  resetOptions(options) {
     var gl = this.gl;
     if (!options) return;
     if (options.blending) gl.disable(gl.BLEND);
     if (options.side === 'back') gl.cullFace(gl.BACK);
-};
+  };
 
 }
 

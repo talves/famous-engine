@@ -45,22 +45,22 @@ class Buffer {
     this.type = type;
     this.data = [];
     this.gl = gl;
-}
+  }
 
-/**
- * Creates a WebGL buffer if one does not yet exist and binds the buffer to
- * to the context. Runs bufferData with appropriate data.
- *
- * @method
- *
- * @return {undefined} undefined
- */
-subData() {
+  /**
+   * Creates a WebGL buffer if one does not yet exist and binds the buffer to
+   * to the context. Runs bufferData with appropriate data.
+   *
+   * @method
+   *
+   * @return {undefined} undefined
+   */
+  subData() {
     var gl = this.gl;
     this.buffer = this.buffer || gl.createBuffer();
     gl.bindBuffer(this.target, this.buffer);
     gl.bufferData(this.target, new this.type(this.data), gl.STATIC_DRAW);
-};
+  };
 
 }
 
