@@ -3,4 +3,5 @@ node_modules/
 dist/*.js
 dist/commonjs
 dist/amd
+dist/umd
 *.log
