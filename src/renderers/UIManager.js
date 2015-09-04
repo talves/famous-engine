@@ -54,38 +54,37 @@ var Commands = require('../core/Commands');
  * @param {RenderLoop} renderLoop an instance of Engine used for executing
  * the `ENGINE` commands on.
  */
-function UIManager (thread, compositor, renderLoop) {
-    this._thread = thread;
-    this._compositor = compositor;
-    this._renderLoop = renderLoop;
+function UIManager(thread, compositor, renderLoop) {
+  this._thread = thread;
+  this._compositor = compositor;
+  this._renderLoop = renderLoop;
 
-    this._renderLoop.update(this);
+  this._renderLoop.update(this);
 
-    var _this = this;
-    this._thread.onmessage = function (ev) {
-        var message = ev.data ? ev.data : ev;
-        if (message[0] === Commands.ENGINE) {
-            switch (message[1]) {
-                case Commands.START:
-                    _this._engine.start();
-                    break;
-                case Commands.STOP:
-                    _this._engine.stop();
-                    break;
-                default:
-                    console.error(
-                        'Unknown ENGINE command "' + message[1] + '"'
-                    );
-                    break;
-            }
-        }
-        else {
-            _this._compositor.receiveCommands(message);
-        }
-    };
-    this._thread.onerror = function (error) {
-        console.error(error);
-    };
+  var _this = this;
+  this._thread.onmessage = function(ev) {
+    var message = ev.data ? ev.data : ev;
+    if (message[0] === Commands.ENGINE) {
+      switch (message[1]) {
+        case Commands.START:
+          _this._engine.start();
+          break;
+        case Commands.STOP:
+          _this._engine.stop();
+          break;
+        default:
+          console.error(
+            'Unknown ENGINE command "' + message[1] + '"'
+          );
+          break;
+      }
+    } else {
+      _this._compositor.receiveCommands(message);
+    }
+  };
+  this._thread.onerror = function(error) {
+    console.error(error);
+  };
 }
 
 /**
@@ -97,7 +96,7 @@ function UIManager (thread, compositor, renderLoop) {
  * @return {Worker|FamousEngine} Either a web worker or a `FamousEngine` singleton.
  */
 UIManager.prototype.getThread = function getThread() {
-    return this._thread;
+  return this._thread;
 };
 
 /**
@@ -108,7 +107,7 @@ UIManager.prototype.getThread = function getThread() {
  * @return {Compositor} The compositor used by the UIManager.
  */
 UIManager.prototype.getCompositor = function getCompositor() {
-    return this._compositor;
+  return this._compositor;
 };
 
 /**
@@ -120,7 +119,7 @@ UIManager.prototype.getCompositor = function getCompositor() {
  * @return {Engine} The engine used by the UIManager.
  */
 UIManager.prototype.getEngine = function getEngine() {
-    return this._renderLoop;
+  return this._renderLoop;
 };
 
 
@@ -133,7 +132,7 @@ UIManager.prototype.getEngine = function getEngine() {
  * UIManager.
  */
 UIManager.prototype.getRenderLoop = function getRenderLoop() {
-    return this._renderLoop;
+  return this._renderLoop;
 };
 
 /**
@@ -147,11 +146,11 @@ UIManager.prototype.getRenderLoop = function getRenderLoop() {
  * FRAME command
  * @return {undefined} undefined
  */
-UIManager.prototype.update = function update (time) {
-    this._thread.postMessage([Commands.FRAME, time]);
-    var threadMessages = this._compositor.drawCommands();
-    this._thread.postMessage(threadMessages);
-    this._compositor.clearCommands();
+UIManager.prototype.update = function update(time) {
+  this._thread.postMessage([Commands.FRAME, time]);
+  var threadMessages = this._compositor.drawCommands();
+  this._thread.postMessage(threadMessages);
+  this._compositor.clearCommands();
 };
 
 module.exports = UIManager;

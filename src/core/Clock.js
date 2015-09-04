@@ -32,14 +32,14 @@
  * @constructor
  * @private
  */
-function Clock () {
-    this._time = 0;
-    this._frame = 0;
-    this._timerQueue = [];
-    this._updatingIndex = 0;
+function Clock() {
+  this._time = 0;
+  this._frame = 0;
+  this._timerQueue = [];
+  this._updatingIndex = 0;
 
-    this._scale = 1;
-    this._scaledTime = this._time;
+  this._scale = 1;
+  this._scaledTime = this._time;
 }
 
 /**
@@ -60,9 +60,9 @@ function Clock () {
  *
  * @return {Clock} this
  */
-Clock.prototype.setScale = function setScale (scale) {
-    this._scale = scale;
-    return this;
+Clock.prototype.setScale = function setScale(scale) {
+  this._scale = scale;
+  return this;
 };
 
 /**
@@ -70,8 +70,8 @@ Clock.prototype.setScale = function setScale (scale) {
  *
  * @return {Number} scale    The scale at which the clock time is passing.
  */
-Clock.prototype.getScale = function getScale () {
-    return this._scale;
+Clock.prototype.getScale = function getScale() {
+  return this._scale;
 };
 
 /**
@@ -84,18 +84,18 @@ Clock.prototype.getScale = function getScale () {
  *                       `update` method on all registered objects
  * @return {Clock}       this
  */
-Clock.prototype.step = function step (time) {
-    this._frame++;
+Clock.prototype.step = function step(time) {
+  this._frame++;
 
-    this._scaledTime = this._scaledTime + (time - this._time)*this._scale;
-    this._time = time;
+  this._scaledTime = this._scaledTime + (time - this._time) * this._scale;
+  this._time = time;
 
-    for (var i = 0; i < this._timerQueue.length; i++) {
-        if (this._timerQueue[i](this._scaledTime)) {
-            this._timerQueue.splice(i, 1);
-        }
+  for (var i = 0; i < this._timerQueue.length; i++) {
+    if (this._timerQueue[i](this._scaledTime)) {
+      this._timerQueue.splice(i, 1);
     }
-    return this;
+  }
+  return this;
 };
 
 /**
@@ -106,8 +106,8 @@ Clock.prototype.step = function step (time) {
  * @return  {Number} time high resolution timestamp used for invoking the
  *                       `update` method on all registered objects
  */
-Clock.prototype.now = function now () {
-    return this._scaledTime;
+Clock.prototype.now = function now() {
+  return this._scaledTime;
 };
 
 /**
@@ -128,8 +128,8 @@ Clock.prototype.getTime = Clock.prototype.now;
  *
  * @return {Number} frames
  */
-Clock.prototype.getFrame = function getFrame () {
-    return this._frame;
+Clock.prototype.getFrame = function getFrame() {
+  return this._frame;
 };
 
 /**
@@ -144,18 +144,18 @@ Clock.prototype.getFrame = function getFrame () {
  *
  * @return {Function} timer function used for Clock#clearTimer
  */
-Clock.prototype.setTimeout = function (callback, delay) {
-    var params = Array.prototype.slice.call(arguments, 2);
-    var startedAt = this._time;
-    var timer = function(time) {
-        if (time - startedAt >= delay) {
-            callback.apply(null, params);
-            return true;
-        }
-        return false;
-    };
-    this._timerQueue.push(timer);
-    return timer;
+Clock.prototype.setTimeout = function(callback, delay) {
+  var params = Array.prototype.slice.call(arguments, 2);
+  var startedAt = this._time;
+  var timer = function(time) {
+    if (time - startedAt >= delay) {
+      callback.apply(null, params);
+      return true;
+    }
+    return false;
+  };
+  this._timerQueue.push(timer);
+  return timer;
 };
 
 
@@ -172,17 +172,17 @@ Clock.prototype.setTimeout = function (callback, delay) {
  * @return {Function} timer function used for Clock#clearTimer
  */
 Clock.prototype.setInterval = function setInterval(callback, delay) {
-    var params = Array.prototype.slice.call(arguments, 2);
-    var startedAt = this._time;
-    var timer = function(time) {
-        if (time - startedAt >= delay) {
-            callback.apply(null, params);
-            startedAt = time;
-        }
-        return false;
-    };
-    this._timerQueue.push(timer);
-    return timer;
+  var params = Array.prototype.slice.call(arguments, 2);
+  var startedAt = this._time;
+  var timer = function(time) {
+    if (time - startedAt >= delay) {
+      callback.apply(null, params);
+      startedAt = time;
+    }
+    return false;
+  };
+  this._timerQueue.push(timer);
+  return timer;
 };
 
 /**
@@ -196,12 +196,12 @@ Clock.prototype.setInterval = function setInterval(callback, delay) {
  *                              `Clock#setInterval` returned callback function
  * @return {Clock}              this
  */
-Clock.prototype.clearTimer = function (timer) {
-    var index = this._timerQueue.indexOf(timer);
-    if (index !== -1) {
-        this._timerQueue.splice(index, 1);
-    }
-    return this;
+Clock.prototype.clearTimer = function(timer) {
+  var index = this._timerQueue.indexOf(timer);
+  if (index !== -1) {
+    this._timerQueue.splice(index, 1);
+  }
+  return this;
 };
 
 module.exports = Clock;

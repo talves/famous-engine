@@ -35,120 +35,120 @@ var UIEvent = require('./UIEvent');
  * @param {Event} ev The native DOM event.
  */
 function MouseEvent(ev) {
-    // [Constructor(DOMString typeArg, optional MouseEventInit mouseEventInitDict)]
-    // interface MouseEvent : UIEvent {
-    //     readonly    attribute long           screenX;
-    //     readonly    attribute long           screenY;
-    //     readonly    attribute long           clientX;
-    //     readonly    attribute long           clientY;
-    //     readonly    attribute boolean        ctrlKey;
-    //     readonly    attribute boolean        shiftKey;
-    //     readonly    attribute boolean        altKey;
-    //     readonly    attribute boolean        metaKey;
-    //     readonly    attribute short          button;
-    //     readonly    attribute EventTarget?   relatedTarget;
-    //     // Introduced in this specification
-    //     readonly    attribute unsigned short buttons;
-    //     boolean getModifierState (DOMString keyArg);
-    // };
+  // [Constructor(DOMString typeArg, optional MouseEventInit mouseEventInitDict)]
+  // interface MouseEvent : UIEvent {
+  //     readonly    attribute long           screenX;
+  //     readonly    attribute long           screenY;
+  //     readonly    attribute long           clientX;
+  //     readonly    attribute long           clientY;
+  //     readonly    attribute boolean        ctrlKey;
+  //     readonly    attribute boolean        shiftKey;
+  //     readonly    attribute boolean        altKey;
+  //     readonly    attribute boolean        metaKey;
+  //     readonly    attribute short          button;
+  //     readonly    attribute EventTarget?   relatedTarget;
+  //     // Introduced in this specification
+  //     readonly    attribute unsigned short buttons;
+  //     boolean getModifierState (DOMString keyArg);
+  // };
 
-    UIEvent.call(this, ev);
+  UIEvent.call(this, ev);
 
-    /**
-     * @name MouseEvent#screenX
-     * @type Number
-     */
-    this.screenX = ev.screenX;
+  /**
+   * @name MouseEvent#screenX
+   * @type Number
+   */
+  this.screenX = ev.screenX;
 
-    /**
-     * @name MouseEvent#screenY
-     * @type Number
-     */
-    this.screenY = ev.screenY;
+  /**
+   * @name MouseEvent#screenY
+   * @type Number
+   */
+  this.screenY = ev.screenY;
 
-    /**
-     * @name MouseEvent#clientX
-     * @type Number
-     */
-    this.clientX = ev.clientX;
+  /**
+   * @name MouseEvent#clientX
+   * @type Number
+   */
+  this.clientX = ev.clientX;
 
-    /**
-     * @name MouseEvent#clientY
-     * @type Number
-     */
-    this.clientY = ev.clientY;
+  /**
+   * @name MouseEvent#clientY
+   * @type Number
+   */
+  this.clientY = ev.clientY;
 
-    /**
-     * @name MouseEvent#ctrlKey
-     * @type Boolean
-     */
-    this.ctrlKey = ev.ctrlKey;
+  /**
+   * @name MouseEvent#ctrlKey
+   * @type Boolean
+   */
+  this.ctrlKey = ev.ctrlKey;
 
-    /**
-     * @name MouseEvent#shiftKey
-     * @type Boolean
-     */
-    this.shiftKey = ev.shiftKey;
+  /**
+   * @name MouseEvent#shiftKey
+   * @type Boolean
+   */
+  this.shiftKey = ev.shiftKey;
 
-    /**
-     * @name MouseEvent#altKey
-     * @type Boolean
-     */
-    this.altKey = ev.altKey;
+  /**
+   * @name MouseEvent#altKey
+   * @type Boolean
+   */
+  this.altKey = ev.altKey;
 
-    /**
-     * @name MouseEvent#metaKey
-     * @type Boolean
-     */
-    this.metaKey = ev.metaKey;
+  /**
+   * @name MouseEvent#metaKey
+   * @type Boolean
+   */
+  this.metaKey = ev.metaKey;
 
-    /**
-     * @type MouseEvent#button
-     * @type Number
-     */
-    this.button = ev.button;
+  /**
+   * @type MouseEvent#button
+   * @type Number
+   */
+  this.button = ev.button;
 
-    /**
-     * @type MouseEvent#buttons
-     * @type Number
-     */
-    this.buttons = ev.buttons;
+  /**
+   * @type MouseEvent#buttons
+   * @type Number
+   */
+  this.buttons = ev.buttons;
 
-    /**
-     * @type MouseEvent#pageX
-     * @type Number
-     */
-    this.pageX = ev.pageX;
+  /**
+   * @type MouseEvent#pageX
+   * @type Number
+   */
+  this.pageX = ev.pageX;
 
-    /**
-     * @type MouseEvent#pageY
-     * @type Number
-     */
-    this.pageY = ev.pageY;
+  /**
+   * @type MouseEvent#pageY
+   * @type Number
+   */
+  this.pageY = ev.pageY;
 
-    /**
-     * @type MouseEvent#x
-     * @type Number
-     */
-    this.x = ev.x;
+  /**
+   * @type MouseEvent#x
+   * @type Number
+   */
+  this.x = ev.x;
 
-    /**
-     * @type MouseEvent#y
-     * @type Number
-     */
-    this.y = ev.y;
+  /**
+   * @type MouseEvent#y
+   * @type Number
+   */
+  this.y = ev.y;
 
-    /**
-     * @type MouseEvent#offsetX
-     * @type Number
-     */
-    this.offsetX = ev.offsetX;
+  /**
+   * @type MouseEvent#offsetX
+   * @type Number
+   */
+  this.offsetX = ev.offsetX;
 
-    /**
-     * @type MouseEvent#offsetY
-     * @type Number
-     */
-    this.offsetY = ev.offsetY;
+  /**
+   * @type MouseEvent#offsetY
+   * @type Number
+   */
+  this.offsetY = ev.offsetY;
 }
 
 MouseEvent.prototype = Object.create(UIEvent.prototype);
@@ -161,8 +161,8 @@ MouseEvent.prototype.constructor = MouseEvent;
  *
  * @return {String} Name of the event type
  */
-MouseEvent.prototype.toString = function toString () {
-    return 'MouseEvent';
+MouseEvent.prototype.toString = function toString() {
+  return 'MouseEvent';
 };
 
 module.exports = MouseEvent;

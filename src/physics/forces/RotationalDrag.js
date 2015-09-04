@@ -38,7 +38,7 @@ var TORQUE_REGISTER = new Vec3();
  * @param {Object} options options to set on drag
  */
 function RotationalDrag(targets, options) {
-    Force.call(this, targets, options);
+  Force.call(this, targets, options);
 }
 
 RotationalDrag.prototype = Object.create(Force.prototype);
@@ -52,7 +52,7 @@ RotationalDrag.prototype.constructor = RotationalDrag;
  * @return {Number} The scale by which to multiply.
  */
 RotationalDrag.QUADRATIC = function QUADRATIC(omega) {
-    return omega.length();
+  return omega.length();
 };
 
 /**
@@ -62,7 +62,7 @@ RotationalDrag.QUADRATIC = function QUADRATIC(omega) {
  * @return {Number} The scale by which to multiply.
  */
 RotationalDrag.LINEAR = function LINEAR() {
-    return 1;
+  return 1;
 };
 
 /**
@@ -72,9 +72,9 @@ RotationalDrag.LINEAR = function LINEAR() {
  * @return {undefined} undefined
  */
 RotationalDrag.prototype.init = function init() {
-    this.max = this.max || Infinity;
-    this.strength = this.strength || 1;
-    this.type = this.type || RotationalDrag.LINEAR;
+  this.max = this.max || Infinity;
+  this.strength = this.strength || 1;
+  this.type = this.type || RotationalDrag.LINEAR;
 };
 
 /**
@@ -84,20 +84,20 @@ RotationalDrag.prototype.init = function init() {
  * @return {undefined} undefined
  */
 RotationalDrag.prototype.update = function update() {
-    var targets = this.targets;
-    var type = this.type;
+  var targets = this.targets;
+  var type = this.type;
 
-    var torque = TORQUE_REGISTER;
+  var torque = TORQUE_REGISTER;
 
-    var max = this.max;
-    var strength = this.strength;
-    for (var i = 0, len = targets.length; i < len; i++) {
-        var target = targets[i];
-        var omega = target.angularVelocity;
-        var magnitude = -strength * type(omega);
-        Vec3.scale(omega, magnitude < -max ? -max : magnitude, torque);
-        target.applyTorque(torque);
-    }
+  var max = this.max;
+  var strength = this.strength;
+  for (var i = 0, len = targets.length; i < len; i++) {
+    var target = targets[i];
+    var omega = target.angularVelocity;
+    var magnitude = -strength * type(omega);
+    Vec3.scale(omega, magnitude < -max ? -max : magnitude, torque);
+    target.applyTorque(torque);
+  }
 };
 
 module.exports = RotationalDrag;

@@ -35,12 +35,12 @@ var UIEvent = require('./UIEvent');
  * @param {Event} ev The native DOM event.
  */
 function FocusEvent(ev) {
-    // [Constructor(DOMString typeArg, optional FocusEventInit focusEventInitDict)]
-    // interface FocusEvent : UIEvent {
-    //     readonly    attribute EventTarget? relatedTarget;
-    // };
+  // [Constructor(DOMString typeArg, optional FocusEventInit focusEventInitDict)]
+  // interface FocusEvent : UIEvent {
+  //     readonly    attribute EventTarget? relatedTarget;
+  // };
 
-    UIEvent.call(this, ev);
+  UIEvent.call(this, ev);
 }
 
 FocusEvent.prototype = Object.create(UIEvent.prototype);
@@ -53,8 +53,8 @@ FocusEvent.prototype.constructor = FocusEvent;
  *
  * @return {String} Name of the event type
  */
-FocusEvent.prototype.toString = function toString () {
-    return 'FocusEvent';
+FocusEvent.prototype.toString = function toString() {
+  return 'FocusEvent';
 };
 
 module.exports = FocusEvent;

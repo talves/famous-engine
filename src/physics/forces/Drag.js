@@ -38,7 +38,7 @@ var FORCE_REGISTER = new Vec3();
  * @param {Object} options The options hash.
  */
 function Drag(targets, options) {
-    Force.call(this, targets, options);
+  Force.call(this, targets, options);
 }
 
 Drag.prototype = Object.create(Force.prototype);
@@ -52,7 +52,7 @@ Drag.prototype.constructor = Drag;
  * @return {Number} The scale by which to multiply.
  */
 Drag.QUADRATIC = function QUADRATIC(v) {
-    return v*v;
+  return v * v;
 };
 
 /**
@@ -63,7 +63,7 @@ Drag.QUADRATIC = function QUADRATIC(v) {
  * @return {Number} The scale by which to multiply.
  */
 Drag.LINEAR = function LINEAR(v) {
-    return v;
+  return v;
 };
 
 /**
@@ -74,9 +74,9 @@ Drag.LINEAR = function LINEAR(v) {
  * @return {undefined} undefined
  */
 Drag.prototype.init = function() {
-    this.max = this.max || Infinity;
-    this.strength = this.strength || 1;
-    this.type = this.type || Drag.LINEAR;
+  this.max = this.max || Infinity;
+  this.strength = this.strength || 1;
+  this.type = this.type || Drag.LINEAR;
 };
 
 /**
@@ -86,22 +86,22 @@ Drag.prototype.init = function() {
  * @return {undefined} undefined
  */
 Drag.prototype.update = function update() {
-    var targets = this.targets;
-    var type = this.type;
+  var targets = this.targets;
+  var type = this.type;
 
-    var force = FORCE_REGISTER;
+  var force = FORCE_REGISTER;
 
-    var max = this.max;
-    var strength = this.strength;
-    for (var i = 0, len = targets.length; i < len; i++) {
-        var target = targets[i];
-        var velocity = target.velocity;
-        var v = velocity.length();
-        var invV = v ? 1 / v : 0;
-        var magnitude = -strength * type(v);
-        Vec3.scale(velocity, (magnitude < -max ? -max : magnitude) * invV, force);
-        target.applyForce(force);
-    }
+  var max = this.max;
+  var strength = this.strength;
+  for (var i = 0, len = targets.length; i < len; i++) {
+    var target = targets[i];
+    var velocity = target.velocity;
+    var v = velocity.length();
+    var invV = v ? 1 / v : 0;
+    var magnitude = -strength * type(v);
+    Vec3.scale(velocity, (magnitude < -max ? -max : magnitude) * invV, force);
+    target.applyForce(force);
+  }
 };
 
 module.exports = Drag;

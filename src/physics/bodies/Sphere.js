@@ -37,17 +37,17 @@ var SUPPORT_REGISTER = new Vec3();
  * @param {Object} options The initial state of the body.
  */
 function Sphere(options) {
-    Particle.call(this, options);
-    var r  = options.radius || 1;
-    this.radius = r;
-    this.size = [2*r, 2*r, 2*r];
-    this.updateLocalInertia();
-    this.inverseInertia.copy(this.localInverseInertia);
+  Particle.call(this, options);
+  var r = options.radius || 1;
+  this.radius = r;
+  this.size = [2 * r, 2 * r, 2 * r];
+  this.updateLocalInertia();
+  this.inverseInertia.copy(this.localInverseInertia);
 
-    var w = options.angularVelocity;
-    if (w) this.setAngularVelocity(w.x, w.y, w.z);
+  var w = options.angularVelocity;
+  if (w) this.setAngularVelocity(w.x, w.y, w.z);
 
-    this.type = 1 << 2;
+  this.type = 1 << 2;
 }
 
 Sphere.prototype = Object.create(Particle.prototype);
@@ -60,7 +60,7 @@ Sphere.prototype.constructor = Sphere;
  * @return {Number} radius
  */
 Sphere.prototype.getRadius = function getRadius() {
-    return this.radius;
+  return this.radius;
 };
 
 /**
@@ -71,9 +71,9 @@ Sphere.prototype.getRadius = function getRadius() {
  * @return {Sphere} this
  */
 Sphere.prototype.setRadius = function setRadius(radius) {
-    this.radius = radius;
-    this.size = [2*this.radius, 2*this.radius, 2*this.radius];
-    return this;
+  this.radius = radius;
+  this.size = [2 * this.radius, 2 * this.radius, 2 * this.radius];
+  return this;
 };
 
 /**
@@ -84,22 +84,22 @@ Sphere.prototype.setRadius = function setRadius(radius) {
  * @return {undefined} undefined
  */
 Sphere.prototype.updateLocalInertia = function updateInertia() {
-    var m = this.mass;
-    var r = this.radius;
+  var m = this.mass;
+  var r = this.radius;
 
-    var mrr = m * r * r;
+  var mrr = m * r * r;
 
-    this.localInertia.set([
-        0.4 * mrr, 0, 0,
-        0, 0.4 * mrr, 0,
-        0, 0, 0.4 * mrr
-    ]);
+  this.localInertia.set([
+    0.4 * mrr, 0, 0,
+    0, 0.4 * mrr, 0,
+    0, 0, 0.4 * mrr
+  ]);
 
-    this.localInverseInertia.set([
-        2.5 / mrr, 0, 0,
-        0, 2.5 / mrr, 0,
-        0, 0, 2.5 / mrr
-    ]);
+  this.localInverseInertia.set([
+    2.5 / mrr, 0, 0,
+    0, 2.5 / mrr, 0,
+    0, 0, 2.5 / mrr
+  ]);
 };
 
 /**
@@ -110,7 +110,7 @@ Sphere.prototype.updateLocalInertia = function updateInertia() {
  * @return {Vec3} The support point.
  */
 Sphere.prototype.support = function support(direction) {
-    return Vec3.scale(direction, this.radius, SUPPORT_REGISTER);
+  return Vec3.scale(direction, this.radius, SUPPORT_REGISTER);
 };
 
 /**

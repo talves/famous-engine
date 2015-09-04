@@ -39,29 +39,43 @@ var GeometryHelper = require('../GeometryHelper');
  *
  * @return {Object} constructed geometry
  */
-function ParametricSphere (options) {
-    if (!(this instanceof ParametricSphere)) return new ParametricSphere(options);
+function ParametricSphere(options) {
+  if (!(this instanceof ParametricSphere)) return new ParametricSphere(options);
 
-    options = options || {};
-    var detail = options.detail || 10;
-    var detailX = options.detailX || detail;
-    var detailY = options.detailY || detail;
+  options = options || {};
+  var detail = options.detail || 10;
+  var detailX = options.detailX || detail;
+  var detailY = options.detailY || detail;
 
-    var buffers = GeometryHelper.generateParametric(
-        detailX,
-        detailY,
-        ParametricSphere.generator,
-        true
-    );
+  var buffers = GeometryHelper.generateParametric(
+    detailX,
+    detailY,
+    ParametricSphere.generator,
+    true
+  );
 
-    options.buffers = [
-        { name: 'a_pos', data: buffers.vertices },
-        { name: 'a_texCoord', data: GeometryHelper.getSpheroidUV(buffers.vertices), size: 2 },
-        { name: 'a_normals', data: GeometryHelper.getSpheroidNormals(buffers.vertices) },
-        { name: 'indices', data: buffers.indices, size: 1 }
-    ];
+  options.buffers = [
+    {
+      name: 'a_pos',
+      data: buffers.vertices
+    },
+    {
+      name: 'a_texCoord',
+      data: GeometryHelper.getSpheroidUV(buffers.vertices),
+      size: 2
+    },
+    {
+      name: 'a_normals',
+      data: GeometryHelper.getSpheroidNormals(buffers.vertices)
+    },
+    {
+      name: 'indices',
+      data: buffers.indices,
+      size: 1
+    }
+  ];
 
-    Geometry.call(this, options);
+  Geometry.call(this, options);
 }
 
 ParametricSphere.prototype = Object.create(Geometry.prototype);
@@ -79,13 +93,13 @@ ParametricSphere.prototype.constructor = ParametricSphere;
  * @return {undefined} undefined
  */
 ParametricSphere.generator = function generator(u, v, pos) {
-    var x = Math.sin(u) * Math.cos(v);
-    var y = Math.cos(u);
-    var z = -Math.sin(u) * Math.sin(v);
+  var x = Math.sin(u) * Math.cos(v);
+  var y = Math.cos(u);
+  var z = -Math.sin(u) * Math.sin(v);
 
-    pos[0] = x;
-    pos[1] = y;
-    pos[2] = z;
+  pos[0] = x;
+  pos[1] = y;
+  pos[2] = z;
 };
 
 module.exports = ParametricSphere;

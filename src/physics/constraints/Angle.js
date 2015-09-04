@@ -41,14 +41,14 @@ var DELTA_REGISTER = new Vec3();
  *  @param {Object} options An object of configurable options.
  */
 function Angle(a, b, options) {
-    this.a = a;
-    this.b = b;
+  this.a = a;
+  this.b = b;
 
-    Constraint.call(this, options);
+  Constraint.call(this, options);
 
-    this.effectiveInertia = new Mat33();
-    this.angularImpulse = new Vec3();
-    this.error = 0;
+  this.effectiveInertia = new Mat33();
+  this.angularImpulse = new Vec3();
+  this.error = 0;
 }
 
 Angle.prototype = Object.create(Constraint.prototype);
@@ -62,7 +62,7 @@ Angle.prototype.constructor = Angle;
  * @return {undefined} undefined
  */
 Angle.prototype.init = function() {
-    this.cosAngle = this.cosAngle || this.a.orientation.dot(this.b.orientation);
+  this.cosAngle = this.cosAngle || this.a.orientation.dot(this.b.orientation);
 };
 
 /**
@@ -72,25 +72,25 @@ Angle.prototype.init = function() {
  * @return {undefined} undefined
  */
 Angle.prototype.update = function update() {
-    var a = this.a;
-    var b = this.b;
+  var a = this.a;
+  var b = this.b;
 
-    var q1 = a.orientation;
-    var q2 = b.orientation;
+  var q1 = a.orientation;
+  var q2 = b.orientation;
 
-    var cosTheta = q1.dot(q2);
-    var diff = 2*(cosTheta - this.cosAngle);
+  var cosTheta = q1.dot(q2);
+  var diff = 2 * (cosTheta - this.cosAngle);
 
-    this.error = diff;
+  this.error = diff;
 
-    var angularImpulse = this.angularImpulse;
-    b.applyAngularImpulse(angularImpulse);
-    a.applyAngularImpulse(angularImpulse.invert());
+  var angularImpulse = this.angularImpulse;
+  b.applyAngularImpulse(angularImpulse);
+  a.applyAngularImpulse(angularImpulse.invert());
 
-    Mat33.add(a.inverseInertia, b.inverseInertia, this.effectiveInertia);
-    this.effectiveInertia.inverse();
+  Mat33.add(a.inverseInertia, b.inverseInertia, this.effectiveInertia);
+  this.effectiveInertia.inverse();
 
-    angularImpulse.clear();
+  angularImpulse.clear();
 };
 
 /**
@@ -100,23 +100,23 @@ Angle.prototype.update = function update() {
  * @return {undefined} undefined
  */
 Angle.prototype.resolve = function update() {
-    var a = this.a;
-    var b = this.b;
+  var a = this.a;
+  var b = this.b;
 
-    var diffW = DELTA_REGISTER;
+  var diffW = DELTA_REGISTER;
 
-    var w1 = a.angularVelocity;
-    var w2 = b.angularVelocity;
+  var w1 = a.angularVelocity;
+  var w2 = b.angularVelocity;
 
-    Vec3.subtract(w1, w2, diffW);
-    diffW.scale(1 + this.error);
+  Vec3.subtract(w1, w2, diffW);
+  diffW.scale(1 + this.error);
 
-    var angularImpulse = diffW.applyMatrix(this.effectiveInertia);
+  var angularImpulse = diffW.applyMatrix(this.effectiveInertia);
 
-    b.applyAngularImpulse(angularImpulse);
-    a.applyAngularImpulse(angularImpulse.invert());
-    angularImpulse.invert();
-    this.angularImpulse.add(angularImpulse);
+  b.applyAngularImpulse(angularImpulse);
+  a.applyAngularImpulse(angularImpulse.invert());
+  angularImpulse.invert();
+  this.angularImpulse.add(angularImpulse);
 };
 
 module.exports = Angle;

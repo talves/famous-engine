@@ -36,13 +36,13 @@ var Position = require('./Position');
  * @param {Node} node Node that the Origin component will be attached to
  */
 function Origin(node) {
-    Position.call(this, node);
+  Position.call(this, node);
 
-    var initial = node.getOrigin();
+  var initial = node.getOrigin();
 
-    this._x.set(initial[0]);
-    this._y.set(initial[1]);
-    this._z.set(initial[2]);
+  this._x.set(initial[0]);
+  this._y.set(initial[1]);
+  this._z.set(initial[2]);
 }
 
 /**
@@ -53,7 +53,7 @@ function Origin(node) {
  * @return {String} Name of the component
  */
 Origin.prototype.toString = function toString() {
-    return 'Origin';
+  return 'Origin';
 };
 
 Origin.prototype = Object.create(Position.prototype);
@@ -68,8 +68,8 @@ Origin.prototype.constructor = Origin;
  * @return {undefined} undefined
  */
 Origin.prototype.update = function update() {
-    this._node.setOrigin(this._x.get(), this._y.get(), this._z.get());
-    this._checkUpdate();
+  this._node.setOrigin(this._x.get(), this._y.get(), this._z.get());
+  this._checkUpdate();
 };
 
 Origin.prototype.onUpdate = Origin.prototype.update;

@@ -48,29 +48,31 @@ var SizeSystem = require('./SizeSystem');
  *                 it needs to be able to send methods to
  *                 the renderers and update nodes in the scene graph
  */
-function Scene (selector, updater) {
-    if (!selector) throw new Error('Scene needs to be created with a DOM selector');
-    if (!updater) throw new Error('Scene needs to be created with a class like Famous');
+function Scene(selector, updater) {
+  if (!selector)
+    throw new Error('Scene needs to be created with a DOM selector');
+  if (!updater)
+    throw new Error('Scene needs to be created with a class like Famous');
 
-    Node.call(this);         // Scene inherits from node
+  Node.call(this); // Scene inherits from node
 
-    this._globalUpdater = updater; // The updater that will both
-                                   // send messages to the renderers
-                                   // and update dirty nodes
+  this._globalUpdater = updater; // The updater that will both
+  // send messages to the renderers
+  // and update dirty nodes
 
-    this._selector = selector; // reference to the DOM selector
-                               // that represents the element
-                               // in the dom that this context
-                               // inhabits
+  this._selector = selector; // reference to the DOM selector
+  // that represents the element
+  // in the dom that this context
+  // inhabits
 
-    this.mount(selector); // Mount the context to itself
-                          // (it is its own parent)
+  this.mount(selector); // Mount the context to itself
+  // (it is its own parent)
 
-    this._globalUpdater                  // message a request for the dom
-        .message(Commands.NEED_SIZE_FOR)  // size of the context so that
-        .message(selector);               // the scene graph has a total size
+  this._globalUpdater // message a request for the dom
+    .message(Commands.NEED_SIZE_FOR) // size of the context so that
+    .message(selector); // the scene graph has a total size
 
-    this.show(); // the context begins shown (it's already present in the dom)
+  this.show(); // the context begins shown (it's already present in the dom)
 }
 
 // Scene inherits from node
@@ -83,8 +85,8 @@ Scene.NO_DEFAULT_COMPONENTS = true;
  *
  * @return {Famous} the updater for this Scene
  */
-Scene.prototype.getUpdater = function getUpdater () {
-    return this._updater;
+Scene.prototype.getUpdater = function getUpdater() {
+  return this._updater;
 };
 
 /**
@@ -92,8 +94,8 @@ Scene.prototype.getUpdater = function getUpdater () {
  *
  * @return {String} dom selector
  */
-Scene.prototype.getSelector = function getSelector () {
-    return this._selector;
+Scene.prototype.getSelector = function getSelector() {
+  return this._selector;
 };
 
 /**
@@ -103,9 +105,9 @@ Scene.prototype.getSelector = function getSelector () {
  * @return {Dispatch} the Scene's Dispatch
  * @deprecated
  */
-Scene.prototype.getDispatch = function getDispatch () {
-    console.warn('Scene#getDispatch is deprecated, require the dispatch directly');
-    return Dispatch;
+Scene.prototype.getDispatch = function getDispatch() {
+  console.warn('Scene#getDispatch is deprecated, require the dispatch directly');
+  return Dispatch;
 };
 
 /**
@@ -118,38 +120,38 @@ Scene.prototype.getDispatch = function getDispatch () {
  *
  * @return {undefined} undefined
  */
-Scene.prototype.onReceive = function onReceive (event, payload) {
-    // TODO: In the future the dom element that the context is attached to
-    // should have a representation as a component. It would be render sized
-    // and the context would receive its size the same way that any render size
-    // component receives its size.
-    if (event === 'CONTEXT_RESIZE') {
-        if (payload.length < 2)
-            throw new Error(
-                    'CONTEXT_RESIZE\'s payload needs to be at least a pair' +
-                    ' of pixel sizes'
-            );
+Scene.prototype.onReceive = function onReceive(event, payload) {
+  // TODO: In the future the dom element that the context is attached to
+  // should have a representation as a component. It would be render sized
+  // and the context would receive its size the same way that any render size
+  // component receives its size.
+  if (event === 'CONTEXT_RESIZE') {
+    if (payload.length < 2)
+      throw new Error(
+        'CONTEXT_RESIZE\'s payload needs to be at least a pair' +
+        ' of pixel sizes'
+      );
 
-        this.setSizeMode('absolute', 'absolute', 'absolute');
-        this.setAbsoluteSize(payload[0],
-                             payload[1],
-                             payload[2] ? payload[2] : 0);
+    this.setSizeMode('absolute', 'absolute', 'absolute');
+    this.setAbsoluteSize(payload[0],
+      payload[1],
+      payload[2] ? payload[2] : 0);
 
-        this._updater.message(Commands.WITH).message(this._selector).message(Commands.READY);
-    }
+    this._updater.message(Commands.WITH).message(this._selector).message(Commands.READY);
+  }
 };
 
 
-Scene.prototype.mount = function mount (path) {
-    if (this.isMounted())
-        throw new Error('Scene is already mounted at: ' + this.getLocation());
-    Dispatch.mount(path, this);
-    this._id = path;
-    this._mounted = true;
-    this._parent = this;
-    TransformSystem.registerTransformAtPath(path);
-    OpacitySystem.registerOpacityAtPath(path);
-    SizeSystem.registerSizeAtPath(path);
+Scene.prototype.mount = function mount(path) {
+  if (this.isMounted())
+    throw new Error('Scene is already mounted at: ' + this.getLocation());
+  Dispatch.mount(path, this);
+  this._id = path;
+  this._mounted = true;
+  this._parent = this;
+  TransformSystem.registerTransformAtPath(path);
+  OpacitySystem.registerOpacityAtPath(path);
+  SizeSystem.registerSizeAtPath(path);
 };
 
 module.exports = Scene;

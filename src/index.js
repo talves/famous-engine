@@ -23,20 +23,20 @@
  */
 
 module.exports = {
-    components: require('./components'),
-    core: require('./core'),
-    renderLoops: require('./render-loops'),
-    domRenderables: require('./dom-renderables'),
-    domRenderers: require('./dom-renderers'),
-    math: require('./math'),
-    physics: require('./physics'),
-    renderers: require('./renderers'),
-    transitions: require('./transitions'),
-    utilities: require('./utilities'),
-    webglRenderables: require('./webgl-renderables'),
-    webglRenderers: require('./webgl-renderers'),
-    webglGeometries: require('./webgl-geometries'),
-    webglMaterials: require('./webgl-materials'),
-    webglShaders: require('./webgl-shaders'),
-    polyfills: require('./polyfills')
+  components: require('./components'),
+  core: require('./core'),
+  renderLoops: require('./render-loops'),
+  domRenderables: require('./dom-renderables'),
+  domRenderers: require('./dom-renderers'),
+  math: require('./math'),
+  physics: require('./physics'),
+  renderers: require('./renderers'),
+  transitions: require('./transitions'),
+  utilities: require('./utilities'),
+  webglRenderables: require('./webgl-renderables'),
+  webglRenderers: require('./webgl-renderers'),
+  webglGeometries: require('./webgl-geometries'),
+  webglMaterials: require('./webgl-materials'),
+  webglShaders: require('./webgl-shaders'),
+  polyfills: require('./polyfills')
 };

@@ -37,15 +37,15 @@ var createCheckerboard = require('./createCheckerboard');
  * @return {undefined} undefined
  */
 function TextureManager(gl) {
-    this.registry = [];
-    this._needsResample = [];
+  this.registry = [];
+  this._needsResample = [];
 
-    this._activeTexture = 0;
-    this._boundTexture = null;
+  this._activeTexture = 0;
+  this._boundTexture = null;
 
-    this._checkerboard = createCheckerboard();
+  this._checkerboard = createCheckerboard();
 
-    this.gl = gl;
+  this.gl = gl;
 }
 
 /**
@@ -58,20 +58,20 @@ function TextureManager(gl) {
  * @return {undefined}          undefined
  */
 TextureManager.prototype.update = function update(time) {
-    var registryLength = this.registry.length;
+  var registryLength = this.registry.length;
 
-    for (var i = 1; i < registryLength; i++) {
-        var texture = this.registry[i];
+  for (var i = 1; i < registryLength; i++) {
+    var texture = this.registry[i];
 
-        if (texture && texture.isLoaded && texture.resampleRate) {
-            if (!texture.lastResample || time - texture.lastResample > texture.resampleRate) {
-                if (!this._needsResample[texture.id]) {
-                    this._needsResample[texture.id] = true;
-                    texture.lastResample = time;
-                }
-            }
+    if (texture && texture.isLoaded && texture.resampleRate) {
+      if (!texture.lastResample || time - texture.lastResample > texture.resampleRate) {
+        if (!this._needsResample[texture.id]) {
+          this._needsResample[texture.id] = true;
+          texture.lastResample = time;
         }
+      }
     }
+  }
 };
 
 /**
@@ -86,65 +86,63 @@ TextureManager.prototype.update = function update(time) {
  * @return {undefined}      undefined
  */
 TextureManager.prototype.register = function register(input, slot) {
-    var _this = this;
+  var _this = this;
 
-    var source = input.data;
-    var textureId = input.id;
-    var options = input.options || {};
-    var texture = this.registry[textureId];
-    var spec;
+  var source = input.data;
+  var textureId = input.id;
+  var options = input.options || {};
+  var texture = this.registry[textureId];
+  var spec;
 
-    if (!texture) {
+  if (!texture) {
 
-        texture = new Texture(this.gl, options);
-        texture.setImage(this._checkerboard);
+    texture = new Texture(this.gl, options);
+    texture.setImage(this._checkerboard);
 
-        // Add texture to registry
+    // Add texture to registry
 
-        spec = this.registry[textureId] = {
-            resampleRate: options.resampleRate || null,
-            lastResample: null,
-            isLoaded: false,
-            texture: texture,
-            source: source,
-            id: textureId,
-            slot: slot
-        };
+    spec = this.registry[textureId] = {
+      resampleRate: options.resampleRate || null,
+      lastResample: null,
+      isLoaded: false,
+      texture: texture,
+      source: source,
+      id: textureId,
+      slot: slot
+    };
 
-        // Handle array
+    // Handle array
 
-        if (Array.isArray(source) || source instanceof Uint8Array || source instanceof Float32Array) {
-            this.bindTexture(textureId);
-            texture.setArray(source);
-            spec.isLoaded = true;
-        }
-
-        // Handle video
-
-        else if (source instanceof HTMLVideoElement) {
-            source.addEventListener('loadeddata', function() {
-                _this.bindTexture(textureId);
-                texture.setImage(source);
-
-                spec.isLoaded = true;
-                spec.source = source;
-            });
-        }
-
-        // Handle image url
-
-        else if (typeof source === 'string') {
-            loadImage(source, function (img) {
-                _this.bindTexture(textureId);
-                texture.setImage(img);
-
-                spec.isLoaded = true;
-                spec.source = img;
-            });
-        }
+    if (Array.isArray(source) || source instanceof Uint8Array || source instanceof Float32Array) {
+      this.bindTexture(textureId);
+      texture.setArray(source);
+      spec.isLoaded = true;
     }
 
-    return textureId;
+    // Handle video
+    else if (source instanceof HTMLVideoElement) {
+      source.addEventListener('loadeddata', function() {
+        _this.bindTexture(textureId);
+        texture.setImage(source);
+
+        spec.isLoaded = true;
+        spec.source = source;
+      });
+    }
+
+    // Handle image url
+    else if (typeof source === 'string') {
+      loadImage(source, function(img) {
+        _this.bindTexture(textureId);
+        texture.setImage(img);
+
+        spec.isLoaded = true;
+        spec.source = img;
+      });
+    }
+  }
+
+  return textureId;
 };
 
 /**
@@ -158,21 +156,21 @@ TextureManager.prototype.register = function register(input, slot) {
  *
  * @return {Object} Image object being loaded.
  */
-function loadImage (input, callback) {
-    var image = (typeof input === 'string' ? new Image() : input) || {};
-        image.crossOrigin = 'anonymous';
+function loadImage(input, callback) {
+  var image = (typeof input === 'string' ? new Image() : input) || {};
+  image.crossOrigin = 'anonymous';
 
-    if (!image.src) image.src = input;
-    if (!image.complete) {
-        image.onload = function () {
-            callback(image);
-        };
-    }
-    else {
-        callback(image);
-    }
+  if (!image.src)
+    image.src = input;
+  if (!image.complete) {
+    image.onload = function() {
+      callback(image);
+    };
+  } else {
+    callback(image);
+  }
 
-    return image;
+  return image;
 }
 
 /**
@@ -186,25 +184,25 @@ function loadImage (input, callback) {
  * @return {undefined} undefined
  */
 TextureManager.prototype.bindTexture = function bindTexture(id) {
-    var spec = this.registry[id];
+  var spec = this.registry[id];
 
-    if (this._activeTexture !== spec.slot) {
-        this.gl.activeTexture(this.gl.TEXTURE0 + spec.slot);
-        this._activeTexture = spec.slot;
-    }
+  if (this._activeTexture !== spec.slot) {
+    this.gl.activeTexture(this.gl.TEXTURE0 + spec.slot);
+    this._activeTexture = spec.slot;
+  }
 
-    if (this._boundTexture !== id) {
-        this._boundTexture = id;
-        spec.texture.bind();
-    }
+  if (this._boundTexture !== id) {
+    this._boundTexture = id;
+    spec.texture.bind();
+  }
 
-    if (this._needsResample[spec.id]) {
+  if (this._needsResample[spec.id]) {
 
-        // TODO: Account for resampling of arrays.
+    // TODO: Account for resampling of arrays.
 
-        spec.texture.setImage(spec.source);
-        this._needsResample[spec.id] = false;
-    }
+    spec.texture.setImage(spec.source);
+    this._needsResample[spec.id] = false;
+  }
 };
 
 module.exports = TextureManager;

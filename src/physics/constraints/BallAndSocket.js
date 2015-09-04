@@ -45,16 +45,16 @@ var WxR_REGISTER = new Vec3();
  * @param {Options} options An object of configurable options.
  */
 function BallAndSocket(a, b, options) {
-    this.a = a;
-    this.b = b;
+  this.a = a;
+  this.b = b;
 
-    Constraint.call(this, options);
+  Constraint.call(this, options);
 
-    this.impulse = new Vec3();
-    this.angImpulseA = new Vec3();
-    this.angImpulseB = new Vec3();
-    this.error = new Vec3();
-    this.effMassMatrix = new Mat33();
+  this.impulse = new Vec3();
+  this.angImpulseA = new Vec3();
+  this.angImpulseB = new Vec3();
+  this.error = new Vec3();
+  this.effMassMatrix = new Mat33();
 }
 
 BallAndSocket.prototype = Object.create(Constraint.prototype);
@@ -67,19 +67,19 @@ BallAndSocket.prototype.constructor = BallAndSocket;
  * @return {undefined} undefined
  */
 BallAndSocket.prototype.init = function() {
-    var w = this.anchor;
+  var w = this.anchor;
 
-    var a = this.a;
-    var b = this.b;
+  var a = this.a;
+  var b = this.b;
 
-    var q1t = Quaternion.conjugate(a.orientation, new Quaternion());
-    var q2t = Quaternion.conjugate(b.orientation, new Quaternion());
+  var q1t = Quaternion.conjugate(a.orientation, new Quaternion());
+  var q2t = Quaternion.conjugate(b.orientation, new Quaternion());
 
-    this.rA = Vec3.subtract(w, a.position, new Vec3());
-    this.rB = Vec3.subtract(w, b.position, new Vec3());
+  this.rA = Vec3.subtract(w, a.position, new Vec3());
+  this.rB = Vec3.subtract(w, b.position, new Vec3());
 
-    this.bodyRA = q1t.rotateVector(this.rA, new Vec3());
-    this.bodyRB = q2t.rotateVector(this.rB, new Vec3());
+  this.bodyRA = q1t.rotateVector(this.rA, new Vec3());
+  this.bodyRB = q2t.rotateVector(this.rB, new Vec3());
 };
 
 /**
@@ -91,47 +91,47 @@ BallAndSocket.prototype.init = function() {
  * @return {undefined} undefined
  */
 BallAndSocket.prototype.update = function(time, dt) {
-    var a = this.a;
-    var b = this.b;
+  var a = this.a;
+  var b = this.b;
 
-    var rA = a.orientation.rotateVector(this.bodyRA, this.rA);
-    var rB = b.orientation.rotateVector(this.bodyRB, this.rB);
+  var rA = a.orientation.rotateVector(this.bodyRA, this.rA);
+  var rB = b.orientation.rotateVector(this.bodyRB, this.rB);
 
-    var xRA = new Mat33([0,rA.z,-rA.y,-rA.z,0,rA.x,rA.y,-rA.x,0]);
-    var xRB = new Mat33([0,rB.z,-rB.y,-rB.z,0,rB.x,rB.y,-rB.x,0]);
+  var xRA = new Mat33([0, rA.z, -rA.y, -rA.z, 0, rA.x, rA.y, -rA.x, 0]);
+  var xRB = new Mat33([0, rB.z, -rB.y, -rB.z, 0, rB.x, rB.y, -rB.x, 0]);
 
-    var RIaRt = Mat33.multiply(xRA, a.inverseInertia, new Mat33()).multiply(xRA.transpose());
-    var RIbRt = Mat33.multiply(xRB, b.inverseInertia, new Mat33()).multiply(xRB.transpose());
+  var RIaRt = Mat33.multiply(xRA, a.inverseInertia, new Mat33()).multiply(xRA.transpose());
+  var RIbRt = Mat33.multiply(xRB, b.inverseInertia, new Mat33()).multiply(xRB.transpose());
 
-    var invEffInertia = Mat33.add(RIaRt, RIbRt, RIaRt);
+  var invEffInertia = Mat33.add(RIaRt, RIbRt, RIaRt);
 
-    var worldA = Vec3.add(a.position, this.rA, this.anchor);
-    var worldB = Vec3.add(b.position, this.rB, VEC2_REGISTER);
+  var worldA = Vec3.add(a.position, this.rA, this.anchor);
+  var worldB = Vec3.add(b.position, this.rB, VEC2_REGISTER);
 
-    Vec3.subtract(worldB, worldA, this.error);
-    this.error.scale(0.2/dt);
+  Vec3.subtract(worldB, worldA, this.error);
+  this.error.scale(0.2 / dt);
 
-    var imA = a.inverseMass;
-    var imB = b.inverseMass;
+  var imA = a.inverseMass;
+  var imB = b.inverseMass;
 
-    var invEffMass = new Mat33([imA + imB,0,0,0,imA + imB,0,0,0,imA + imB]);
+  var invEffMass = new Mat33([imA + imB, 0, 0, 0, imA + imB, 0, 0, 0, imA + imB]);
 
-    Mat33.add(invEffInertia, invEffMass, this.effMassMatrix);
-    this.effMassMatrix.inverse();
+  Mat33.add(invEffInertia, invEffMass, this.effMassMatrix);
+  this.effMassMatrix.inverse();
 
-    var impulse = this.impulse;
-    var angImpulseA = this.angImpulseA;
-    var angImpulseB = this.angImpulseB;
+  var impulse = this.impulse;
+  var angImpulseA = this.angImpulseA;
+  var angImpulseB = this.angImpulseB;
 
-    b.applyImpulse(impulse);
-    b.applyAngularImpulse(angImpulseB);
-    impulse.invert();
-    a.applyImpulse(impulse);
-    a.applyAngularImpulse(angImpulseA);
+  b.applyImpulse(impulse);
+  b.applyAngularImpulse(angImpulseB);
+  impulse.invert();
+  a.applyImpulse(impulse);
+  a.applyAngularImpulse(angImpulseA);
 
-    impulse.clear();
-    angImpulseA.clear();
-    angImpulseB.clear();
+  impulse.clear();
+  angImpulseA.clear();
+  angImpulseB.clear();
 };
 
 /**
@@ -141,29 +141,29 @@ BallAndSocket.prototype.update = function(time, dt) {
  * @return {undefined} undefined
  */
 BallAndSocket.prototype.resolve = function resolve() {
-    var a = this.a;
-    var b = this.b;
+  var a = this.a;
+  var b = this.b;
 
-    var rA = this.rA;
-    var rB = this.rB;
+  var rA = this.rA;
+  var rB = this.rB;
 
-    var v1 = Vec3.add(a.velocity, Vec3.cross(a.angularVelocity, rA, WxR_REGISTER), VB1_REGISTER);
-    var v2 = Vec3.add(b.velocity, Vec3.cross(b.angularVelocity, rB, WxR_REGISTER), VB2_REGISTER);
+  var v1 = Vec3.add(a.velocity, Vec3.cross(a.angularVelocity, rA, WxR_REGISTER), VB1_REGISTER);
+  var v2 = Vec3.add(b.velocity, Vec3.cross(b.angularVelocity, rB, WxR_REGISTER), VB2_REGISTER);
 
-    var impulse = v1.subtract(v2).subtract(this.error).applyMatrix(this.effMassMatrix);
-    var angImpulseB = Vec3.cross(rB, impulse, VEC1_REGISTER);
-    var angImpulseA = Vec3.cross(rA, impulse, VEC2_REGISTER).invert();
+  var impulse = v1.subtract(v2).subtract(this.error).applyMatrix(this.effMassMatrix);
+  var angImpulseB = Vec3.cross(rB, impulse, VEC1_REGISTER);
+  var angImpulseA = Vec3.cross(rA, impulse, VEC2_REGISTER).invert();
 
-    b.applyImpulse(impulse);
-    b.applyAngularImpulse(angImpulseB);
-    impulse.invert();
-    a.applyImpulse(impulse);
-    a.applyAngularImpulse(angImpulseA);
-    impulse.invert();
+  b.applyImpulse(impulse);
+  b.applyAngularImpulse(angImpulseB);
+  impulse.invert();
+  a.applyImpulse(impulse);
+  a.applyAngularImpulse(angImpulseA);
+  impulse.invert();
 
-    this.impulse.add(impulse);
-    this.angImpulseA.add(angImpulseA);
-    this.angImpulseB.add(angImpulseB);
+  this.impulse.add(impulse);
+  this.angImpulseA.add(angImpulseA);
+  this.angImpulseB.add(angImpulseB);
 };
 
 module.exports = BallAndSocket;

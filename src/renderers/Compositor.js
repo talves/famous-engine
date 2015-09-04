@@ -41,26 +41,26 @@ var Commands = require('../core/Commands');
  * @return {undefined} undefined
  */
 function Compositor() {
-    injectCSS();
+  injectCSS();
 
-    this._contexts = {};
-    this._outCommands = [];
-    this._inCommands = [];
-    this._time = null;
+  this._contexts = {};
+  this._outCommands = [];
+  this._inCommands = [];
+  this._time = null;
 
-    this._resized = false;
+  this._resized = false;
 
-    var _this = this;
-    window.addEventListener('resize', function() {
-        _this.onResize();
-    });
+  var _this = this;
+  window.addEventListener('resize', function() {
+    _this.onResize();
+  });
 }
 
-Compositor.prototype.onResize = function onResize () {
-    this._resized = true;
-    for (var selector in this._contexts) {
-        this._contexts[selector].updateSize();
-    }
+Compositor.prototype.onResize = function onResize() {
+  this._resized = true;
+  for (var selector in this._contexts) {
+    this._contexts[selector].updateSize();
+  }
 };
 
 /**
@@ -76,7 +76,7 @@ Compositor.prototype.onResize = function onResize () {
  * @return {Number} time The clock time used in core.
  */
 Compositor.prototype.getTime = function getTime() {
-    return this._time;
+  return this._time;
 };
 
 /**
@@ -95,7 +95,7 @@ Compositor.prototype.getTime = function getTime() {
  * @return {undefined} undefined
  */
 Compositor.prototype.sendEvent = function sendEvent(path, ev, payload) {
-    this._outCommands.push(Commands.WITH, path, Commands.TRIGGER, ev, payload);
+  this._outCommands.push(Commands.WITH, path, Commands.TRIGGER, ev, payload);
 };
 
 /**
@@ -111,8 +111,8 @@ Compositor.prototype.sendEvent = function sendEvent(path, ev, payload) {
  *
  * @return {undefined} undefined
  */
-Compositor.prototype.sendResize = function sendResize (selector, size) {
-    this.sendEvent(selector, 'CONTEXT_RESIZE', size);
+Compositor.prototype.sendResize = function sendResize(selector, size) {
+  this.sendEvent(selector, 'CONTEXT_RESIZE', size);
 };
 
 /**
@@ -129,11 +129,11 @@ Compositor.prototype.sendResize = function sendResize (selector, size) {
  *
  * @return {undefined} undefined
  */
-Compositor.prototype.handleWith = function handleWith (iterator, commands) {
-    var path = commands[iterator];
-    var pathArr = path.split('/');
-    var context = this.getOrSetContext(pathArr.shift());
-    return context.receive(path, commands, iterator);
+Compositor.prototype.handleWith = function handleWith(iterator, commands) {
+  var path = commands[iterator];
+  var pathArr = path.split('/');
+  var context = this.getOrSetContext(pathArr.shift());
+  return context.receive(path, commands, iterator);
 };
 
 /**
@@ -148,14 +148,13 @@ Compositor.prototype.handleWith = function handleWith (iterator, commands) {
  * @return {Context} context
  */
 Compositor.prototype.getOrSetContext = function getOrSetContext(selector) {
-    if (this._contexts[selector]) {
-        return this._contexts[selector];
-    }
-    else {
-        var context = new Context(selector, this);
-        this._contexts[selector] = context;
-        return context;
-    }
+  if (this._contexts[selector]) {
+    return this._contexts[selector];
+  } else {
+    var context = new Context(selector, this);
+    this._contexts[selector] = context;
+    return context;
+  }
 };
 
 /**
@@ -168,8 +167,8 @@ Compositor.prototype.getOrSetContext = function getOrSetContext(selector) {
  * @return {Context}            The repsective context.
  */
 Compositor.prototype.getContext = function getContext(selector) {
-    if (this._contexts[selector])
-        return this._contexts[selector];
+  if (this._contexts[selector])
+    return this._contexts[selector];
 };
 
 /**
@@ -182,35 +181,35 @@ Compositor.prototype.getContext = function getContext(selector) {
  * @return {Array} outCommands set of commands to be sent back
  */
 Compositor.prototype.drawCommands = function drawCommands() {
-    var commands = this._inCommands;
-    var localIterator = 0;
-    var command = commands[localIterator];
-    while (command) {
-        switch (command) {
-            case Commands.TIME:
-                this._time = commands[++localIterator];
-                break;
-            case Commands.WITH:
-                localIterator = this.handleWith(++localIterator, commands);
-                break;
-            case Commands.NEED_SIZE_FOR:
-                this.giveSizeFor(++localIterator, commands);
-                break;
-        }
-        command = commands[++localIterator];
+  var commands = this._inCommands;
+  var localIterator = 0;
+  var command = commands[localIterator];
+  while (command) {
+    switch (command) {
+      case Commands.TIME:
+        this._time = commands[++localIterator];
+        break;
+      case Commands.WITH:
+        localIterator = this.handleWith(++localIterator, commands);
+        break;
+      case Commands.NEED_SIZE_FOR:
+        this.giveSizeFor(++localIterator, commands);
+        break;
     }
+    command = commands[++localIterator];
+  }
 
-    // TODO: Switch to associative arrays here...
+  // TODO: Switch to associative arrays here...
 
-    for (var key in this._contexts) {
-        this._contexts[key].draw();
-    }
+  for (var key in this._contexts) {
+    this._contexts[key].draw();
+  }
 
-    if (this._resized) {
-        this.updateSize();
-    }
+  if (this._resized) {
+    this.updateSize();
+  }
 
-    return this._outCommands;
+  return this._outCommands;
 };
 
 
@@ -225,9 +224,9 @@ Compositor.prototype.drawCommands = function drawCommands() {
  * @return {undefined} undefined
  */
 Compositor.prototype.updateSize = function updateSize() {
-    for (var selector in this._contexts) {
-        this._contexts[selector].updateSize();
-    }
+  for (var selector in this._contexts) {
+    this._contexts[selector].updateSize();
+  }
 };
 
 /**
@@ -242,14 +241,14 @@ Compositor.prototype.updateSize = function updateSize() {
  * @return {undefined} undefined
  */
 Compositor.prototype.receiveCommands = function receiveCommands(commands) {
-    var len = commands.length;
-    for (var i = 0; i < len; i++) {
-        this._inCommands.push(commands[i]);
-    }
+  var len = commands.length;
+  for (var i = 0; i < len; i++) {
+    this._inCommands.push(commands[i]);
+  }
 
-    for (var selector in this._contexts) {
-        this._contexts[selector].checkInit();
-    }
+  for (var selector in this._contexts) {
+    this._contexts[selector].checkInit();
+  }
 };
 
 /**
@@ -265,15 +264,14 @@ Compositor.prototype.receiveCommands = function receiveCommands(commands) {
  * @return {undefined} undefined
  */
 Compositor.prototype.giveSizeFor = function giveSizeFor(iterator, commands) {
-    var selector = commands[iterator];
-    var context = this.getContext(selector);
-    if (context) {
-        var size = context.getRootSize();
-        this.sendResize(selector, size);
-    }
-    else {
-        this.getOrSetContext(selector);
-    }
+  var selector = commands[iterator];
+  var context = this.getContext(selector);
+  if (context) {
+    var size = context.getRootSize();
+    this.sendResize(selector, size);
+  } else {
+    this.getOrSetContext(selector);
+  }
 };
 
 /**
@@ -285,9 +283,9 @@ Compositor.prototype.giveSizeFor = function giveSizeFor(iterator, commands) {
  * @return {undefined} undefined
  */
 Compositor.prototype.clearCommands = function clearCommands() {
-    this._inCommands.length = 0;
-    this._outCommands.length = 0;
-    this._resized = false;
+  this._inCommands.length = 0;
+  this._outCommands.length = 0;
+  this._resized = false;
 };
 
 module.exports = Compositor;

@@ -46,13 +46,13 @@ var PREFIXES = ['', '-ms-', '-webkit-', '-moz-', '-o-'];
  *                              property (e.g. `-webkit-border-radius`).
  */
 function vendorPrefix(property) {
-    for (var i = 0; i < PREFIXES.length; i++) {
-        var prefixed = PREFIXES[i] + property;
-        if (document.documentElement.style[prefixed] === '') {
-            return prefixed;
-        }
+  for (var i = 0; i < PREFIXES.length; i++) {
+    var prefixed = PREFIXES[i] + property;
+    if (document.documentElement.style[prefixed] === '') {
+      return prefixed;
     }
-    return property;
+  }
+  return property;
 }
 
 module.exports = vendorPrefix;

@@ -36,16 +36,16 @@ var Transitionable = require('../transitions/Transitionable');
  * @param {Node} node Node that the Position component will be attached to
  */
 function Position(node) {
-    this._node = node;
-    this._id = node.addComponent(this);
-  
-    this._requestingUpdate = false;
-    
-    var initialPosition = node.getPosition();
+  this._node = node;
+  this._id = node.addComponent(this);
 
-    this._x = new Transitionable(initialPosition[0]);
-    this._y = new Transitionable(initialPosition[1]);
-    this._z = new Transitionable(initialPosition[2]);
+  this._requestingUpdate = false;
+
+  var initialPosition = node.getPosition();
+
+  this._x = new Transitionable(initialPosition[0]);
+  this._y = new Transitionable(initialPosition[1]);
+  this._z = new Transitionable(initialPosition[2]);
 }
 
 /**
@@ -56,7 +56,7 @@ function Position(node) {
  * @return {String} Name of the component
  */
 Position.prototype.toString = function toString() {
-    return 'Position';
+  return 'Position';
 };
 
 /**
@@ -67,12 +67,12 @@ Position.prototype.toString = function toString() {
  * @return {Object} the internal state of the component
  */
 Position.prototype.getValue = function getValue() {
-    return {
-        component: this.toString(),
-        x: this._x.get(),
-        y: this._y.get(),
-        z: this._z.get()
-    };
+  return {
+    component: this.toString(),
+    x: this._x.get(),
+    y: this._y.get(),
+    z: this._z.get()
+  };
 };
 
 /**
@@ -85,11 +85,11 @@ Position.prototype.getValue = function getValue() {
  * @return {Boolean} status of the set
  */
 Position.prototype.setValue = function setValue(state) {
-    if (this.toString() === state.component) {
-        this.set(state.x, state.y, state.z);
-        return true;
-    }
-    return false;
+  if (this.toString() === state.component) {
+    this.set(state.x, state.y, state.z);
+    return true;
+  }
+  return false;
 };
 
 /**
@@ -100,7 +100,7 @@ Position.prototype.setValue = function setValue(state) {
  * @return {Number} the Node's translation along its x-axis
  */
 Position.prototype.getX = function getX() {
-    return this._x.get();
+  return this._x.get();
 };
 
 /**
@@ -111,7 +111,7 @@ Position.prototype.getX = function getX() {
  * @return {Number} the Node's translation along its Y-axis
  */
 Position.prototype.getY = function getY() {
-    return this._y.get();
+  return this._y.get();
 };
 
 /**
@@ -122,7 +122,7 @@ Position.prototype.getY = function getY() {
  * @return {Number} the Node's translation along its z-axis
  */
 Position.prototype.getZ = function getZ() {
-    return this._z.get();
+  return this._z.get();
 };
 
 /**
@@ -133,7 +133,7 @@ Position.prototype.getZ = function getZ() {
  * @return {Boolean} whether or not the Position is changing the Node's position
  */
 Position.prototype.isActive = function isActive() {
-    return this._x.isActive() || this._y.isActive() || this._z.isActive();
+  return this._x.isActive() || this._y.isActive() || this._z.isActive();
 };
 
 /**
@@ -145,8 +145,9 @@ Position.prototype.isActive = function isActive() {
  * @return {undefined} undefined
  */
 Position.prototype._checkUpdate = function _checkUpdate() {
-    if (this.isActive()) this._node.requestUpdateOnNextTick(this._id);
-    else this._requestingUpdate = false;
+  if (this.isActive()) this._node.requestUpdateOnNextTick(this._id);
+  else
+    this._requestingUpdate = false;
 };
 
 /**
@@ -157,9 +158,9 @@ Position.prototype._checkUpdate = function _checkUpdate() {
  *
  * @return {undefined} undefined
  */
-Position.prototype.update = function update () {
-    this._node.setPosition(this._x.get(), this._y.get(), this._z.get());
-    this._checkUpdate();
+Position.prototype.update = function update() {
+  this._node.setPosition(this._x.get(), this._y.get(), this._z.get());
+  this._checkUpdate();
 };
 
 Position.prototype.onUpdate = Position.prototype.update;
@@ -176,13 +177,13 @@ Position.prototype.onUpdate = Position.prototype.update;
  * @return {Position} this
  */
 Position.prototype.setX = function setX(val, transition, callback) {
-    if (!this._requestingUpdate) {
-        this._node.requestUpdate(this._id);
-        this._requestingUpdate = true;
-    }
+  if (!this._requestingUpdate) {
+    this._node.requestUpdate(this._id);
+    this._requestingUpdate = true;
+  }
 
-    this._x.set(val, transition, callback);
-    return this;
+  this._x.set(val, transition, callback);
+  return this;
 };
 
 /** 
@@ -197,13 +198,13 @@ Position.prototype.setX = function setX(val, transition, callback) {
  * @return {Position} this
  */
 Position.prototype.setY = function setY(val, transition, callback) {
-    if (!this._requestingUpdate) {
-        this._node.requestUpdate(this._id);
-        this._requestingUpdate = true;
-    }
+  if (!this._requestingUpdate) {
+    this._node.requestUpdate(this._id);
+    this._requestingUpdate = true;
+  }
 
-    this._y.set(val, transition, callback);
-    return this;
+  this._y.set(val, transition, callback);
+  return this;
 };
 
 /** 
@@ -218,13 +219,13 @@ Position.prototype.setY = function setY(val, transition, callback) {
  * @return {Position} this
  */
 Position.prototype.setZ = function setZ(val, transition, callback) {
-    if (!this._requestingUpdate) {
-        this._node.requestUpdate(this._id);
-        this._requestingUpdate = true;
-    }
+  if (!this._requestingUpdate) {
+    this._node.requestUpdate(this._id);
+    this._requestingUpdate = true;
+  }
 
-    this._z.set(val, transition, callback);
-    return this;
+  this._z.set(val, transition, callback);
+  return this;
 };
 
 
@@ -242,30 +243,28 @@ Position.prototype.setZ = function setZ(val, transition, callback) {
  * @return {Position} this
  */
 Position.prototype.set = function set(x, y, z, transition, callback) {
-    if (!this._requestingUpdate) {
-        this._node.requestUpdate(this._id);
-        this._requestingUpdate = true;
-    }
+  if (!this._requestingUpdate) {
+    this._node.requestUpdate(this._id);
+    this._requestingUpdate = true;
+  }
 
-    var xCallback;
-    var yCallback;
-    var zCallback;
+  var xCallback;
+  var yCallback;
+  var zCallback;
 
-    if (z != null) {
-        zCallback = callback;
-    }
-    else if (y != null) {
-        yCallback = callback;
-    }
-    else if (x != null) {
-        xCallback = callback;
-    }
+  if (z != null) {
+    zCallback = callback;
+  } else if (y != null) {
+    yCallback = callback;
+  } else if (x != null) {
+    xCallback = callback;
+  }
 
-    if (x != null) this._x.set(x, transition, xCallback);
-    if (y != null) this._y.set(y, transition, yCallback);
-    if (z != null) this._z.set(z, transition, zCallback);
+  if (x != null) this._x.set(x, transition, xCallback);
+  if (y != null) this._y.set(y, transition, yCallback);
+  if (z != null) this._z.set(z, transition, zCallback);
 
-    return this;
+  return this;
 };
 
 /**
@@ -276,10 +275,10 @@ Position.prototype.set = function set(x, y, z, transition, callback) {
  * @return {Position} this
  */
 Position.prototype.halt = function halt() {
-    this._x.halt();
-    this._y.halt();
-    this._z.halt();
-    return this;
+  this._x.halt();
+  this._y.halt();
+  this._z.halt();
+  return this;
 };
 
 module.exports = Position;

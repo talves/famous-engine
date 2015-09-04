@@ -35,16 +35,16 @@ var now = require('./now');
  * @class ContainerLoop
  */
 function ContainerLoop() {
-    this._updates = [];
-    this._stoppedAt = now();
-    this._sleep = 0;
+  this._updates = [];
+  this._stoppedAt = now();
+  this._sleep = 0;
 
-    this.start();
+  this.start();
 
-    var _this = this;
-    window.addEventListener('message', function(ev) {
-        _this._onWindowMessage(ev);
-    });
+  var _this = this;
+  window.addEventListener('message', function(ev) {
+    _this._onWindowMessage(ev);
+  });
 }
 
 /**
@@ -58,13 +58,13 @@ function ContainerLoop() {
  * @return {ContainerLoop} this
  */
 ContainerLoop.prototype._onWindowMessage = function _onWindowMessage(ev) {
-    if (
-        this._running &&
-        ev.data.constructor === Array &&
-        ev.data[0] === 'FRAME'
-    ) {
-        this.step(ev.data[1] - this._sleep);
-    }
+  if (
+    this._running &&
+    ev.data.constructor === Array &&
+    ev.data[0] === 'FRAME'
+  ) {
+    this.step(ev.data[1] - this._sleep);
+  }
 };
 
 /**
@@ -75,9 +75,9 @@ ContainerLoop.prototype._onWindowMessage = function _onWindowMessage(ev) {
  * @return {ContainerLoop} this
  */
 ContainerLoop.prototype.start = function start() {
-    this._running = true;
-    this._sleep += now() - this._stoppedAt;
-    return this;
+  this._running = true;
+  this._sleep += now() - this._stoppedAt;
+  return this;
 };
 
 /**
@@ -88,9 +88,9 @@ ContainerLoop.prototype.start = function start() {
  * @return {ContainerLoop} this
  */
 ContainerLoop.prototype.stop = function stop() {
-    this._running = false;
-    this._stoppedAt = now();
-    return this;
+  this._running = false;
+  this._stoppedAt = now();
+  return this;
 };
 
 /**
@@ -101,7 +101,7 @@ ContainerLoop.prototype.stop = function stop() {
  * @return {Boolean} boolean value indicating whether the ContainerLoop is currently running or not
  */
 ContainerLoop.prototype.isRunning = function isRunning() {
-    return this._running;
+  return this._running;
 };
 
 /**
@@ -113,11 +113,11 @@ ContainerLoop.prototype.isRunning = function isRunning() {
  *
  * @return {ContainerLoop} this
  */
-ContainerLoop.prototype.step = function step (time) {
-    for (var i = 0, len = this._updates.length ; i < len ; i++) {
-        this._updates[i].update(time);
-    }
-    return this;
+ContainerLoop.prototype.step = function step(time) {
+  for (var i = 0, len = this._updates.length; i < len; i++) {
+    this._updates[i].update(time);
+  }
+  return this;
 };
 
 /**
@@ -132,10 +132,10 @@ ContainerLoop.prototype.step = function step (time) {
  * @return {ContainerLoop} this
  */
 ContainerLoop.prototype.update = function update(updateable) {
-    if (this._updates.indexOf(updateable) === -1) {
-        this._updates.push(updateable);
-    }
-    return this;
+  if (this._updates.indexOf(updateable) === -1) {
+    this._updates.push(updateable);
+  }
+  return this;
 };
 
 /**
@@ -149,11 +149,11 @@ ContainerLoop.prototype.update = function update(updateable) {
  * @return {ContainerLoop} this
  */
 ContainerLoop.prototype.noLongerUpdate = function noLongerUpdate(updateable) {
-    var index = this._updates.indexOf(updateable);
-    if (index > -1) {
-        this._updates.splice(index, 1);
-    }
-    return this;
+  var index = this._updates.indexOf(updateable);
+  if (index > -1) {
+    this._updates.splice(index, 1);
+  }
+  return this;
 };
 
 module.exports = ContainerLoop;

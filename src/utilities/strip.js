@@ -40,25 +40,25 @@
  *                              primitive types (serializable).
  */
 function strip(obj) {
-    switch (obj) {
-        case null:
-        case undefined:
-            return obj;
-    }
-    switch (obj.constructor) {
-        case Boolean:
-        case Number:
-        case String:
-            return obj;
-        case Object:
-            for (var key in obj) {
-                var stripped = strip(obj[key], true);
-                obj[key] = stripped;
-            }
-            return obj;
-        default:
-            return null;
-    }
+  switch (obj) {
+    case null:
+    case undefined:
+      return obj;
+  }
+  switch (obj.constructor) {
+    case Boolean:
+    case Number:
+    case String:
+      return obj;
+    case Object:
+      for (var key in obj) {
+        var stripped = strip(obj[key], true);
+        obj[key] = stripped;
+      }
+      return obj;
+    default:
+      return null;
+  }
 }
 
 module.exports = strip;

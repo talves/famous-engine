@@ -25,14 +25,14 @@
 'use strict';
 
 module.exports = {
-    Buffer: require('./Buffer'),
-    BufferRegistry: require('./BufferRegistry'),
-    compileMaterial: require('./compileMaterial'),
-    createCheckerboard: require('./createCheckerboard'),
-    Debug: require('./Debug'),
-    Program: require('./Program'),
-    radixSort: require('./radixSort'),
-    Texture: require('./Texture'),
-    TextureManager: require('./TextureManager'),
-    WebGLRenderer: require('./WebGLRenderer')
+  Buffer: require('./Buffer'),
+  BufferRegistry: require('./BufferRegistry'),
+  compileMaterial: require('./compileMaterial'),
+  createCheckerboard: require('./createCheckerboard'),
+  Debug: require('./Debug'),
+  Program: require('./Program'),
+  radixSort: require('./radixSort'),
+  Texture: require('./Texture'),
+  TextureManager: require('./TextureManager'),
+  WebGLRenderer: require('./WebGLRenderer')
 };

@@ -36,10 +36,10 @@ var PathUtils = require('./Path');
  * @class
  *
  */
-function PathStore () {
-    this.items = [];
-    this.paths = [];
-    this.memo = {};
+function PathStore() {
+  this.items = [];
+  this.paths = [];
+  this.memo = {};
 }
 
 /**
@@ -53,44 +53,44 @@ function PathStore () {
  *
  * @return {undefined} undefined
  */
-PathStore.prototype.insert = function insert (path, item) {
-    var paths = this.paths;
-    var index = paths.indexOf(path);
-    if (index !== -1)
-        throw new Error('item already exists at path: ' + path);
+PathStore.prototype.insert = function insert(path, item) {
+  var paths = this.paths;
+  var index = paths.indexOf(path);
+  if (index !== -1)
+    throw new Error('item already exists at path: ' + path);
 
-    var i = 0;
-    var targetDepth = PathUtils.depth(path);
-    var targetIndex = PathUtils.index(path);
+  var i = 0;
+  var targetDepth = PathUtils.depth(path);
+  var targetIndex = PathUtils.index(path);
 
-    // The item will be inserted at a point in the array
-    // such that it is within its own breadth in the tree
-    // that the paths represent
-    while (
-        paths[i] &&
-        targetDepth >= PathUtils.depth(paths[i])
-    ) i++;
+  // The item will be inserted at a point in the array
+  // such that it is within its own breadth in the tree
+  // that the paths represent
+  while (
+    paths[i] &&
+    targetDepth >= PathUtils.depth(paths[i])
+  ) i++;
 
-    // The item will be sorted within its breadth by index
-    // in regard to its siblings.
-    while (
-        paths[i] &&
-        targetDepth === PathUtils.depth(paths[i]) &&
-        targetIndex < PathUtils.index(paths[i])
-    ) i++;
+  // The item will be sorted within its breadth by index
+  // in regard to its siblings.
+  while (
+    paths[i] &&
+    targetDepth === PathUtils.depth(paths[i]) &&
+    targetIndex < PathUtils.index(paths[i])
+  ) i++;
 
-    // insert the items in the path
-    paths.splice(i, 0, path);
-    this.items.splice(i, 0, item);
+  // insert the items in the path
+  paths.splice(i, 0, path);
+  this.items.splice(i, 0, item);
 
-    // store the relationship between path and index in the memo
-    this.memo[path] = i;
+  // store the relationship between path and index in the memo
+  this.memo[path] = i;
 
-    // all items behind the inserted item are now no longer
-    // accurately stored in the memo. Thus the memo must be cleared for
-    // these items.
-    for (var len = this.paths.length ; i < len ; i++)
-        this.memo[this.paths[i]] = null;
+  // all items behind the inserted item are now no longer
+  // accurately stored in the memo. Thus the memo must be cleared for
+  // these items.
+  for (var len = this.paths.length; i < len; i++)
+    this.memo[this.paths[i]] = null;
 };
 
 /**
@@ -103,19 +103,19 @@ PathStore.prototype.insert = function insert (path, item) {
  *
  * @return {undefined} undefined
  */
-PathStore.prototype.remove = function remove (path) {
-    var paths = this.paths;
-    var index = this.memo[path] ? this.memo[path] : paths.indexOf(path);
-    if (index === -1)
-        throw new Error('Cannot remove. No item exists at path: ' + path);
+PathStore.prototype.remove = function remove(path) {
+  var paths = this.paths;
+  var index = this.memo[path] ? this.memo[path] : paths.indexOf(path);
+  if (index === -1)
+    throw new Error('Cannot remove. No item exists at path: ' + path);
 
-    paths.splice(index, 1);
-    this.items.splice(index, 1);
+  paths.splice(index, 1);
+  this.items.splice(index, 1);
 
-    this.memo[path] = null;
+  this.memo[path] = null;
 
-    for (var len = this.paths.length ; index < len ; index++)
-        this.memo[this.paths[index]] = null;
+  for (var len = this.paths.length; index < len; index++)
+    this.memo[this.paths[index]] = null;
 };
 
 /**
@@ -128,16 +128,16 @@ PathStore.prototype.remove = function remove (path) {
  *
  * @return {Any | undefined} the item stored or undefined
  */
-PathStore.prototype.get = function get (path) {
-    if (this.memo[path]) return this.items[this.memo[path]];
+PathStore.prototype.get = function get(path) {
+  if (this.memo[path]) return this.items[this.memo[path]];
 
-    var index = this.paths.indexOf(path);
+  var index = this.paths.indexOf(path);
 
-    if (index === -1) return void 0;
+  if (index === -1) return void 0;
 
-    this.memo[path] = index;
+  this.memo[path] = index;
 
-    return this.items[index];
+  return this.items[index];
 };
 
 /**
@@ -148,8 +148,8 @@ PathStore.prototype.get = function get (path) {
  *
  * @return {Array} items currently stored
  */
-PathStore.prototype.getItems = function getItems () {
-    return this.items;
+PathStore.prototype.getItems = function getItems() {
+  return this.items;
 };
 
 /**
@@ -160,8 +160,8 @@ PathStore.prototype.getItems = function getItems () {
  *
  * @return {Array} paths currently stored
  */
-PathStore.prototype.getPaths = function getPaths () {
-    return this.paths;
+PathStore.prototype.getPaths = function getPaths() {
+  return this.paths;
 };
 
 module.exports = PathStore;

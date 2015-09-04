@@ -25,6 +25,6 @@
 'use strict';
 
 module.exports = {
-    Curves: require('./Curves'),
-    Transitionable: require('./Transitionable')
+  Curves: require('./Curves'),
+  Transitionable: require('./Transitionable')
 };

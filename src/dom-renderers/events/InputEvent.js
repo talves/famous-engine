@@ -35,41 +35,41 @@ var UIEvent = require('./UIEvent');
  * @param {Event} ev The native DOM event.
  */
 function InputEvent(ev) {
-    // [Constructor(DOMString typeArg, optional InputEventInit inputEventInitDict)]
-    // interface InputEvent : UIEvent {
-    //     readonly    attribute DOMString inputType;
-    //     readonly    attribute DOMString data;
-    //     readonly    attribute boolean   isComposing;
-    //     readonly    attribute Range     targetRange;
-    // };
+  // [Constructor(DOMString typeArg, optional InputEventInit inputEventInitDict)]
+  // interface InputEvent : UIEvent {
+  //     readonly    attribute DOMString inputType;
+  //     readonly    attribute DOMString data;
+  //     readonly    attribute boolean   isComposing;
+  //     readonly    attribute Range     targetRange;
+  // };
 
-    UIEvent.call(this, ev);
+  UIEvent.call(this, ev);
 
-    /**
-     * @name    InputEvent#inputType
-     * @type    String
-     */
-    this.inputType = ev.inputType;
+  /**
+   * @name    InputEvent#inputType
+   * @type    String
+   */
+  this.inputType = ev.inputType;
 
-    /**
-     * @name    InputEvent#data
-     * @type    String
-     */
-    this.data = ev.data;
+  /**
+   * @name    InputEvent#data
+   * @type    String
+   */
+  this.data = ev.data;
 
-    /**
-     * @name    InputEvent#isComposing
-     * @type    Boolean
-     */
-    this.isComposing = ev.isComposing;
+  /**
+   * @name    InputEvent#isComposing
+   * @type    Boolean
+   */
+  this.isComposing = ev.isComposing;
 
-    /**
-     * **Limited browser support**.
-     *
-     * @name    InputEvent#targetRange
-     * @type    Boolean
-     */
-    this.targetRange = ev.targetRange;
+  /**
+   * **Limited browser support**.
+   *
+   * @name    InputEvent#targetRange
+   * @type    Boolean
+   */
+  this.targetRange = ev.targetRange;
 }
 
 InputEvent.prototype = Object.create(UIEvent.prototype);
@@ -82,8 +82,8 @@ InputEvent.prototype.constructor = InputEvent;
  *
  * @return {String} Name of the event type
  */
-InputEvent.prototype.toString = function toString () {
-    return 'InputEvent';
+InputEvent.prototype.toString = function toString() {
+  return 'InputEvent';
 };
 
 module.exports = InputEvent;

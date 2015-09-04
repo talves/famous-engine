@@ -33,27 +33,27 @@ var ZEROS = [0, 0, 0];
  *
  * @param {Size} parent the parent size
  */
-function Size (parent) {
+function Size(parent) {
 
-    this.finalSize = new Float32Array(3);
-    this.sizeChanged = false;
+  this.finalSize = new Float32Array(3);
+  this.sizeChanged = false;
 
-    this.sizeMode = new Uint8Array(3);
-    this.sizeModeChanged = false;
+  this.sizeMode = new Uint8Array(3);
+  this.sizeModeChanged = false;
 
-    this.absoluteSize = new Float32Array(3);
-    this.absoluteSizeChanged = false;
+  this.absoluteSize = new Float32Array(3);
+  this.absoluteSizeChanged = false;
 
-    this.proportionalSize = new Float32Array(ONES);
-    this.proportionalSizeChanged = false;
+  this.proportionalSize = new Float32Array(ONES);
+  this.proportionalSizeChanged = false;
 
-    this.differentialSize = new Float32Array(3);
-    this.differentialSizeChanged = false;
+  this.differentialSize = new Float32Array(3);
+  this.differentialSizeChanged = false;
 
-    this.renderSize = new Float32Array(3);
-    this.renderSizeChanged = false;
+  this.renderSize = new Float32Array(3);
+  this.renderSizeChanged = false;
 
-    this.parent = parent != null ? parent : null;
+  this.parent = parent != null ? parent : null;
 }
 
 // an enumeration of the different types of size modes
@@ -76,11 +76,11 @@ Size.DEFAULT = Size.RELATIVE;
  *
  * @return {Boolean} returns true if anything changed
  */
-function _vecOptionalSet (vec, index, val) {
-    if (val != null && vec[index] !== val) {
-        vec[index] = val;
-        return true;
-    } else return false;
+function _vecOptionalSet(vec, index, val) {
+  if (val != null && vec[index] !== val) {
+    vec[index] = val;
+    return true;
+  } else return false;
 }
 
 /**
@@ -96,14 +96,14 @@ function _vecOptionalSet (vec, index, val) {
  *
  * @return {Boolean} whether anything has changed
  */
-function setVec (vec, x, y, z) {
-    var propagate = false;
+function setVec(vec, x, y, z) {
+  var propagate = false;
 
-    propagate = _vecOptionalSet(vec, 0, x) || propagate;
-    propagate = _vecOptionalSet(vec, 1, y) || propagate;
-    propagate = _vecOptionalSet(vec, 2, z) || propagate;
+  propagate = _vecOptionalSet(vec, 0, x) || propagate;
+  propagate = _vecOptionalSet(vec, 1, y) || propagate;
+  propagate = _vecOptionalSet(vec, 2, z) || propagate;
 
-    return propagate;
+  return propagate;
 }
 
 /**
@@ -116,18 +116,19 @@ function setVec (vec, x, y, z) {
  *
  * @return {Number} the resolved size mode from the enumeration.
  */
-function resolveSizeMode (val) {
-    if (val.constructor === String) {
-        switch (val.toLowerCase()) {
-            case 'relative':
-            case 'default': return Size.RELATIVE;
-            case 'absolute': return Size.ABSOLUTE;
-            case 'render': return Size.RENDER;
-            default: throw new Error('unknown size mode: ' + val);
-        }
+function resolveSizeMode(val) {
+  if (val.constructor === String) {
+    switch (val.toLowerCase()) {
+      case 'relative':
+      case 'default': return Size.RELATIVE;
+      case 'absolute': return Size.ABSOLUTE;
+      case 'render': return Size.RENDER;
+      default:
+        throw new Error('unknown size mode: ' + val);
     }
-    else if (val < 0 || val > Size.RENDER) throw new Error('unknown size mode: ' + val);
-    return val;
+  } else if (val < 0 || val > Size.RENDER)
+    throw new Error('unknown size mode: ' + val);
+  return val;
 }
 
 /**
@@ -139,9 +140,9 @@ function resolveSizeMode (val) {
  *
  * @return {Size} this
  */
-Size.prototype.setParent = function setParent (parent) {
-    this.parent = parent;
-    return this;
+Size.prototype.setParent = function setParent(parent) {
+  this.parent = parent;
+  return this;
 };
 
 /**
@@ -151,8 +152,8 @@ Size.prototype.setParent = function setParent (parent) {
  *
  * @returns {Size|undefined} the parent if one exists
  */
-Size.prototype.getParent = function getParent () {
-    return this.parent;
+Size.prototype.getParent = function getParent() {
+  return this.parent;
 };
 
 /**
@@ -166,12 +167,15 @@ Size.prototype.getParent = function getParent () {
  *
  * @return {array} array of size modes
  */
-Size.prototype.setSizeMode = function setSizeMode (x, y, z) {
-    if (x != null) x = resolveSizeMode(x);
-    if (y != null) y = resolveSizeMode(y);
-    if (z != null) z = resolveSizeMode(z);
-    this.sizeModeChanged = setVec(this.sizeMode, x, y, z);
-    return this;
+Size.prototype.setSizeMode = function setSizeMode(x, y, z) {
+  if (x != null)
+    x = resolveSizeMode(x);
+  if (y != null)
+    y = resolveSizeMode(y);
+  if (z != null)
+    z = resolveSizeMode(z);
+  this.sizeModeChanged = setVec(this.sizeMode, x, y, z);
+  return this;
 };
 
 /**
@@ -181,8 +185,8 @@ Size.prototype.setSizeMode = function setSizeMode (x, y, z) {
  *
  * @return {Array} the current size mode of the this.
  */
-Size.prototype.getSizeMode = function getSizeMode () {
-    return this.sizeMode;
+Size.prototype.getSizeMode = function getSizeMode() {
+  return this.sizeMode;
 };
 
 /**
@@ -196,9 +200,9 @@ Size.prototype.getSizeMode = function getSizeMode () {
  *
  * @return {Size} this
  */
-Size.prototype.setAbsolute = function setAbsolute (x, y, z) {
-    this.absoluteSizeChanged = setVec(this.absoluteSize, x, y, z);
-    return this;
+Size.prototype.setAbsolute = function setAbsolute(x, y, z) {
+  this.absoluteSizeChanged = setVec(this.absoluteSize, x, y, z);
+  return this;
 };
 
 /**
@@ -208,8 +212,8 @@ Size.prototype.setAbsolute = function setAbsolute (x, y, z) {
  *
  * @return {array} array of absolute size
  */
-Size.prototype.getAbsolute = function getAbsolute () {
-    return this.absoluteSize;
+Size.prototype.getAbsolute = function getAbsolute() {
+  return this.absoluteSize;
 };
 
 /**
@@ -223,9 +227,9 @@ Size.prototype.getAbsolute = function getAbsolute () {
  *
  * @return {Size} this
  */
-Size.prototype.setProportional = function setProportional (x, y, z) {
-    this.proportionalSizeChanged = setVec(this.proportionalSize, x, y, z);
-    return this;
+Size.prototype.setProportional = function setProportional(x, y, z) {
+  this.proportionalSizeChanged = setVec(this.proportionalSize, x, y, z);
+  return this;
 };
 
 /**
@@ -235,8 +239,8 @@ Size.prototype.setProportional = function setProportional (x, y, z) {
  *
  * @return {array} array of proportional size
  */
-Size.prototype.getProportional = function getProportional () {
-    return this.proportionalSize;
+Size.prototype.getProportional = function getProportional() {
+  return this.proportionalSize;
 };
 
 /**
@@ -250,9 +254,9 @@ Size.prototype.getProportional = function getProportional () {
  *
  * @return {Size} this
  */
-Size.prototype.setDifferential = function setDifferential (x, y, z) {
-    this.differentialSizeChanged = setVec(this.differentialSize, x, y, z);
-    return this;
+Size.prototype.setDifferential = function setDifferential(x, y, z) {
+  this.differentialSizeChanged = setVec(this.differentialSize, x, y, z);
+  return this;
 };
 
 /**
@@ -262,8 +266,8 @@ Size.prototype.setDifferential = function setDifferential (x, y, z) {
  *
  * @return {array} array of differential size
  */
-Size.prototype.getDifferential = function getDifferential () {
-    return this.differentialSize;
+Size.prototype.getDifferential = function getDifferential() {
+  return this.differentialSize;
 };
 
 /**
@@ -277,8 +281,8 @@ Size.prototype.getDifferential = function getDifferential () {
  *
  * @return {Size} this
  */
-Size.prototype.get = function get () {
-    return this.finalSize;
+Size.prototype.get = function get() {
+  return this.finalSize;
 };
 
 /**
@@ -293,39 +297,39 @@ Size.prototype.get = function get () {
  *
  * @return {Boolean} true if the size of the node has changed.
  */
-Size.prototype.fromComponents = function fromComponents (components) {
-    var mode = this.sizeMode;
-    var target = this.finalSize;
-    var parentSize = this.parent ? this.parent.get() : ZEROS;
-    var prev;
-    var changed = false;
-    var len = components.length;
-    var j;
-    for (var i = 0 ; i < 3 ; i++) {
-        prev = target[i];
-        switch (mode[i]) {
-            case Size.RELATIVE:
-                target[i] = parentSize[i] * this.proportionalSize[i] + this.differentialSize[i];
-                break;
-            case Size.ABSOLUTE:
-                target[i] = this.absoluteSize[i];
-                break;
-            case Size.RENDER:
-                var candidate;
-                var component;
-                for (j = 0; j < len ; j++) {
-                    component = components[j];
-                    if (component && component.getRenderSize) {
-                        candidate = component.getRenderSize()[i];
-                        target[i] = target[i] < candidate || target[i] === 0 ? candidate : target[i];
-                    }
-                }
-                break;
+Size.prototype.fromComponents = function fromComponents(components) {
+  var mode = this.sizeMode;
+  var target = this.finalSize;
+  var parentSize = this.parent ? this.parent.get() : ZEROS;
+  var prev;
+  var changed = false;
+  var len = components.length;
+  var j;
+  for (var i = 0; i < 3; i++) {
+    prev = target[i];
+    switch (mode[i]) {
+      case Size.RELATIVE:
+        target[i] = parentSize[i] * this.proportionalSize[i] + this.differentialSize[i];
+        break;
+      case Size.ABSOLUTE:
+        target[i] = this.absoluteSize[i];
+        break;
+      case Size.RENDER:
+        var candidate;
+        var component;
+        for (j = 0; j < len; j++) {
+          component = components[j];
+          if (component && component.getRenderSize) {
+            candidate = component.getRenderSize()[i];
+            target[i] = target[i] < candidate || target[i] === 0 ? candidate : target[i];
+          }
         }
-        changed = changed || prev !== target[i];
+        break;
     }
-    this.sizeChanged = changed;
-    return changed;
+    changed = changed || prev !== target[i];
+  }
+  this.sizeChanged = changed;
+  return changed;
 };
 
 module.exports = Size;

@@ -36,13 +36,13 @@ var Position = require('./Position');
 * @param {Node} node Node that the MountPoint component will be attached to
  */
 function MountPoint(node) {
-    Position.call(this, node);
+  Position.call(this, node);
 
-    var initial = node.getMountPoint();
+  var initial = node.getMountPoint();
 
-    this._x.set(initial[0]);
-    this._y.set(initial[1]);
-    this._z.set(initial[2]);
+  this._x.set(initial[0]);
+  this._y.set(initial[1]);
+  this._z.set(initial[2]);
 }
 
 /**
@@ -53,7 +53,7 @@ function MountPoint(node) {
  * @return {String} Name of the component
  */
 MountPoint.prototype.toString = function toString() {
-    return 'MountPoint';
+  return 'MountPoint';
 };
 
 MountPoint.prototype = Object.create(Position.prototype);
@@ -68,8 +68,8 @@ MountPoint.prototype.constructor = MountPoint;
  * @return {undefined} undefined
  */
 MountPoint.prototype.update = function update() {
-    this._node.setMountPoint(this._x.get(), this._y.get(), this._z.get());
-    this._checkUpdate();
+  this._node.setMountPoint(this._x.get(), this._y.get(), this._z.get());
+  this._checkUpdate();
 };
 
 MountPoint.prototype.onUpdate = MountPoint.prototype.update;

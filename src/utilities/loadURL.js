@@ -36,14 +36,14 @@
  * @return {undefined} undefined
  */
 var loadURL = function loadURL(url, callback) {
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function onreadystatechange() {
-        if (this.readyState === 4) {
-            if (callback) callback(this.responseText);
-        }
-    };
-    xhr.open('GET', url);
-    xhr.send();
+  var xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = function onreadystatechange() {
+    if (this.readyState === 4) {
+      if (callback) callback(this.responseText);
+    }
+  };
+  xhr.open('GET', url);
+  xhr.send();
 };
 
 module.exports = loadURL;

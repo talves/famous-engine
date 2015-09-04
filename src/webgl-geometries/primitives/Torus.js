@@ -41,27 +41,41 @@ var GeometryHelper = require('../GeometryHelper');
  */
 
 function Torus(options) {
-    if (!(this instanceof Torus)) return new Torus(options);
+  if (!(this instanceof Torus)) return new Torus(options);
 
-    options = options || {};
-    var detail = options.detail || 30;
-    var holeRadius = options.holeRadius || 0.80;
-    var tubeRadius = options.tubeRadius || 0.20;
+  options = options || {};
+  var detail = options.detail || 30;
+  var holeRadius = options.holeRadius || 0.80;
+  var tubeRadius = options.tubeRadius || 0.20;
 
-    var buffers = GeometryHelper.generateParametric(
-        detail,
-        detail,
-        Torus.generator.bind(null, holeRadius, tubeRadius)
-    );
+  var buffers = GeometryHelper.generateParametric(
+    detail,
+    detail,
+    Torus.generator.bind(null, holeRadius, tubeRadius)
+  );
 
-    options.buffers = [
-        { name: 'a_pos', data: buffers.vertices },
-        { name: 'a_texCoord', data: GeometryHelper.getSpheroidUV(buffers.vertices), size: 2 },
-        { name: 'a_normals', data: GeometryHelper.computeNormals(buffers.vertices, buffers.indices) },
-        { name: 'indices', data: buffers.indices, size: 1 }
-    ];
+  options.buffers = [
+    {
+      name: 'a_pos',
+      data: buffers.vertices
+    },
+    {
+      name: 'a_texCoord',
+      data: GeometryHelper.getSpheroidUV(buffers.vertices),
+      size: 2
+    },
+    {
+      name: 'a_normals',
+      data: GeometryHelper.computeNormals(buffers.vertices, buffers.indices)
+    },
+    {
+      name: 'indices',
+      data: buffers.indices,
+      size: 1
+    }
+  ];
 
-    Geometry.call(this, options);
+  Geometry.call(this, options);
 }
 
 Torus.prototype = Object.create(Geometry.prototype);
@@ -81,9 +95,9 @@ Torus.prototype.constructor = Torus;
  * @return {undefined} undefined
  */
 Torus.generator = function generator(c, a, u, v, pos) {
-    pos[0] = (c + a * Math.cos(2 * v)) * Math.sin(2 * u);
-    pos[1] = -(c + a * Math.cos(2 * v)) * Math.cos(2 * u);
-    pos[2] = a * Math.sin(2 * v);
+  pos[0] = (c + a * Math.cos(2 * v)) * Math.sin(2 * u);
+  pos[1] = -(c + a * Math.cos(2 * v)) * Math.cos(2 * u);
+  pos[2] = a * Math.sin(2 * v);
 };
 
 module.exports = Torus;

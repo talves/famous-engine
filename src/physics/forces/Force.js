@@ -34,16 +34,19 @@ var _ID = 0;
  * @param {Object} options The options hash.
  */
 function Force(targets, options) {
-    if (targets) {
-        if (targets instanceof Array) this.targets = targets;
-        else this.targets = [targets];
-    }
-    else this.targets = [];
+  if (targets) {
+    if (targets instanceof Array)
+      this.targets = targets;
+    else
+      this.targets = [targets];
+  }
+  else
+    this.targets = [];
 
-    options = options || {};
-    this.setOptions(options);
+  options = options || {};
+  this.setOptions(options);
 
-    this._ID = _ID++;
+  this._ID = _ID++;
 }
 
 /**
@@ -54,8 +57,8 @@ function Force(targets, options) {
  * @return {undefined} undefined
  */
 Force.prototype.setOptions = function setOptions(options) {
-    for (var key in options) this[key] = options[key];
-    this.init(options);
+  for (var key in options) this[key] = options[key];
+  this.init(options);
 };
 
 /**
@@ -66,7 +69,7 @@ Force.prototype.setOptions = function setOptions(options) {
  * @return {undefined} undefined
  */
 Force.prototype.addTarget = function addTarget(target) {
-    this.targets.push(target);
+  this.targets.push(target);
 };
 
 /**
@@ -77,9 +80,9 @@ Force.prototype.addTarget = function addTarget(target) {
  * @return {undefined} undefined
  */
 Force.prototype.removeTarget = function removeTarget(target) {
-    var index = this.targets.indexOf(target);
-    if (index < 0) return;
-    this.targets.splice(index, 1);
+  var index = this.targets.indexOf(target);
+  if (index < 0) return;
+  this.targets.splice(index, 1);
 };
 
 /**

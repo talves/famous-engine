@@ -37,25 +37,25 @@
  * @return {undefined} undefined
  */
 function Texture(gl, options) {
-    options = options || {};
-    this.id = gl.createTexture();
-    this.width = options.width || 0;
-    this.height = options.height || 0;
-    this.mipmap = options.mipmap;
-    this.format = options.format || 'RGBA';
-    this.type = options.type || 'UNSIGNED_BYTE';
-    this.gl = gl;
+  options = options || {};
+  this.id = gl.createTexture();
+  this.width = options.width || 0;
+  this.height = options.height || 0;
+  this.mipmap = options.mipmap;
+  this.format = options.format || 'RGBA';
+  this.type = options.type || 'UNSIGNED_BYTE';
+  this.gl = gl;
 
-    this.bind();
+  this.bind();
 
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, options.flipYWebgl || false);
-    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, options.premultiplyAlphaWebgl || false);
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, options.flipYWebgl || false);
+  gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, options.premultiplyAlphaWebgl || false);
 
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl[options.magFilter] || gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl[options.minFilter] || gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl[options.magFilter] || gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl[options.minFilter] || gl.NEAREST);
 
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl[options.wrapS] || gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl[options.wrapT] || gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl[options.wrapS] || gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl[options.wrapT] || gl.CLAMP_TO_EDGE);
 }
 
 /**
@@ -65,8 +65,8 @@ function Texture(gl, options) {
  * @return {Object} Current texture instance.
  */
 Texture.prototype.bind = function bind() {
-    this.gl.bindTexture(this.gl.TEXTURE_2D, this.id);
-    return this;
+  this.gl.bindTexture(this.gl.TEXTURE_2D, this.id);
+  return this;
 };
 
 /**
@@ -76,8 +76,8 @@ Texture.prototype.bind = function bind() {
  * @return {Object} Current texture instance.
  */
 Texture.prototype.unbind = function unbind() {
-    this.gl.bindTexture(this.gl.TEXTURE_2D, null);
-    return this;
+  this.gl.bindTexture(this.gl.TEXTURE_2D, null);
+  return this;
 };
 
 /**
@@ -89,9 +89,9 @@ Texture.prototype.unbind = function unbind() {
  * @return {Object}         Current texture instance.
  */
 Texture.prototype.setImage = function setImage(img) {
-    this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl[this.format], this.gl[this.format], this.gl[this.type], img);
-    if (this.mipmap) this.gl.generateMipmap(this.gl.TEXTURE_2D);
-    return this;
+  this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl[this.format], this.gl[this.format], this.gl[this.type], img);
+  if (this.mipmap) this.gl.generateMipmap(this.gl.TEXTURE_2D);
+  return this;
 };
 
 /**
@@ -103,8 +103,8 @@ Texture.prototype.setImage = function setImage(img) {
  * @return {Object}         Current texture instance.
  */
 Texture.prototype.setArray = function setArray(input) {
-    this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl[this.format], this.width, this.height, 0, this.gl[this.format], this.gl[this.type], input);
-    return this;
+  this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl[this.format], this.width, this.height, 0, this.gl[this.format], this.gl[this.type], input);
+  return this;
 };
 
 /**
@@ -120,20 +120,20 @@ Texture.prototype.setArray = function setArray(input) {
  * @return {Array}          An array of the pixels contained in the snapshot.
  */
 Texture.prototype.readBack = function readBack(x, y, width, height) {
-    var gl = this.gl;
-    var pixels;
-    x = x || 0;
-    y = y || 0;
-    width = width || this.width;
-    height = height || this.height;
-    var fb = gl.createFramebuffer();
-    gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
-    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.id, 0);
-    if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE) {
-        pixels = new Uint8Array(width * height * 4);
-        gl.readPixels(x, y, width, height, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
-    }
-    return pixels;
+  var gl = this.gl;
+  var pixels;
+  x = x || 0;
+  y = y || 0;
+  width = width || this.width;
+  height = height || this.height;
+  var fb = gl.createFramebuffer();
+  gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.id, 0);
+  if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE) {
+    pixels = new Uint8Array(width * height * 4);
+    gl.readPixels(x, y, width, height, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+  }
+  return pixels;
 };
 
 module.exports = Texture;

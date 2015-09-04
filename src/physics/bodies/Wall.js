@@ -45,40 +45,40 @@ Wall.BACKWARD = 5;
  * @param {Object} options The initial state of the body.
  */
 function Wall(options) {
-    Particle.call(this, options);
+  Particle.call(this, options);
 
-    var n = this.normal = new Vec3();
+  var n = this.normal = new Vec3();
 
-    var d = this.direction = options.direction;
-    switch (d) {
-        case Wall.DOWN:
-            n.set(0, 1, 0);
-            break;
-        case Wall.UP:
-            n.set(0, -1, 0);
-            break;
-        case Wall.LEFT:
-            n.set(-1, 0, 0);
-            break;
-        case Wall.RIGHT:
-            n.set(1, 0, 0);
-            break;
-        case Wall.FORWARD:
-            n.set(0, 0, -1);
-            break;
-        case Wall.BACKWARD:
-            n.set(0, 0, 1);
-            break;
-        default:
-            break;
-    }
+  var d = this.direction = options.direction;
+  switch (d) {
+    case Wall.DOWN:
+      n.set(0, 1, 0);
+      break;
+    case Wall.UP:
+      n.set(0, -1, 0);
+      break;
+    case Wall.LEFT:
+      n.set(-1, 0, 0);
+      break;
+    case Wall.RIGHT:
+      n.set(1, 0, 0);
+      break;
+    case Wall.FORWARD:
+      n.set(0, 0, -1);
+      break;
+    case Wall.BACKWARD:
+      n.set(0, 0, 1);
+      break;
+    default:
+      break;
+  }
 
-    this.invNormal = Vec3.clone(n, new Vec3()).invert();
+  this.invNormal = Vec3.clone(n, new Vec3()).invert();
 
-    this.mass = Infinity;
-    this.inverseMass = 0;
+  this.mass = Infinity;
+  this.inverseMass = 0;
 
-    this.type = 1 << 3;
+  this.type = 1 << 3;
 }
 
 Wall.prototype = Object.create(Particle.prototype);

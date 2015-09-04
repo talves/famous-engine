@@ -41,8 +41,8 @@ var Commands = require('../../core/Commands');
  * @return {undefined} undefined
  */
 function AmbientLight(node) {
-    Light.call(this, node);
-    this.commands.color = Commands.GL_AMBIENT_LIGHT;
+  Light.call(this, node);
+  this.commands.color = Commands.GL_AMBIENT_LIGHT;
 }
 
 /**

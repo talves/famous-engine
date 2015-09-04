@@ -38,15 +38,15 @@ var Commands = require('../../core/Commands');
  * @return {undefined} undefined
  */
 function Light(node) {
-    this._node = node;
-    this._requestingUpdate = false;
-    this._color = null;
-    this.queue = [];
-    this.commands = {
-        color: Commands.GL_LIGHT_COLOR,
-        position: Commands.GL_LIGHT_POSITION
-    };
-    this._id = node.addComponent(this);
+  this._node = node;
+  this._requestingUpdate = false;
+  this._color = null;
+  this.queue = [];
+  this.commands = {
+    color: Commands.GL_LIGHT_COLOR,
+    position: Commands.GL_LIGHT_POSITION
+  };
+  this._id = node.addComponent(this);
 }
 
 /**
@@ -59,18 +59,18 @@ function Light(node) {
 * @return {Light} Light
 */
 Light.prototype.setColor = function setColor(color) {
-    if (!color.getNormalizedRGB) return false;
-    if (!this._requestingUpdate) {
-        this._node.requestUpdate(this._id);
-        this._requestingUpdate = true;
-    }
-    this._color = color;
-    this.queue.push(this.commands.color);
-    var rgb = this._color.getNormalizedRGB();
-    this.queue.push(rgb[0]);
-    this.queue.push(rgb[1]);
-    this.queue.push(rgb[2]);
-    return this;
+  if (!color.getNormalizedRGB) return false;
+  if (!this._requestingUpdate) {
+    this._node.requestUpdate(this._id);
+    this._requestingUpdate = true;
+  }
+  this._color = color;
+  this.queue.push(this.commands.color);
+  var rgb = this._color.getNormalizedRGB();
+  this.queue.push(rgb[0]);
+  this.queue.push(rgb[1]);
+  this.queue.push(rgb[2]);
+  return this;
 };
 
 /**
@@ -81,7 +81,7 @@ Light.prototype.setColor = function setColor(color) {
 * @returns {Color} Color
 */
 Light.prototype.getColor = function getColor() {
-    return this._color;
+  return this._color;
 };
 
 /**
@@ -93,28 +93,27 @@ Light.prototype.getColor = function getColor() {
 * @return {undefined} undefined
 */
 Light.prototype.onUpdate = function onUpdate() {
-    var path = this._node.getLocation();
+  var path = this._node.getLocation();
 
-    this._node
-        .sendDrawCommand(Commands.WITH)
-        .sendDrawCommand(path);
+  this._node
+    .sendDrawCommand(Commands.WITH)
+    .sendDrawCommand(path);
 
-    var i = this.queue.length;
-    while (i--) {
-        this._node.sendDrawCommand(this.queue.shift());
-    }
+  var i = this.queue.length;
+  while (i--) {
+    this._node.sendDrawCommand(this.queue.shift());
+  }
 
-    if (this._color && this._color.isActive()) {
-        this._node.sendDrawCommand(this.commands.color);
-        var rgb = this._color.getNormalizedRGB();
-        this._node.sendDrawCommand(rgb[0]);
-        this._node.sendDrawCommand(rgb[1]);
-        this._node.sendDrawCommand(rgb[2]);
-        this._node.requestUpdateOnNextTick(this._id);
-    }
-    else {
-        this._requestingUpdate = false;
-    }
+  if (this._color && this._color.isActive()) {
+    this._node.sendDrawCommand(this.commands.color);
+    var rgb = this._color.getNormalizedRGB();
+    this._node.sendDrawCommand(rgb[0]);
+    this._node.sendDrawCommand(rgb[1]);
+    this._node.sendDrawCommand(rgb[2]);
+    this._node.requestUpdateOnNextTick(this._id);
+  } else {
+    this._requestingUpdate = false;
+  }
 };
 
 module.exports = Light;

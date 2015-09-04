@@ -37,58 +37,58 @@ var EMPTY_ARRAY = [];
  * @param {Touch} touch The native Touch object.
  */
 function Touch(touch) {
-    // interface Touch {
-    //     readonly    attribute long        identifier;
-    //     readonly    attribute EventTarget target;
-    //     readonly    attribute double      screenX;
-    //     readonly    attribute double      screenY;
-    //     readonly    attribute double      clientX;
-    //     readonly    attribute double      clientY;
-    //     readonly    attribute double      pageX;
-    //     readonly    attribute double      pageY;
-    // };
+  // interface Touch {
+  //     readonly    attribute long        identifier;
+  //     readonly    attribute EventTarget target;
+  //     readonly    attribute double      screenX;
+  //     readonly    attribute double      screenY;
+  //     readonly    attribute double      clientX;
+  //     readonly    attribute double      clientY;
+  //     readonly    attribute double      pageX;
+  //     readonly    attribute double      pageY;
+  // };
 
-    /**
-     * @name Touch#identifier
-     * @type Number
-     */
-    this.identifier = touch.identifier;
+  /**
+   * @name Touch#identifier
+   * @type Number
+   */
+  this.identifier = touch.identifier;
 
-    /**
-     * @name Touch#screenX
-     * @type Number
-     */
-    this.screenX = touch.screenX;
+  /**
+   * @name Touch#screenX
+   * @type Number
+   */
+  this.screenX = touch.screenX;
 
-    /**
-     * @name Touch#screenY
-     * @type Number
-     */
-    this.screenY = touch.screenY;
+  /**
+   * @name Touch#screenY
+   * @type Number
+   */
+  this.screenY = touch.screenY;
 
-    /**
-     * @name Touch#clientX
-     * @type Number
-     */
-    this.clientX = touch.clientX;
+  /**
+   * @name Touch#clientX
+   * @type Number
+   */
+  this.clientX = touch.clientX;
 
-    /**
-     * @name Touch#clientY
-     * @type Number
-     */
-    this.clientY = touch.clientY;
+  /**
+   * @name Touch#clientY
+   * @type Number
+   */
+  this.clientY = touch.clientY;
 
-    /**
-     * @name Touch#pageX
-     * @type Number
-     */
-    this.pageX = touch.pageX;
+  /**
+   * @name Touch#pageX
+   * @type Number
+   */
+  this.pageX = touch.pageX;
 
-    /**
-     * @name Touch#pageY
-     * @type Number
-     */
-    this.pageY = touch.pageY;
+  /**
+   * @name Touch#pageY
+   * @type Number
+   */
+  this.pageY = touch.pageY;
 }
 
 
@@ -103,17 +103,17 @@ function Touch(touch) {
  * @return {Array.<Touch>}          An array of normalized Touch objects.
  */
 function cloneTouchList(touchList) {
-    if (!touchList) return EMPTY_ARRAY;
-    // interface TouchList {
-    //     readonly    attribute unsigned long length;
-    //     getter Touch? item (unsigned long index);
-    // };
+  if (!touchList) return EMPTY_ARRAY;
+  // interface TouchList {
+  //     readonly    attribute unsigned long length;
+  //     getter Touch? item (unsigned long index);
+  // };
 
-    var touchListArray = [];
-    for (var i = 0; i < touchList.length; i++) {
-        touchListArray[i] = new Touch(touchList[i]);
-    }
-    return touchListArray;
+  var touchListArray = [];
+  for (var i = 0; i < touchList.length; i++) {
+    touchListArray[i] = new Touch(touchList[i]);
+  }
+  return touchListArray;
 }
 
 /**
@@ -125,58 +125,58 @@ function cloneTouchList(touchList) {
  * @param {Event} ev The native DOM event.
  */
 function TouchEvent(ev) {
-    // interface TouchEvent : UIEvent {
-    //     readonly    attribute TouchList touches;
-    //     readonly    attribute TouchList targetTouches;
-    //     readonly    attribute TouchList changedTouches;
-    //     readonly    attribute boolean   altKey;
-    //     readonly    attribute boolean   metaKey;
-    //     readonly    attribute boolean   ctrlKey;
-    //     readonly    attribute boolean   shiftKey;
-    // };
-    UIEvent.call(this, ev);
+  // interface TouchEvent : UIEvent {
+  //     readonly    attribute TouchList touches;
+  //     readonly    attribute TouchList targetTouches;
+  //     readonly    attribute TouchList changedTouches;
+  //     readonly    attribute boolean   altKey;
+  //     readonly    attribute boolean   metaKey;
+  //     readonly    attribute boolean   ctrlKey;
+  //     readonly    attribute boolean   shiftKey;
+  // };
+  UIEvent.call(this, ev);
 
-    /**
-     * @name TouchEvent#touches
-     * @type Array.<Touch>
-     */
-    this.touches = cloneTouchList(ev.touches);
+  /**
+   * @name TouchEvent#touches
+   * @type Array.<Touch>
+   */
+  this.touches = cloneTouchList(ev.touches);
 
-    /**
-     * @name TouchEvent#targetTouches
-     * @type Array.<Touch>
-     */
-    this.targetTouches = cloneTouchList(ev.targetTouches);
+  /**
+   * @name TouchEvent#targetTouches
+   * @type Array.<Touch>
+   */
+  this.targetTouches = cloneTouchList(ev.targetTouches);
 
-    /**
-     * @name TouchEvent#changedTouches
-     * @type TouchList
-     */
-    this.changedTouches = cloneTouchList(ev.changedTouches);
+  /**
+   * @name TouchEvent#changedTouches
+   * @type TouchList
+   */
+  this.changedTouches = cloneTouchList(ev.changedTouches);
 
-    /**
-     * @name TouchEvent#altKey
-     * @type Boolean
-     */
-    this.altKey = ev.altKey;
+  /**
+   * @name TouchEvent#altKey
+   * @type Boolean
+   */
+  this.altKey = ev.altKey;
 
-    /**
-     * @name TouchEvent#metaKey
-     * @type Boolean
-     */
-    this.metaKey = ev.metaKey;
+  /**
+   * @name TouchEvent#metaKey
+   * @type Boolean
+   */
+  this.metaKey = ev.metaKey;
 
-    /**
-     * @name TouchEvent#ctrlKey
-     * @type Boolean
-     */
-    this.ctrlKey = ev.ctrlKey;
+  /**
+   * @name TouchEvent#ctrlKey
+   * @type Boolean
+   */
+  this.ctrlKey = ev.ctrlKey;
 
-    /**
-     * @name TouchEvent#shiftKey
-     * @type Boolean
-     */
-    this.shiftKey = ev.shiftKey;
+  /**
+   * @name TouchEvent#shiftKey
+   * @type Boolean
+   */
+  this.shiftKey = ev.shiftKey;
 }
 
 TouchEvent.prototype = Object.create(UIEvent.prototype);
@@ -189,8 +189,8 @@ TouchEvent.prototype.constructor = TouchEvent;
  *
  * @return {String} Name of the event type
  */
-TouchEvent.prototype.toString = function toString () {
-    return 'TouchEvent';
+TouchEvent.prototype.toString = function toString() {
+  return 'TouchEvent';
 };
 
 module.exports = TouchEvent;

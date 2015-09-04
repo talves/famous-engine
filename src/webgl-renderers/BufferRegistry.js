@@ -40,14 +40,14 @@ var Buffer = require('./Buffer');
  * @return {undefined} undefined
  */
 function BufferRegistry(context) {
-    this.gl = context;
+  this.gl = context;
 
-    this.registry = {};
-    this._dynamicBuffers = [];
-    this._staticBuffers = [];
+  this.registry = {};
+  this._dynamicBuffers = [];
+  this._staticBuffers = [];
 
-    this._arrayBufferMax = 30000;
-    this._elementBufferMax = 30000;
+  this._arrayBufferMax = 30000;
+  this._elementBufferMax = 30000;
 }
 
 /**
@@ -68,78 +68,91 @@ function BufferRegistry(context) {
  * @return {undefined} undefined
  */
 BufferRegistry.prototype.allocate = function allocate(geometryId, name, value, spacing, dynamic) {
-    var vertexBuffers = this.registry[geometryId] || (this.registry[geometryId] = { keys: [], values: [], spacing: [], offset: [], length: [] });
+  var vertexBuffers = this.registry[geometryId] || (this.registry[geometryId] = {
+      keys: [],
+      values: [],
+      spacing: [],
+      offset: [],
+      length: []
+  });
 
-    var j = vertexBuffers.keys.indexOf(name);
-    var isIndex = name === INDICES;
-    var bufferFound = false;
-    var newOffset;
-    var offset = 0;
-    var length;
-    var buffer;
-    var k;
+  var j = vertexBuffers.keys.indexOf(name);
+  var isIndex = name === INDICES;
+  var bufferFound = false;
+  var newOffset;
+  var offset = 0;
+  var length;
+  var buffer;
+  var k;
 
-    if (j === -1) {
-        j = vertexBuffers.keys.length;
-        length = isIndex ? value.length : Math.floor(value.length / spacing);
+  if (j === -1) {
+    j = vertexBuffers.keys.length;
+    length = isIndex ? value.length : Math.floor(value.length / spacing);
 
-        if (!dynamic) {
+    if (!dynamic) {
 
-            // Use a previously created buffer if available.
+      // Use a previously created buffer if available.
 
-            for (k = 0; k < this._staticBuffers.length; k++) {
+      for (k = 0; k < this._staticBuffers.length; k++) {
 
-                if (isIndex === this._staticBuffers[k].isIndex) {
-                    newOffset = this._staticBuffers[k].offset + value.length;
-                    if ((!isIndex && newOffset < this._arrayBufferMax) || (isIndex && newOffset < this._elementBufferMax)) {
-                        buffer = this._staticBuffers[k].buffer;
-                        offset = this._staticBuffers[k].offset;
-                        this._staticBuffers[k].offset += value.length;
-                        bufferFound = true;
-                        break;
-                    }
-                }
-            }
-
-            // Create a new static buffer in none were found.
-
-            if (!bufferFound) {
-                buffer = new Buffer(
-                    isIndex ? this.gl.ELEMENT_ARRAY_BUFFER : this.gl.ARRAY_BUFFER,
-                    isIndex ? Uint16Array : Float32Array,
-                    this.gl
-                );
-
-                this._staticBuffers.push({ buffer: buffer, offset: value.length, isIndex: isIndex });
-            }
+        if (isIndex === this._staticBuffers[k].isIndex) {
+          newOffset = this._staticBuffers[k].offset + value.length;
+          if ((!isIndex && newOffset < this._arrayBufferMax) || (isIndex && newOffset < this._elementBufferMax)) {
+            buffer = this._staticBuffers[k].buffer;
+            offset = this._staticBuffers[k].offset;
+            this._staticBuffers[k].offset += value.length;
+            bufferFound = true;
+            break;
+          }
         }
-        else {
+      }
 
-            // For dynamic geometries, always create new buffer.
+      // Create a new static buffer in none were found.
 
-            buffer = new Buffer(
-                isIndex ? this.gl.ELEMENT_ARRAY_BUFFER : this.gl.ARRAY_BUFFER,
-                isIndex ? Uint16Array : Float32Array,
-                this.gl
-            );
+      if (!bufferFound) {
+        buffer = new Buffer(
+          isIndex ? this.gl.ELEMENT_ARRAY_BUFFER : this.gl.ARRAY_BUFFER,
+          isIndex ? Uint16Array : Float32Array,
+          this.gl
+        );
 
-            this._dynamicBuffers.push({ buffer: buffer, offset: value.length, isIndex: isIndex });
-        }
+        this._staticBuffers.push({
+          buffer: buffer,
+          offset: value.length,
+          isIndex: isIndex
+        });
+      }
+    } else {
 
-        // Update the registry for the spec with buffer information.
+      // For dynamic geometries, always create new buffer.
 
-        vertexBuffers.keys.push(name);
-        vertexBuffers.values.push(buffer);
-        vertexBuffers.spacing.push(spacing);
-        vertexBuffers.offset.push(offset);
-        vertexBuffers.length.push(length);
+      buffer = new Buffer(
+        isIndex ? this.gl.ELEMENT_ARRAY_BUFFER : this.gl.ARRAY_BUFFER,
+        isIndex ? Uint16Array : Float32Array,
+        this.gl
+      );
+
+      this._dynamicBuffers.push({
+        buffer: buffer,
+        offset: value.length,
+        isIndex: isIndex
+      });
     }
 
-    var len = value.length;
-    for (k = 0; k < len; k++) {
-        vertexBuffers.values[j].data[offset + k] = value[k];
-    }
-    vertexBuffers.values[j].subData();
+    // Update the registry for the spec with buffer information.
+
+    vertexBuffers.keys.push(name);
+    vertexBuffers.values.push(buffer);
+    vertexBuffers.spacing.push(spacing);
+    vertexBuffers.offset.push(offset);
+    vertexBuffers.length.push(length);
+  }
+
+  var len = value.length;
+  for (k = 0; k < len; k++) {
+    vertexBuffers.values[j].data[offset + k] = value[k];
+  }
+  vertexBuffers.values[j].subData();
 };
 
 module.exports = BufferRegistry;

@@ -33,10 +33,10 @@
  * @param {Number} y The y component.
  * @param {Number} z The z component.
  */
-var Vec3 = function(x ,y, z){
-    this.x = x || 0;
-    this.y = y || 0;
-    this.z = z || 0;
+var Vec3 = function(x, y, z) {
+  this.x = x || 0;
+  this.y = y || 0;
+  this.z = z || 0;
 };
 
 /**
@@ -51,11 +51,14 @@ var Vec3 = function(x ,y, z){
  * @return {Vec3} this
  */
 Vec3.prototype.set = function set(x, y, z) {
-    if (x != null) this.x = x;
-    if (y != null) this.y = y;
-    if (z != null) this.z = z;
+  if (x != null)
+    this.x = x;
+  if (y != null)
+    this.y = y;
+  if (z != null)
+    this.z = z;
 
-    return this;
+  return this;
 };
 
 /**
@@ -68,11 +71,11 @@ Vec3.prototype.set = function set(x, y, z) {
  * @return {Vec3} this
  */
 Vec3.prototype.add = function add(v) {
-    this.x += v.x;
-    this.y += v.y;
-    this.z += v.z;
+  this.x += v.x;
+  this.y += v.y;
+  this.z += v.z;
 
-    return this;
+  return this;
 };
 
 /**
@@ -85,11 +88,11 @@ Vec3.prototype.add = function add(v) {
  * @return {Vec3} this
  */
 Vec3.prototype.subtract = function subtract(v) {
-    this.x -= v.x;
-    this.y -= v.y;
-    this.z -= v.z;
+  this.x -= v.x;
+  this.y -= v.y;
+  this.z -= v.z;
 
-    return this;
+  return this;
 };
 
 /**
@@ -102,16 +105,16 @@ Vec3.prototype.subtract = function subtract(v) {
  * @return {Vec3} this
  */
 Vec3.prototype.rotateX = function rotateX(theta) {
-    var y = this.y;
-    var z = this.z;
+  var y = this.y;
+  var z = this.z;
 
-    var cosTheta = Math.cos(theta);
-    var sinTheta = Math.sin(theta);
+  var cosTheta = Math.cos(theta);
+  var sinTheta = Math.sin(theta);
 
-    this.y = y * cosTheta - z * sinTheta;
-    this.z = y * sinTheta + z * cosTheta;
+  this.y = y * cosTheta - z * sinTheta;
+  this.z = y * sinTheta + z * cosTheta;
 
-    return this;
+  return this;
 };
 
 /**
@@ -124,16 +127,16 @@ Vec3.prototype.rotateX = function rotateX(theta) {
  * @return {Vec3} this
  */
 Vec3.prototype.rotateY = function rotateY(theta) {
-    var x = this.x;
-    var z = this.z;
+  var x = this.x;
+  var z = this.z;
 
-    var cosTheta = Math.cos(theta);
-    var sinTheta = Math.sin(theta);
+  var cosTheta = Math.cos(theta);
+  var sinTheta = Math.sin(theta);
 
-    this.x = z * sinTheta + x * cosTheta;
-    this.z = z * cosTheta - x * sinTheta;
+  this.x = z * sinTheta + x * cosTheta;
+  this.z = z * cosTheta - x * sinTheta;
 
-    return this;
+  return this;
 };
 
 /**
@@ -146,16 +149,16 @@ Vec3.prototype.rotateY = function rotateY(theta) {
  * @return {Vec3} this
  */
 Vec3.prototype.rotateZ = function rotateZ(theta) {
-    var x = this.x;
-    var y = this.y;
+  var x = this.x;
+  var y = this.y;
 
-    var cosTheta = Math.cos(theta);
-    var sinTheta = Math.sin(theta);
+  var cosTheta = Math.cos(theta);
+  var sinTheta = Math.sin(theta);
 
-    this.x = x * cosTheta - y * sinTheta;
-    this.y = x * sinTheta + y * cosTheta;
+  this.x = x * cosTheta - y * sinTheta;
+  this.y = x * sinTheta + y * cosTheta;
 
-    return this;
+  return this;
 };
 
 /**
@@ -168,7 +171,7 @@ Vec3.prototype.rotateZ = function rotateZ(theta) {
  * @return {Vec3} this
  */
 Vec3.prototype.dot = function dot(v) {
-    return this.x*v.x + this.y*v.y + this.z*v.z;
+  return this.x * v.x + this.y * v.y + this.z * v.z;
 };
 
 /**
@@ -182,18 +185,18 @@ Vec3.prototype.dot = function dot(v) {
  * @return {Vec3} this
  */
 Vec3.prototype.cross = function cross(v) {
-    var x = this.x;
-    var y = this.y;
-    var z = this.z;
+  var x = this.x;
+  var y = this.y;
+  var z = this.z;
 
-    var vx = v.x;
-    var vy = v.y;
-    var vz = v.z;
+  var vx = v.x;
+  var vy = v.y;
+  var vz = v.z;
 
-    this.x = y * vz - z * vy;
-    this.y = z * vx - x * vz;
-    this.z = x * vy - y * vx;
-    return this;
+  this.x = y * vz - z * vy;
+  this.y = z * vx - x * vz;
+  this.z = x * vy - y * vx;
+  return this;
 };
 
 /**
@@ -206,11 +209,11 @@ Vec3.prototype.cross = function cross(v) {
  * @return {Vec3} this
  */
 Vec3.prototype.scale = function scale(s) {
-    this.x *= s;
-    this.y *= s;
-    this.z *= s;
+  this.x *= s;
+  this.y *= s;
+  this.z *= s;
 
-    return this;
+  return this;
 };
 
 /**
@@ -221,11 +224,11 @@ Vec3.prototype.scale = function scale(s) {
  * @return {Vec3} this
  */
 Vec3.prototype.invert = function invert() {
-    this.x = -this.x;
-    this.y = -this.y;
-    this.z = -this.z;
+  this.x = -this.x;
+  this.y = -this.y;
+  this.z = -this.z;
 
-    return this;
+  return this;
 };
 
 /**
@@ -238,11 +241,11 @@ Vec3.prototype.invert = function invert() {
  * @return {Vec3} this
  */
 Vec3.prototype.map = function map(fn) {
-    this.x = fn(this.x);
-    this.y = fn(this.y);
-    this.z = fn(this.z);
+  this.x = fn(this.x);
+  this.y = fn(this.y);
+  this.z = fn(this.z);
 
-    return this;
+  return this;
 };
 
 /**
@@ -253,11 +256,11 @@ Vec3.prototype.map = function map(fn) {
  * @return {Number} the magnitude of the Vec3
  */
 Vec3.prototype.length = function length() {
-    var x = this.x;
-    var y = this.y;
-    var z = this.z;
+  var x = this.x;
+  var y = this.y;
+  var z = this.z;
 
-    return Math.sqrt(x * x + y * y + z * z);
+  return Math.sqrt(x * x + y * y + z * z);
 };
 
 /**
@@ -268,11 +271,11 @@ Vec3.prototype.length = function length() {
  * @return {Number} magnitude of the Vec3 squared
  */
 Vec3.prototype.lengthSq = function lengthSq() {
-    var x = this.x;
-    var y = this.y;
-    var z = this.z;
+  var x = this.x;
+  var y = this.y;
+  var z = this.z;
 
-    return x * x + y * y + z * z;
+  return x * x + y * y + z * z;
 };
 
 /**
@@ -285,10 +288,10 @@ Vec3.prototype.lengthSq = function lengthSq() {
  * @return {Vec3} this
  */
 Vec3.prototype.copy = function copy(v) {
-    this.x = v.x;
-    this.y = v.y;
-    this.z = v.z;
-    return this;
+  this.x = v.x;
+  this.y = v.y;
+  this.z = v.z;
+  return this;
 };
 
 /**
@@ -299,10 +302,10 @@ Vec3.prototype.copy = function copy(v) {
  * @return {Vec3} this
  */
 Vec3.prototype.clear = function clear() {
-    this.x = 0;
-    this.y = 0;
-    this.z = 0;
-    return this;
+  this.x = 0;
+  this.y = 0;
+  this.z = 0;
+  return this;
 };
 
 /**
@@ -313,7 +316,7 @@ Vec3.prototype.clear = function clear() {
  * @return {Boolean} whether or not the magnitude is zero
  */
 Vec3.prototype.isZero = function isZero() {
-    return this.x === 0 && this.y === 0 && this.z === 0;
+  return this.x === 0 && this.y === 0 && this.z === 0;
 };
 
 /**
@@ -324,7 +327,7 @@ Vec3.prototype.isZero = function isZero() {
  * @return {Array} a three element array representing the components of the Vec3
  */
 Vec3.prototype.toArray = function toArray() {
-    return [this.x, this.y, this.z];
+  return [this.x, this.y, this.z];
 };
 
 /**
@@ -335,17 +338,17 @@ Vec3.prototype.toArray = function toArray() {
  * @return {Vec3} this
  */
 Vec3.prototype.normalize = function normalize() {
-    var x = this.x;
-    var y = this.y;
-    var z = this.z;
+  var x = this.x;
+  var y = this.y;
+  var z = this.z;
 
-    var len = Math.sqrt(x * x + y * y + z * z) || 1;
-    len = 1 / len;
+  var len = Math.sqrt(x * x + y * y + z * z) || 1;
+  len = 1 / len;
 
-    this.x *= len;
-    this.y *= len;
-    this.z *= len;
-    return this;
+  this.x *= len;
+  this.y *= len;
+  this.z *= len;
+  return this;
 };
 
 /**
@@ -359,29 +362,29 @@ Vec3.prototype.normalize = function normalize() {
  * @return {Vec3} this
  */
 Vec3.prototype.applyRotation = function applyRotation(q) {
-    var cw = q.w;
-    var cx = -q.x;
-    var cy = -q.y;
-    var cz = -q.z;
+  var cw = q.w;
+  var cx = -q.x;
+  var cy = -q.y;
+  var cz = -q.z;
 
-    var vx = this.x;
-    var vy = this.y;
-    var vz = this.z;
+  var vx = this.x;
+  var vy = this.y;
+  var vz = this.z;
 
-    var tw = -cx * vx - cy * vy - cz * vz;
-    var tx = vx * cw + vy * cz - cy * vz;
-    var ty = vy * cw + cx * vz - vx * cz;
-    var tz = vz * cw + vx * cy - cx * vy;
+  var tw = -cx * vx - cy * vy - cz * vz;
+  var tx = vx * cw + vy * cz - cy * vz;
+  var ty = vy * cw + cx * vz - vx * cz;
+  var tz = vz * cw + vx * cy - cx * vy;
 
-    var w = cw;
-    var x = -cx;
-    var y = -cy;
-    var z = -cz;
+  var w = cw;
+  var x = -cx;
+  var y = -cy;
+  var z = -cz;
 
-    this.x = tx * w + x * tw + y * tz - ty * z;
-    this.y = ty * w + y * tw + tx * z - x * tz;
-    this.z = tz * w + z * tw + x * ty - tx * y;
-    return this;
+  this.x = tx * w + x * tw + y * tz - ty * z;
+  this.y = ty * w + y * tw + tx * z - x * tz;
+  this.z = tz * w + z * tw + x * ty - tx * y;
+  return this;
 };
 
 /**
@@ -394,16 +397,16 @@ Vec3.prototype.applyRotation = function applyRotation(q) {
  * @return {Vec3} this
  */
 Vec3.prototype.applyMatrix = function applyMatrix(matrix) {
-    var M = matrix.get();
+  var M = matrix.get();
 
-    var x = this.x;
-    var y = this.y;
-    var z = this.z;
+  var x = this.x;
+  var y = this.y;
+  var z = this.z;
 
-    this.x = M[0]*x + M[1]*y + M[2]*z;
-    this.y = M[3]*x + M[4]*y + M[5]*z;
-    this.z = M[6]*x + M[7]*y + M[8]*z;
-    return this;
+  this.x = M[0] * x + M[1] * y + M[2] * z;
+  this.y = M[3] * x + M[4] * y + M[5] * z;
+  this.z = M[6] * x + M[7] * y + M[8] * z;
+  return this;
 };
 
 /**
@@ -417,17 +420,17 @@ Vec3.prototype.applyMatrix = function applyMatrix(matrix) {
  * @return {Vec3} The normalize Vec3.
  */
 Vec3.normalize = function normalize(v, output) {
-    var x = v.x;
-    var y = v.y;
-    var z = v.z;
+  var x = v.x;
+  var y = v.y;
+  var z = v.z;
 
-    var length = Math.sqrt(x * x + y * y + z * z) || 1;
-    length = 1 / length;
+  var length = Math.sqrt(x * x + y * y + z * z) || 1;
+  length = 1 / length;
 
-    output.x = x * length;
-    output.y = y * length;
-    output.z = z * length;
-    return output;
+  output.x = x * length;
+  output.y = y * length;
+  output.z = z * length;
+  return output;
 };
 
 /**
@@ -442,29 +445,29 @@ Vec3.normalize = function normalize(v, output) {
  * @return {Vec3} The rotated version of the input Vec3.
  */
 Vec3.applyRotation = function applyRotation(v, q, output) {
-    var cw = q.w;
-    var cx = -q.x;
-    var cy = -q.y;
-    var cz = -q.z;
+  var cw = q.w;
+  var cx = -q.x;
+  var cy = -q.y;
+  var cz = -q.z;
 
-    var vx = v.x;
-    var vy = v.y;
-    var vz = v.z;
+  var vx = v.x;
+  var vy = v.y;
+  var vz = v.z;
 
-    var tw = -cx * vx - cy * vy - cz * vz;
-    var tx = vx * cw + vy * cz - cy * vz;
-    var ty = vy * cw + cx * vz - vx * cz;
-    var tz = vz * cw + vx * cy - cx * vy;
+  var tw = -cx * vx - cy * vy - cz * vz;
+  var tx = vx * cw + vy * cz - cy * vz;
+  var ty = vy * cw + cx * vz - vx * cz;
+  var tz = vz * cw + vx * cy - cx * vy;
 
-    var w = cw;
-    var x = -cx;
-    var y = -cy;
-    var z = -cz;
+  var w = cw;
+  var x = -cx;
+  var y = -cy;
+  var z = -cz;
 
-    output.x = tx * w + x * tw + y * tz - ty * z;
-    output.y = ty * w + y * tw + tx * z - x * tz;
-    output.z = tz * w + z * tw + x * ty - tx * y;
-    return output;
+  output.x = tx * w + x * tw + y * tz - ty * z;
+  output.y = ty * w + y * tw + tx * z - x * tz;
+  output.z = tz * w + z * tw + x * ty - tx * y;
+  return output;
 };
 
 /**
@@ -477,7 +480,7 @@ Vec3.applyRotation = function applyRotation(v, q, output) {
  * @return {Vec3} The cloned Vec3.
  */
 Vec3.clone = function clone(v) {
-    return new Vec3(v.x, v.y, v.z);
+  return new Vec3(v.x, v.y, v.z);
 };
 
 /**
@@ -492,10 +495,10 @@ Vec3.clone = function clone(v) {
  * @return {Vec3} The result of the addition.
  */
 Vec3.add = function add(v1, v2, output) {
-    output.x = v1.x + v2.x;
-    output.y = v1.y + v2.y;
-    output.z = v1.z + v2.z;
-    return output;
+  output.x = v1.x + v2.x;
+  output.y = v1.y + v2.y;
+  output.z = v1.z + v2.z;
+  return output;
 };
 
 /**
@@ -510,10 +513,10 @@ Vec3.add = function add(v1, v2, output) {
  * @return {Vec3} The result of the subtraction.
  */
 Vec3.subtract = function subtract(v1, v2, output) {
-    output.x = v1.x - v2.x;
-    output.y = v1.y - v2.y;
-    output.z = v1.z - v2.z;
-    return output;
+  output.x = v1.x - v2.x;
+  output.y = v1.y - v2.y;
+  output.z = v1.z - v2.z;
+  return output;
 };
 
 /**
@@ -528,10 +531,10 @@ Vec3.subtract = function subtract(v1, v2, output) {
  * @return {Vec3} The result of the scaling.
  */
 Vec3.scale = function scale(v, s, output) {
-    output.x = v.x * s;
-    output.y = v.y * s;
-    output.z = v.z * s;
-    return output;
+  output.x = v.x * s;
+  output.y = v.y * s;
+  output.z = v.z * s;
+  return output;
 };
 
 /**
@@ -545,7 +548,7 @@ Vec3.scale = function scale(v, s, output) {
  * @return {Number} The dot product.
  */
 Vec3.dot = function dot(v1, v2) {
-    return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+  return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 };
 
 /**
@@ -561,17 +564,17 @@ Vec3.dot = function dot(v1, v2) {
  * @return {Object} the object the result of the cross product was placed into
  */
 Vec3.cross = function cross(v1, v2, output) {
-    var x1 = v1.x;
-    var y1 = v1.y;
-    var z1 = v1.z;
-    var x2 = v2.x;
-    var y2 = v2.y;
-    var z2 = v2.z;
+  var x1 = v1.x;
+  var y1 = v1.y;
+  var z1 = v1.z;
+  var x2 = v2.x;
+  var y2 = v2.y;
+  var z2 = v2.z;
 
-    output.x = y1 * z2 - z1 * y2;
-    output.y = z1 * x2 - x1 * z2;
-    output.z = x1 * y2 - y1 * x2;
-    return output;
+  output.x = y1 * z2 - z1 * y2;
+  output.y = z1 * x2 - x1 * z2;
+  output.z = x1 * y2 - y1 * x2;
+  return output;
 };
 
 /**
@@ -586,21 +589,21 @@ Vec3.cross = function cross(v1, v2, output) {
  * @return {Object} the object the result of the cross product was placed into 
  */
 Vec3.project = function project(v1, v2, output) {
-    var x1 = v1.x;
-    var y1 = v1.y;
-    var z1 = v1.z;
-    var x2 = v2.x;
-    var y2 = v2.y;
-    var z2 = v2.z;
+  var x1 = v1.x;
+  var y1 = v1.y;
+  var z1 = v1.z;
+  var x2 = v2.x;
+  var y2 = v2.y;
+  var z2 = v2.z;
 
-    var scale = x1 * x2 + y1 * y2 + z1 * z2;
-    scale /= x2 * x2 + y2 * y2 + z2 * z2;
+  var scale = x1 * x2 + y1 * y2 + z1 * z2;
+  scale /= x2 * x2 + y2 * y2 + z2 * z2;
 
-    output.x = x2 * scale;
-    output.y = y2 * scale;
-    output.z = z2 * scale;
+  output.x = x2 * scale;
+  output.y = y2 * scale;
+  output.z = z2 * scale;
 
-    return output;
+  return output;
 };
 
 module.exports = Vec3;

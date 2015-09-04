@@ -35,16 +35,16 @@ var PathUtils = require('./Path');
  * @param {Scene} context The context on which it operates
  * @constructor
  */
-function Dispatch () {
-    this._nodes = {}; // a container for constant time lookup of nodes
+function Dispatch() {
+  this._nodes = {}; // a container for constant time lookup of nodes
 
-                      // The queue is used for two purposes
-                      // 1. It is used to list indicies in the
-                      //    Nodes path which are then used to lookup
-                      //    a node in the scene graph.
-                      // 2. It is used to assist dispatching
-                      //    such that it is possible to do a breadth first
-                      //    traversal of the scene graph.
+// The queue is used for two purposes
+// 1. It is used to list indicies in the
+//    Nodes path which are then used to lookup
+//    a node in the scene graph.
+// 2. It is used to assist dispatching
+//    such that it is possible to do a breadth first
+//    traversal of the scene graph.
 }
 
 /**
@@ -58,10 +58,10 @@ function Dispatch () {
  *
  * @return {undefined} undefined
  */
-Dispatch.prototype._setUpdater = function _setUpdater (updater) {
-    this._updater = updater;
+Dispatch.prototype._setUpdater = function _setUpdater(updater) {
+  this._updater = updater;
 
-    for (var key in this._nodes) this._nodes[key]._setUpdater(updater);
+  for (var key in this._nodes) this._nodes[key]._setUpdater(updater);
 };
 
 /**
@@ -77,51 +77,51 @@ Dispatch.prototype._setUpdater = function _setUpdater (updater) {
  *
  * @return {void}
  */
-Dispatch.prototype.mount = function mount (path, node) {
-    if (!node) throw new Error('Dispatch: no node passed to mount at: ' + path);
-    if (this._nodes[path])
-        throw new Error('Dispatch: there is a node already registered at: ' + path);
+Dispatch.prototype.mount = function mount(path, node) {
+  if (!node)
+    throw new Error('Dispatch: no node passed to mount at: ' + path);
+  if (this._nodes[path])
+    throw new Error('Dispatch: there is a node already registered at: ' + path);
 
-    node._setUpdater(this._updater);
-    this._nodes[path] = node;
-    var parentPath = PathUtils.parent(path);
+  node._setUpdater(this._updater);
+  this._nodes[path] = node;
+  var parentPath = PathUtils.parent(path);
 
-    // scenes are their own parents
-    var parent = !parentPath ? node : this._nodes[parentPath];
+  // scenes are their own parents
+  var parent = !parentPath ? node : this._nodes[parentPath];
 
-    if (!parent)
-        throw new Error(
-                'Parent to path: ' + path +
-                ' doesn\'t exist at expected path: ' + parentPath
-        );
+  if (!parent)
+    throw new Error(
+      'Parent to path: ' + path +
+      ' doesn\'t exist at expected path: ' + parentPath
+    );
 
-    var children = node.getChildren();
-    var components = node.getComponents();
-    var i;
-    var len;
+  var children = node.getChildren();
+  var components = node.getComponents();
+  var i;
+  var len;
 
-    if (parent.isMounted()) node._setMounted(true, path);
-    if (parent.isShown()) node._setShown(true);
+  if (parent.isMounted()) node._setMounted(true, path);
+  if (parent.isShown()) node._setShown(true);
 
-    if (parent.isMounted()) {
-        node._setParent(parent);
-        if (node.onMount) node.onMount(path);
+  if (parent.isMounted()) {
+    node._setParent(parent);
+    if (node.onMount) node.onMount(path);
 
-        for (i = 0, len = components.length ; i < len ; i++)
-            if (components[i] && components[i].onMount)
-                components[i].onMount(node, i);
+    for (i = 0, len = components.length; i < len; i++)
+      if (components[i] && components[i].onMount)
+        components[i].onMount(node, i);
 
-        for (i = 0, len = children.length ; i < len ; i++)
-            if (children[i] && children[i].mount) children[i].mount(path + '/' + i);
-            else if (children[i]) this.mount(path + '/' + i, children[i]);
-    }
+    for (i = 0, len = children.length; i < len; i++)
+      if (children[i] && children[i].mount) children[i].mount(path + '/' + i);else if (children[i]) this.mount(path + '/' + i, children[i]);
+  }
 
-    if (parent.isShown()) {
-        if (node.onShow) node.onShow();
-        for (i = 0, len = components.length ; i < len ; i++)
-            if (components[i] && components[i].onShow)
-                components[i].onShow();
-    }
+  if (parent.isShown()) {
+    if (node.onShow) node.onShow();
+    for (i = 0, len = components.length; i < len; i++)
+      if (components[i] && components[i].onShow)
+        components[i].onShow();
+  }
 };
 
 /**
@@ -134,43 +134,42 @@ Dispatch.prototype.mount = function mount (path, node) {
  *
  * @param {String} path at which to begin dismounting
  */
-Dispatch.prototype.dismount = function dismount (path) {
-    var node = this._nodes[path];
+Dispatch.prototype.dismount = function dismount(path) {
+  var node = this._nodes[path];
 
-    if (!node)
-        throw new Error(
-                'No node registered to path: ' + path
-        );
+  if (!node)
+    throw new Error(
+      'No node registered to path: ' + path
+    );
 
-    var children = node.getChildren();
-    var components = node.getComponents();
-    var i;
-    var len;
+  var children = node.getChildren();
+  var components = node.getComponents();
+  var i;
+  var len;
 
-    if (node.isShown()) {
-        node._setShown(false);
-        if (node.onHide) node.onHide();
-        for (i = 0, len = components.length ; i < len ; i++)
-            if (components[i] && components[i].onHide)
-                components[i].onHide();
-    }
+  if (node.isShown()) {
+    node._setShown(false);
+    if (node.onHide) node.onHide();
+    for (i = 0, len = components.length; i < len; i++)
+      if (components[i] && components[i].onHide)
+        components[i].onHide();
+  }
 
-    if (node.isMounted()) {
-        if (node.onDismount) node.onDismount(path);
+  if (node.isMounted()) {
+    if (node.onDismount) node.onDismount(path);
 
-        for (i = 0, len = children.length ; i < len ; i++)
-            if (children[i] && children[i].dismount) children[i].dismount();
-            else if (children[i]) this.dismount(path + '/' + i);
+    for (i = 0, len = children.length; i < len; i++)
+      if (children[i] && children[i].dismount) children[i].dismount();else if (children[i]) this.dismount(path + '/' + i);
 
-        for (i = 0, len = components.length ; i < len ; i++)
-            if (components[i] && components[i].onDismount)
-                components[i].onDismount();
+    for (i = 0, len = components.length; i < len; i++)
+      if (components[i] && components[i].onDismount)
+        components[i].onDismount();
 
-        node._setMounted(false);
-        node._setParent(null);
-    }
+    node._setMounted(false);
+    node._setParent(null);
+  }
 
-    this._nodes[path] = null;
+  this._nodes[path] = null;
 };
 
 /**
@@ -182,8 +181,8 @@ Dispatch.prototype.dismount = function dismount (path) {
  *
  * @param {String} path at which to look up the node
  */
-Dispatch.prototype.getNode = function getNode (path) {
-    return this._nodes[path];
+Dispatch.prototype.getNode = function getNode(path) {
+  return this._nodes[path];
 };
 
 /**
@@ -196,30 +195,30 @@ Dispatch.prototype.getNode = function getNode (path) {
  *
  * @param {String} path the path of the node to show
  */
-Dispatch.prototype.show = function show (path) {
-    var node = this._nodes[path];
+Dispatch.prototype.show = function show(path) {
+  var node = this._nodes[path];
 
-    if (!node)
-        throw new Error(
-                'No node registered to path: ' + path
-        );
+  if (!node)
+    throw new Error(
+      'No node registered to path: ' + path
+    );
 
-    if (node.onShow) node.onShow();
+  if (node.onShow) node.onShow();
 
-    var components = node.getComponents();
-    for (var i = 0, len = components.length ; i < len ; i++)
-        if (components[i] && components[i].onShow)
-            components[i].onShow();
+  var components = node.getComponents();
+  for (var i = 0, len = components.length; i < len; i++)
+    if (components[i] && components[i].onShow)
+      components[i].onShow();
 
-    var queue = allocQueue();
+  var queue = allocQueue();
 
-    addChildrenToQueue(node, queue);
-    var child;
+  addChildrenToQueue(node, queue);
+  var child;
 
-    while ((child = breadthFirstNext(queue)))
-        this.show(child.getLocation());
+  while ((child = breadthFirstNext(queue)))
+  this.show(child.getLocation());
 
-    deallocQueue(queue);
+  deallocQueue(queue);
 };
 
 /**
@@ -232,30 +231,30 @@ Dispatch.prototype.show = function show (path) {
  *
  * @param {String} path the path of the node to hide
  */
-Dispatch.prototype.hide = function hide (path) {
-    var node = this._nodes[path];
+Dispatch.prototype.hide = function hide(path) {
+  var node = this._nodes[path];
 
-    if (!node)
-        throw new Error(
-                'No node registered to path: ' + path
-        );
+  if (!node)
+    throw new Error(
+      'No node registered to path: ' + path
+    );
 
-    if (node.onHide) node.onHide();
+  if (node.onHide) node.onHide();
 
-    var components = node.getComponents();
-    for (var i = 0, len = components.length ; i < len ; i++)
-        if (components[i] && components[i].onHide)
-            components[i].onHide();
+  var components = node.getComponents();
+  for (var i = 0, len = components.length; i < len; i++)
+    if (components[i] && components[i].onHide)
+      components[i].onHide();
 
-    var queue = allocQueue();
+  var queue = allocQueue();
 
-    addChildrenToQueue(node, queue);
-    var child;
+  addChildrenToQueue(node, queue);
+  var child;
 
-    while ((child = breadthFirstNext(queue)))
-        this.hide(child.getLocation());
+  while ((child = breadthFirstNext(queue)))
+  this.hide(child.getLocation());
 
-    deallocQueue(queue);
+  deallocQueue(queue);
 };
 
 /**
@@ -266,20 +265,21 @@ Dispatch.prototype.hide = function hide (path) {
  *
  * @return {Node | undefined} The node at the requested path
  */
-Dispatch.prototype.lookupNode = function lookupNode (location) {
-    if (!location) throw new Error('lookupNode must be called with a path');
+Dispatch.prototype.lookupNode = function lookupNode(location) {
+  if (!location)
+    throw new Error('lookupNode must be called with a path');
 
-    var path = allocQueue();
+  var path = allocQueue();
 
-    _splitTo(location, path);
+  _splitTo(location, path);
 
-    for (var i = 0, len = path.length ; i < len ; i++)
-        path[i] = this._nodes[path[i]];
+  for (var i = 0, len = path.length; i < len; i++)
+    path[i] = this._nodes[path[i]];
 
-    path.length = 0;
-    deallocQueue(path);
+  path.length = 0;
+  deallocQueue(path);
 
-    return path[path.length - 1];
+  return path[path.length - 1];
 };
 
 /**
@@ -294,36 +294,38 @@ Dispatch.prototype.lookupNode = function lookupNode (location) {
  *
  * @return {undefined} undefined
  */
-Dispatch.prototype.dispatch = function dispatch (path, event, payload) {
-    if (!path) throw new Error('dispatch requires a path as it\'s first argument');
-    if (!event) throw new Error('dispatch requires an event name as it\'s second argument');
+Dispatch.prototype.dispatch = function dispatch(path, event, payload) {
+  if (!path)
+    throw new Error('dispatch requires a path as it\'s first argument');
+  if (!event)
+    throw new Error('dispatch requires an event name as it\'s second argument');
 
-    var node = this._nodes[path];
+  var node = this._nodes[path];
 
-    if (!node) return;
+  if (!node) return;
 
-    payload.node = node;
+  payload.node = node;
 
-    var queue = allocQueue();
-    queue.push(node);
+  var queue = allocQueue();
+  queue.push(node);
 
-    var child;
-    var components;
-    var i;
-    var len;
+  var child;
+  var components;
+  var i;
+  var len;
 
-    while ((child = breadthFirstNext(queue))) {
-        if (child && child.onReceive)
-            child.onReceive(event, payload);
+  while ((child = breadthFirstNext(queue))) {
+    if (child && child.onReceive)
+      child.onReceive(event, payload);
 
-        components = child.getComponents();
+    components = child.getComponents();
 
-        for (i = 0, len = components.length ; i < len ; i++)
-            if (components[i] && components[i].onReceive)
-                components[i].onReceive(event, payload);
-    }
+    for (i = 0, len = components.length; i < len; i++)
+      if (components[i] && components[i].onReceive)
+        components[i].onReceive(event, payload);
+  }
 
-    deallocQueue(queue);
+  deallocQueue(queue);
 };
 
 /**
@@ -338,35 +340,37 @@ Dispatch.prototype.dispatch = function dispatch (path, event, payload) {
  *
  * @return {undefined} undefined
  */
-Dispatch.prototype.dispatchUIEvent = function dispatchUIEvent (path, event, payload) {
-    if (!path) throw new Error('dispatchUIEvent needs a valid path to dispatch to');
-    if (!event) throw new Error('dispatchUIEvent needs an event name as its second argument');
-    var node;
+Dispatch.prototype.dispatchUIEvent = function dispatchUIEvent(path, event, payload) {
+  if (!path)
+    throw new Error('dispatchUIEvent needs a valid path to dispatch to');
+  if (!event)
+    throw new Error('dispatchUIEvent needs an event name as its second argument');
+  var node;
 
-    Event.call(payload);
-    node = this.getNode(path);
-    if (node) {
-        var parent;
-        var components;
-        var i;
-        var len;
+  Event.call(payload);
+  node = this.getNode(path);
+  if (node) {
+    var parent;
+    var components;
+    var i;
+    var len;
 
-        payload.node = node;
+    payload.node = node;
 
-        while (node) {
-            if (node.onReceive) node.onReceive(event, payload);
-            components = node.getComponents();
+    while (node) {
+      if (node.onReceive) node.onReceive(event, payload);
+      components = node.getComponents();
 
-            for (i = 0, len = components.length ; i < len ; i++)
-                if (components[i] && components[i].onReceive)
-                    components[i].onReceive(event, payload);
+      for (i = 0, len = components.length; i < len; i++)
+        if (components[i] && components[i].onReceive)
+          components[i].onReceive(event, payload);
 
-            if (payload.propagationStopped) break;
-            parent = node.getParent();
-            if (parent === node) return;
-            node = parent;
-        }
+      if (payload.propagationStopped) break;
+      parent = node.getParent();
+      if (parent === node) return;
+      node = parent;
     }
+  }
 };
 
 var queues = [];
@@ -380,7 +384,7 @@ var queues = [];
  * @return {Array} allocated queue.
  */
 function allocQueue() {
-    return queues.pop() || [];
+  return queues.pop() || [];
 }
 
 /**
@@ -392,7 +396,7 @@ function allocQueue() {
  * @return {undefined}      undefined
  */
 function deallocQueue(queue) {
-    queues.push(queue);
+  queues.push(queue);
 }
 
 /**
@@ -405,22 +409,22 @@ function deallocQueue(queue) {
  *
  * @return {Array} the target after having been written to
  */
-function _splitTo (string, target) {
-    target.length = 0; // clears the array first.
-    var last = 0;
-    var i;
-    var len = string.length;
+function _splitTo(string, target) {
+  target.length = 0; // clears the array first.
+  var last = 0;
+  var i;
+  var len = string.length;
 
-    for (i = 0 ; i < len ; i++) {
-        if (string[i] === '/') {
-            target.push(string.substring(last, i));
-            last = i + 1;
-        }
+  for (i = 0; i < len; i++) {
+    if (string[i] === '/') {
+      target.push(string.substring(last, i));
+      last = i + 1;
     }
+  }
 
-    if (i - last > 0) target.push(string.substring(last, i));
+  if (i - last > 0) target.push(string.substring(last, i));
 
-    return target;
+  return target;
 }
 
 /**
@@ -434,13 +438,13 @@ function _splitTo (string, target) {
  *
  * @return {void}
  */
-function addChildrenToQueue (node, queue) {
-    var children = node.getChildren();
-    var child;
-    for (var i = 0, len = children.length ; i < len ; i++) {
-        child = children[i];
-        if (child) queue.push(child);
-    }
+function addChildrenToQueue(node, queue) {
+  var children = node.getChildren();
+  var child;
+  for (var i = 0, len = children.length; i < len; i++) {
+    child = children[i];
+    if (child) queue.push(child);
+  }
 }
 
 /**
@@ -452,11 +456,11 @@ function addChildrenToQueue (node, queue) {
  * @param {Array} queue the queue used for retrieving the new child from
  * @return {Node | undefined} the next node in the traversal if one exists
  */
-function breadthFirstNext (queue) {
-    var child = queue.shift();
-    if (!child) return void 0;
-    addChildrenToQueue(child, queue);
-    return child;
+function breadthFirstNext(queue) {
+  var child = queue.shift();
+  if (!child) return void 0;
+  addChildrenToQueue(child, queue);
+  return child;
 }
 
 

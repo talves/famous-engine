@@ -25,9 +25,9 @@
 'use strict';
 
 module.exports = {
-    DOMRenderer: require('./DOMRenderer'),
-    ElementCache: require('./ElementCache'),
-    Events: require('./events'),
-    Math: require('./Math'),
-    VoidElements: require('./VoidElements')
+  DOMRenderer: require('./DOMRenderer'),
+  ElementCache: require('./ElementCache'),
+  Events: require('./events'),
+  Math: require('./Math'),
+  VoidElements: require('./VoidElements')
 };

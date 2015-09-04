@@ -25,5 +25,5 @@
 'use strict';
 
 module.exports = {
-    DOMElement: require('./DOMElement')
+  DOMElement: require('./DOMElement')
 };

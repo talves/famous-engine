@@ -36,29 +36,29 @@ var SizeSystem = require('../core/SizeSystem');
  * @param {Node} node Node that the Size component is attached to
  */
 function Size(node) {
-    this._node = node;
-    this._id = node.addComponent(this);
-    this._requestingUpdate = false;
+  this._node = node;
+  this._id = node.addComponent(this);
+  this._requestingUpdate = false;
 
-    var initialProportionalSize = node.getProportionalSize();
-    var initialDifferentialSize = node.getDifferentialSize();
-    var initialAbsoluteSize = node.getAbsoluteSize();
+  var initialProportionalSize = node.getProportionalSize();
+  var initialDifferentialSize = node.getDifferentialSize();
+  var initialAbsoluteSize = node.getAbsoluteSize();
 
-    this._proportional = {
-        x: new Transitionable(initialProportionalSize[0]),
-        y: new Transitionable(initialProportionalSize[1]),
-        z: new Transitionable(initialProportionalSize[2])
-    };
-    this._differential = {
-        x: new Transitionable(initialDifferentialSize[0]),
-        y: new Transitionable(initialDifferentialSize[1]),
-        z: new Transitionable(initialDifferentialSize[2])
-    };
-    this._absolute = {
-        x: new Transitionable(initialAbsoluteSize[0]),
-        y: new Transitionable(initialAbsoluteSize[1]),
-        z: new Transitionable(initialAbsoluteSize[2])
-    };
+  this._proportional = {
+    x: new Transitionable(initialProportionalSize[0]),
+    y: new Transitionable(initialProportionalSize[1]),
+    z: new Transitionable(initialProportionalSize[2])
+  };
+  this._differential = {
+    x: new Transitionable(initialDifferentialSize[0]),
+    y: new Transitionable(initialDifferentialSize[1]),
+    z: new Transitionable(initialDifferentialSize[2])
+  };
+  this._absolute = {
+    x: new Transitionable(initialAbsoluteSize[0]),
+    y: new Transitionable(initialAbsoluteSize[1]),
+    z: new Transitionable(initialAbsoluteSize[2])
+  };
 }
 
 Size.RELATIVE = 0;
@@ -80,8 +80,8 @@ Size.DEFAULT = Size.RELATIVE;
  * @return {Size} this
  */
 Size.prototype.setMode = function setMode(x, y, z) {
-    this._node.setSizeMode(x, y, z);
-    return this;
+  this._node.setSizeMode(x, y, z);
+  return this;
 };
 
 /**
@@ -92,7 +92,7 @@ Size.prototype.setMode = function setMode(x, y, z) {
  * @return {String} Name of the component
  */
 Size.prototype.toString = function toString() {
-    return 'Size';
+  return 'Size';
 };
 
 /**
@@ -128,24 +128,24 @@ Size.prototype.toString = function toString() {
  * @return {Object} the internal state of the component
  */
 Size.prototype.getValue = function getValue() {
-    return {
-        sizeMode: SizeSystem.get(this._node.getLocation()).getSizeMode(),
-        absolute: {
-            x: this._absolute.x.get(),
-            y: this._absolute.y.get(),
-            z: this._absolute.z.get()
-        },
-        differential: {
-            x: this._differential.x.get(),
-            y: this._differential.y.get(),
-            z: this._differential.z.get()
-        },
-        proportional: {
-            x: this._proportional.x.get(),
-            y: this._proportional.y.get(),
-            z: this._proportional.z.get()
-        }
-    };
+  return {
+    sizeMode: SizeSystem.get(this._node.getLocation()).getSizeMode(),
+    absolute: {
+      x: this._absolute.x.get(),
+      y: this._absolute.y.get(),
+      z: this._absolute.z.get()
+    },
+    differential: {
+      x: this._differential.x.get(),
+      y: this._differential.y.get(),
+      z: this._differential.z.get()
+    },
+    proportional: {
+      x: this._proportional.x.get(),
+      y: this._proportional.y.get(),
+      z: this._proportional.z.get()
+    }
+  };
 };
 
 /**
@@ -158,19 +158,19 @@ Size.prototype.getValue = function getValue() {
  * @return {Boolean} boolean indicating whether the new state has been applied
  */
 Size.prototype.setValue = function setValue(state) {
-    if (this.toString() === state.component) {
-        this.setMode.apply(this, state.sizeMode);
-        if (state.absolute) {
-            this.setAbsolute(state.absolute.x, state.absolute.y, state.absolute.z);
-        }
-        if (state.differential) {
-            this.setAbsolute(state.differential.x, state.differential.y, state.differential.z);
-        }
-        if (state.proportional) {
-            this.setAbsolute(state.proportional.x, state.proportional.y, state.proportional.z);
-        }
+  if (this.toString() === state.component) {
+    this.setMode.apply(this, state.sizeMode);
+    if (state.absolute) {
+      this.setAbsolute(state.absolute.x, state.absolute.y, state.absolute.z);
     }
-    return false;
+    if (state.differential) {
+      this.setAbsolute(state.differential.x, state.differential.y, state.differential.z);
+    }
+    if (state.proportional) {
+      this.setAbsolute(state.proportional.x, state.proportional.y, state.proportional.z);
+    }
+  }
+  return false;
 };
 
 /**
@@ -184,7 +184,7 @@ Size.prototype.setValue = function setValue(state) {
  * @return {Boolean} boolean indicating whether the new state has been applied
  */
 Size.prototype._isActive = function _isActive(type) {
-    return type.x.isActive() || type.y.isActive() || type.z.isActive();
+  return type.x.isActive() || type.y.isActive() || type.z.isActive();
 };
 
 /**
@@ -197,12 +197,12 @@ Size.prototype._isActive = function _isActive(type) {
  * @return {Boolean} boolean indicating whether the new state has been applied
  */
 
-Size.prototype.isActive = function isActive(){
-    return (
-        this._isActive(this._absolute) ||
-        this._isActive(this._proportional) ||
-        this._isActive(this._differential)
-    );
+Size.prototype.isActive = function isActive() {
+  return (
+    this._isActive(this._absolute) ||
+    this._isActive(this._proportional) ||
+    this._isActive(this._differential)
+  );
 };
 
 /**
@@ -214,27 +214,28 @@ Size.prototype.isActive = function isActive(){
  * @return {undefined} undefined
  */
 Size.prototype.onUpdate = function onUpdate() {
-    var abs = this._absolute;
-    this._node.setAbsoluteSize(
-        abs.x.get(),
-        abs.y.get(),
-        abs.z.get()
-    );
-    var prop = this._proportional;
-    var diff = this._differential;
-    this._node.setProportionalSize(
-        prop.x.get(),
-        prop.y.get(),
-        prop.z.get()
-    );
-    this._node.setDifferentialSize(
-        diff.x.get(),
-        diff.y.get(),
-        diff.z.get()
-    );
+  var abs = this._absolute;
+  this._node.setAbsoluteSize(
+    abs.x.get(),
+    abs.y.get(),
+    abs.z.get()
+  );
+  var prop = this._proportional;
+  var diff = this._differential;
+  this._node.setProportionalSize(
+    prop.x.get(),
+    prop.y.get(),
+    prop.z.get()
+  );
+  this._node.setDifferentialSize(
+    diff.x.get(),
+    diff.y.get(),
+    diff.z.get()
+  );
 
-    if (this.isActive()) this._node.requestUpdateOnNextTick(this._id);
-    else this._requestingUpdate = false;
+  if (this.isActive()) this._node.requestUpdateOnNextTick(this._id);
+  else
+    this._requestingUpdate = false;
 };
 
 
@@ -252,35 +253,33 @@ Size.prototype.onUpdate = function onUpdate() {
 * @return {Size} this
 */
 Size.prototype.setAbsolute = function setAbsolute(x, y, z, options, callback) {
-    if (!this._requestingUpdate) {
-        this._node.requestUpdate(this._id);
-        this._requestingUpdate = true;
-    }
+  if (!this._requestingUpdate) {
+    this._node.requestUpdate(this._id);
+    this._requestingUpdate = true;
+  }
 
-    var xCallback;
-    var yCallback;
-    var zCallback;
+  var xCallback;
+  var yCallback;
+  var zCallback;
 
-    if (z != null) {
-        zCallback = callback;
-    }
-    else if (y != null) {
-        yCallback = callback;
-    }
-    else if (x != null) {
-        xCallback = callback;
-    }
+  if (z != null) {
+    zCallback = callback;
+  } else if (y != null) {
+    yCallback = callback;
+  } else if (x != null) {
+    xCallback = callback;
+  }
 
-    var abs = this._absolute;
-    if (x != null) {
-        abs.x.set(x, options, xCallback);
-    }
-    if (y != null) {
-        abs.y.set(y, options, yCallback);
-    }
-    if (z != null) {
-        abs.z.set(z, options, zCallback);
-    }
+  var abs = this._absolute;
+  if (x != null) {
+    abs.x.set(x, options, xCallback);
+  }
+  if (y != null) {
+    abs.y.set(y, options, yCallback);
+  }
+  if (z != null) {
+    abs.z.set(z, options, zCallback);
+  }
 };
 
 /**
@@ -297,36 +296,34 @@ Size.prototype.setAbsolute = function setAbsolute(x, y, z, options, callback) {
 * @return {Size} this
 */
 Size.prototype.setProportional = function setProportional(x, y, z, options, callback) {
-    if (!this._requestingUpdate) {
-        this._node.requestUpdate(this._id);
-        this._requestingUpdate = true;
-    }
+  if (!this._requestingUpdate) {
+    this._node.requestUpdate(this._id);
+    this._requestingUpdate = true;
+  }
 
-    var xCallback;
-    var yCallback;
-    var zCallback;
+  var xCallback;
+  var yCallback;
+  var zCallback;
 
-    if (z != null) {
-        zCallback = callback;
-    }
-    else if (y != null) {
-        yCallback = callback;
-    }
-    else if (x != null) {
-        xCallback = callback;
-    }
+  if (z != null) {
+    zCallback = callback;
+  } else if (y != null) {
+    yCallback = callback;
+  } else if (x != null) {
+    xCallback = callback;
+  }
 
-    var prop = this._proportional;
-    if (x != null) {
-        prop.x.set(x, options, xCallback);
-    }
-    if (y != null) {
-        prop.y.set(y, options, yCallback);
-    }
-    if (z != null) {
-        prop.z.set(z, options, zCallback);
-    }
-    return this;
+  var prop = this._proportional;
+  if (x != null) {
+    prop.x.set(x, options, xCallback);
+  }
+  if (y != null) {
+    prop.y.set(y, options, yCallback);
+  }
+  if (z != null) {
+    prop.z.set(z, options, zCallback);
+  }
+  return this;
 };
 
 /**
@@ -343,36 +340,34 @@ Size.prototype.setProportional = function setProportional(x, y, z, options, call
 * @return {Size} this
 */
 Size.prototype.setDifferential = function setDifferential(x, y, z, options, callback) {
-    if (!this._requestingUpdate) {
-        this._node.requestUpdate(this._id);
-        this._requestingUpdate = true;
-    }
+  if (!this._requestingUpdate) {
+    this._node.requestUpdate(this._id);
+    this._requestingUpdate = true;
+  }
 
-    var xCallback;
-    var yCallback;
-    var zCallback;
+  var xCallback;
+  var yCallback;
+  var zCallback;
 
-    if (z != null) {
-        zCallback = callback;
-    }
-    else if (y != null) {
-        yCallback = callback;
-    }
-    else if (x != null) {
-        xCallback = callback;
-    }
+  if (z != null) {
+    zCallback = callback;
+  } else if (y != null) {
+    yCallback = callback;
+  } else if (x != null) {
+    xCallback = callback;
+  }
 
-    var diff = this._differential;
-    if (x != null) {
-        diff.x.set(x, options, xCallback);
-    }
-    if (y != null) {
-        diff.y.set(y, options, yCallback);
-    }
-    if (z != null) {
-        diff.z.set(z, options, zCallback);
-    }
-    return this;
+  var diff = this._differential;
+  if (x != null) {
+    diff.x.set(x, options, xCallback);
+  }
+  if (y != null) {
+    diff.y.set(y, options, yCallback);
+  }
+  if (z != null) {
+    diff.z.set(z, options, zCallback);
+  }
+  return this;
 };
 
 /**
@@ -382,8 +377,8 @@ Size.prototype.setDifferential = function setDifferential(x, y, z, options, call
  *
  * @return {Array} size three dimensional computed size
  */
-Size.prototype.get = function get () {
-    return this._node.getSize();
+Size.prototype.get = function get() {
+  return this._node.getSize();
 };
 
 /**
@@ -393,17 +388,17 @@ Size.prototype.get = function get () {
  *
  * @return {Size} this
  */
-Size.prototype.halt = function halt () {
-    this._proportional.x.halt();
-    this._proportional.y.halt();
-    this._proportional.z.halt();
-    this._differential.x.halt();
-    this._differential.y.halt();
-    this._differential.z.halt();
-    this._absolute.x.halt();
-    this._absolute.y.halt();
-    this._absolute.z.halt();
-    return this;
+Size.prototype.halt = function halt() {
+  this._proportional.x.halt();
+  this._proportional.y.halt();
+  this._proportional.z.halt();
+  this._differential.x.halt();
+  this._differential.y.halt();
+  this._differential.z.halt();
+  this._absolute.x.halt();
+  this._absolute.y.halt();
+  this._absolute.z.halt();
+  return this;
 };
 
 module.exports = Size;

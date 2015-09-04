@@ -72,34 +72,34 @@ var Transform = require('./Transform');
  * @class Node
  * @constructor
  */
-function Node () {
-    this._requestingUpdate = false;
-    this._inUpdate = false;
-    this._mounted = false;
-    this._shown = true;
-    this._updater = null;
-    this._UIEvents = [];
+function Node() {
+  this._requestingUpdate = false;
+  this._inUpdate = false;
+  this._mounted = false;
+  this._shown = true;
+  this._updater = null;
+  this._UIEvents = [];
 
-    this._updateQueue = [];
-    this._nextUpdateQueue = [];
+  this._updateQueue = [];
+  this._nextUpdateQueue = [];
 
-    this._freedComponentIndicies = [];
-    this._components = [];
+  this._freedComponentIndicies = [];
+  this._components = [];
 
-    this._freedChildIndicies = [];
-    this._children = [];
+  this._freedChildIndicies = [];
+  this._children = [];
 
-    this._fullChildren = [];
+  this._fullChildren = [];
 
-    this._parent = null;
+  this._parent = null;
 
-    this._id = null;
+  this._id = null;
 
-    this._transformID = null;
-    this._sizeID = null;
-    this._opacityID = null;
+  this._transformID = null;
+  this._sizeID = null;
+  this._opacityID = null;
 
-    if (!this.constructor.NO_DEFAULT_COMPONENTS) this._init();
+  if (!this.constructor.NO_DEFAULT_COMPONENTS) this._init();
 }
 
 Node.RELATIVE_SIZE = 0;
@@ -116,10 +116,10 @@ Node.NO_DEFAULT_COMPONENTS = false;
  *
  * @return {undefined} undefined
  */
-Node.prototype._init = function _init () {
-    this._transformID = this.addComponent(new Transform());
-    this._sizeID = this.addComponent(new Size());
-    this._opacityID = this.addComponent(new Opacity());
+Node.prototype._init = function _init() {
+  this._transformID = this.addComponent(new Transform());
+  this._sizeID = this.addComponent(new Size());
+  this._opacityID = this.addComponent(new Opacity());
 };
 
 /**
@@ -131,11 +131,11 @@ Node.prototype._init = function _init () {
  *
  * @return {undefined} undefined;
  */
-Node.prototype._setParent = function _setParent (parent) {
-    if (this._parent && this._parent.getChildren().indexOf(this) !== -1) {
-        this._parent.removeChild(this);
-    }
-    this._parent = parent;
+Node.prototype._setParent = function _setParent(parent) {
+  if (this._parent && this._parent.getChildren().indexOf(this) !== -1) {
+    this._parent.removeChild(this);
+  }
+  this._parent = parent;
 };
 
 /**
@@ -149,9 +149,9 @@ Node.prototype._setParent = function _setParent (parent) {
  *
  * @return {undefined} undefined
  */
-Node.prototype._setMounted = function _setMounted (mounted, path) {
-    this._mounted = mounted;
-    this._id = path ? path : null;
+Node.prototype._setMounted = function _setMounted(mounted, path) {
+  this._mounted = mounted;
+  this._id = path ? path : null;
 };
 
 /**
@@ -164,8 +164,8 @@ Node.prototype._setMounted = function _setMounted (mounted, path) {
  *
  * @return {undefined} undefined
  */
-Node.prototype._setShown = function _setShown (shown) {
-    this._shown = shown;
+Node.prototype._setShown = function _setShown(shown) {
+  this._shown = shown;
 };
 
 /**
@@ -177,9 +177,9 @@ Node.prototype._setShown = function _setShown (shown) {
  *
  * @return {undefined} undefined
  */
-Node.prototype._setUpdater = function _setUpdater (updater) {
-    this._updater = updater;
-    if (this._requestingUpdate) this._updater.requestUpdate(this);
+Node.prototype._setUpdater = function _setUpdater(updater) {
+  this._updater = updater;
+  if (this._requestingUpdate) this._updater.requestUpdate(this);
 };
 
 /**
@@ -194,8 +194,8 @@ Node.prototype._setUpdater = function _setUpdater (updater) {
  *
  * @return {String} location (path), e.g. `body/0/1`
  */
-Node.prototype.getLocation = function getLocation () {
-    return this._id;
+Node.prototype.getLocation = function getLocation() {
+  return this._id;
 };
 
 /**
@@ -216,15 +216,15 @@ Node.prototype.getId = Node.prototype.getLocation;
  *
  * @return {Node} this
  */
-Node.prototype.emit = function emit (event, payload) {
-    Dispatch.dispatch(this.getLocation(), event, payload);
-    return this;
+Node.prototype.emit = function emit(event, payload) {
+  Dispatch.dispatch(this.getLocation(), event, payload);
+  return this;
 };
 
 // THIS WILL BE DEPRECATED
-Node.prototype.sendDrawCommand = function sendDrawCommand (message) {
-    this._updater.message(message);
-    return this;
+Node.prototype.sendDrawCommand = function sendDrawCommand(message) {
+  this._updater.message(message);
+  return this;
 };
 
 /**
@@ -235,76 +235,76 @@ Node.prototype.sendDrawCommand = function sendDrawCommand (message) {
  * @return {Object}     Serialized representation of the node, including
  *                      components.
  */
-Node.prototype.getValue = function getValue () {
-    var numberOfChildren = this._children.length;
-    var numberOfComponents = this._components.length;
-    var i = 0;
+Node.prototype.getValue = function getValue() {
+  var numberOfChildren = this._children.length;
+  var numberOfComponents = this._components.length;
+  var i = 0;
 
-    var value = {
-        location: this.getId(),
-        spec: {
-            location: this.getId(),
-            showState: {
-                mounted: this.isMounted(),
-                shown: this.isShown(),
-                opacity: 1
-            },
-            offsets: {
-                mountPoint: [0, 0, 0],
-                align: [0, 0, 0],
-                origin: [0, 0, 0]
-            },
-            vectors: {
-                position: [0, 0, 0],
-                rotation: [0, 0, 0, 1],
-                scale: [1, 1, 1]
-            },
-            size: {
-                sizeMode: [0, 0, 0],
-                proportional: [1, 1, 1],
-                differential: [0, 0, 0],
-                absolute: [0, 0, 0],
-                render: [0, 0, 0]
-            }
-        },
-        UIEvents: this._UIEvents,
-        components: [],
-        children: []
-    };
+  var value = {
+    location: this.getId(),
+    spec: {
+      location: this.getId(),
+      showState: {
+        mounted: this.isMounted(),
+        shown: this.isShown(),
+        opacity: 1
+      },
+      offsets: {
+        mountPoint: [0, 0, 0],
+        align: [0, 0, 0],
+        origin: [0, 0, 0]
+      },
+      vectors: {
+        position: [0, 0, 0],
+        rotation: [0, 0, 0, 1],
+        scale: [1, 1, 1]
+      },
+      size: {
+        sizeMode: [0, 0, 0],
+        proportional: [1, 1, 1],
+        differential: [0, 0, 0],
+        absolute: [0, 0, 0],
+        render: [0, 0, 0]
+      }
+    },
+    UIEvents: this._UIEvents,
+    components: [],
+    children: []
+  };
 
-    if (value.location) {
-        var transform = TransformSystem.get(this.getId());
-        var size = SizeSystem.get(this.getId());
-        var opacity = OpacitySystem.get(this.getId());
+  if (value.location) {
+    var transform = TransformSystem.get(this.getId());
+    var size = SizeSystem.get(this.getId());
+    var opacity = OpacitySystem.get(this.getId());
 
-        value.spec.showState.opacity = opacity.getOpacity();
+    value.spec.showState.opacity = opacity.getOpacity();
 
-        for (i = 0 ; i < 3 ; i++) {
-            value.spec.offsets.mountPoint[i] = transform.offsets.mountPoint[i];
-            value.spec.offsets.align[i] = transform.offsets.align[i];
-            value.spec.offsets.origin[i] = transform.offsets.origin[i];
-            value.spec.vectors.position[i] = transform.vectors.position[i];
-            value.spec.vectors.rotation[i] = transform.vectors.rotation[i];
-            value.spec.vectors.scale[i] = transform.vectors.scale[i];
-            value.spec.size.sizeMode[i] = size.sizeMode[i];
-            value.spec.size.proportional[i] = size.proportionalSize[i];
-            value.spec.size.differential[i] = size.differentialSize[i];
-            value.spec.size.absolute[i] = size.absoluteSize[i];
-            value.spec.size.render[i] = size.renderSize[i];
-        }
-
-        value.spec.vectors.rotation[3] = transform.vectors.rotation[3];
+    for (i = 0; i < 3; i++) {
+      value.spec.offsets.mountPoint[i] = transform.offsets.mountPoint[i];
+      value.spec.offsets.align[i] = transform.offsets.align[i];
+      value.spec.offsets.origin[i] = transform.offsets.origin[i];
+      value.spec.vectors.position[i] = transform.vectors.position[i];
+      value.spec.vectors.rotation[i] = transform.vectors.rotation[i];
+      value.spec.vectors.scale[i] = transform.vectors.scale[i];
+      value.spec.size.sizeMode[i] = size.sizeMode[i];
+      value.spec.size.proportional[i] = size.proportionalSize[i];
+      value.spec.size.differential[i] = size.differentialSize[i];
+      value.spec.size.absolute[i] = size.absoluteSize[i];
+      value.spec.size.render[i] = size.renderSize[i];
     }
 
-    for (i = 0; i < numberOfChildren ; i++)
-        if (this._children[i] && this._children[i].getValue)
-            value.children.push(this._children[i].getValue());
+    value.spec.vectors.rotation[3] = transform.vectors.rotation[3];
+  }
 
-    for (i = 0 ; i < numberOfComponents ; i++)
-        if (this._components[i] && this._components[i].getValue)
-            value.components.push(this._components[i].getValue());
+  for (i = 0; i < numberOfChildren; i++)
+    if (this._children[i] && this._children[i].getValue)
+      value.children.push(this._children[i].getValue());
 
-    return value;
+  for (i = 0; i < numberOfComponents; i++)
+    if (this._components[i] && this._components[i].getValue)
+      value.components.push(this._components[i].getValue());
+
+  return value;
 };
 
 /**
@@ -317,25 +317,25 @@ Node.prototype.getValue = function getValue () {
  * @return {Object}     Serialized representation of the node, including
  *                      children, excluding components.
  */
-Node.prototype.getComputedValue = function getComputedValue () {
-    console.warn('Node.getComputedValue is depricated. Use Node.getValue instead');
-    var numberOfChildren = this._children.length;
+Node.prototype.getComputedValue = function getComputedValue() {
+  console.warn('Node.getComputedValue is depricated. Use Node.getValue instead');
+  var numberOfChildren = this._children.length;
 
-    var value = {
-        location: this.getId(),
-        computedValues: {
-            transform: this.isMounted() ? TransformSystem.get(this.getLocation()).getLocalTransform() : null,
-            size: this.isMounted() ? SizeSystem.get(this.getLocation()).get() : null,
-            opacity: this.isMounted() ? OpacitySystem.get(this.getLocation()).get() : null
-        },
-        children: []
-    };
+  var value = {
+    location: this.getId(),
+    computedValues: {
+      transform: this.isMounted() ? TransformSystem.get(this.getLocation()).getLocalTransform() : null,
+      size: this.isMounted() ? SizeSystem.get(this.getLocation()).get() : null,
+      opacity: this.isMounted() ? OpacitySystem.get(this.getLocation()).get() : null
+    },
+    children: []
+  };
 
-    for (var i = 0 ; i < numberOfChildren ; i++)
-        if (this._children[i] && this._children[i].getComputedValue)
-            value.children.push(this._children[i].getComputedValue());
+  for (var i = 0; i < numberOfChildren; i++)
+    if (this._children[i] && this._children[i].getComputedValue)
+      value.children.push(this._children[i].getComputedValue());
 
-    return value;
+  return value;
 };
 
 /**
@@ -345,8 +345,8 @@ Node.prototype.getComputedValue = function getComputedValue () {
  *
  * @return {Array.<Node>}   An array of children.
  */
-Node.prototype.getChildren = function getChildren () {
-    return this._fullChildren;
+Node.prototype.getChildren = function getChildren() {
+  return this._fullChildren;
 };
 
 /**
@@ -359,7 +359,7 @@ Node.prototype.getChildren = function getChildren () {
  * @return {Array}  An array of children. Might contain `null` elements.
  */
 Node.prototype.getRawChildren = function getRawChildren() {
-    return this._children;
+  return this._children;
 };
 
 /**
@@ -370,8 +370,8 @@ Node.prototype.getRawChildren = function getRawChildren() {
  *
  * @return {Node}       Parent node.
  */
-Node.prototype.getParent = function getParent () {
-    return this._parent;
+Node.prototype.getParent = function getParent() {
+  return this._parent;
 };
 
 /**
@@ -394,14 +394,14 @@ Node.prototype.getParent = function getParent () {
  *
  * @return {Node} this
  */
-Node.prototype.requestUpdate = function requestUpdate (requester) {
-    if (this._inUpdate || !this.isMounted())
-        return this.requestUpdateOnNextTick(requester);
-    if (this._updateQueue.indexOf(requester) === -1) {
-        this._updateQueue.push(requester);
-        if (!this._requestingUpdate) this._requestUpdate();
-    }
-    return this;
+Node.prototype.requestUpdate = function requestUpdate(requester) {
+  if (this._inUpdate || !this.isMounted())
+    return this.requestUpdateOnNextTick(requester);
+  if (this._updateQueue.indexOf(requester) === -1) {
+    this._updateQueue.push(requester);
+    if (!this._requestingUpdate) this._requestUpdate();
+  }
+  return this;
 };
 
 /**
@@ -427,10 +427,10 @@ Node.prototype.requestUpdate = function requestUpdate (requester) {
  *
  * @return {Node} this
  */
-Node.prototype.requestUpdateOnNextTick = function requestUpdateOnNextTick (requester) {
-    if (this._nextUpdateQueue.indexOf(requester) === -1)
-        this._nextUpdateQueue.push(requester);
-    return this;
+Node.prototype.requestUpdateOnNextTick = function requestUpdateOnNextTick(requester) {
+  if (this._nextUpdateQueue.indexOf(requester) === -1)
+    this._nextUpdateQueue.push(requester);
+  return this;
 };
 
 /**
@@ -441,8 +441,8 @@ Node.prototype.requestUpdateOnNextTick = function requestUpdateOnNextTick (reque
  *
  * @return {Boolean}    Boolean indicating whether the node is mounted or not.
  */
-Node.prototype.isMounted = function isMounted () {
-    return this._mounted;
+Node.prototype.isMounted = function isMounted() {
+  return this._mounted;
 };
 
 /**
@@ -453,8 +453,8 @@ Node.prototype.isMounted = function isMounted () {
  *
  * @return {Boolean}    Boolean indicating whether the node is rendered or not.
  */
-Node.prototype.isRendered = function isRendered () {
-    return this._mounted && this._shown;
+Node.prototype.isRendered = function isRendered() {
+  return this._mounted && this._shown;
 };
 
 /**
@@ -465,8 +465,8 @@ Node.prototype.isRendered = function isRendered () {
  * @return {Boolean}    Boolean indicating whether the node is visible
  *                      ("shown") or not.
  */
-Node.prototype.isShown = function isShown () {
-    return this._shown;
+Node.prototype.isShown = function isShown() {
+  return this._shown;
 };
 
 /**
@@ -479,12 +479,12 @@ Node.prototype.isShown = function isShown () {
  *
  * @return {Number}         Relative opacity of the node.
  */
-Node.prototype.getOpacity = function getOpacity () {
-    if (!this.constructor.NO_DEFAULT_COMPONENTS)
-        return this.getComponent(this._opacityID).getOpacity();
-    else if (this.isMounted())
-        return OpacitySystem.get(this.getLocation()).getOpacity();
-    else throw new Error('This node does not have access to an opacity component');
+Node.prototype.getOpacity = function getOpacity() {
+  if (!this.constructor.NO_DEFAULT_COMPONENTS)
+    return this.getComponent(this._opacityID).getOpacity();else if (this.isMounted())
+    return OpacitySystem.get(this.getLocation()).getOpacity();
+  else
+    throw new Error('This node does not have access to an opacity component');
 };
 
 /**
@@ -494,12 +494,12 @@ Node.prototype.getOpacity = function getOpacity () {
  *
  * @return {Float32Array}   An array representing the mount point.
  */
-Node.prototype.getMountPoint = function getMountPoint () {
-    if (!this.constructor.NO_DEFAULT_COMPONENTS)
-        return this.getComponent(this._transformID).getMountPoint();
-    else if (this.isMounted())
-        return TransformSystem.get(this.getLocation()).getMountPoint();
-    else throw new Error('This node does not have access to a transform component');
+Node.prototype.getMountPoint = function getMountPoint() {
+  if (!this.constructor.NO_DEFAULT_COMPONENTS)
+    return this.getComponent(this._transformID).getMountPoint();else if (this.isMounted())
+    return TransformSystem.get(this.getLocation()).getMountPoint();
+  else
+    throw new Error('This node does not have access to a transform component');
 };
 
 /**
@@ -509,12 +509,12 @@ Node.prototype.getMountPoint = function getMountPoint () {
  *
  * @return {Float32Array}   An array representing the align.
  */
-Node.prototype.getAlign = function getAlign () {
-    if (!this.constructor.NO_DEFAULT_COMPONENTS)
-        return this.getComponent(this._transformID).getAlign();
-    else if (this.isMounted())
-        return TransformSystem.get(this.getLocation()).getAlign();
-    else throw new Error('This node does not have access to a transform component');
+Node.prototype.getAlign = function getAlign() {
+  if (!this.constructor.NO_DEFAULT_COMPONENTS)
+    return this.getComponent(this._transformID).getAlign();else if (this.isMounted())
+    return TransformSystem.get(this.getLocation()).getAlign();
+  else
+    throw new Error('This node does not have access to a transform component');
 };
 
 /**
@@ -524,12 +524,12 @@ Node.prototype.getAlign = function getAlign () {
  *
  * @return {Float32Array}   An array representing the origin.
  */
-Node.prototype.getOrigin = function getOrigin () {
-    if (!this.constructor.NO_DEFAULT_COMPONENTS)
-        return this.getComponent(this._transformID).getOrigin();
-    else if (this.isMounted())
-        return TransformSystem.get(this.getLocation()).getOrigin();
-    else throw new Error('This node does not have access to a transform component');
+Node.prototype.getOrigin = function getOrigin() {
+  if (!this.constructor.NO_DEFAULT_COMPONENTS)
+    return this.getComponent(this._transformID).getOrigin();else if (this.isMounted())
+    return TransformSystem.get(this.getLocation()).getOrigin();
+  else
+    throw new Error('This node does not have access to a transform component');
 };
 
 /**
@@ -539,12 +539,12 @@ Node.prototype.getOrigin = function getOrigin () {
  *
  * @return {Float32Array}   An array representing the position.
  */
-Node.prototype.getPosition = function getPosition () {
-    if (!this.constructor.NO_DEFAULT_COMPONENTS)
-        return this.getComponent(this._transformID).getPosition();
-    else if (this.isMounted())
-        return TransformSystem.get(this.getLocation()).getPosition();
-    else throw new Error('This node does not have access to a transform component');
+Node.prototype.getPosition = function getPosition() {
+  if (!this.constructor.NO_DEFAULT_COMPONENTS)
+    return this.getComponent(this._transformID).getPosition();else if (this.isMounted())
+    return TransformSystem.get(this.getLocation()).getPosition();
+  else
+    throw new Error('This node does not have access to a transform component');
 };
 
 /**
@@ -554,12 +554,12 @@ Node.prototype.getPosition = function getPosition () {
  *
  * @return {Float32Array} an array of four values, showing the rotation as a quaternion
  */
-Node.prototype.getRotation = function getRotation () {
-    if (!this.constructor.NO_DEFAULT_COMPONENTS)
-        return this.getComponent(this._transformID).getRotation();
-    else if (this.isMounted())
-        return TransformSystem.get(this.getLocation()).getRotation();
-    else throw new Error('This node does not have access to a transform component');
+Node.prototype.getRotation = function getRotation() {
+  if (!this.constructor.NO_DEFAULT_COMPONENTS)
+    return this.getComponent(this._transformID).getRotation();else if (this.isMounted())
+    return TransformSystem.get(this.getLocation()).getRotation();
+  else
+    throw new Error('This node does not have access to a transform component');
 };
 
 /**
@@ -569,12 +569,12 @@ Node.prototype.getRotation = function getRotation () {
  *
  * @return {Float32Array} an array showing the current scale vector
  */
-Node.prototype.getScale = function getScale () {
-    if (!this.constructor.NO_DEFAULT_COMPONENTS)
-        return this.getComponent(this._transformID).getScale();
-    else if (this.isMounted())
-        return TransformSystem.get(this.getLocation()).getScale();
-    else throw new Error('This node does not have access to a transform component');
+Node.prototype.getScale = function getScale() {
+  if (!this.constructor.NO_DEFAULT_COMPONENTS)
+    return this.getComponent(this._transformID).getScale();else if (this.isMounted())
+    return TransformSystem.get(this.getLocation()).getScale();
+  else
+    throw new Error('This node does not have access to a transform component');
 };
 
 /**
@@ -584,12 +584,12 @@ Node.prototype.getScale = function getScale () {
  *
  * @return {Float32Array} an array of numbers showing the current size mode
  */
-Node.prototype.getSizeMode = function getSizeMode () {
-    if (!this.constructor.NO_DEFAULT_COMPONENTS)
-        return this.getComponent(this._sizeID).getSizeMode();
-    else if (this.isMounted())
-        return SizeSystem.get(this.getLocation()).getSizeMode();
-    else throw new Error('This node does not have access to a size component');
+Node.prototype.getSizeMode = function getSizeMode() {
+  if (!this.constructor.NO_DEFAULT_COMPONENTS)
+    return this.getComponent(this._sizeID).getSizeMode();else if (this.isMounted())
+    return SizeSystem.get(this.getLocation()).getSizeMode();
+  else
+    throw new Error('This node does not have access to a size component');
 };
 
 /**
@@ -599,12 +599,12 @@ Node.prototype.getSizeMode = function getSizeMode () {
  *
  * @return {Float32Array} a vector 3 showing the current proportional size
  */
-Node.prototype.getProportionalSize = function getProportionalSize () {
-    if (!this.constructor.NO_DEFAULT_COMPONENTS)
-        return this.getComponent(this._sizeID).getProportional();
-    else if (this.isMounted())
-        return SizeSystem.get(this.getLocation()).getProportional();
-    else throw new Error('This node does not have access to a size component');
+Node.prototype.getProportionalSize = function getProportionalSize() {
+  if (!this.constructor.NO_DEFAULT_COMPONENTS)
+    return this.getComponent(this._sizeID).getProportional();else if (this.isMounted())
+    return SizeSystem.get(this.getLocation()).getProportional();
+  else
+    throw new Error('This node does not have access to a size component');
 };
 
 /**
@@ -614,12 +614,12 @@ Node.prototype.getProportionalSize = function getProportionalSize () {
  *
  * @return {Float32Array} a vector 3 showing the current differential size
  */
-Node.prototype.getDifferentialSize = function getDifferentialSize () {
-    if (!this.constructor.NO_DEFAULT_COMPONENTS)
-        return this.getComponent(this._sizeID).getDifferential();
-    else if (this.isMounted())
-        return SizeSystem.get(this.getLocation()).getDifferential();
-    else throw new Error('This node does not have access to a size component');
+Node.prototype.getDifferentialSize = function getDifferentialSize() {
+  if (!this.constructor.NO_DEFAULT_COMPONENTS)
+    return this.getComponent(this._sizeID).getDifferential();else if (this.isMounted())
+    return SizeSystem.get(this.getLocation()).getDifferential();
+  else
+    throw new Error('This node does not have access to a size component');
 };
 
 /**
@@ -629,12 +629,12 @@ Node.prototype.getDifferentialSize = function getDifferentialSize () {
  *
  * @return {Float32Array} a vector 3 showing the current absolute size of the node
  */
-Node.prototype.getAbsoluteSize = function getAbsoluteSize () {
-    if (!this.constructor.NO_DEFAULT_COMPONENTS)
-        return this.getComponent(this._sizeID).getAbsolute();
-    else if (this.isMounted())
-        return SizeSystem.get(this.getLocation()).getAbsolute();
-    else throw new Error('This node does not have access to a size component');
+Node.prototype.getAbsoluteSize = function getAbsoluteSize() {
+  if (!this.constructor.NO_DEFAULT_COMPONENTS)
+    return this.getComponent(this._sizeID).getAbsolute();else if (this.isMounted())
+    return SizeSystem.get(this.getLocation()).getAbsolute();
+  else
+    throw new Error('This node does not have access to a size component');
 };
 
 /**
@@ -646,12 +646,12 @@ Node.prototype.getAbsoluteSize = function getAbsoluteSize () {
  *
  * @return {Float32Array} a vector 3 showing the current render size
  */
-Node.prototype.getRenderSize = function getRenderSize () {
-    if (!this.constructor.NO_DEFAULT_COMPONENTS)
-        return this.getComponent(this._sizeID).getRender();
-    else if (this.isMounted())
-        return SizeSystem.get(this.getLocation()).getRender();
-    else throw new Error('This node does not have access to a size component');
+Node.prototype.getRenderSize = function getRenderSize() {
+  if (!this.constructor.NO_DEFAULT_COMPONENTS)
+    return this.getComponent(this._sizeID).getRender();else if (this.isMounted())
+    return SizeSystem.get(this.getLocation()).getRender();
+  else
+    throw new Error('This node does not have access to a size component');
 };
 
 /**
@@ -661,12 +661,12 @@ Node.prototype.getRenderSize = function getRenderSize () {
  *
  * @return {Float32Array} a vector 3 of the final calculated side of the node
  */
-Node.prototype.getSize = function getSize () {
-    if (!this.constructor.NO_DEFAULT_COMPONENTS)
-        return this.getComponent(this._sizeID).get();
-    else if (this.isMounted())
-        return SizeSystem.get(this.getLocation()).get();
-    else throw new Error('This node does not have access to a size component');
+Node.prototype.getSize = function getSize() {
+  if (!this.constructor.NO_DEFAULT_COMPONENTS)
+    return this.getComponent(this._sizeID).get();else if (this.isMounted())
+    return SizeSystem.get(this.getLocation()).get();
+  else
+    throw new Error('This node does not have access to a size component');
 };
 
 /**
@@ -676,8 +676,8 @@ Node.prototype.getSize = function getSize () {
  *
  * @return {Float32Array} a 16 value transform
  */
-Node.prototype.getTransform = function getTransform () {
-    return TransformSystem.get(this.getLocation());
+Node.prototype.getTransform = function getTransform() {
+  return TransformSystem.get(this.getLocation());
 };
 
 /**
@@ -687,8 +687,8 @@ Node.prototype.getTransform = function getTransform () {
  *
  * @return {Array} an array of strings representing the current subscribed UI event of this node
  */
-Node.prototype.getUIEvents = function getUIEvents () {
-    return this._UIEvents;
+Node.prototype.getUIEvents = function getUIEvents() {
+  return this._UIEvents;
 };
 
 /**
@@ -702,22 +702,22 @@ Node.prototype.getUIEvents = function getUIEvents () {
  *
  * @return {Node} the appended node.
  */
-Node.prototype.addChild = function addChild (child) {
-    var index = child ? this._children.indexOf(child) : -1;
-    child = child ? child : new Node();
+Node.prototype.addChild = function addChild(child) {
+  var index = child ? this._children.indexOf(child) : -1;
+  child = child ? child : new Node();
 
-    if (index === -1) {
-        index = this._freedChildIndicies.length ?
-                this._freedChildIndicies.pop() : this._children.length;
+  if (index === -1) {
+    index = this._freedChildIndicies.length ?
+      this._freedChildIndicies.pop() : this._children.length;
 
-        this._children[index] = child;
-        this._fullChildren.push(child);
-    }
+    this._children[index] = child;
+    this._fullChildren.push(child);
+  }
 
-    if (this.isMounted())
-        child.mount(this.getLocation() + '/' + index);
+  if (this.isMounted())
+    child.mount(this.getLocation() + '/' + index);
 
-    return child;
+  return child;
 };
 
 /**
@@ -730,30 +730,29 @@ Node.prototype.addChild = function addChild (child) {
  *
  * @return {Boolean} whether or not the node was successfully removed
  */
-Node.prototype.removeChild = function removeChild (child) {
-    var index = this._children.indexOf(child);
+Node.prototype.removeChild = function removeChild(child) {
+  var index = this._children.indexOf(child);
 
-    if (index > - 1) {
-        this._freedChildIndicies.push(index);
+  if (index > -1) {
+    this._freedChildIndicies.push(index);
 
-        this._children[index] = null;
+    this._children[index] = null;
 
-        if (child.isMounted()) child.dismount();
+    if (child.isMounted()) child.dismount();
 
-        var fullChildrenIndex = this._fullChildren.indexOf(child);
-        var len = this._fullChildren.length;
-        var i = 0;
+    var fullChildrenIndex = this._fullChildren.indexOf(child);
+    var len = this._fullChildren.length;
+    var i = 0;
 
-        for (i = fullChildrenIndex; i < len-1; i++)
-            this._fullChildren[i] = this._fullChildren[i + 1];
+    for (i = fullChildrenIndex; i < len - 1; i++)
+      this._fullChildren[i] = this._fullChildren[i + 1];
 
-        this._fullChildren.pop();
+    this._fullChildren.pop();
 
-        return true;
-    }
-    else {
-        return false;
-    }
+    return true;
+  } else {
+    return false;
+  }
 };
 
 /**
@@ -766,20 +765,20 @@ Node.prototype.removeChild = function removeChild (child) {
  *                              registered. Indices aren't necessarily
  *                              consecutive.
  */
-Node.prototype.addComponent = function addComponent (component) {
-    var index = this._components.indexOf(component);
-    if (index === -1) {
-        index = this._freedComponentIndicies.length ? this._freedComponentIndicies.pop() : this._components.length;
-        this._components[index] = component;
+Node.prototype.addComponent = function addComponent(component) {
+  var index = this._components.indexOf(component);
+  if (index === -1) {
+    index = this._freedComponentIndicies.length ? this._freedComponentIndicies.pop() : this._components.length;
+    this._components[index] = component;
 
-        if (this.isMounted() && component.onMount)
-            component.onMount(this, index);
+    if (this.isMounted() && component.onMount)
+      component.onMount(this, index);
 
-        if (this.isShown() && component.onShow)
-            component.onShow();
-    }
+    if (this.isShown() && component.onShow)
+      component.onShow();
+  }
 
-    return index;
+  return index;
 };
 
 /**
@@ -790,8 +789,8 @@ Node.prototype.addComponent = function addComponent (component) {
  * @return {*}              The component registered at the passed in index (if
  *                          any).
  */
-Node.prototype.getComponent = function getComponent (index) {
-    return this._components[index];
+Node.prototype.getComponent = function getComponent(index) {
+  return this._components[index];
 };
 
 /**
@@ -804,19 +803,19 @@ Node.prototype.getComponent = function getComponent (index) {
  *
  * @return {Node} this
  */
-Node.prototype.removeComponent = function removeComponent (component) {
-    var index = this._components.indexOf(component);
-    if (index !== -1) {
-        this._freedComponentIndicies.push(index);
-        if (this.isShown() && component.onHide)
-            component.onHide();
+Node.prototype.removeComponent = function removeComponent(component) {
+  var index = this._components.indexOf(component);
+  if (index !== -1) {
+    this._freedComponentIndicies.push(index);
+    if (this.isShown() && component.onHide)
+      component.onHide();
 
-        if (this.isMounted() && component.onDismount)
-            component.onDismount();
+    if (this.isMounted() && component.onDismount)
+      component.onDismount();
 
-        this._components[index] = null;
-    }
-    return component;
+    this._components[index] = null;
+  }
+  return component;
 };
 
 /**
@@ -830,19 +829,19 @@ Node.prototype.removeComponent = function removeComponent (component) {
  *
  * @return {undefined} undefined
  */
-Node.prototype.removeUIEvent = function removeUIEvent (eventName) {
-    var UIEvents = this.getUIEvents();
-    var components = this._components;
-    var component;
+Node.prototype.removeUIEvent = function removeUIEvent(eventName) {
+  var UIEvents = this.getUIEvents();
+  var components = this._components;
+  var component;
 
-    var index = UIEvents.indexOf(eventName);
-    if (index !== -1) {
-        UIEvents.splice(index, 1);
-        for (var i = 0, len = components.length ; i < len ; i++) {
-            component = components[i];
-            if (component && component.onRemoveUIEvent) component.onRemoveUIEvent(eventName);
-        }
+  var index = UIEvents.indexOf(eventName);
+  if (index !== -1) {
+    UIEvents.splice(index, 1);
+    for (var i = 0, len = components.length; i < len; i++) {
+      component = components[i];
+      if (component && component.onRemoveUIEvent) component.onRemoveUIEvent(eventName);
     }
+  }
 };
 
 /**
@@ -856,21 +855,21 @@ Node.prototype.removeUIEvent = function removeUIEvent (eventName) {
  *
  * @return {Node} this
  */
-Node.prototype.addUIEvent = function addUIEvent (eventName) {
-    var UIEvents = this.getUIEvents();
-    var components = this._components;
-    var component;
+Node.prototype.addUIEvent = function addUIEvent(eventName) {
+  var UIEvents = this.getUIEvents();
+  var components = this._components;
+  var component;
 
-    var added = UIEvents.indexOf(eventName) !== -1;
-    if (!added) {
-        UIEvents.push(eventName);
-        for (var i = 0, len = components.length ; i < len ; i++) {
-            component = components[i];
-            if (component && component.onAddUIEvent) component.onAddUIEvent(eventName);
-        }
+  var added = UIEvents.indexOf(eventName) !== -1;
+  if (!added) {
+    UIEvents.push(eventName);
+    for (var i = 0, len = components.length; i < len; i++) {
+      component = components[i];
+      if (component && component.onAddUIEvent) component.onAddUIEvent(eventName);
     }
+  }
 
-    return this;
+  return this;
 };
 
 /**
@@ -883,12 +882,12 @@ Node.prototype.addUIEvent = function addUIEvent (eventName) {
  *
  * @return {undefined} undefined
  */
-Node.prototype._requestUpdate = function _requestUpdate (force) {
-    if (force || !this._requestingUpdate) {
-        if (this._updater)
-            this._updater.requestUpdate(this);
-        this._requestingUpdate = true;
-    }
+Node.prototype._requestUpdate = function _requestUpdate(force) {
+  if (force || !this._requestingUpdate) {
+    if (this._updater)
+      this._updater.requestUpdate(this);
+    this._requestingUpdate = true;
+  }
 };
 
 /**
@@ -903,13 +902,13 @@ Node.prototype._requestUpdate = function _requestUpdate (force) {
  *
  * @return {Boolean} whether or not a new value was inserted.
  */
-Node.prototype._vecOptionalSet = function _vecOptionalSet (vec, index, val) {
-    if (val != null && vec[index] !== val) {
-        vec[index] = val;
-        if (!this._requestingUpdate) this._requestUpdate();
-        return true;
-    }
-    return false;
+Node.prototype._vecOptionalSet = function _vecOptionalSet(vec, index, val) {
+  if (val != null && vec[index] !== val) {
+    vec[index] = val;
+    if (!this._requestingUpdate) this._requestUpdate();
+    return true;
+  }
+  return false;
 };
 
 /**
@@ -921,10 +920,10 @@ Node.prototype._vecOptionalSet = function _vecOptionalSet (vec, index, val) {
  *
  * @return {Node} this
  */
-Node.prototype.show = function show () {
-    Dispatch.show(this.getLocation());
-    this._shown = true;
-    return this;
+Node.prototype.show = function show() {
+  Dispatch.show(this.getLocation());
+  this._shown = true;
+  return this;
 };
 
 /**
@@ -936,10 +935,10 @@ Node.prototype.show = function show () {
  *
  * @return {Node} this
  */
-Node.prototype.hide = function hide () {
-    Dispatch.hide(this.getLocation());
-    this._shown = false;
-    return this;
+Node.prototype.hide = function hide() {
+  Dispatch.hide(this.getLocation());
+  this._shown = false;
+  return this;
 };
 
 /**
@@ -954,13 +953,13 @@ Node.prototype.hide = function hide () {
  *
  * @return {Node} this
  */
-Node.prototype.setAlign = function setAlign (x, y, z) {
-    if (!this.constructor.NO_DEFAULT_COMPONENTS)
-        this.getComponent(this._transformID).setAlign(x, y, z);
-    else if (this.isMounted())
-        TransformSystem.get(this.getLocation()).setAlign(x, y, z);
-    else throw new Error('This node does not have access to a transform component');
-    return this;
+Node.prototype.setAlign = function setAlign(x, y, z) {
+  if (!this.constructor.NO_DEFAULT_COMPONENTS)
+    this.getComponent(this._transformID).setAlign(x, y, z);else if (this.isMounted())
+    TransformSystem.get(this.getLocation()).setAlign(x, y, z);
+  else
+    throw new Error('This node does not have access to a transform component');
+  return this;
 };
 
 /**
@@ -975,13 +974,13 @@ Node.prototype.setAlign = function setAlign (x, y, z) {
  *
  * @return {Node} this
  */
-Node.prototype.setMountPoint = function setMountPoint (x, y, z) {
-    if (!this.constructor.NO_DEFAULT_COMPONENTS)
-        this.getComponent(this._transformID).setMountPoint(x, y, z);
-    else if (this.isMounted())
-        TransformSystem.get(this.getLocation()).setMountPoint(x, y, z);
-    else throw new Error('This node does not have access to a transform component');
-    return this;
+Node.prototype.setMountPoint = function setMountPoint(x, y, z) {
+  if (!this.constructor.NO_DEFAULT_COMPONENTS)
+    this.getComponent(this._transformID).setMountPoint(x, y, z);else if (this.isMounted())
+    TransformSystem.get(this.getLocation()).setMountPoint(x, y, z);
+  else
+    throw new Error('This node does not have access to a transform component');
+  return this;
 };
 
 /**
@@ -996,13 +995,13 @@ Node.prototype.setMountPoint = function setMountPoint (x, y, z) {
  *
  * @return {Node} this
  */
-Node.prototype.setOrigin = function setOrigin (x, y, z) {
-    if (!this.constructor.NO_DEFAULT_COMPONENTS)
-        this.getComponent(this._transformID).setOrigin(x, y, z);
-    else if (this.isMounted())
-        TransformSystem.get(this.getLocation()).setOrigin(x, y, z);
-    else throw new Error('This node does not have access to a transform component');
-    return this;
+Node.prototype.setOrigin = function setOrigin(x, y, z) {
+  if (!this.constructor.NO_DEFAULT_COMPONENTS)
+    this.getComponent(this._transformID).setOrigin(x, y, z);else if (this.isMounted())
+    TransformSystem.get(this.getLocation()).setOrigin(x, y, z);
+  else
+    throw new Error('This node does not have access to a transform component');
+  return this;
 };
 
 /**
@@ -1017,13 +1016,13 @@ Node.prototype.setOrigin = function setOrigin (x, y, z) {
  *
  * @return {Node} this
  */
-Node.prototype.setPosition = function setPosition (x, y, z) {
-    if (!this.constructor.NO_DEFAULT_COMPONENTS)
-        this.getComponent(this._transformID).setPosition(x, y, z);
-    else if (this.isMounted())
-        TransformSystem.get(this.getLocation()).setPosition(x, y, z);
-    else throw new Error('This node does not have access to a transform component');
-    return this;
+Node.prototype.setPosition = function setPosition(x, y, z) {
+  if (!this.constructor.NO_DEFAULT_COMPONENTS)
+    this.getComponent(this._transformID).setPosition(x, y, z);else if (this.isMounted())
+    TransformSystem.get(this.getLocation()).setPosition(x, y, z);
+  else
+    throw new Error('This node does not have access to a transform component');
+  return this;
 };
 
 /**
@@ -1041,13 +1040,13 @@ Node.prototype.setPosition = function setPosition (x, y, z) {
  *
  * @return {Node} this
  */
-Node.prototype.setRotation = function setRotation (x, y, z, w) {
-    if (!this.constructor.NO_DEFAULT_COMPONENTS)
-        this.getComponent(this._transformID).setRotation(x, y, z, w);
-    else if (this.isMounted())
-        TransformSystem.get(this.getLocation()).setRotation(x, y, z, w);
-    else throw new Error('This node does not have access to a transform component');
-    return this;
+Node.prototype.setRotation = function setRotation(x, y, z, w) {
+  if (!this.constructor.NO_DEFAULT_COMPONENTS)
+    this.getComponent(this._transformID).setRotation(x, y, z, w);else if (this.isMounted())
+    TransformSystem.get(this.getLocation()).setRotation(x, y, z, w);
+  else
+    throw new Error('This node does not have access to a transform component');
+  return this;
 };
 
 /**
@@ -1062,13 +1061,13 @@ Node.prototype.setRotation = function setRotation (x, y, z, w) {
  *
  * @return {Node} this
  */
-Node.prototype.setScale = function setScale (x, y, z) {
-    if (!this.constructor.NO_DEFAULT_COMPONENTS)
-        this.getComponent(this._transformID).setScale(x, y, z);
-    else if (this.isMounted())
-        TransformSystem.get(this.getLocation()).setScale(x, y, z);
-    else throw new Error('This node does not have access to a transform component');
-    return this;
+Node.prototype.setScale = function setScale(x, y, z) {
+  if (!this.constructor.NO_DEFAULT_COMPONENTS)
+    this.getComponent(this._transformID).setScale(x, y, z);else if (this.isMounted())
+    TransformSystem.get(this.getLocation()).setScale(x, y, z);
+  else
+    throw new Error('This node does not have access to a transform component');
+  return this;
 };
 
 /**
@@ -1081,13 +1080,13 @@ Node.prototype.setScale = function setScale (x, y, z) {
  *
  * @return {Node} this
  */
-Node.prototype.setOpacity = function setOpacity (val) {
-    if (!this.constructor.NO_DEFAULT_COMPONENTS)
-        this.getComponent(this._opacityID).setOpacity(val);
-    else if (this.isMounted())
-        OpacitySystem.get(this.getLocation()).setOpacity(val);
-    else throw new Error('This node does not have access to an opacity component');
-    return this;
+Node.prototype.setOpacity = function setOpacity(val) {
+  if (!this.constructor.NO_DEFAULT_COMPONENTS)
+    this.getComponent(this._opacityID).setOpacity(val);else if (this.isMounted())
+    OpacitySystem.get(this.getLocation()).setOpacity(val);
+  else
+    throw new Error('This node does not have access to an opacity component');
+  return this;
 };
 
 /**
@@ -1115,13 +1114,13 @@ Node.prototype.setOpacity = function setOpacity (val) {
  *
  * @return {Node} this
  */
-Node.prototype.setSizeMode = function setSizeMode (x, y, z) {
-    if (!this.constructor.NO_DEFAULT_COMPONENTS)
-        this.getComponent(this._sizeID).setSizeMode(x, y, z);
-    else if (this.isMounted())
-        SizeSystem.get(this.getLocation()).setSizeMode(x, y, z);
-    else throw new Error('This node does not have access to a size component');
-    return this;
+Node.prototype.setSizeMode = function setSizeMode(x, y, z) {
+  if (!this.constructor.NO_DEFAULT_COMPONENTS)
+    this.getComponent(this._sizeID).setSizeMode(x, y, z);else if (this.isMounted())
+    SizeSystem.get(this.getLocation()).setSizeMode(x, y, z);
+  else
+    throw new Error('This node does not have access to a size component');
+  return this;
 };
 
 /**
@@ -1137,13 +1136,13 @@ Node.prototype.setSizeMode = function setSizeMode (x, y, z) {
  *
  * @return {Node} this
  */
-Node.prototype.setProportionalSize = function setProportionalSize (x, y, z) {
-    if (!this.constructor.NO_DEFAULT_COMPONENTS)
-        this.getComponent(this._sizeID).setProportional(x, y, z);
-    else if (this.isMounted())
-        SizeSystem.get(this.getLocation()).setProportional(x, y, z);
-    else throw new Error('This node does not have access to a size component');
-    return this;
+Node.prototype.setProportionalSize = function setProportionalSize(x, y, z) {
+  if (!this.constructor.NO_DEFAULT_COMPONENTS)
+    this.getComponent(this._sizeID).setProportional(x, y, z);else if (this.isMounted())
+    SizeSystem.get(this.getLocation()).setProportional(x, y, z);
+  else
+    throw new Error('This node does not have access to a size component');
+  return this;
 };
 
 /**
@@ -1164,13 +1163,13 @@ Node.prototype.setProportionalSize = function setProportionalSize (x, y, z) {
  *
  * @return {Node} this
  */
-Node.prototype.setDifferentialSize = function setDifferentialSize (x, y, z) {
-    if (!this.constructor.NO_DEFAULT_COMPONENTS)
-        this.getComponent(this._sizeID).setDifferential(x, y, z);
-    else if (this.isMounted())
-        SizeSystem.get(this.getLocation()).setDifferential(x, y, z);
-    else throw new Error('This node does not have access to a size component');
-    return this;
+Node.prototype.setDifferentialSize = function setDifferentialSize(x, y, z) {
+  if (!this.constructor.NO_DEFAULT_COMPONENTS)
+    this.getComponent(this._sizeID).setDifferential(x, y, z);else if (this.isMounted())
+    SizeSystem.get(this.getLocation()).setDifferential(x, y, z);
+  else
+    throw new Error('This node does not have access to a size component');
+  return this;
 };
 
 /**
@@ -1184,13 +1183,13 @@ Node.prototype.setDifferentialSize = function setDifferentialSize (x, y, z) {
  *
  * @return {Node} this
  */
-Node.prototype.setAbsoluteSize = function setAbsoluteSize (x, y, z) {
-    if (!this.constructor.NO_DEFAULT_COMPONENTS)
-        this.getComponent(this._sizeID).setAbsolute(x, y, z);
-    else if (this.isMounted())
-        SizeSystem.get(this.getLocation()).setAbsolute(x, y, z);
-    else throw new Error('This node does not have access to a size component');
-    return this;
+Node.prototype.setAbsoluteSize = function setAbsoluteSize(x, y, z) {
+  if (!this.constructor.NO_DEFAULT_COMPONENTS)
+    this.getComponent(this._sizeID).setAbsolute(x, y, z);else if (this.isMounted())
+    SizeSystem.get(this.getLocation()).setAbsolute(x, y, z);
+  else
+    throw new Error('This node does not have access to a size component');
+  return this;
 };
 
 /**
@@ -1200,8 +1199,8 @@ Node.prototype.setAbsoluteSize = function setAbsoluteSize (x, y, z) {
  *
  * @return {Number} current frame
  */
-Node.prototype.getFrame = function getFrame () {
-    return this._updater.getFrame();
+Node.prototype.getFrame = function getFrame() {
+  return this._updater.getFrame();
 };
 
 /**
@@ -1212,8 +1211,8 @@ Node.prototype.getFrame = function getFrame () {
  *
  * @return {Array} list of components.
  */
-Node.prototype.getComponents = function getComponents () {
-    return this._components;
+Node.prototype.getComponents = function getComponents() {
+  return this._components;
 };
 
 /**
@@ -1226,32 +1225,31 @@ Node.prototype.getComponents = function getComponents () {
  *
  * @return {Node} this
  */
-Node.prototype.update = function update (time){
-    this._inUpdate = true;
-    var nextQueue = this._nextUpdateQueue;
-    var queue = this._updateQueue;
-    var item;
+Node.prototype.update = function update(time) {
+  this._inUpdate = true;
+  var nextQueue = this._nextUpdateQueue;
+  var queue = this._updateQueue;
+  var item;
 
-    while (nextQueue.length) queue.unshift(nextQueue.pop());
+  while (nextQueue.length) queue.unshift(nextQueue.pop());
 
-    while (queue.length) {
-        item = this._components[queue.shift()];
-        if (item && item.onUpdate) item.onUpdate(time);
-    }
+  while (queue.length) {
+    item = this._components[queue.shift()];
+    if (item && item.onUpdate) item.onUpdate(time);
+  }
 
-    this._inUpdate = false;
-    this._requestingUpdate = false;
+  this._inUpdate = false;
+  this._requestingUpdate = false;
 
-    if (!this.isMounted()) {
-        // last update
-        this._parent = null;
-        this._id = null;
-    }
-    else if (this._nextUpdateQueue.length) {
-        this._updater.requestUpdateOnNextTick(this);
-        this._requestingUpdate = true;
-    }
-    return this;
+  if (!this.isMounted()) {
+    // last update
+    this._parent = null;
+    this._id = null;
+  } else if (this._nextUpdateQueue.length) {
+    this._updater.requestUpdateOnNextTick(this);
+    this._requestingUpdate = true;
+  }
+  return this;
 };
 
 /**
@@ -1264,24 +1262,23 @@ Node.prototype.update = function update (time){
  *
  * @return {Node} this
  */
-Node.prototype.mount = function mount (path) {
-    if (this.isMounted())
-        throw new Error('Node is already mounted at: ' + this.getLocation());
+Node.prototype.mount = function mount(path) {
+  if (this.isMounted())
+    throw new Error('Node is already mounted at: ' + this.getLocation());
 
-    if (!this.constructor.NO_DEFAULT_COMPONENTS){
-        TransformSystem.registerTransformAtPath(path, this.getComponent(this._transformID));
-        OpacitySystem.registerOpacityAtPath(path, this.getComponent(this._opacityID));
-        SizeSystem.registerSizeAtPath(path, this.getComponent(this._sizeID));
-    }
-    else {
-        TransformSystem.registerTransformAtPath(path);
-        OpacitySystem.registerOpacityAtPath(path);
-        SizeSystem.registerSizeAtPath(path);
-    }
-    Dispatch.mount(path, this);
+  if (!this.constructor.NO_DEFAULT_COMPONENTS) {
+    TransformSystem.registerTransformAtPath(path, this.getComponent(this._transformID));
+    OpacitySystem.registerOpacityAtPath(path, this.getComponent(this._opacityID));
+    SizeSystem.registerSizeAtPath(path, this.getComponent(this._sizeID));
+  } else {
+    TransformSystem.registerTransformAtPath(path);
+    OpacitySystem.registerOpacityAtPath(path);
+    SizeSystem.registerSizeAtPath(path);
+  }
+  Dispatch.mount(path, this);
 
-    if (!this._requestingUpdate) this._requestUpdate();
-    return this;
+  if (!this._requestingUpdate) this._requestUpdate();
+  return this;
 
 };
 
@@ -1293,18 +1290,18 @@ Node.prototype.mount = function mount (path) {
  *
  * @return {Node} this
  */
-Node.prototype.dismount = function dismount () {
-    if (!this.isMounted())
-        throw new Error('Node is not mounted');
+Node.prototype.dismount = function dismount() {
+  if (!this.isMounted())
+    throw new Error('Node is not mounted');
 
-    var path = this.getLocation();
+  var path = this.getLocation();
 
-    TransformSystem.deregisterTransformAtPath(path);
-    SizeSystem.deregisterSizeAtPath(path);
-    OpacitySystem.deregisterOpacityAtPath(path);
-    Dispatch.dismount(path);
+  TransformSystem.deregisterTransformAtPath(path);
+  SizeSystem.deregisterSizeAtPath(path);
+  OpacitySystem.deregisterOpacityAtPath(path);
+  Dispatch.dismount(path);
 
-    if (!this._requestingUpdate) this._requestUpdate();
+  if (!this._requestingUpdate) this._requestUpdate();
 };
 
 module.exports = Node;

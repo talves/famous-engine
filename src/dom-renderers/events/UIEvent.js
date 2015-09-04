@@ -35,18 +35,18 @@ var Event = require('./Event');
  * @param  {Event} ev   The native DOM event.
  */
 function UIEvent(ev) {
-    // [Constructor(DOMString type, optional UIEventInit eventInitDict)]
-    // interface UIEvent : Event {
-    //     readonly    attribute Window? view;
-    //     readonly    attribute long    detail;
-    // };
-    Event.call(this, ev);
+  // [Constructor(DOMString type, optional UIEventInit eventInitDict)]
+  // interface UIEvent : Event {
+  //     readonly    attribute Window? view;
+  //     readonly    attribute long    detail;
+  // };
+  Event.call(this, ev);
 
-    /**
-     * @name UIEvent#detail
-     * @type Number
-     */
-    this.detail = ev.detail;
+  /**
+   * @name UIEvent#detail
+   * @type Number
+   */
+  this.detail = ev.detail;
 }
 
 UIEvent.prototype = Object.create(Event.prototype);
@@ -59,8 +59,8 @@ UIEvent.prototype.constructor = UIEvent;
  *
  * @return {String} Name of the event type
  */
-UIEvent.prototype.toString = function toString () {
-    return 'UIEvent';
+UIEvent.prototype.toString = function toString() {
+  return 'UIEvent';
 };
 
 module.exports = UIEvent;

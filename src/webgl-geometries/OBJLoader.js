@@ -24,7 +24,7 @@
 
 'use strict';
 
-var loadURL        = require('../utilities/loadURL');
+var loadURL = require('../utilities/loadURL');
 var GeometryHelper = require('./GeometryHelper');
 
 /*
@@ -37,9 +37,9 @@ var GeometryHelper = require('./GeometryHelper');
  * @return {undefined} undefined
  */
 var OBJLoader = {
-    cached: {},
-    requests: {},
-    formatText: format
+  cached: {},
+  requests: {},
+  formatText: format
 };
 
 /*
@@ -56,25 +56,23 @@ var OBJLoader = {
  * @return {undefined} undefined
  */
 OBJLoader.load = function load(url, cb, options) {
-    if (!this.cached[url]) {
-        if (!this.requests[url]) {
-            this.requests[url] = [cb];
-            loadURL(
-                url,
-                this._onsuccess.bind(
-                    this,
-                    url,
-                    options
-                )
-            );
-        }
-        else {
-            this.requests[url].push(cb);
-        }
+  if (!this.cached[url]) {
+    if (!this.requests[url]) {
+      this.requests[url] = [cb];
+      loadURL(
+        url,
+        this._onsuccess.bind(
+          this,
+          url,
+          options
+        )
+      );
+    } else {
+      this.requests[url].push(cb);
     }
-    else {
-        cb(this.cached[url]);
-    }
+  } else {
+    cb(this.cached[url]);
+  }
 };
 
 /*
@@ -91,14 +89,14 @@ OBJLoader.load = function load(url, cb, options) {
  * @return {undefined} undefined
  */
 OBJLoader._onsuccess = function _onsuccess(url, options, text) {
-    var buffers = format.call(this, text, options || {});
-    this.cached[url] = buffers;
+  var buffers = format.call(this, text, options || {});
+  this.cached[url] = buffers;
 
-    for (var i = 0; i < this.requests[url].length; i++) {
-        this.requests[url][i](buffers);
-    }
+  for (var i = 0; i < this.requests[url].length; i++) {
+    this.requests[url][i](buffers);
+  }
 
-    this.requests[url] = null;
+  this.requests[url] = null;
 };
 
 /*
@@ -114,209 +112,183 @@ OBJLoader._onsuccess = function _onsuccess(url, options, text) {
  * @return {Object} vertex buffer data
  */
 function format(text, options) {
-    text = sanitize(text);
+  text = sanitize(text);
 
-    var lines = text.split('\n');
+  var lines = text.split('\n');
 
-    var geometries = [];
-    options = options || {};
+  var geometries = [];
+  options = options || {};
 
-    var faceTexCoords = [];
-    var faceVertices = [];
-    var faceNormals = [];
+  var faceTexCoords = [];
+  var faceVertices = [];
+  var faceNormals = [];
 
-    var normals = [];
-    var texCoords = [];
-    var vertices = [];
+  var normals = [];
+  var texCoords = [];
+  var vertices = [];
 
-    var i1, i2, i3, i4;
-    var split;
-    var line;
+  var i1, i2, i3, i4;
+  var split;
+  var line;
 
-    var length = lines.length;
+  var length = lines.length;
 
-    for (var i = 0; i < length; i++) {
-        line = lines[i];
-        split = lines[i].trim().split(' ');
+  for (var i = 0; i < length; i++) {
+    line = lines[i];
+    split = lines[i].trim().split(' ');
 
-        // Handle vertex positions
+    // Handle vertex positions
 
-        if (line.indexOf('v ') !== -1) {
-            vertices.push([
-                parseFloat(split[1]),
-                parseFloat(split[2]),
-                parseFloat(split[3])
-            ]);
-        }
-
-        // Handle texture coordinates
-
-        else if(line.indexOf('vt ') !== -1) {
-            texCoords.push([
-                parseFloat(split[1]),
-                parseFloat(split[2])
-            ]);
-        }
-
-        // Handle vertex normals
-
-        else if (line.indexOf('vn ') !== -1) {
-            normals.push([
-                parseFloat(split[1]),
-                parseFloat(split[2]),
-                parseFloat(split[3])
-            ]);
-        }
-
-        // Handle face
-
-        else if (line.indexOf('f ') !== -1) {
-
-            // Vertex, Normal
-
-            if (split[1].indexOf('//') !== -1) {
-                i1 = split[1].split('//');
-                i2 = split[2].split('//');
-                i3 = split[3].split('//');
-
-                faceVertices.push([
-                    parseFloat(i1[0]) - 1,
-                    parseFloat(i2[0]) - 1,
-                    parseFloat(i3[0]) - 1
-                ]);
-                faceNormals.push([
-                    parseFloat(i1[1]) - 1,
-                    parseFloat(i2[1]) - 1,
-                    parseFloat(i3[1]) - 1
-                ]);
-
-                // Handle quad
-
-                if (split[4]) {
-                    i4 = split[4].split('//');
-                    faceVertices.push([
-                        parseFloat(i1[0]) - 1,
-                        parseFloat(i3[0]) - 1,
-                        parseFloat(i4[0]) - 1
-                    ]);
-                    faceNormals.push([
-                        parseFloat(i1[2]) - 1,
-                        parseFloat(i3[2]) - 1,
-                        parseFloat(i4[2]) - 1
-                    ]);
-                }
-            }
-
-            // Vertex, TexCoord, Normal
-
-            else if (split[1].indexOf('/') !== -1) {
-                i1 = split[1].split('/');
-                i2 = split[2].split('/');
-                i3 = split[3].split('/');
-
-                faceVertices.push([
-                    parseFloat(i1[0]) - 1,
-                    parseFloat(i2[0]) - 1,
-                    parseFloat(i3[0]) - 1
-                ]);
-                faceTexCoords.push([
-                    parseFloat(i1[1]) - 1,
-                    parseFloat(i2[1]) - 1,
-                    parseFloat(i3[1]) - 1
-                ]);
-                faceNormals.push([
-                    parseFloat(i1[2]) - 1,
-                    parseFloat(i2[2]) - 1,
-                    parseFloat(i3[2]) - 1
-                ]);
-
-                // Handle Quad
-
-                if (split[4]) {
-                    i4 = split[4].split('/');
-
-                    faceVertices.push([
-                        parseFloat(i1[0]) - 1,
-                        parseFloat(i3[0]) - 1,
-                        parseFloat(i4[0]) - 1
-                    ]);
-                    faceTexCoords.push([
-                        parseFloat(i1[1]) - 1,
-                        parseFloat(i3[1]) - 1,
-                        parseFloat(i4[1]) - 1
-                    ]);
-                    faceNormals.push([
-                        parseFloat(i1[2]) - 1,
-                        parseFloat(i3[2]) - 1,
-                        parseFloat(i4[2]) - 1
-                    ]);
-                }
-            }
-
-            // Vertex
-
-            else {
-                faceVertices.push([
-                    parseFloat(split[1]) - 1,
-                    parseFloat(split[2]) - 1,
-                    parseFloat(split[3]) - 1
-                ]);
-                faceTexCoords.push([
-                    parseFloat(split[1]) - 1,
-                    parseFloat(split[2]) - 1,
-                    parseFloat(split[3]) - 1
-                ]);
-                faceNormals.push([
-                    parseFloat(split[1]) - 1,
-                    parseFloat(split[2]) - 1,
-                    parseFloat(split[3]) - 1
-                ]);
-
-                // Handle Quad
-
-                if (split[4]) {
-                    faceVertices.push([
-                        parseFloat(split[1]) - 1,
-                        parseFloat(split[3]) - 1,
-                        parseFloat(split[4]) - 1
-                    ]);
-                    faceTexCoords.push([
-                        parseFloat(split[1]) - 1,
-                        parseFloat(split[3]) - 1,
-                        parseFloat(split[4]) - 1
-                    ]);
-                    faceNormals.push([
-                        parseFloat(split[1]) - 1,
-                        parseFloat(split[3]) - 1,
-                        parseFloat(split[4]) - 1
-                    ]);
-                }
-            }
-        }
-
-        else if (line.indexOf('g ') !== -1) {
-            if (faceVertices.length) {
-                geometries.push(
-                    packageGeometry(
-                        vertices,
-                        normals,
-                        texCoords,
-                        faceVertices,
-                        faceNormals,
-                        faceTexCoords,
-                        options
-                    )
-                );
-            }
-
-            faceVertices.length = 0;
-            faceTexCoords.length = 0;
-            faceNormals.length = 0;
-        }
+    if (line.indexOf('v ') !== -1) {
+      vertices.push([
+        parseFloat(split[1]),
+        parseFloat(split[2]),
+        parseFloat(split[3])
+      ]);
     }
 
-    geometries.push(
-        packageGeometry(
+    // Handle texture coordinates
+    else if (line.indexOf('vt ') !== -1) {
+      texCoords.push([
+        parseFloat(split[1]),
+        parseFloat(split[2])
+      ]);
+    }
+
+    // Handle vertex normals
+    else if (line.indexOf('vn ') !== -1) {
+      normals.push([
+        parseFloat(split[1]),
+        parseFloat(split[2]),
+        parseFloat(split[3])
+      ]);
+    }
+
+    // Handle face
+    else if (line.indexOf('f ') !== -1) {
+
+      // Vertex, Normal
+
+      if (split[1].indexOf('//') !== -1) {
+        i1 = split[1].split('//');
+        i2 = split[2].split('//');
+        i3 = split[3].split('//');
+
+        faceVertices.push([
+          parseFloat(i1[0]) - 1,
+          parseFloat(i2[0]) - 1,
+          parseFloat(i3[0]) - 1
+        ]);
+        faceNormals.push([
+          parseFloat(i1[1]) - 1,
+          parseFloat(i2[1]) - 1,
+          parseFloat(i3[1]) - 1
+        ]);
+
+        // Handle quad
+
+        if (split[4]) {
+          i4 = split[4].split('//');
+          faceVertices.push([
+            parseFloat(i1[0]) - 1,
+            parseFloat(i3[0]) - 1,
+            parseFloat(i4[0]) - 1
+          ]);
+          faceNormals.push([
+            parseFloat(i1[2]) - 1,
+            parseFloat(i3[2]) - 1,
+            parseFloat(i4[2]) - 1
+          ]);
+        }
+      }
+
+      // Vertex, TexCoord, Normal
+      else if (split[1].indexOf('/') !== -1) {
+        i1 = split[1].split('/');
+        i2 = split[2].split('/');
+        i3 = split[3].split('/');
+
+        faceVertices.push([
+          parseFloat(i1[0]) - 1,
+          parseFloat(i2[0]) - 1,
+          parseFloat(i3[0]) - 1
+        ]);
+        faceTexCoords.push([
+          parseFloat(i1[1]) - 1,
+          parseFloat(i2[1]) - 1,
+          parseFloat(i3[1]) - 1
+        ]);
+        faceNormals.push([
+          parseFloat(i1[2]) - 1,
+          parseFloat(i2[2]) - 1,
+          parseFloat(i3[2]) - 1
+        ]);
+
+        // Handle Quad
+
+        if (split[4]) {
+          i4 = split[4].split('/');
+
+          faceVertices.push([
+            parseFloat(i1[0]) - 1,
+            parseFloat(i3[0]) - 1,
+            parseFloat(i4[0]) - 1
+          ]);
+          faceTexCoords.push([
+            parseFloat(i1[1]) - 1,
+            parseFloat(i3[1]) - 1,
+            parseFloat(i4[1]) - 1
+          ]);
+          faceNormals.push([
+            parseFloat(i1[2]) - 1,
+            parseFloat(i3[2]) - 1,
+            parseFloat(i4[2]) - 1
+          ]);
+        }
+      }
+
+      // Vertex
+      else {
+        faceVertices.push([
+          parseFloat(split[1]) - 1,
+          parseFloat(split[2]) - 1,
+          parseFloat(split[3]) - 1
+        ]);
+        faceTexCoords.push([
+          parseFloat(split[1]) - 1,
+          parseFloat(split[2]) - 1,
+          parseFloat(split[3]) - 1
+        ]);
+        faceNormals.push([
+          parseFloat(split[1]) - 1,
+          parseFloat(split[2]) - 1,
+          parseFloat(split[3]) - 1
+        ]);
+
+        // Handle Quad
+
+        if (split[4]) {
+          faceVertices.push([
+            parseFloat(split[1]) - 1,
+            parseFloat(split[3]) - 1,
+            parseFloat(split[4]) - 1
+          ]);
+          faceTexCoords.push([
+            parseFloat(split[1]) - 1,
+            parseFloat(split[3]) - 1,
+            parseFloat(split[4]) - 1
+          ]);
+          faceNormals.push([
+            parseFloat(split[1]) - 1,
+            parseFloat(split[3]) - 1,
+            parseFloat(split[4]) - 1
+          ]);
+        }
+      }
+    } else if (line.indexOf('g ') !== -1) {
+      if (faceVertices.length) {
+        geometries.push(
+          packageGeometry(
             vertices,
             normals,
             texCoords,
@@ -324,10 +296,29 @@ function format(text, options) {
             faceNormals,
             faceTexCoords,
             options
-        )
-    );
+          )
+        );
+      }
 
-    return geometries;
+      faceVertices.length = 0;
+      faceTexCoords.length = 0;
+      faceNormals.length = 0;
+    }
+  }
+
+  geometries.push(
+    packageGeometry(
+      vertices,
+      normals,
+      texCoords,
+      faceVertices,
+      faceNormals,
+      faceTexCoords,
+      options
+    )
+  );
+
+  return geometries;
 }
 
 /*
@@ -348,39 +339,39 @@ function format(text, options) {
  * @return {Object} geometry buffers
  */
 function packageGeometry(v, n, t, fv, fn, ft, options) {
-    var cached = cacheVertices(
-        v,
-        n,
-        t,
-        fv,
-        fn,
-        ft
+  var cached = cacheVertices(
+    v,
+    n,
+    t,
+    fv,
+    fn,
+    ft
+  );
+
+  cached.vertices = flatten(cached.vertices);
+  cached.normals = flatten(cached.normals);
+  cached.texCoords = flatten(cached.texCoords);
+  cached.indices = flatten(cached.indices);
+
+  if (options.normalize) {
+    cached.vertices = GeometryHelper.normalizeVertices(
+      cached.vertices
     );
+  }
 
-    cached.vertices = flatten(cached.vertices);
-    cached.normals = flatten(cached.normals);
-    cached.texCoords = flatten(cached.texCoords);
-    cached.indices = flatten(cached.indices);
+  if (options.computeNormals) {
+    cached.normals = GeometryHelper.computeNormals(
+      cached.vertices,
+      cached.indices
+    );
+  }
 
-    if (options.normalize) {
-        cached.vertices = GeometryHelper.normalizeVertices(
-            cached.vertices
-        );
-    }
-
-    if (options.computeNormals) {
-        cached.normals = GeometryHelper.computeNormals(
-            cached.vertices,
-            cached.indices
-        );
-    }
-
-    return {
-        vertices: cached.vertices,
-        normals: cached.normals,
-        textureCoords: cached.texCoords,
-        indices: cached.indices
-    };
+  return {
+    vertices: cached.vertices,
+    normals: cached.normals,
+    textureCoords: cached.texCoords,
+    indices: cached.indices
+  };
 }
 
 /*
@@ -395,7 +386,7 @@ function packageGeometry(v, n, t, fv, fn, ft, options) {
  * @return {String}     Sanitized string.
  */
 function sanitize(text) {
-    return text.replace(/ +(?= )/g,'').replace(/\s+$/g, '');
+  return text.replace(/ +(?= )/g, '').replace(/\s+$/g, '');
 }
 
 /*
@@ -416,55 +407,57 @@ function sanitize(text) {
  *                      normals of the OBJ.
  */
 function cacheVertices(v, n, t, fv, fn, ft) {
-    var outNormals = [];
-    var outPos = [];
-    var outTexCoord = [];
-    var outIndices = [];
+  var outNormals = [];
+  var outPos = [];
+  var outTexCoord = [];
+  var outIndices = [];
 
-    var vertexCache = {};
+  var vertexCache = {};
 
-    var positionIndex;
-    var normalIndex;
-    var texCoordIndex;
+  var positionIndex;
+  var normalIndex;
+  var texCoordIndex;
 
-    var currentIndex = 0;
-    var fvLength = fv.length;
-    var fnLength = fn.length;
-    var ftLength = ft.length;
-    var faceLength;
-    var index;
+  var currentIndex = 0;
+  var fvLength = fv.length;
+  var fnLength = fn.length;
+  var ftLength = ft.length;
+  var faceLength;
+  var index;
 
-    for (var i = 0; i < fvLength; i++) {
-        outIndices[i] = [];
-        faceLength = fv[i].length;
+  for (var i = 0; i < fvLength; i++) {
+    outIndices[i] = [];
+    faceLength = fv[i].length;
 
-        for (var j = 0; j < faceLength; j++) {
-            if (ftLength) texCoordIndex = ft[i][j];
-            if (fnLength) normalIndex   = fn[i][j];
-                          positionIndex = fv[i][j];
+    for (var j = 0; j < faceLength; j++) {
+      if (ftLength)
+        texCoordIndex = ft[i][j];
+      if (fnLength)
+        normalIndex = fn[i][j];
+      positionIndex = fv[i][j];
 
-            index = vertexCache[positionIndex + ',' + normalIndex + ',' + texCoordIndex];
+      index = vertexCache[positionIndex + ',' + normalIndex + ',' + texCoordIndex];
 
-            if(index === undefined) {
-                index = currentIndex++;
+      if (index === undefined) {
+        index = currentIndex++;
 
-                              outPos.push(v[positionIndex]);
-                if (fnLength) outNormals.push(n[normalIndex]);
-                if (ftLength) outTexCoord.push(t[texCoordIndex]);
+        outPos.push(v[positionIndex]);
+        if (fnLength) outNormals.push(n[normalIndex]);
+        if (ftLength) outTexCoord.push(t[texCoordIndex]);
 
-                vertexCache[positionIndex + ',' + normalIndex + ',' + texCoordIndex] = index;
-            }
+        vertexCache[positionIndex + ',' + normalIndex + ',' + texCoordIndex] = index;
+      }
 
-            outIndices[i].push(index);
-        }
+      outIndices[i].push(index);
     }
+  }
 
-    return {
-        vertices: outPos,
-        normals: outNormals,
-        texCoords: outTexCoord,
-        indices: outIndices
-    };
+  return {
+    vertices: outPos,
+    normals: outNormals,
+    texCoords: outTexCoord,
+    indices: outIndices
+  };
 }
 
 /*
@@ -479,14 +472,14 @@ function cacheVertices(v, n, t, fv, fn, ft) {
  * @return {Array} Flattened version of input array.
  */
 function flatten(arr) {
-    var len = arr.length;
-    var out = [];
+  var len = arr.length;
+  var out = [];
 
-    for (var i = 0; i < len; i++) {
-        out.push.apply(out, arr[i]);
-    }
+  for (var i = 0; i < len; i++) {
+    out.push.apply(out, arr[i]);
+  }
 
-    return out;
+  return out;
 }
 
 module.exports = OBJLoader;

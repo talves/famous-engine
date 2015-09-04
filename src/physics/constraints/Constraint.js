@@ -34,10 +34,10 @@ var _ID = 0;
  * @param {Object} options The options hash.
  */
 function Constraint(options) {
-    options = options || {};
-    this.setOptions(options);
+  options = options || {};
+  this.setOptions(options);
 
-    this._ID = _ID++;
+  this._ID = _ID++;
 }
 
 /**
@@ -48,8 +48,8 @@ function Constraint(options) {
  * @return {undefined} undefined
  */
 Constraint.prototype.setOptions = function setOptions(options) {
-    for (var key in options) this[key] = options[key];
-    this.init(options);
+  for (var key in options) this[key] = options[key];
+  this.init(options);
 };
 
 /**

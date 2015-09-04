@@ -36,13 +36,13 @@ var Position = require('./Position');
  * @param {Node} node Node that the Align component will be attached to
  */
 function Align(node) {
-    Position.call(this, node);
+  Position.call(this, node);
 
-    var initial = node.getAlign();
+  var initial = node.getAlign();
 
-    this._x.set(initial[0]);
-    this._y.set(initial[1]);
-    this._z.set(initial[2]);
+  this._x.set(initial[0]);
+  this._y.set(initial[1]);
+  this._z.set(initial[2]);
 }
 
 /**
@@ -53,7 +53,7 @@ function Align(node) {
  * @return {String} Name of the component
  */
 Align.prototype.toString = function toString() {
-    return 'Align';
+  return 'Align';
 };
 
 Align.prototype = Object.create(Position.prototype);
@@ -68,8 +68,8 @@ Align.prototype.constructor = Align;
  * @return {undefined} undefined
  */
 Align.prototype.update = function update() {
-    this._node.setAlign(this._x.get(), this._y.get(), this._z.get());
-    this._checkUpdate();
+  this._node.setAlign(this._x.get(), this._y.get(), this._z.get());
+  this._checkUpdate();
 };
 
 Align.prototype.onUpdate = Align.prototype.update;

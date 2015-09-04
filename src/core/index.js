@@ -25,18 +25,18 @@
 'use strict';
 
 module.exports = {
-    Channel: require('./Channel'),
-    Clock: require('./Clock'),
-    Commands: require('./Commands'),
-    Dispatch: require('./Dispatch'),
-    Event: require('./Event'),
-    FamousEngine: require('./FamousEngine'),
-    Node: require('./Node'),
-    Path: require('./Path'),
-    PathStore: require('./PathStore'),
-    Scene: require('./Scene'),
-    Size: require('./Size'),
-    SizeSystem: require('./SizeSystem'),
-    Transform: require('./Transform'),
-    TransformSystem: require('./TransformSystem')
+  Channel: require('./Channel'),
+  Clock: require('./Clock'),
+  Commands: require('./Commands'),
+  Dispatch: require('./Dispatch'),
+  Event: require('./Event'),
+  FamousEngine: require('./FamousEngine'),
+  Node: require('./Node'),
+  Path: require('./Path'),
+  PathStore: require('./PathStore'),
+  Scene: require('./Scene'),
+  Size: require('./Size'),
+  SizeSystem: require('./SizeSystem'),
+  Transform: require('./Transform'),
+  TransformSystem: require('./TransformSystem')
 };

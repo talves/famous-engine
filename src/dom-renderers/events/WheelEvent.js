@@ -35,61 +35,61 @@ var MouseEvent = require('./MouseEvent');
  * @param {Event} ev The native DOM event.
  */
 function WheelEvent(ev) {
-    // [Constructor(DOMString typeArg, optional WheelEventInit wheelEventInitDict)]
-    // interface WheelEvent : MouseEvent {
-    //     // DeltaModeCode
-    //     const unsigned long DOM_DELTA_PIXEL = 0x00;
-    //     const unsigned long DOM_DELTA_LINE = 0x01;
-    //     const unsigned long DOM_DELTA_PAGE = 0x02;
-    //     readonly    attribute double        deltaX;
-    //     readonly    attribute double        deltaY;
-    //     readonly    attribute double        deltaZ;
-    //     readonly    attribute unsigned long deltaMode;
-    // };
+  // [Constructor(DOMString typeArg, optional WheelEventInit wheelEventInitDict)]
+  // interface WheelEvent : MouseEvent {
+  //     // DeltaModeCode
+  //     const unsigned long DOM_DELTA_PIXEL = 0x00;
+  //     const unsigned long DOM_DELTA_LINE = 0x01;
+  //     const unsigned long DOM_DELTA_PAGE = 0x02;
+  //     readonly    attribute double        deltaX;
+  //     readonly    attribute double        deltaY;
+  //     readonly    attribute double        deltaZ;
+  //     readonly    attribute unsigned long deltaMode;
+  // };
 
-    MouseEvent.call(this, ev);
+  MouseEvent.call(this, ev);
 
-    /**
-     * @name WheelEvent#DOM_DELTA_PIXEL
-     * @type Number
-     */
-    this.DOM_DELTA_PIXEL = 0x00;
+  /**
+   * @name WheelEvent#DOM_DELTA_PIXEL
+   * @type Number
+   */
+  this.DOM_DELTA_PIXEL = 0x00;
 
-    /**
-     * @name WheelEvent#DOM_DELTA_LINE
-     * @type Number
-     */
-    this.DOM_DELTA_LINE = 0x01;
+  /**
+   * @name WheelEvent#DOM_DELTA_LINE
+   * @type Number
+   */
+  this.DOM_DELTA_LINE = 0x01;
 
-    /**
-     * @name WheelEvent#DOM_DELTA_PAGE
-     * @type Number
-     */
-    this.DOM_DELTA_PAGE = 0x02;
+  /**
+   * @name WheelEvent#DOM_DELTA_PAGE
+   * @type Number
+   */
+  this.DOM_DELTA_PAGE = 0x02;
 
-    /**
-     * @name WheelEvent#deltaX
-     * @type Number
-     */
-    this.deltaX = ev.deltaX;
+  /**
+   * @name WheelEvent#deltaX
+   * @type Number
+   */
+  this.deltaX = ev.deltaX;
 
-    /**
-     * @name WheelEvent#deltaY
-     * @type Number
-     */
-    this.deltaY = ev.deltaY;
+  /**
+   * @name WheelEvent#deltaY
+   * @type Number
+   */
+  this.deltaY = ev.deltaY;
 
-    /**
-     * @name WheelEvent#deltaZ
-     * @type Number
-     */
-    this.deltaZ = ev.deltaZ;
+  /**
+   * @name WheelEvent#deltaZ
+   * @type Number
+   */
+  this.deltaZ = ev.deltaZ;
 
-    /**
-     * @name WheelEvent#deltaMode
-     * @type Number
-     */
-    this.deltaMode = ev.deltaMode;
+  /**
+   * @name WheelEvent#deltaMode
+   * @type Number
+   */
+  this.deltaMode = ev.deltaMode;
 }
 
 WheelEvent.prototype = Object.create(MouseEvent.prototype);
@@ -102,8 +102,8 @@ WheelEvent.prototype.constructor = WheelEvent;
  *
  * @return {String} Name of the event type
  */
-WheelEvent.prototype.toString = function toString () {
-    return 'WheelEvent';
+WheelEvent.prototype.toString = function toString() {
+  return 'WheelEvent';
 };
 
 module.exports = WheelEvent;

@@ -53,23 +53,23 @@ ObjectManager.pools = {};
  * @return {undefined} undefined
  */
 ObjectManager.register = function(type, Constructor) {
-    var pool = this.pools[type] = [];
+  var pool = this.pools[type] = [];
 
-    this['request' + type] = _request(pool, Constructor);
-    this['free' + type] = _free(pool);
+  this['request' + type] = _request(pool, Constructor);
+  this['free' + type] = _free(pool);
 };
 
 function _request(pool, Constructor) {
-    return function request() {
-        if (pool.length !== 0) return pool.pop();
-        else return new Constructor();
-    };
+  return function request() {
+    if (pool.length !== 0) return pool.pop();
+    else return new Constructor();
+  };
 }
 
 function _free(pool) {
-    return function free(obj) {
-        pool.push(obj);
-    };
+  return function free(obj) {
+    pool.push(obj);
+  };
 }
 
 /**
@@ -83,9 +83,9 @@ function _free(pool) {
  * @return {undefined} undefined
  */
 ObjectManager.disposeOf = function(type) {
-    var pool = this.pools[type];
-    var i = pool.length;
-    while (i--) pool.pop();
+  var pool = this.pools[type];
+  var i = pool.length;
+  while (i--) pool.pop();
 };
 
 module.exports = ObjectManager;

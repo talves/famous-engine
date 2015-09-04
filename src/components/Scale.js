@@ -36,11 +36,11 @@ var Position = require('./Position');
  * @param {Node} node Node that the Scale component will be attached to
  */
 function Scale(node) {
-    Position.call(this, node);
+  Position.call(this, node);
 
-    this._x.set(1);
-    this._y.set(1);
-    this._z.set(1);
+  this._x.set(1);
+  this._y.set(1);
+  this._z.set(1);
 }
 
 /**
@@ -51,7 +51,7 @@ function Scale(node) {
  * @return {String} Name of the component
  */
 Scale.prototype.toString = function toString() {
-    return 'Scale';
+  return 'Scale';
 };
 
 Scale.prototype = Object.create(Position.prototype);
@@ -66,8 +66,8 @@ Scale.prototype.constructor = Scale;
  * @return {undefined} undefined
  */
 Scale.prototype.update = function update() {
-    this._node.setScale(this._x.get(), this._y.get(), this._z.get());
-    this._checkUpdate();
+  this._node.setScale(this._x.get(), this._y.get(), this._z.get());
+  this._checkUpdate();
 };
 
 Scale.prototype.onUpdate = Scale.prototype.update;

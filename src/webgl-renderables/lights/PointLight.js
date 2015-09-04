@@ -40,7 +40,7 @@ var TransformSystem = require('../../core/TransformSystem');
  * @return {undefined} undefined
  */
 function PointLight(node) {
-    Light.call(this, node);
+  Light.call(this, node);
 }
 
 /**
@@ -62,9 +62,9 @@ PointLight.prototype.constructor = PointLight;
  * @return {undefined} undefined
  */
 PointLight.prototype.onMount = function onMount(node, id) {
-    this._id = id;
-    TransformSystem.makeBreakPointAt(this._node.getLocation());
-    this.onTransformChange(TransformSystem.get(this._node.getLocation()));
+  this._id = id;
+  TransformSystem.makeBreakPointAt(this._node.getLocation());
+  this.onTransformChange(TransformSystem.get(this._node.getLocation()));
 };
 
 /**
@@ -76,16 +76,16 @@ PointLight.prototype.onMount = function onMount(node, id) {
  *
  * @return {undefined} undefined
  */
-PointLight.prototype.onTransformChange = function onTransformChange (transform) {
-    if (!this._requestingUpdate) {
-        this._node.requestUpdate(this._id);
-        this._requestingUpdate = true;
-    }
-    transform = transform.getWorldTransform();
-    this.queue.push(this.commands.position);
-    this.queue.push(transform[12]);
-    this.queue.push(transform[13]);
-    this.queue.push(transform[14]);
+PointLight.prototype.onTransformChange = function onTransformChange(transform) {
+  if (!this._requestingUpdate) {
+    this._node.requestUpdate(this._id);
+    this._requestingUpdate = true;
+  }
+  transform = transform.getWorldTransform();
+  this.queue.push(this.commands.position);
+  this.queue.push(transform[12]);
+  this.queue.push(transform[13]);
+  this.queue.push(transform[14]);
 };
 
 module.exports = PointLight;

@@ -33,9 +33,9 @@
  * @constructor
  */
 function Channel() {
-    if (typeof self !== 'undefined' && self.window !== self) {
-        this._enterWorkerMode();
-    }
+  if (typeof self !== 'undefined' && self.window !== self) {
+    this._enterWorkerMode();
+  }
 }
 
 
@@ -50,11 +50,11 @@ function Channel() {
  * @return {undefined} undefined
  */
 Channel.prototype._enterWorkerMode = function _enterWorkerMode() {
-    this._workerMode = true;
-    var _this = this;
-    self.addEventListener('message', function onmessage(ev) {
-        _this.onMessage(ev.data);
-    });
+  this._workerMode = true;
+  var _this = this;
+  self.addEventListener('message', function onmessage(ev) {
+    _this.onMessage(ev.data);
+  });
 };
 
 /**
@@ -75,13 +75,12 @@ Channel.prototype.onMessage = null;
  *
  * @return {undefined} undefined
  */
-Channel.prototype.sendMessage = function sendMessage (message) {
-    if (this._workerMode) {
-        self.postMessage(message);
-    }
-    else {
-        this.onmessage(message);
-    }
+Channel.prototype.sendMessage = function sendMessage(message) {
+  if (this._workerMode) {
+    self.postMessage(message);
+  } else {
+    this.onmessage(message);
+  }
 };
 
 /**
@@ -109,7 +108,7 @@ Channel.prototype.onmessage = null;
  * @return {undefined} undefined
  */
 Channel.prototype.postMessage = function postMessage(message) {
-    return this.onMessage(message);
+  return this.onMessage(message);
 };
 
 module.exports = Channel;

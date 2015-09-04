@@ -50,25 +50,25 @@ var OpacitySystem = require('../core/OpacitySystem');
 
 var INPUTS = ['baseColor', 'normals', 'glossiness', 'positionOffset'];
 
-function Mesh (node, options) {
-    this._node = null;
-    this._id = null;
-    this._changeQueue = [];
-    this._initialized = false;
-    this._requestingUpdate = false;
-    this._inDraw = false;
-    this.value = {
-        geometry: Plane(),
-        drawOptions: null,
-        color: null,
-        expressions: {},
-        flatShading: null,
-        glossiness: null,
-        positionOffset: null,
-        normals: null
-    };
-    if (node) node.addComponent(this);
-    if (options) this.setDrawOptions(options);
+function Mesh(node, options) {
+  this._node = null;
+  this._id = null;
+  this._changeQueue = [];
+  this._initialized = false;
+  this._requestingUpdate = false;
+  this._inDraw = false;
+  this.value = {
+    geometry: Plane(),
+    drawOptions: null,
+    color: null,
+    expressions: {},
+    flatShading: null,
+    glossiness: null,
+    positionOffset: null,
+    normals: null
+  };
+  if (node) node.addComponent(this);
+  if (options) this.setDrawOptions(options);
 }
 /**
  * Pass custom options to Mesh, such as a 3 element map
@@ -79,12 +79,12 @@ function Mesh (node, options) {
  * @param {Object} options Draw options
  * @return {Mesh} Current mesh
  */
-Mesh.prototype.setDrawOptions = function setOptions (options) {
-    this._changeQueue.push(Commands.GL_SET_DRAW_OPTIONS);
-    this._changeQueue.push(options);
+Mesh.prototype.setDrawOptions = function setOptions(options) {
+  this._changeQueue.push(Commands.GL_SET_DRAW_OPTIONS);
+  this._changeQueue.push(options);
 
-    this.value.drawOptions = options;
-    return this;
+  this.value.drawOptions = options;
+  return this;
 };
 
 /**
@@ -94,8 +94,8 @@ Mesh.prototype.setDrawOptions = function setOptions (options) {
  *
  * @returns {Object} Options
  */
-Mesh.prototype.getDrawOptions = function getDrawOptions () {
-    return this.value.drawOptions;
+Mesh.prototype.getDrawOptions = function getDrawOptions() {
+  return this.value.drawOptions;
 };
 
 /**
@@ -110,47 +110,47 @@ Mesh.prototype.getDrawOptions = function getDrawOptions () {
  *
  * @return {Mesh} Mesh
  */
-Mesh.prototype.setGeometry = function setGeometry (geometry, options) {
-    if (typeof geometry === 'string') {
-        if (!Geometry[geometry]) throw 'Invalid geometry: "' + geometry + '".';
-        else {
-            console.warn(
-                'Mesh#setGeometry using the geometry registry is deprecated!\n' +
-                'Instantiate the geometry directly via `new ' + geometry +
-                '(options)` instead!'
-            );
+Mesh.prototype.setGeometry = function setGeometry(geometry, options) {
+  if (typeof geometry === 'string') {
+    if (!Geometry[geometry])
+      throw 'Invalid geometry: "' + geometry + '".'; else {
+      console.warn(
+        'Mesh#setGeometry using the geometry registry is deprecated!\n' +
+        'Instantiate the geometry directly via `new ' + geometry +
+        '(options)` instead!'
+      );
 
-            geometry = new Geometry[geometry](options);
-        }
+      geometry = new Geometry[geometry](options);
     }
+  }
 
-    if (this.value.geometry !== geometry || this._inDraw) {
-        if (this._initialized) {
-            this._changeQueue.push(Commands.GL_SET_GEOMETRY);
-            this._changeQueue.push(geometry.spec.id);
-            this._changeQueue.push(geometry.spec.type);
-            this._changeQueue.push(geometry.spec.dynamic);
-        }
-        this._requestUpdate();
-        this.value.geometry = geometry;
-    }
-
+  if (this.value.geometry !== geometry || this._inDraw) {
     if (this._initialized) {
-        if (this._node) {
-            var i = this.value.geometry.spec.invalidations.length;
-            if (i) this._requestUpdate();
-            while (i--) {
-                this.value.geometry.spec.invalidations.pop();
-                this._changeQueue.push(Commands.GL_BUFFER_DATA);
-                this._changeQueue.push(this.value.geometry.spec.id);
-                this._changeQueue.push(this.value.geometry.spec.bufferNames[i]);
-                this._changeQueue.push(this.value.geometry.spec.bufferValues[i]);
-                this._changeQueue.push(this.value.geometry.spec.bufferSpacings[i]);
-                this._changeQueue.push(this.value.geometry.spec.dynamic);
-            }
-        }
+      this._changeQueue.push(Commands.GL_SET_GEOMETRY);
+      this._changeQueue.push(geometry.spec.id);
+      this._changeQueue.push(geometry.spec.type);
+      this._changeQueue.push(geometry.spec.dynamic);
     }
-    return this;
+    this._requestUpdate();
+    this.value.geometry = geometry;
+  }
+
+  if (this._initialized) {
+    if (this._node) {
+      var i = this.value.geometry.spec.invalidations.length;
+      if (i) this._requestUpdate();
+      while (i--) {
+        this.value.geometry.spec.invalidations.pop();
+        this._changeQueue.push(Commands.GL_BUFFER_DATA);
+        this._changeQueue.push(this.value.geometry.spec.id);
+        this._changeQueue.push(this.value.geometry.spec.bufferNames[i]);
+        this._changeQueue.push(this.value.geometry.spec.bufferValues[i]);
+        this._changeQueue.push(this.value.geometry.spec.bufferSpacings[i]);
+        this._changeQueue.push(this.value.geometry.spec.dynamic);
+      }
+    }
+  }
+  return this;
 };
 
 /**
@@ -160,8 +160,8 @@ Mesh.prototype.setGeometry = function setGeometry (geometry, options) {
  *
  * @returns {Geometry} Geometry
  */
-Mesh.prototype.getGeometry = function getGeometry () {
-    return this.value.geometry;
+Mesh.prototype.getGeometry = function getGeometry() {
+  return this.value.geometry;
 };
 
 /**
@@ -174,44 +174,42 @@ Mesh.prototype.getGeometry = function getGeometry () {
 *
 * @return {Mesh} Mesh
 */
-Mesh.prototype.setBaseColor = function setBaseColor (color) {
-    var uniformValue;
-    var isMaterial = color.__isAMaterial__;
-    var isColor = !!color.getNormalizedRGBA;
+Mesh.prototype.setBaseColor = function setBaseColor(color) {
+  var uniformValue;
+  var isMaterial = color.__isAMaterial__;
+  var isColor = !!color.getNormalizedRGBA;
 
-    if (isMaterial) {
-        addMeshToMaterial(this, color, 'baseColor');
-        this.value.color = null;
-        this.value.expressions.baseColor = color;
-        uniformValue = color;
-    }
-    else if (isColor) {
-        this.value.expressions.baseColor = null;
-        this.value.color = color;
-        uniformValue = color.getNormalizedRGBA();
-    }
+  if (isMaterial) {
+    addMeshToMaterial(this, color, 'baseColor');
+    this.value.color = null;
+    this.value.expressions.baseColor = color;
+    uniformValue = color;
+  } else if (isColor) {
+    this.value.expressions.baseColor = null;
+    this.value.color = color;
+    uniformValue = color.getNormalizedRGBA();
+  }
 
-    if (this._initialized) {
+  if (this._initialized) {
 
-        // If a material expression
+    // If a material expression
 
-        if (color.__isAMaterial__) {
-            this._changeQueue.push(Commands.MATERIAL_INPUT);
-        }
-
-        // If a color component
-
-        else if (color.getNormalizedRGB) {
-            this._changeQueue.push(Commands.GL_UNIFORMS);
-        }
-
-        this._changeQueue.push('u_baseColor');
-        this._changeQueue.push(uniformValue);
+    if (color.__isAMaterial__) {
+      this._changeQueue.push(Commands.MATERIAL_INPUT);
     }
 
-    this._requestUpdate();
+    // If a color component
+    else if (color.getNormalizedRGB) {
+      this._changeQueue.push(Commands.GL_UNIFORMS);
+    }
 
-    return this;
+    this._changeQueue.push('u_baseColor');
+    this._changeQueue.push(uniformValue);
+  }
+
+  this._requestUpdate();
+
+  return this;
 };
 
 /**
@@ -221,8 +219,8 @@ Mesh.prototype.setBaseColor = function setBaseColor (color) {
  *
  * @returns {MaterialExpress|Color} MaterialExpress or Color instance
  */
-Mesh.prototype.getBaseColor = function getBaseColor () {
-    return this.value.expressions.baseColor || this.value.color;
+Mesh.prototype.getBaseColor = function getBaseColor() {
+  return this.value.expressions.baseColor || this.value.color;
 };
 
 /**
@@ -234,18 +232,18 @@ Mesh.prototype.getBaseColor = function getBaseColor () {
  *
  * @return {Mesh} Mesh
  */
-Mesh.prototype.setFlatShading = function setFlatShading (bool) {
-    if (this._inDraw || this.value.flatShading !== bool) {
-        this.value.flatShading = bool;
-        if (this._initialized) {
-            this._changeQueue.push(Commands.GL_UNIFORMS);
-            this._changeQueue.push('u_flatShading');
-            this._changeQueue.push(bool ? 1 : 0);
-        }
-        this._requestUpdate();
+Mesh.prototype.setFlatShading = function setFlatShading(bool) {
+  if (this._inDraw || this.value.flatShading !== bool) {
+    this.value.flatShading = bool;
+    if (this._initialized) {
+      this._changeQueue.push(Commands.GL_UNIFORMS);
+      this._changeQueue.push('u_flatShading');
+      this._changeQueue.push(bool ? 1 : 0);
     }
+    this._requestUpdate();
+  }
 
-    return this;
+  return this;
 };
 
 /**
@@ -255,8 +253,8 @@ Mesh.prototype.setFlatShading = function setFlatShading (bool) {
  *
  * @returns {Boolean} Boolean
  */
-Mesh.prototype.getFlatShading = function getFlatShading () {
-    return this.value.flatShading;
+Mesh.prototype.getFlatShading = function getFlatShading() {
+  return this.value.flatShading;
 };
 
 
@@ -271,23 +269,23 @@ Mesh.prototype.getFlatShading = function getFlatShading () {
  *
  * @return {Mesh} Mesh
  */
-Mesh.prototype.setNormals = function setNormals (materialExpression) {
-    var isMaterial = materialExpression.__isAMaterial__;
+Mesh.prototype.setNormals = function setNormals(materialExpression) {
+  var isMaterial = materialExpression.__isAMaterial__;
 
-    if (isMaterial) {
-        addMeshToMaterial(this, materialExpression, 'normals');
-        this.value.expressions.normals = materialExpression;
-    }
+  if (isMaterial) {
+    addMeshToMaterial(this, materialExpression, 'normals');
+    this.value.expressions.normals = materialExpression;
+  }
 
-    if (this._initialized) {
-        this._changeQueue.push(materialExpression.__isAMaterial__ ? Commands.MATERIAL_INPUT : Commands.GL_UNIFORMS);
-        this._changeQueue.push('u_normals');
-        this._changeQueue.push(materialExpression);
-    }
+  if (this._initialized) {
+    this._changeQueue.push(materialExpression.__isAMaterial__ ? Commands.MATERIAL_INPUT : Commands.GL_UNIFORMS);
+    this._changeQueue.push('u_normals');
+    this._changeQueue.push(materialExpression);
+  }
 
-    this._requestUpdate();
+  this._requestUpdate();
 
-    return this;
+  return this;
 };
 
 /**
@@ -299,8 +297,8 @@ Mesh.prototype.setNormals = function setNormals (materialExpression) {
  *
  * @returns {Array} The normals expression for Mesh
  */
-Mesh.prototype.getNormals = function getNormals (materialExpression) {
-    return this.value.expressions.normals;
+Mesh.prototype.getNormals = function getNormals(materialExpression) {
+  return this.value.expressions.normals;
 };
 
 /**
@@ -315,29 +313,28 @@ Mesh.prototype.getNormals = function getNormals (materialExpression) {
  * @return {Mesh} Mesh
  */
 Mesh.prototype.setGlossiness = function setGlossiness(glossiness, strength) {
-    var isMaterial = glossiness.__isAMaterial__;
-    var isColor = !!glossiness.getNormalizedRGB;
+  var isMaterial = glossiness.__isAMaterial__;
+  var isColor = !!glossiness.getNormalizedRGB;
 
-    if (isMaterial) {
-        addMeshToMaterial(this, glossiness, 'glossiness');
-        this.value.glossiness = [null, null];
-        this.value.expressions.glossiness = glossiness;
-    }
-    else if (isColor) {
-        this.value.expressions.glossiness = null;
-        this.value.glossiness = [glossiness, strength || 20];
-        glossiness = glossiness ? glossiness.getNormalizedRGB() : [0, 0, 0];
-        glossiness.push(strength || 20);
-    }
+  if (isMaterial) {
+    addMeshToMaterial(this, glossiness, 'glossiness');
+    this.value.glossiness = [null, null];
+    this.value.expressions.glossiness = glossiness;
+  } else if (isColor) {
+    this.value.expressions.glossiness = null;
+    this.value.glossiness = [glossiness, strength || 20];
+    glossiness = glossiness ? glossiness.getNormalizedRGB() : [0, 0, 0];
+    glossiness.push(strength || 20);
+  }
 
-    if (this._initialized) {
-        this._changeQueue.push(glossiness.__isAMaterial__ ? Commands.MATERIAL_INPUT : Commands.GL_UNIFORMS);
-        this._changeQueue.push('u_glossiness');
-        this._changeQueue.push(glossiness);
-    }
+  if (this._initialized) {
+    this._changeQueue.push(glossiness.__isAMaterial__ ? Commands.MATERIAL_INPUT : Commands.GL_UNIFORMS);
+    this._changeQueue.push('u_glossiness');
+    this._changeQueue.push(glossiness);
+  }
 
-    this._requestUpdate();
-    return this;
+  this._requestUpdate();
+  return this;
 };
 
 /**
@@ -348,7 +345,7 @@ Mesh.prototype.setGlossiness = function setGlossiness(glossiness, strength) {
  * @returns {MaterialExpress|Number} MaterialExpress or Number
  */
 Mesh.prototype.getGlossiness = function getGlossiness() {
-    return this.value.expressions.glossiness || this.value.glossiness;
+  return this.value.expressions.glossiness || this.value.glossiness;
 };
 
 /**
@@ -362,29 +359,28 @@ Mesh.prototype.getGlossiness = function getGlossiness() {
  * @return {Mesh} Mesh
  */
 Mesh.prototype.setPositionOffset = function positionOffset(materialExpression) {
-    var uniformValue;
-    var isMaterial = materialExpression.__isAMaterial__;
+  var uniformValue;
+  var isMaterial = materialExpression.__isAMaterial__;
 
-    if (isMaterial) {
-        addMeshToMaterial(this, materialExpression, 'positionOffset');
-        this.value.expressions.positionOffset = materialExpression;
-        uniformValue = materialExpression;
-    }
-    else {
-        this.value.expressions.positionOffset = null;
-        this.value.positionOffset = materialExpression;
-        uniformValue = this.value.positionOffset;
-    }
+  if (isMaterial) {
+    addMeshToMaterial(this, materialExpression, 'positionOffset');
+    this.value.expressions.positionOffset = materialExpression;
+    uniformValue = materialExpression;
+  } else {
+    this.value.expressions.positionOffset = null;
+    this.value.positionOffset = materialExpression;
+    uniformValue = this.value.positionOffset;
+  }
 
-    if (this._initialized) {
-        this._changeQueue.push(materialExpression.__isAMaterial__ ? Commands.MATERIAL_INPUT : Commands.GL_UNIFORMS);
-        this._changeQueue.push('u_positionOffset');
-        this._changeQueue.push(uniformValue);
-    }
+  if (this._initialized) {
+    this._changeQueue.push(materialExpression.__isAMaterial__ ? Commands.MATERIAL_INPUT : Commands.GL_UNIFORMS);
+    this._changeQueue.push('u_positionOffset');
+    this._changeQueue.push(uniformValue);
+  }
 
-    this._requestUpdate();
+  this._requestUpdate();
 
-    return this;
+  return this;
 };
 
 /**
@@ -394,8 +390,8 @@ Mesh.prototype.setPositionOffset = function positionOffset(materialExpression) {
  *
  * @returns {MaterialExpress|Number} MaterialExpress or Number
  */
-Mesh.prototype.getPositionOffset = function getPositionOffset () {
-    return this.value.expressions.positionOffset || this.value.positionOffset;
+Mesh.prototype.getPositionOffset = function getPositionOffset() {
+  return this.value.expressions.positionOffset || this.value.positionOffset;
 };
 
 /**
@@ -405,8 +401,8 @@ Mesh.prototype.getPositionOffset = function getPositionOffset () {
  *
  * @returns {Object} Object
  */
-Mesh.prototype.getMaterialExpressions = function getMaterialExpressions () {
-    return this.value.expressions;
+Mesh.prototype.getMaterialExpressions = function getMaterialExpressions() {
+  return this.value.expressions;
 };
 
 /**
@@ -416,8 +412,8 @@ Mesh.prototype.getMaterialExpressions = function getMaterialExpressions () {
  *
  * @returns {Number} Value
  */
-Mesh.prototype.getValue = function getValue () {
-    return this.value;
+Mesh.prototype.getValue = function getValue() {
+  return this.value;
 };
 
 /**
@@ -427,22 +423,22 @@ Mesh.prototype.getValue = function getValue () {
  *
  * @return {Mesh} Mesh
  */
-Mesh.prototype._pushInvalidations = function _pushInvalidations (expressionName) {
-    var uniformKey;
-    var expression = this.value.expressions[expressionName];
-    var sender = this._node;
-    if (expression) {
-        expression.traverse(function (node) {
-            var i = node.invalidations.length;
-            while (i--) {
-                uniformKey = node.invalidations.pop();
-                sender.sendDrawCommand(Commands.GL_UNIFORMS);
-                sender.sendDrawCommand(uniformKey);
-                sender.sendDrawCommand(node.uniforms[uniformKey]);
-            }
-        });
-    }
-    return this;
+Mesh.prototype._pushInvalidations = function _pushInvalidations(expressionName) {
+  var uniformKey;
+  var expression = this.value.expressions[expressionName];
+  var sender = this._node;
+  if (expression) {
+    expression.traverse(function(node) {
+      var i = node.invalidations.length;
+      while (i--) {
+        uniformKey = node.invalidations.pop();
+        sender.sendDrawCommand(Commands.GL_UNIFORMS);
+        sender.sendDrawCommand(uniformKey);
+        sender.sendDrawCommand(node.uniforms[uniformKey]);
+      }
+    });
+  }
+  return this;
 };
 
 /**
@@ -454,44 +450,43 @@ Mesh.prototype._pushInvalidations = function _pushInvalidations (expressionName)
 * @return {undefined} undefined
 */
 Mesh.prototype.onUpdate = function onUpdate() {
-    var node = this._node;
-    var queue = this._changeQueue;
+  var node = this._node;
+  var queue = this._changeQueue;
 
-    if (node && node.isMounted()) {
-        node.sendDrawCommand(Commands.WITH);
-        node.sendDrawCommand(node.getLocation());
+  if (node && node.isMounted()) {
+    node.sendDrawCommand(Commands.WITH);
+    node.sendDrawCommand(node.getLocation());
 
-        // If any invalidations exist, push them into the queue
-        if (this.value.color && this.value.color.isActive()) {
-            this._node.sendDrawCommand(Commands.GL_UNIFORMS);
-            this._node.sendDrawCommand('u_baseColor');
-            this._node.sendDrawCommand(this.value.color.getNormalizedRGBA());
-            this._node.requestUpdateOnNextTick(this._id);
-        }
-        if (this.value.glossiness && this.value.glossiness[0] && this.value.glossiness[0].isActive()) {
-            this._node.sendDrawCommand(Commands.GL_UNIFORMS);
-            this._node.sendDrawCommand('u_glossiness');
-            var glossiness = this.value.glossiness[0].getNormalizedRGB();
-            glossiness.push(this.value.glossiness[1]);
-            this._node.sendDrawCommand(glossiness);
-            this._node.requestUpdateOnNextTick(this._id);
-        }
-        else {
-            this._requestingUpdate = false;
-        }
-
-        // If any invalidations exist, push them into the queue
-        this._pushInvalidations('baseColor');
-        this._pushInvalidations('positionOffset');
-        this._pushInvalidations('normals');
-        this._pushInvalidations('glossiness');
-
-        for (var i = 0; i < queue.length; i++) {
-            node.sendDrawCommand(queue[i]);
-        }
-
-        queue.length = 0;
+    // If any invalidations exist, push them into the queue
+    if (this.value.color && this.value.color.isActive()) {
+      this._node.sendDrawCommand(Commands.GL_UNIFORMS);
+      this._node.sendDrawCommand('u_baseColor');
+      this._node.sendDrawCommand(this.value.color.getNormalizedRGBA());
+      this._node.requestUpdateOnNextTick(this._id);
     }
+    if (this.value.glossiness && this.value.glossiness[0] && this.value.glossiness[0].isActive()) {
+      this._node.sendDrawCommand(Commands.GL_UNIFORMS);
+      this._node.sendDrawCommand('u_glossiness');
+      var glossiness = this.value.glossiness[0].getNormalizedRGB();
+      glossiness.push(this.value.glossiness[1]);
+      this._node.sendDrawCommand(glossiness);
+      this._node.requestUpdateOnNextTick(this._id);
+    } else {
+      this._requestingUpdate = false;
+    }
+
+    // If any invalidations exist, push them into the queue
+    this._pushInvalidations('baseColor');
+    this._pushInvalidations('positionOffset');
+    this._pushInvalidations('normals');
+    this._pushInvalidations('glossiness');
+
+    for (var i = 0; i < queue.length; i++) {
+      node.sendDrawCommand(queue[i]);
+    }
+
+    queue.length = 0;
+  }
 };
 
 /**
@@ -504,14 +499,14 @@ Mesh.prototype.onUpdate = function onUpdate() {
  *
  * @return {undefined} undefined
  */
-Mesh.prototype.onMount = function onMount (node, id) {
-    this._node = node;
-    this._id = id;
+Mesh.prototype.onMount = function onMount(node, id) {
+  this._node = node;
+  this._id = id;
 
-    TransformSystem.makeCalculateWorldMatrixAt(node.getLocation());
-    OpacitySystem.makeCalculateWorldOpacityAt(node.getLocation());
+  TransformSystem.makeCalculateWorldMatrixAt(node.getLocation());
+  OpacitySystem.makeCalculateWorldOpacityAt(node.getLocation());
 
-    this.draw();
+  this.draw();
 };
 
 /**
@@ -521,16 +516,16 @@ Mesh.prototype.onMount = function onMount (node, id) {
  *
  * @return {undefined} undefined
  */
-Mesh.prototype.onDismount = function onDismount () {
-    this._initialized = false;
-    this._inDraw = false;
+Mesh.prototype.onDismount = function onDismount() {
+  this._initialized = false;
+  this._inDraw = false;
 
-    this._node.sendDrawCommand(Commands.WITH);
-    this._node.sendDrawCommand(this._node.getLocation());
-    this._node.sendDrawCommand(Commands.GL_REMOVE_MESH);
+  this._node.sendDrawCommand(Commands.WITH);
+  this._node.sendDrawCommand(this._node.getLocation());
+  this._node.sendDrawCommand(Commands.GL_REMOVE_MESH);
 
-    this._node = null;
-    this._id = null;
+  this._node = null;
+  this._id = null;
 };
 
 /**
@@ -540,10 +535,10 @@ Mesh.prototype.onDismount = function onDismount () {
  *
  * @return {undefined} undefined
  */
-Mesh.prototype.onShow = function onShow () {
-    this._changeQueue.push(Commands.GL_MESH_VISIBILITY, true);
+Mesh.prototype.onShow = function onShow() {
+  this._changeQueue.push(Commands.GL_MESH_VISIBILITY, true);
 
-    this._requestUpdate();
+  this._requestUpdate();
 };
 
 /**
@@ -553,10 +548,10 @@ Mesh.prototype.onShow = function onShow () {
  *
  * @return {undefined} undefined
  */
-Mesh.prototype.onHide = function onHide () {
-    this._changeQueue.push(Commands.GL_MESH_VISIBILITY, false);
+Mesh.prototype.onHide = function onHide() {
+  this._changeQueue.push(Commands.GL_MESH_VISIBILITY, false);
 
-    this._requestUpdate();
+  this._requestUpdate();
 };
 
 /**
@@ -569,14 +564,14 @@ Mesh.prototype.onHide = function onHide () {
  *
  * @return {undefined} undefined
  */
-Mesh.prototype.onTransformChange = function onTransformChange (transform) {
-    if (this._initialized) {
-        this._changeQueue.push(Commands.GL_UNIFORMS);
-        this._changeQueue.push('u_transform');
-        this._changeQueue.push(transform.getWorldTransform());
-    }
+Mesh.prototype.onTransformChange = function onTransformChange(transform) {
+  if (this._initialized) {
+    this._changeQueue.push(Commands.GL_UNIFORMS);
+    this._changeQueue.push('u_transform');
+    this._changeQueue.push(transform.getWorldTransform());
+  }
 
-    this._requestUpdate();
+  this._requestUpdate();
 };
 
 /**
@@ -591,14 +586,14 @@ Mesh.prototype.onTransformChange = function onTransformChange (transform) {
  *
  * @return {undefined} undefined
  */
-Mesh.prototype.onSizeChange = function onSizeChange (x, y, z) {
-    if (this._initialized) {
-        this._changeQueue.push(Commands.GL_UNIFORMS);
-        this._changeQueue.push('u_size');
-        this._changeQueue.push([x, y, z]);
-    }
+Mesh.prototype.onSizeChange = function onSizeChange(x, y, z) {
+  if (this._initialized) {
+    this._changeQueue.push(Commands.GL_UNIFORMS);
+    this._changeQueue.push('u_size');
+    this._changeQueue.push([x, y, z]);
+  }
 
-    this._requestUpdate();
+  this._requestUpdate();
 };
 
 /**
@@ -611,14 +606,14 @@ Mesh.prototype.onSizeChange = function onSizeChange (x, y, z) {
  *
  * @return {undefined} undefined
  */
-Mesh.prototype.onOpacityChange = function onOpacityChange (opacity) {
-    if (this._initialized) {
-        this._changeQueue.push(Commands.GL_UNIFORMS);
-        this._changeQueue.push('u_opacity');
-        this._changeQueue.push(opacity.getWorldOpacity());
-    }
+Mesh.prototype.onOpacityChange = function onOpacityChange(opacity) {
+  if (this._initialized) {
+    this._changeQueue.push(Commands.GL_UNIFORMS);
+    this._changeQueue.push('u_opacity');
+    this._changeQueue.push(opacity.getWorldOpacity());
+  }
 
-    this._requestUpdate();
+  this._requestUpdate();
 };
 
 /**
@@ -630,8 +625,8 @@ Mesh.prototype.onOpacityChange = function onOpacityChange (opacity) {
  *
  * @return {undefined} undefined
  */
-Mesh.prototype.onAddUIEvent = function onAddUIEvent (UIEvent) {
-    //TODO
+Mesh.prototype.onAddUIEvent = function onAddUIEvent(UIEvent) {
+  //TODO
 };
 
 /**
@@ -641,11 +636,11 @@ Mesh.prototype.onAddUIEvent = function onAddUIEvent (UIEvent) {
  *
  * @return {undefined} undefined
  */
-Mesh.prototype._requestUpdate = function _requestUpdate () {
-    if (!this._requestingUpdate && this._node) {
-        this._node.requestUpdate(this._id);
-        this._requestingUpdate = true;
-    }
+Mesh.prototype._requestUpdate = function _requestUpdate() {
+  if (!this._requestingUpdate && this._node) {
+    this._node.requestUpdate(this._id);
+    this._requestingUpdate = true;
+  }
 };
 
 /**
@@ -655,13 +650,13 @@ Mesh.prototype._requestUpdate = function _requestUpdate () {
  *
  * @return {undefined} undefined
  */
-Mesh.prototype.init = function init () {
-    this._initialized = true;
-    this.onTransformChange(TransformSystem.get(this._node.getLocation()));
-    this.onOpacityChange(OpacitySystem.get(this._node.getLocation()));
-    var size = this._node.getSize();
-    this.onSizeChange(size[0], size[1], size[2]);
-    this._requestUpdate();
+Mesh.prototype.init = function init() {
+  this._initialized = true;
+  this.onTransformChange(TransformSystem.get(this._node.getLocation()));
+  this.onOpacityChange(OpacitySystem.get(this._node.getLocation()));
+  var size = this._node.getSize();
+  this.onSizeChange(size[0], size[1], size[2]);
+  this._requestUpdate();
 };
 
 /**
@@ -671,47 +666,47 @@ Mesh.prototype.init = function init () {
  *
  * @return {undefined} undefined
  */
-Mesh.prototype.draw = function draw () {
-    this._inDraw = true;
+Mesh.prototype.draw = function draw() {
+  this._inDraw = true;
 
-    this.init();
+  this.init();
 
-    var value = this.getValue();
+  var value = this.getValue();
 
-    if (value.geometry != null) this.setGeometry(value.geometry);
-    if (value.color != null) this.setBaseColor(value.color);
-    if (value.glossiness != null) this.setGlossiness.apply(this, value.glossiness);
-    if (value.drawOptions != null) this.setDrawOptions(value.drawOptions);
-    if (value.flatShading != null) this.setFlatShading(value.flatShading);
+  if (value.geometry != null) this.setGeometry(value.geometry);
+  if (value.color != null) this.setBaseColor(value.color);
+  if (value.glossiness != null) this.setGlossiness.apply(this, value.glossiness);
+  if (value.drawOptions != null) this.setDrawOptions(value.drawOptions);
+  if (value.flatShading != null) this.setFlatShading(value.flatShading);
 
-    if (value.expressions.normals != null) this.setNormals(value.expressions.normals);
-    if (value.expressions.baseColor != null) this.setBaseColor(value.expressions.baseColor);
-    if (value.expressions.glossiness != null) this.setGlossiness(value.expressions.glossiness);
-    if (value.expressions.positionOffset != null) this.setPositionOffset(value.expressions.positionOffset);
+  if (value.expressions.normals != null) this.setNormals(value.expressions.normals);
+  if (value.expressions.baseColor != null) this.setBaseColor(value.expressions.baseColor);
+  if (value.expressions.glossiness != null) this.setGlossiness(value.expressions.glossiness);
+  if (value.expressions.positionOffset != null) this.setPositionOffset(value.expressions.positionOffset);
 
-    this._inDraw = false;
+  this._inDraw = false;
 };
 
 
 function addMeshToMaterial(mesh, material, name) {
-    var expressions = mesh.value.expressions;
-    var previous = expressions[name];
-    var shouldRemove = true;
-    var len = material.inputs;
+  var expressions = mesh.value.expressions;
+  var previous = expressions[name];
+  var shouldRemove = true;
+  var len = material.inputs;
 
-    while(len--)
-        addMeshToMaterial(mesh, material.inputs[len], name);
+  while (len--)
+  addMeshToMaterial(mesh, material.inputs[len], name);
 
-    len = INPUTS.length;
+  len = INPUTS.length;
 
-    while (len--)
-        shouldRemove |= (name !== INPUTS[len] && previous !== expressions[INPUTS[len]]);
+  while (len--)
+  shouldRemove |= (name !== INPUTS[len] && previous !== expressions[INPUTS[len]]);
 
-    if (shouldRemove)
-        material.meshes.splice(material.meshes.indexOf(previous), 1);
+  if (shouldRemove)
+    material.meshes.splice(material.meshes.indexOf(previous), 1);
 
-    if (material.meshes.indexOf(mesh) === -1)
-        material.meshes.push(mesh);
+  if (material.meshes.indexOf(mesh) === -1)
+    material.meshes.push(mesh);
 }
 
 module.exports = Mesh;

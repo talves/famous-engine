@@ -46,51 +46,51 @@ var TRANSFORM = null;
  * @param {String} selector the selector of the element.
  * @param {Compositor} compositor the compositor controlling the renderer
  */
-function DOMRenderer (element, selector, compositor) {
-    var _this = this;
+function DOMRenderer(element, selector, compositor) {
+  var _this = this;
 
-    element.classList.add('famous-dom-renderer');
+  element.classList.add('famous-dom-renderer');
 
-    TRANSFORM = TRANSFORM || vendorPrefix('transform');
-    this._compositor = compositor; // a reference to the compositor
+  TRANSFORM = TRANSFORM || vendorPrefix('transform');
+  this._compositor = compositor; // a reference to the compositor
 
-    this._target = null; // a register for holding the current
-                         // element that the Renderer is operating
-                         // upon
+  this._target = null; // a register for holding the current
+  // element that the Renderer is operating
+  // upon
 
-    this._parent = null; // a register for holding the parent
-                         // of the target
+  this._parent = null; // a register for holding the parent
+  // of the target
 
-    this._path = null; // a register for holding the path of the target
-                       // this register must be set first, and then
-                       // children, target, and parent are all looked
-                       // up from that.
+  this._path = null; // a register for holding the path of the target
+  // this register must be set first, and then
+  // children, target, and parent are all looked
+  // up from that.
 
-    this._children = []; // a register for holding the children of the
-                         // current target.
+  this._children = []; // a register for holding the children of the
+  // current target.
 
-     this._insertElCallbackStore = new CallbackStore();
-     this._removeElCallbackStore = new CallbackStore();
+  this._insertElCallbackStore = new CallbackStore();
+  this._removeElCallbackStore = new CallbackStore();
 
-    this._root = new ElementCache(element, selector); // the root
-                                                      // of the dom tree that this
-                                                      // renderer is responsible
-                                                      // for
+  this._root = new ElementCache(element, selector); // the root
+  // of the dom tree that this
+  // renderer is responsible
+  // for
 
-    this._boundTriggerEvent = function (ev) {
-        return _this._triggerEvent(ev);
-    };
+  this._boundTriggerEvent = function(ev) {
+    return _this._triggerEvent(ev);
+  };
 
-    this._selector = selector;
+  this._selector = selector;
 
-    this._elements = {};
+  this._elements = {};
 
-    this._elements[selector] = this._root;
+  this._elements[selector] = this._root;
 
-    this.perspectiveTransform = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
-    this._VPtransform = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+  this.perspectiveTransform = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+  this._VPtransform = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
 
-    this._lastEv = null;
+  this._lastEv = null;
 }
 
 
@@ -110,9 +110,9 @@ function DOMRenderer (element, selector, compositor) {
  * @return {undefined} undefined
  */
 DOMRenderer.prototype.subscribe = function subscribe(type) {
-    this._assertTargetLoaded();
-    this._listen(type);
-    this._target.subscribe[type] = true;
+  this._assertTargetLoaded();
+  this._listen(type);
+  this._target.subscribe[type] = true;
 };
 
 /**
@@ -125,9 +125,9 @@ DOMRenderer.prototype.subscribe = function subscribe(type) {
  * @return {undefined}      undefined
  */
 DOMRenderer.prototype.preventDefault = function preventDefault(type) {
-    this._assertTargetLoaded();
-    this._listen(type);
-    this._target.preventDefault[type] = true;
+  this._assertTargetLoaded();
+  this._listen(type);
+  this._target.preventDefault[type] = true;
 };
 
 /**
@@ -142,9 +142,9 @@ DOMRenderer.prototype.preventDefault = function preventDefault(type) {
  * @return {undefined}      undefined
  */
 DOMRenderer.prototype.allowDefault = function allowDefault(type) {
-    this._assertTargetLoaded();
-    this._listen(type);
-    this._target.preventDefault[type] = false;
+  this._assertTargetLoaded();
+  this._listen(type);
+  this._target.preventDefault[type] = false;
 };
 
 /**
@@ -163,16 +163,15 @@ DOMRenderer.prototype.allowDefault = function allowDefault(type) {
  * @return {undefined}      undefined
  */
 DOMRenderer.prototype._listen = function _listen(type) {
-    this._assertTargetLoaded();
+  this._assertTargetLoaded();
 
-    if (
-        !this._target.listeners[type] && !this._root.listeners[type]
-    ) {
-        // FIXME Add to content DIV if available
-        var target = eventMap[type][1] ? this._root : this._target;
-        target.listeners[type] = this._boundTriggerEvent;
-        target.element.addEventListener(type, this._boundTriggerEvent);
-    }
+  if (
+    !this._target.listeners[type] && !this._root.listeners[type]) {
+    // FIXME Add to content DIV if available
+    var target = eventMap[type][1] ? this._root : this._target;
+    target.listeners[type] = this._boundTriggerEvent;
+    target.element.addEventListener(type, this._boundTriggerEvent);
+  }
 };
 
 /**
@@ -184,8 +183,8 @@ DOMRenderer.prototype._listen = function _listen(type) {
  * @return {undefined} undefined
  */
 DOMRenderer.prototype.unsubscribe = function unsubscribe(type) {
-    this._assertTargetLoaded();
-    this._target.subscribe[type] = false;
+  this._assertTargetLoaded();
+  this._target.subscribe[type] = false;
 };
 
 /**
@@ -200,40 +199,40 @@ DOMRenderer.prototype.unsubscribe = function unsubscribe(type) {
  * @return {undefined} undefined
  */
 DOMRenderer.prototype._triggerEvent = function _triggerEvent(ev) {
-    if (this._lastEv === ev) return;
+  if (this._lastEv === ev) return;
 
-    // Use ev.path, which is an array of Elements (polyfilled if needed).
-    var evPath = ev.path ? ev.path : _getPath(ev);
-    // First element in the path is the element on which the event has actually
-    // been emitted.
-    for (var i = 0; i < evPath.length; i++) {
-        // Skip nodes that don't have a dataset property or data-fa-path
-        // attribute.
-        if (!evPath[i].dataset) continue;
-        var path = evPath[i].dataset.faPath;
-        if (!path) continue;
+  // Use ev.path, which is an array of Elements (polyfilled if needed).
+  var evPath = ev.path ? ev.path : _getPath(ev);
+  // First element in the path is the element on which the event has actually
+  // been emitted.
+  for (var i = 0; i < evPath.length; i++) {
+    // Skip nodes that don't have a dataset property or data-fa-path
+    // attribute.
+    if (!evPath[i].dataset) continue;
+    var path = evPath[i].dataset.faPath;
+    if (!path) continue;
 
-        // Optionally preventDefault. This needs forther consideration and
-        // should be optional. Eventually this should be a separate command/
-        // method.
-        if (this._elements[path].preventDefault[ev.type]) {
-            ev.preventDefault();
-        }
-
-        // Stop further event propogation and path traversal as soon as the
-        // first ElementCache subscribing for the emitted event has been found.
-        if (this._elements[path] && this._elements[path].subscribe[ev.type]) {
-            this._lastEv = ev;
-
-            var NormalizedEventConstructor = eventMap[ev.type][0];
-
-            // Finally send the event to the Worker Thread through the
-            // compositor.
-            this._compositor.sendEvent(path, ev.type, new NormalizedEventConstructor(ev));
-
-            break;
-        }
+    // Optionally preventDefault. This needs forther consideration and
+    // should be optional. Eventually this should be a separate command/
+    // method.
+    if (this._elements[path].preventDefault[ev.type]) {
+      ev.preventDefault();
     }
+
+    // Stop further event propogation and path traversal as soon as the
+    // first ElementCache subscribing for the emitted event has been found.
+    if (this._elements[path] && this._elements[path].subscribe[ev.type]) {
+      this._lastEv = ev;
+
+      var NormalizedEventConstructor = eventMap[ev.type][0];
+
+      // Finally send the event to the Worker Thread through the
+      // compositor.
+      this._compositor.sendEvent(path, ev.type, new NormalizedEventConstructor(ev));
+
+      break;
+    }
+  }
 };
 
 
@@ -248,23 +247,25 @@ DOMRenderer.prototype._triggerEvent = function _triggerEvent(ev) {
  * @return {Array} a vec3 of the offset size of the dom element
  */
 DOMRenderer.prototype.getSizeOf = function getSizeOf(path) {
-    var element = this._elements[path];
-    if (!element) return null;
+  var element = this._elements[path];
+  if (!element) return null;
 
-    var res = {val: element.size};
-    this._compositor.sendEvent(path, 'resize', res);
-    return res;
+  var res = {
+    val: element.size
+  };
+  this._compositor.sendEvent(path, 'resize', res);
+  return res;
 };
 
 function _getPath(ev) {
-    // TODO move into _triggerEvent, avoid object allocation
-    var path = [];
-    var node = ev.target;
-    while (node !== document.body) {
-        path.push(node);
-        node = node.parentNode;
-    }
-    return path;
+  // TODO move into _triggerEvent, avoid object allocation
+  var path = [];
+  var node = ev.target;
+  while (node !== document.body) {
+    path.push(node);
+    node = node.parentNode;
+  }
+  return path;
 }
 
 /**
@@ -278,34 +279,34 @@ function _getPath(ev) {
  * @return {undefined} undefined
  */
 DOMRenderer.prototype.draw = function draw(renderState) {
-    if (renderState.perspectiveDirty) {
-        this.perspectiveDirty = true;
+  if (renderState.perspectiveDirty) {
+    this.perspectiveDirty = true;
 
-        this.perspectiveTransform[0] = renderState.perspectiveTransform[0];
-        this.perspectiveTransform[1] = renderState.perspectiveTransform[1];
-        this.perspectiveTransform[2] = renderState.perspectiveTransform[2];
-        this.perspectiveTransform[3] = renderState.perspectiveTransform[3];
+    this.perspectiveTransform[0] = renderState.perspectiveTransform[0];
+    this.perspectiveTransform[1] = renderState.perspectiveTransform[1];
+    this.perspectiveTransform[2] = renderState.perspectiveTransform[2];
+    this.perspectiveTransform[3] = renderState.perspectiveTransform[3];
 
-        this.perspectiveTransform[4] = renderState.perspectiveTransform[4];
-        this.perspectiveTransform[5] = renderState.perspectiveTransform[5];
-        this.perspectiveTransform[6] = renderState.perspectiveTransform[6];
-        this.perspectiveTransform[7] = renderState.perspectiveTransform[7];
+    this.perspectiveTransform[4] = renderState.perspectiveTransform[4];
+    this.perspectiveTransform[5] = renderState.perspectiveTransform[5];
+    this.perspectiveTransform[6] = renderState.perspectiveTransform[6];
+    this.perspectiveTransform[7] = renderState.perspectiveTransform[7];
 
-        this.perspectiveTransform[8] = renderState.perspectiveTransform[8];
-        this.perspectiveTransform[9] = renderState.perspectiveTransform[9];
-        this.perspectiveTransform[10] = renderState.perspectiveTransform[10];
-        this.perspectiveTransform[11] = renderState.perspectiveTransform[11];
+    this.perspectiveTransform[8] = renderState.perspectiveTransform[8];
+    this.perspectiveTransform[9] = renderState.perspectiveTransform[9];
+    this.perspectiveTransform[10] = renderState.perspectiveTransform[10];
+    this.perspectiveTransform[11] = renderState.perspectiveTransform[11];
 
-        this.perspectiveTransform[12] = renderState.perspectiveTransform[12];
-        this.perspectiveTransform[13] = renderState.perspectiveTransform[13];
-        this.perspectiveTransform[14] = renderState.perspectiveTransform[14];
-        this.perspectiveTransform[15] = renderState.perspectiveTransform[15];
-    }
+    this.perspectiveTransform[12] = renderState.perspectiveTransform[12];
+    this.perspectiveTransform[13] = renderState.perspectiveTransform[13];
+    this.perspectiveTransform[14] = renderState.perspectiveTransform[14];
+    this.perspectiveTransform[15] = renderState.perspectiveTransform[15];
+  }
 
-    if (renderState.viewDirty || renderState.perspectiveDirty) {
-        math.multiply(this._VPtransform, this.perspectiveTransform, renderState.viewTransform);
-        this._root.element.style[TRANSFORM] = this._stringifyMatrix(this._VPtransform);
-    }
+  if (renderState.viewDirty || renderState.perspectiveDirty) {
+    math.multiply(this._VPtransform, this.perspectiveTransform, renderState.viewTransform);
+    this._root.element.style[TRANSFORM] = this._stringifyMatrix(this._VPtransform);
+  }
 };
 
 
@@ -318,7 +319,8 @@ DOMRenderer.prototype.draw = function draw(renderState) {
  * @return {undefined} undefined
  */
 DOMRenderer.prototype._assertPathLoaded = function _asserPathLoaded() {
-    if (!this._path) throw new Error('path not loaded');
+  if (!this._path)
+    throw new Error('path not loaded');
 };
 
 /**
@@ -330,7 +332,8 @@ DOMRenderer.prototype._assertPathLoaded = function _asserPathLoaded() {
  * @return {undefined} undefined
  */
 DOMRenderer.prototype._assertParentLoaded = function _assertParentLoaded() {
-    if (!this._parent) throw new Error('parent not loaded');
+  if (!this._parent)
+    throw new Error('parent not loaded');
 };
 
 /**
@@ -343,7 +346,8 @@ DOMRenderer.prototype._assertParentLoaded = function _assertParentLoaded() {
  * @return {undefined} undefined
  */
 DOMRenderer.prototype._assertChildrenLoaded = function _assertChildrenLoaded() {
-    if (!this._children) throw new Error('children not loaded');
+  if (!this._children)
+    throw new Error('children not loaded');
 };
 
 /**
@@ -354,7 +358,8 @@ DOMRenderer.prototype._assertChildrenLoaded = function _assertChildrenLoaded() {
  * @return {undefined} undefined
  */
 DOMRenderer.prototype._assertTargetLoaded = function _assertTargetLoaded() {
-    if (!this._target) throw new Error('No target loaded');
+  if (!this._target)
+    throw new Error('No target loaded');
 };
 
 /**
@@ -365,19 +370,19 @@ DOMRenderer.prototype._assertTargetLoaded = function _assertTargetLoaded() {
  *
  * @return {ElementCache} Parent element.
  */
-DOMRenderer.prototype.findParent = function findParent () {
-    this._assertPathLoaded();
+DOMRenderer.prototype.findParent = function findParent() {
+  this._assertPathLoaded();
 
-    var path = this._path;
-    var parent;
+  var path = this._path;
+  var parent;
 
-    while (!parent && path.length) {
-        path = path.substring(0, path.lastIndexOf('/'));
-        parent = this._elements[path];
-    }
+  while (!parent && path.length) {
+    path = path.substring(0, path.lastIndexOf('/'));
+    parent = this._elements[path];
+  }
 
-    this._parent = parent;
-    return parent;
+  this._parent = parent;
+  return parent;
 };
 
 /**
@@ -389,8 +394,8 @@ DOMRenderer.prototype.findParent = function findParent () {
  * @return {ElementCache|undefined} Element loaded under defined path.
  */
 DOMRenderer.prototype.findTarget = function findTarget() {
-    this._target = this._elements[this._path];
-    return this._target;
+  this._target = this._elements[this._path];
+  return this._target;
 };
 
 /**
@@ -402,10 +407,10 @@ DOMRenderer.prototype.findTarget = function findTarget() {
  *
  * @return {String} Loaded path
  */
-DOMRenderer.prototype.loadPath = function loadPath (path) {
-    this._path = path;
-    this._target = this._elements[this._path];
-    return this._path;
+DOMRenderer.prototype.loadPath = function loadPath(path) {
+  this._path = path;
+  this._target = this._elements[this._path];
+  return this._path;
 };
 
 /**
@@ -418,25 +423,25 @@ DOMRenderer.prototype.loadPath = function loadPath (path) {
  * @param {HTMLElement} element the inserted element
  * @param {HTMLElement} parent the parent of the inserted element
  */
-DOMRenderer.prototype.resolveChildren = function resolveChildren (element, parent) {
-    var i = 0;
-    var childNode;
-    var path = this._path;
-    var childPath;
+DOMRenderer.prototype.resolveChildren = function resolveChildren(element, parent) {
+  var i = 0;
+  var childNode;
+  var path = this._path;
+  var childPath;
 
-    while ((childNode = parent.childNodes[i])) {
-        if (!childNode.dataset) {
-            i++;
-            continue;
-        }
-        childPath = childNode.dataset.faPath;
-        if (!childPath) {
-            i++;
-            continue;
-        }
-        if (PathUtils.isDescendentOf(childPath, path)) element.appendChild(childNode);
-        else i++;
+  while ((childNode = parent.childNodes[i])) {
+    if (!childNode.dataset) {
+      i++;
+      continue;
     }
+    childPath = childNode.dataset.faPath;
+    if (!childPath) {
+      i++;
+      continue;
+    }
+    if (PathUtils.isDescendentOf(childPath, path)) element.appendChild(childNode);
+    else i++;
+  }
 };
 
 /**
@@ -449,29 +454,30 @@ DOMRenderer.prototype.resolveChildren = function resolveChildren (element, paren
  *
  * @return {undefined} undefined
  */
-DOMRenderer.prototype.insertEl = function insertEl (tagName) {
+DOMRenderer.prototype.insertEl = function insertEl(tagName) {
 
-    this.findParent();
+  this.findParent();
 
-    this._assertParentLoaded();
+  this._assertParentLoaded();
 
-    if (this._parent.void)
-        throw new Error(
-            this._parent.path + ' is a void element. ' +
-            'Void elements are not allowed to have children.'
-        );
+  if (this._parent.void)
+    throw new Error(
+      this._parent.path + ' is a void element. ' +
+      'Void elements are not allowed to have children.'
+    );
 
-    if (!this._target) this._target = new ElementCache(document.createElement(tagName), this._path);
+  if (!this._target)
+    this._target = new ElementCache(document.createElement(tagName), this._path);
 
-    var el = this._target.element;
-    var parent = this._parent.element;
+  var el = this._target.element;
+  var parent = this._parent.element;
 
-    this.resolveChildren(el, parent);
+  this.resolveChildren(el, parent);
 
-    parent.appendChild(el);
-    this._elements[this._path] = this._target;
+  parent.appendChild(el);
+  this._elements[this._path] = this._target;
 
-    this._insertElCallbackStore.trigger(this._path, this._target);
+  this._insertElCallbackStore.trigger(this._path, this._target);
 
 };
 
@@ -486,9 +492,9 @@ DOMRenderer.prototype.insertEl = function insertEl (tagName) {
  *
  * @return {undefined} undefined
  */
-DOMRenderer.prototype.setProperty = function setProperty (name, value) {
-    this._assertTargetLoaded();
-    this._target.element.style[name] = value;
+DOMRenderer.prototype.setProperty = function setProperty(name, value) {
+  this._assertTargetLoaded();
+  this._target.element.style[name] = value;
 };
 
 
@@ -507,11 +513,11 @@ DOMRenderer.prototype.setProperty = function setProperty (name, value) {
  *
  * @return {undefined} undefined
  */
-DOMRenderer.prototype.setSize = function setSize (width, height) {
-    this._assertTargetLoaded();
+DOMRenderer.prototype.setSize = function setSize(width, height) {
+  this._assertTargetLoaded();
 
-    this.setWidth(width);
-    this.setHeight(height);
+  this.setWidth(width);
+  this.setHeight(height);
 };
 
 /**
@@ -528,23 +534,24 @@ DOMRenderer.prototype.setSize = function setSize (width, height) {
  * @return {undefined} undefined
  */
 DOMRenderer.prototype.setWidth = function setWidth(width) {
-    this._assertTargetLoaded();
+  this._assertTargetLoaded();
 
-    var contentWrapper = this._target.content;
+  var contentWrapper = this._target.content;
 
-    if (width === false) {
-        this._target.explicitWidth = true;
-        if (contentWrapper) contentWrapper.style.width = '';
-        width = contentWrapper ? contentWrapper.offsetWidth : 0;
-        this._target.element.style.width = width + 'px';
-    }
-    else {
-        this._target.explicitWidth = false;
-        if (contentWrapper) contentWrapper.style.width = width + 'px';
-        this._target.element.style.width = width + 'px';
-    }
+  if (width === false) {
+    this._target.explicitWidth = true;
+    if (contentWrapper)
+      contentWrapper.style.width = '';
+    width = contentWrapper ? contentWrapper.offsetWidth : 0;
+    this._target.element.style.width = width + 'px';
+  } else {
+    this._target.explicitWidth = false;
+    if (contentWrapper)
+      contentWrapper.style.width = width + 'px';
+    this._target.element.style.width = width + 'px';
+  }
 
-    this._target.size[0] = width;
+  this._target.size[0] = width;
 };
 
 /**
@@ -561,23 +568,24 @@ DOMRenderer.prototype.setWidth = function setWidth(width) {
  * @return {undefined} undefined
  */
 DOMRenderer.prototype.setHeight = function setHeight(height) {
-    this._assertTargetLoaded();
+  this._assertTargetLoaded();
 
-    var contentWrapper = this._target.content;
+  var contentWrapper = this._target.content;
 
-    if (height === false) {
-        this._target.explicitHeight = true;
-        if (contentWrapper) contentWrapper.style.height = '';
-        height = contentWrapper ? contentWrapper.offsetHeight : 0;
-        this._target.element.style.height = height + 'px';
-    }
-    else {
-        this._target.explicitHeight = false;
-        if (contentWrapper) contentWrapper.style.height = height + 'px';
-        this._target.element.style.height = height + 'px';
-    }
+  if (height === false) {
+    this._target.explicitHeight = true;
+    if (contentWrapper)
+      contentWrapper.style.height = '';
+    height = contentWrapper ? contentWrapper.offsetHeight : 0;
+    this._target.element.style.height = height + 'px';
+  } else {
+    this._target.explicitHeight = false;
+    if (contentWrapper)
+      contentWrapper.style.height = height + 'px';
+    this._target.element.style.height = height + 'px';
+  }
 
-    this._target.size[1] = height;
+  this._target.size[1] = height;
 };
 
 /**
@@ -591,8 +599,8 @@ DOMRenderer.prototype.setHeight = function setHeight(height) {
  * @return {undefined} undefined
  */
 DOMRenderer.prototype.setAttribute = function setAttribute(name, value) {
-    this._assertTargetLoaded();
-    this._target.element.setAttribute(name, value);
+  this._assertTargetLoaded();
+  this._target.element.setAttribute(name, value);
 };
 
 /**
@@ -605,28 +613,26 @@ DOMRenderer.prototype.setAttribute = function setAttribute(name, value) {
  * @return {undefined} undefined
  */
 DOMRenderer.prototype.setContent = function setContent(content) {
-    this._assertTargetLoaded();
+  this._assertTargetLoaded();
 
-    if (this._target.formElement) {
-        this._target.element.value = content;
+  if (this._target.formElement) {
+    this._target.element.value = content;
+  } else {
+    if (!this._target.content) {
+      this._target.content = document.createElement('div');
+      this._target.content.classList.add('famous-dom-element-content');
+      this._target.element.insertBefore(
+        this._target.content,
+        this._target.element.firstChild
+      );
     }
-    else {
-        if (!this._target.content) {
-            this._target.content = document.createElement('div');
-            this._target.content.classList.add('famous-dom-element-content');
-            this._target.element.insertBefore(
-                this._target.content,
-                this._target.element.firstChild
-            );
-        }
-        this._target.content.innerHTML = content;
-    }
+    this._target.content.innerHTML = content;
+  }
 
 
-    this.setSize(
-        this._target.explicitWidth ? false : this._target.size[0],
-        this._target.explicitHeight ? false : this._target.size[1]
-    );
+  this.setSize(
+    this._target.explicitWidth ? false : this._target.size[0],
+    this._target.explicitHeight ? false : this._target.size[1]);
 };
 
 
@@ -640,9 +646,9 @@ DOMRenderer.prototype.setContent = function setContent(content) {
  *
  * @return {undefined} undefined
  */
-DOMRenderer.prototype.setMatrix = function setMatrix (transform) {
-    this._assertTargetLoaded();
-    this._target.element.style[TRANSFORM] = this._stringifyMatrix(transform);
+DOMRenderer.prototype.setMatrix = function setMatrix(transform) {
+  this._assertTargetLoaded();
+  this._target.element.style[TRANSFORM] = this._stringifyMatrix(transform);
 };
 
 
@@ -656,8 +662,8 @@ DOMRenderer.prototype.setMatrix = function setMatrix (transform) {
  * @return {undefined} undefined
  */
 DOMRenderer.prototype.addClass = function addClass(domClass) {
-    this._assertTargetLoaded();
-    this._target.element.classList.add(domClass);
+  this._assertTargetLoaded();
+  this._target.element.classList.add(domClass);
 };
 
 
@@ -672,8 +678,8 @@ DOMRenderer.prototype.addClass = function addClass(domClass) {
  * @return {undefined} undefined
  */
 DOMRenderer.prototype.removeClass = function removeClass(domClass) {
-    this._assertTargetLoaded();
-    this._target.element.classList.remove(domClass);
+  this._assertTargetLoaded();
+  this._target.element.classList.remove(domClass);
 };
 
 
@@ -687,26 +693,26 @@ DOMRenderer.prototype.removeClass = function removeClass(domClass) {
  * @return {String}     Stringified matrix as `matrix3d`-property.
  */
 DOMRenderer.prototype._stringifyMatrix = function _stringifyMatrix(m) {
-    var r = 'matrix3d(';
+  var r = 'matrix3d(';
 
-    r += (m[0] < 0.000001 && m[0] > -0.000001) ? '0,' : m[0] + ',';
-    r += (m[1] < 0.000001 && m[1] > -0.000001) ? '0,' : m[1] + ',';
-    r += (m[2] < 0.000001 && m[2] > -0.000001) ? '0,' : m[2] + ',';
-    r += (m[3] < 0.000001 && m[3] > -0.000001) ? '0,' : m[3] + ',';
-    r += (m[4] < 0.000001 && m[4] > -0.000001) ? '0,' : m[4] + ',';
-    r += (m[5] < 0.000001 && m[5] > -0.000001) ? '0,' : m[5] + ',';
-    r += (m[6] < 0.000001 && m[6] > -0.000001) ? '0,' : m[6] + ',';
-    r += (m[7] < 0.000001 && m[7] > -0.000001) ? '0,' : m[7] + ',';
-    r += (m[8] < 0.000001 && m[8] > -0.000001) ? '0,' : m[8] + ',';
-    r += (m[9] < 0.000001 && m[9] > -0.000001) ? '0,' : m[9] + ',';
-    r += (m[10] < 0.000001 && m[10] > -0.000001) ? '0,' : m[10] + ',';
-    r += (m[11] < 0.000001 && m[11] > -0.000001) ? '0,' : m[11] + ',';
-    r += (m[12] < 0.000001 && m[12] > -0.000001) ? '0,' : m[12] + ',';
-    r += (m[13] < 0.000001 && m[13] > -0.000001) ? '0,' : m[13] + ',';
-    r += (m[14] < 0.000001 && m[14] > -0.000001) ? '0,' : m[14] + ',';
+  r += (m[0] < 0.000001 && m[0] > -0.000001) ? '0,' : m[0] + ',';
+  r += (m[1] < 0.000001 && m[1] > -0.000001) ? '0,' : m[1] + ',';
+  r += (m[2] < 0.000001 && m[2] > -0.000001) ? '0,' : m[2] + ',';
+  r += (m[3] < 0.000001 && m[3] > -0.000001) ? '0,' : m[3] + ',';
+  r += (m[4] < 0.000001 && m[4] > -0.000001) ? '0,' : m[4] + ',';
+  r += (m[5] < 0.000001 && m[5] > -0.000001) ? '0,' : m[5] + ',';
+  r += (m[6] < 0.000001 && m[6] > -0.000001) ? '0,' : m[6] + ',';
+  r += (m[7] < 0.000001 && m[7] > -0.000001) ? '0,' : m[7] + ',';
+  r += (m[8] < 0.000001 && m[8] > -0.000001) ? '0,' : m[8] + ',';
+  r += (m[9] < 0.000001 && m[9] > -0.000001) ? '0,' : m[9] + ',';
+  r += (m[10] < 0.000001 && m[10] > -0.000001) ? '0,' : m[10] + ',';
+  r += (m[11] < 0.000001 && m[11] > -0.000001) ? '0,' : m[11] + ',';
+  r += (m[12] < 0.000001 && m[12] > -0.000001) ? '0,' : m[12] + ',';
+  r += (m[13] < 0.000001 && m[13] > -0.000001) ? '0,' : m[13] + ',';
+  r += (m[14] < 0.000001 && m[14] > -0.000001) ? '0,' : m[14] + ',';
 
-    r += m[15] + ')';
-    return r;
+  r += m[15] + ')';
+  return r;
 };
 
 /**
@@ -721,8 +727,8 @@ DOMRenderer.prototype._stringifyMatrix = function _stringifyMatrix(m) {
  * @return {DOMRenderer}        this
  */
 DOMRenderer.prototype.onInsertEl = function onInsertEl(path, callback) {
-    this._insertElCallbackStore.on(path, callback);
-    return this;
+  this._insertElCallbackStore.on(path, callback);
+  return this;
 };
 
 /**
@@ -737,8 +743,8 @@ DOMRenderer.prototype.onInsertEl = function onInsertEl(path, callback) {
  * @return {DOMRenderer}        this
  */
 DOMRenderer.prototype.offInsertEl = function offInsertEl(path, callback) {
-    this._insertElCallbackStore.off(path, callback);
-    return this;
+  this._insertElCallbackStore.off(path, callback);
+  return this;
 };
 
 /**
@@ -754,8 +760,8 @@ DOMRenderer.prototype.offInsertEl = function offInsertEl(path, callback) {
  * @return {DOMRenderer}        this
  */
 DOMRenderer.prototype.onRemoveEl = function onRemoveEl(path, callback) {
-    this._removeElCallbackStore.on(path, callback);
-    return this;
+  this._removeElCallbackStore.on(path, callback);
+  return this;
 };
 
 /**
@@ -770,8 +776,8 @@ DOMRenderer.prototype.onRemoveEl = function onRemoveEl(path, callback) {
  * @return {DOMRenderer}        this
  */
 DOMRenderer.prototype.offRemoveEl = function offRemoveEl(path, callback) {
-    this._removeElCallbackStore.off(path, callback);
-    return this;
+  this._removeElCallbackStore.off(path, callback);
+  return this;
 };
 
 module.exports = DOMRenderer;

@@ -30,9 +30,9 @@
  *
  * @constructor Event
  */
-function Event () {
-    this.propagationStopped = false;
-    this.stopPropagation = stopPropagation;
+function Event() {
+  this.propagationStopped = false;
+  this.stopPropagation = stopPropagation;
 }
 
 /**
@@ -43,8 +43,8 @@ function Event () {
  *
  * @return {undefined} undefined
  */
-function stopPropagation () {
-    this.propagationStopped = true;
+function stopPropagation() {
+  this.propagationStopped = true;
 }
 
 module.exports = Event;

@@ -35,18 +35,18 @@ var UIEvent = require('./UIEvent');
  * @param {Event} ev The native DOM event.
  */
 function CompositionEvent(ev) {
-    // [Constructor(DOMString typeArg, optional CompositionEventInit compositionEventInitDict)]
-    // interface CompositionEvent : UIEvent {
-    //     readonly    attribute DOMString data;
-    // };
+  // [Constructor(DOMString typeArg, optional CompositionEventInit compositionEventInitDict)]
+  // interface CompositionEvent : UIEvent {
+  //     readonly    attribute DOMString data;
+  // };
 
-    UIEvent.call(this, ev);
+  UIEvent.call(this, ev);
 
-    /**
-     * @name CompositionEvent#data
-     * @type String
-     */
-    this.data = ev.data;
+  /**
+   * @name CompositionEvent#data
+   * @type String
+   */
+  this.data = ev.data;
 }
 
 CompositionEvent.prototype = Object.create(UIEvent.prototype);
@@ -59,8 +59,8 @@ CompositionEvent.prototype.constructor = CompositionEvent;
  *
  * @return {String} Name of the event type
  */
-CompositionEvent.prototype.toString = function toString () {
-    return 'CompositionEvent';
+CompositionEvent.prototype.toString = function toString() {
+  return 'CompositionEvent';
 };
 
 module.exports = CompositionEvent;

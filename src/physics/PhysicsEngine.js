@@ -45,46 +45,46 @@ var DELTA_REGISTER = new Vec3();
  * @param {Object} options A hash of configurable options.
  */
 function PhysicsEngine(options) {
-    this.events = new CallbackStore();
+  this.events = new CallbackStore();
 
-    options = options || {};
-    /** @prop bodies The bodies currently active in the engine. */
-    this.bodies = [];
-    /** @prop forces The forces currently active in the engine. */
-    this.forces = [];
-    /** @prop constraints The constraints currently active in the engine. */
-    this.constraints = [];
+  options = options || {};
+  /** @prop bodies The bodies currently active in the engine. */
+  this.bodies = [];
+  /** @prop forces The forces currently active in the engine. */
+  this.forces = [];
+  /** @prop constraints The constraints currently active in the engine. */
+  this.constraints = [];
 
-    /** @prop step The time between frames in the engine. */
-    this.step = options.step || 1000/60;
-    /** @prop iterations The number of times each constraint is solved per frame. */
-    this.iterations = options.iterations || 10;
-    /** @prop _indexPool Pools of indicies to track holes in the arrays. */
-    this._indexPools = {
-        bodies: [],
-        forces: [],
-        constraints: []
-    };
+  /** @prop step The time between frames in the engine. */
+  this.step = options.step || 1000 / 60;
+  /** @prop iterations The number of times each constraint is solved per frame. */
+  this.iterations = options.iterations || 10;
+  /** @prop _indexPool Pools of indicies to track holes in the arrays. */
+  this._indexPools = {
+    bodies: [],
+    forces: [],
+    constraints: []
+  };
 
-    this._entityMaps = {
-        bodies: {},
-        forces: {},
-        constraints: {}
-    };
+  this._entityMaps = {
+    bodies: {},
+    forces: {},
+    constraints: {}
+  };
 
-    this.speed = options.speed || 1.0;
-    this.time = 0;
-    this.delta = 0;
+  this.speed = options.speed || 1.0;
+  this.time = 0;
+  this.delta = 0;
 
-    this.origin = options.origin || new Vec3();
-    this.orientation = options.orientation ? options.orientation.normalize() :  new Quaternion();
+  this.origin = options.origin || new Vec3();
+  this.orientation = options.orientation ? options.orientation.normalize() : new Quaternion();
 
-    this.frameDependent = options.frameDependent || false;
+  this.frameDependent = options.frameDependent || false;
 
-    this.transformBuffers = {
-        position: [0, 0, 0],
-        rotation: [0, 0, 0, 1]
-    };
+  this.transformBuffers = {
+    position: [0, 0, 0],
+    rotation: [0, 0, 0, 1]
+  };
 }
 
 /**
@@ -96,8 +96,8 @@ function PhysicsEngine(options) {
  * @return {PhysicsEngine} this
  */
 PhysicsEngine.prototype.on = function on(key, callback) {
-    this.events.on(key, callback);
-    return this;
+  this.events.on(key, callback);
+  return this;
 };
 
 /**
@@ -109,8 +109,8 @@ PhysicsEngine.prototype.on = function on(key, callback) {
  * @return {PhysicsEngine} this
  */
 PhysicsEngine.prototype.off = function off(key, callback) {
-    this.events.off(key, callback);
-    return this;
+  this.events.off(key, callback);
+  return this;
 };
 
 /**
@@ -122,8 +122,8 @@ PhysicsEngine.prototype.off = function off(key, callback) {
  * @return {PhysicsEngine} this
  */
 PhysicsEngine.prototype.trigger = function trigger(key, payload) {
-    this.events.trigger(key, payload);
-    return this;
+  this.events.trigger(key, payload);
+  return this;
 };
 
 /**
@@ -137,8 +137,8 @@ PhysicsEngine.prototype.trigger = function trigger(key, payload) {
  * @return {PhysicsEngine} this
  */
 PhysicsEngine.prototype.setOrigin = function setOrigin(x, y, z) {
-    this.origin.set(x, y, z);
-    return this;
+  this.origin.set(x, y, z);
+  return this;
 };
 
 /**
@@ -153,8 +153,8 @@ PhysicsEngine.prototype.setOrigin = function setOrigin(x, y, z) {
  * @return {PhysicsEngine} this
  */
 PhysicsEngine.prototype.setOrientation = function setOrientation(w, x, y, z) {
-    this.orientation.set(w, x, y, z).normalize();
-    return this;
+  this.orientation.set(w, x, y, z).normalize();
+  return this;
 };
 
 /**
@@ -168,14 +168,16 @@ PhysicsEngine.prototype.setOrientation = function setOrientation(w, x, y, z) {
  * @return {undefined} undefined
  */
 function _addElement(context, element, key) {
-    var map = context._entityMaps[key];
-    if (map[element._ID] == null) {
-        var library = context[key];
-        var indexPool = context._indexPools[key];
-        if (indexPool.length) map[element._ID] = indexPool.pop();
-        else map[element._ID] = library.length;
-        library[map[element._ID]] = element;
-    }
+  var map = context._entityMaps[key];
+  if (map[element._ID] == null) {
+    var library = context[key];
+    var indexPool = context._indexPools[key];
+    if (indexPool.length)
+      map[element._ID] = indexPool.pop();
+    else
+      map[element._ID] = library.length;
+    library[map[element._ID]] = element;
+  }
 }
 
 /**
@@ -189,13 +191,13 @@ function _addElement(context, element, key) {
  * @return {undefined} undefined
  */
 function _removeElement(context, element, key) {
-    var map = context._entityMaps[key];
-    var index = map[element._ID];
-    if (index != null) {
-        context._indexPools[key].push(index);
-        context[key][index] = null;
-        map[element._ID] = null;
-    }
+  var map = context._entityMaps[key];
+  var index = map[element._ID];
+  if (index != null) {
+    context._indexPools[key].push(index);
+    context[key][index] = null;
+    map[element._ID] = null;
+  }
 }
 
 /**
@@ -205,21 +207,18 @@ function _removeElement(context, element, key) {
  * @return {PhysicsEngine} this
  */
 PhysicsEngine.prototype.add = function add() {
-    for (var j = 0, lenj = arguments.length; j < lenj; j++) {
-        var entity = arguments[j];
-        if (entity instanceof Array) {
-            for (var i = 0, len = entity.length; i < len; i++) {
-                var e = entity[i];
-                this.add(e);
-            }
-        }
-        else {
-            if (entity instanceof Particle) this.addBody(entity);
-            else if (entity instanceof Constraint) this.addConstraint(entity);
-            else if (entity instanceof Force) this.addForce(entity);
-        }
+  for (var j = 0, lenj = arguments.length; j < lenj; j++) {
+    var entity = arguments[j];
+    if (entity instanceof Array) {
+      for (var i = 0, len = entity.length; i < len; i++) {
+        var e = entity[i];
+        this.add(e);
+      }
+    } else {
+      if (entity instanceof Particle) this.addBody(entity);else if (entity instanceof Constraint) this.addConstraint(entity);else if (entity instanceof Force) this.addForce(entity);
     }
-    return this;
+  }
+  return this;
 };
 
 /**
@@ -229,21 +228,18 @@ PhysicsEngine.prototype.add = function add() {
  * @return {PhysicsEngine} this
  */
 PhysicsEngine.prototype.remove = function remove() {
-    for (var j = 0, lenj = arguments.length; j < lenj; j++) {
-        var entity = arguments[j];
-        if (entity instanceof Array) {
-            for (var i = 0, len = entity.length; i < len; i++) {
-                var e = entity[i];
-                this.add(e);
-            }
-        }
-        else {
-            if (entity instanceof Particle) this.removeBody(entity);
-            else if (entity instanceof Constraint) this.removeConstraint(entity);
-            else if (entity instanceof Force) this.removeForce(entity);
-        }
+  for (var j = 0, lenj = arguments.length; j < lenj; j++) {
+    var entity = arguments[j];
+    if (entity instanceof Array) {
+      for (var i = 0, len = entity.length; i < len; i++) {
+        var e = entity[i];
+        this.add(e);
+      }
+    } else {
+      if (entity instanceof Particle) this.removeBody(entity);else if (entity instanceof Constraint) this.removeConstraint(entity);else if (entity instanceof Force) this.removeForce(entity);
     }
-    return this;
+  }
+  return this;
 };
 
 /**
@@ -254,7 +250,7 @@ PhysicsEngine.prototype.remove = function remove() {
  * @return {undefined} undefined
  */
 PhysicsEngine.prototype.addBody = function addBody(body) {
-    _addElement(this, body, 'bodies');
+  _addElement(this, body, 'bodies');
 };
 
 /**
@@ -265,7 +261,7 @@ PhysicsEngine.prototype.addBody = function addBody(body) {
  * @return {undefined} undefined
  */
 PhysicsEngine.prototype.addForce = function addForce(force) {
-    _addElement(this, force, 'forces');
+  _addElement(this, force, 'forces');
 };
 
 /**
@@ -276,7 +272,7 @@ PhysicsEngine.prototype.addForce = function addForce(force) {
  * @return {undefined} undefined
  */
 PhysicsEngine.prototype.addConstraint = function addConstraint(constraint) {
-    _addElement(this, constraint, 'constraints');
+  _addElement(this, constraint, 'constraints');
 };
 
 /**
@@ -287,7 +283,7 @@ PhysicsEngine.prototype.addConstraint = function addConstraint(constraint) {
  * @return {undefined} undefined
  */
 PhysicsEngine.prototype.removeBody = function removeBody(body) {
-    _removeElement(this, body, 'bodies');
+  _removeElement(this, body, 'bodies');
 };
 
 /**
@@ -298,7 +294,7 @@ PhysicsEngine.prototype.removeBody = function removeBody(body) {
  * @return {undefined} undefined
  */
 PhysicsEngine.prototype.removeForce = function removeForce(force) {
-    _removeElement(this, force, 'forces');
+  _removeElement(this, force, 'forces');
 };
 
 /**
@@ -309,7 +305,7 @@ PhysicsEngine.prototype.removeForce = function removeForce(force) {
  * @return {undefined} undefined
  */
 PhysicsEngine.prototype.removeConstraint = function removeConstraint(constraint) {
-    _removeElement(this, constraint, 'constraints');
+  _removeElement(this, constraint, 'constraints');
 };
 
 /**
@@ -321,71 +317,74 @@ PhysicsEngine.prototype.removeConstraint = function removeConstraint(constraint)
  * @return {undefined} undefined
  */
 PhysicsEngine.prototype.update = function update(time) {
-    if (this.time === 0) this.time = time;
-
-    var bodies = this.bodies;
-    var forces = this.forces;
-    var constraints = this.constraints;
-
-    var frameDependent = this.frameDependent;
-    var step = this.step;
-    var dt = step * 0.001;
-    var speed = this.speed;
-
-    var delta = this.delta;
-    delta += (time - this.time) * speed;
+  if (this.time === 0)
     this.time = time;
 
-    var i, len;
-    var force, body, constraint;
+  var bodies = this.bodies;
+  var forces = this.forces;
+  var constraints = this.constraints;
 
-    while(delta > step) {
-        this.events.trigger('prestep', time);
+  var frameDependent = this.frameDependent;
+  var step = this.step;
+  var dt = step * 0.001;
+  var speed = this.speed;
 
-        // Update Forces on particles
-        for (i = 0, len = forces.length; i < len; i++) {
-            force = forces[i];
-            if (force === null) continue;
-            force.update(time, dt);
-        }
+  var delta = this.delta;
+  delta += (time - this.time) * speed;
+  this.time = time;
 
-        // Tentatively update velocities
-        for (i = 0, len = bodies.length; i < len; i++) {
-            body = bodies[i];
-            if (body === null) continue;
-            _integrateVelocity(body, dt);
-        }
+  var i, len;
+  var force, body, constraint;
 
-        // Prep constraints for solver
-        for (i = 0, len = constraints.length; i < len; i++) {
-            constraint = constraints[i];
-            if (constraint === null) continue;
-            constraint.update(time, dt);
-        }
+  while (delta > step) {
+    this.events.trigger('prestep', time);
 
-        // Iteratively resolve constraints
-        for (var j = 0, numIterations = this.iterations; j < numIterations; j++) {
-            for (i = 0, len = constraints.length; i < len; i++) {
-                constraint = constraints[i];
-                if (constraint === null) continue;
-                constraint.resolve(time, dt);
-            }
-        }
-
-        // Increment positions and orientations
-        for (i = 0, len = bodies.length; i < len; i++) {
-            body = bodies[i];
-            if (body === null) continue;
-            _integratePose(body, dt);
-        }
-
-        this.events.trigger('poststep', time);
-
-        if (frameDependent) delta = 0;
-        else delta -= step;
+    // Update Forces on particles
+    for (i = 0, len = forces.length; i < len; i++) {
+      force = forces[i];
+      if (force === null) continue;
+      force.update(time, dt);
     }
 
-    this.delta = delta;
+    // Tentatively update velocities
+    for (i = 0, len = bodies.length; i < len; i++) {
+      body = bodies[i];
+      if (body === null) continue;
+      _integrateVelocity(body, dt);
+    }
+
+    // Prep constraints for solver
+    for (i = 0, len = constraints.length; i < len; i++) {
+      constraint = constraints[i];
+      if (constraint === null) continue;
+      constraint.update(time, dt);
+    }
+
+    // Iteratively resolve constraints
+    for (var j = 0, numIterations = this.iterations; j < numIterations; j++) {
+      for (i = 0, len = constraints.length; i < len; i++) {
+        constraint = constraints[i];
+        if (constraint === null) continue;
+        constraint.resolve(time, dt);
+      }
+    }
+
+    // Increment positions and orientations
+    for (i = 0, len = bodies.length; i < len; i++) {
+      body = bodies[i];
+      if (body === null) continue;
+      _integratePose(body, dt);
+    }
+
+    this.events.trigger('poststep', time);
+
+    if (frameDependent)
+      delta = 0;
+    else
+      delta -= step;
+  }
+
+  this.delta = delta;
 };
 
 /**
@@ -397,30 +396,30 @@ PhysicsEngine.prototype.update = function update(time) {
  * the origin and orientation of the world.
  */
 PhysicsEngine.prototype.getTransform = function getTransform(body) {
-    var o = this.origin;
-    var oq = this.orientation;
-    var transform = this.transformBuffers;
+  var o = this.origin;
+  var oq = this.orientation;
+  var transform = this.transformBuffers;
 
-    var p = body.position;
-    var q = body.orientation;
-    var rot = q;
-    var loc = p;
+  var p = body.position;
+  var q = body.orientation;
+  var rot = q;
+  var loc = p;
 
-    if (oq.w !== 1) {
-        rot = Quaternion.multiply(q, oq, QUAT_REGISTER);
-        loc = oq.rotateVector(p, VEC_REGISTER);
-    }
+  if (oq.w !== 1) {
+    rot = Quaternion.multiply(q, oq, QUAT_REGISTER);
+    loc = oq.rotateVector(p, VEC_REGISTER);
+  }
 
-    transform.position[0] = o.x+loc.x;
-    transform.position[1] = o.y+loc.y;
-    transform.position[2] = o.z+loc.z;
+  transform.position[0] = o.x + loc.x;
+  transform.position[1] = o.y + loc.y;
+  transform.position[2] = o.z + loc.z;
 
-    transform.rotation[0] = rot.x;
-    transform.rotation[1] = rot.y;
-    transform.rotation[2] = rot.z;
-    transform.rotation[3] = rot.w;
+  transform.rotation[0] = rot.x;
+  transform.rotation[1] = rot.y;
+  transform.rotation[2] = rot.z;
+  transform.rotation[3] = rot.w;
 
-    return transform;
+  return transform;
 };
 
 /**
@@ -433,12 +432,12 @@ PhysicsEngine.prototype.getTransform = function getTransform(body) {
  * @return {undefined} undefined
  */
 function _integrateVelocity(body, dt) {
-    body.momentum.add(Vec3.scale(body.force, dt, DELTA_REGISTER));
-    body.angularMomentum.add(Vec3.scale(body.torque, dt, DELTA_REGISTER));
-    Vec3.scale(body.momentum, body.inverseMass, body.velocity);
-    body.inverseInertia.vectorMultiply(body.angularMomentum, body.angularVelocity);
-    body.force.clear();
-    body.torque.clear();
+  body.momentum.add(Vec3.scale(body.force, dt, DELTA_REGISTER));
+  body.angularMomentum.add(Vec3.scale(body.torque, dt, DELTA_REGISTER));
+  Vec3.scale(body.momentum, body.inverseMass, body.velocity);
+  body.inverseInertia.vectorMultiply(body.angularMomentum, body.angularVelocity);
+  body.force.clear();
+  body.torque.clear();
 }
 
 /**
@@ -451,48 +450,54 @@ function _integrateVelocity(body, dt) {
  * @return {undefined} undefined
  */
 function _integratePose(body, dt) {
-    if (body.restrictions !== 0) {
-        var restrictions = body.restrictions;
-        var x = null;
-        var y = null;
-        var z = null;
-        var ax = null;
-        var ay = null;
-        var az = null;
+  if (body.restrictions !== 0) {
+    var restrictions = body.restrictions;
+    var x = null;
+    var y = null;
+    var z = null;
+    var ax = null;
+    var ay = null;
+    var az = null;
 
-        if (restrictions & 32) x = 0;
-        if (restrictions & 16) y = 0;
-        if (restrictions & 8) z = 0;
-        if (restrictions & 4) ax = 0;
-        if (restrictions & 2) ay = 0;
-        if (restrictions & 1) az = 0;
+    if (restrictions & 32)
+      x = 0;
+    if (restrictions & 16)
+      y = 0;
+    if (restrictions & 8)
+      z = 0;
+    if (restrictions & 4)
+      ax = 0;
+    if (restrictions & 2)
+      ay = 0;
+    if (restrictions & 1)
+      az = 0;
 
-        if (x !== null || y !== null || z !== null) body.setVelocity(x,y,z);
-        if (ax !== null || ay !== null || az !== null) body.setAngularVelocity(ax, ay, az);
-    }
+    if (x !== null || y !== null || z !== null) body.setVelocity(x, y, z);
+    if (ax !== null || ay !== null || az !== null) body.setAngularVelocity(ax, ay, az);
+  }
 
-    body.position.add(Vec3.scale(body.velocity, dt, DELTA_REGISTER));
+  body.position.add(Vec3.scale(body.velocity, dt, DELTA_REGISTER));
 
-    var w = body.angularVelocity;
-    var q = body.orientation;
-    var wx = w.x;
-    var wy = w.y;
-    var wz = w.z;
+  var w = body.angularVelocity;
+  var q = body.orientation;
+  var wx = w.x;
+  var wy = w.y;
+  var wz = w.z;
 
-    var qw = q.w;
-    var qx = q.x;
-    var qy = q.y;
-    var qz = q.z;
+  var qw = q.w;
+  var qx = q.x;
+  var qy = q.y;
+  var qz = q.z;
 
-    var hdt = dt * 0.5;
-    q.w += (-wx * qx - wy * qy - wz * qz) * hdt;
-    q.x += (wx * qw + wy * qz - wz * qy) * hdt;
-    q.y += (wy * qw + wz * qx - wx * qz) * hdt;
-    q.z += (wz * qw + wx * qy - wy * qx) * hdt;
+  var hdt = dt * 0.5;
+  q.w += (-wx * qx - wy * qy - wz * qz) * hdt;
+  q.x += (wx * qw + wy * qz - wz * qy) * hdt;
+  q.y += (wy * qw + wz * qx - wx * qz) * hdt;
+  q.z += (wz * qw + wx * qy - wy * qx) * hdt;
 
-    q.normalize();
+  q.normalize();
 
-    body.updateInertia();
+  body.updateInertia();
 }
 
 module.exports = PhysicsEngine;

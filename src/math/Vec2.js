@@ -33,14 +33,13 @@
  * @param {Number} y The y component.
  */
 var Vec2 = function(x, y) {
-    if (x instanceof Array || x instanceof Float32Array) {
-        this.x = x[0] || 0;
-        this.y = x[1] || 0;
-    }
-    else {
-        this.x = x || 0;
-        this.y = y || 0;
-    }
+  if (x instanceof Array || x instanceof Float32Array) {
+    this.x = x[0] || 0;
+    this.y = x[1] || 0;
+  } else {
+    this.x = x || 0;
+    this.y = y || 0;
+  }
 };
 
 /**
@@ -54,9 +53,11 @@ var Vec2 = function(x, y) {
  * @return {Vec2} this
  */
 Vec2.prototype.set = function set(x, y) {
-    if (x != null) this.x = x;
-    if (y != null) this.y = y;
-    return this;
+  if (x != null)
+    this.x = x;
+  if (y != null)
+    this.y = y;
+  return this;
 };
 
 /**
@@ -69,9 +70,9 @@ Vec2.prototype.set = function set(x, y) {
  * @return {Vec2} this
  */
 Vec2.prototype.add = function add(v) {
-    this.x += v.x;
-    this.y += v.y;
-    return this;
+  this.x += v.x;
+  this.y += v.y;
+  return this;
 };
 
 /**
@@ -84,9 +85,9 @@ Vec2.prototype.add = function add(v) {
  * @return {Vec2} this
  */
 Vec2.prototype.subtract = function subtract(v) {
-    this.x -= v.x;
-    this.y -= v.y;
-    return this;
+  this.x -= v.x;
+  this.y -= v.y;
+  return this;
 };
 
 /**
@@ -99,15 +100,14 @@ Vec2.prototype.subtract = function subtract(v) {
  * @return {Vec2} this
  */
 Vec2.prototype.scale = function scale(s) {
-    if (s instanceof Vec2) {
-        this.x *= s.x;
-        this.y *= s.y;
-    }
-    else {
-        this.x *= s;
-        this.y *= s;
-    }
-    return this;
+  if (s instanceof Vec2) {
+    this.x *= s.x;
+    this.y *= s.y;
+  } else {
+    this.x *= s;
+    this.y *= s;
+  }
+  return this;
 };
 
 /**
@@ -120,16 +120,16 @@ Vec2.prototype.scale = function scale(s) {
  * @return {Vec2} this
  */
 Vec2.prototype.rotate = function(theta) {
-    var x = this.x;
-    var y = this.y;
+  var x = this.x;
+  var y = this.y;
 
-    var cosTheta = Math.cos(theta);
-    var sinTheta = Math.sin(theta);
+  var cosTheta = Math.cos(theta);
+  var sinTheta = Math.sin(theta);
 
-    this.x = x * cosTheta - y * sinTheta;
-    this.y = x * sinTheta + y * cosTheta;
+  this.x = x * cosTheta - y * sinTheta;
+  this.y = x * sinTheta + y * cosTheta;
 
-    return this;
+  return this;
 };
 
 /**
@@ -142,7 +142,7 @@ Vec2.prototype.rotate = function(theta) {
  * @return {Vec2} this
  */
 Vec2.prototype.dot = function(v) {
-    return this.x * v.x + this.y * v.y;
+  return this.x * v.x + this.y * v.y;
 };
 
 /**
@@ -155,7 +155,7 @@ Vec2.prototype.dot = function(v) {
  * @return {Vec2} this
  */
 Vec2.prototype.cross = function(v) {
-    return this.x * v.y - this.y * v.x;
+  return this.x * v.y - this.y * v.x;
 };
 
 /**
@@ -166,9 +166,9 @@ Vec2.prototype.cross = function(v) {
  * @return {Vec2} this
  */
 Vec2.prototype.invert = function invert() {
-    this.x *= -1;
-    this.y *= -1;
-    return this;
+  this.x *= -1;
+  this.y *= -1;
+  return this;
 };
 
 /**
@@ -181,9 +181,9 @@ Vec2.prototype.invert = function invert() {
  * @return {Vec2} this
  */
 Vec2.prototype.map = function map(fn) {
-    this.x = fn(this.x);
-    this.y = fn(this.y);
-    return this;
+  this.x = fn(this.x);
+  this.y = fn(this.y);
+  return this;
 };
 
 /**
@@ -194,10 +194,10 @@ Vec2.prototype.map = function map(fn) {
  * @return {Number} the length of the vector
  */
 Vec2.prototype.length = function length() {
-    var x = this.x;
-    var y = this.y;
+  var x = this.x;
+  var y = this.y;
 
-    return Math.sqrt(x * x + y * y);
+  return Math.sqrt(x * x + y * y);
 };
 
 /**
@@ -210,9 +210,9 @@ Vec2.prototype.length = function length() {
  * @return {Vec2} this
  */
 Vec2.prototype.copy = function copy(v) {
-    this.x = v.x;
-    this.y = v.y;
-    return this;
+  this.x = v.x;
+  this.y = v.y;
+  return this;
 };
 
 /**
@@ -223,9 +223,9 @@ Vec2.prototype.copy = function copy(v) {
  * @return {Vec2} this
  */
 Vec2.prototype.clear = function clear() {
-    this.x = 0;
-    this.y = 0;
-    return this;
+  this.x = 0;
+  this.y = 0;
+  return this;
 };
 
 /**
@@ -236,8 +236,8 @@ Vec2.prototype.clear = function clear() {
  * @return {Boolean} whether or not the length is 0
  */
 Vec2.prototype.isZero = function isZero() {
-    if (this.x !== 0 || this.y !== 0) return false;
-    else return true;
+  if (this.x !== 0 || this.y !== 0) return false;
+  else return true;
 };
 
 /**
@@ -248,7 +248,7 @@ Vec2.prototype.isZero = function isZero() {
  * @return {Array} the Vec to as an array
  */
 Vec2.prototype.toArray = function toArray() {
-    return [this.x, this.y];
+  return [this.x, this.y];
 };
 
 /**
@@ -262,15 +262,15 @@ Vec2.prototype.toArray = function toArray() {
  * @return {Vec2} The normalized Vec2.
  */
 Vec2.normalize = function normalize(v, output) {
-    var x = v.x;
-    var y = v.y;
+  var x = v.x;
+  var y = v.y;
 
-    var length = Math.sqrt(x * x + y * y) || 1;
-    length = 1 / length;
-    output.x = v.x * length;
-    output.y = v.y * length;
+  var length = Math.sqrt(x * x + y * y) || 1;
+  length = 1 / length;
+  output.x = v.x * length;
+  output.y = v.y * length;
 
-    return output;
+  return output;
 };
 
 /**
@@ -283,7 +283,7 @@ Vec2.normalize = function normalize(v, output) {
  * @return {Vec2} The cloned Vec2.
  */
 Vec2.clone = function clone(v) {
-    return new Vec2(v.x, v.y);
+  return new Vec2(v.x, v.y);
 };
 
 /**
@@ -298,10 +298,10 @@ Vec2.clone = function clone(v) {
  * @return {Vec2} The result of the addition.
  */
 Vec2.add = function add(v1, v2, output) {
-    output.x = v1.x + v2.x;
-    output.y = v1.y + v2.y;
+  output.x = v1.x + v2.x;
+  output.y = v1.y + v2.y;
 
-    return output;
+  return output;
 };
 
 /**
@@ -316,9 +316,9 @@ Vec2.add = function add(v1, v2, output) {
  * @return {Vec2} The result of the subtraction.
  */
 Vec2.subtract = function subtract(v1, v2, output) {
-    output.x = v1.x - v2.x;
-    output.y = v1.y - v2.y;
-    return output;
+  output.x = v1.x - v2.x;
+  output.y = v1.y - v2.y;
+  return output;
 };
 
 /**
@@ -333,9 +333,9 @@ Vec2.subtract = function subtract(v1, v2, output) {
  * @return {Vec2} The result of the scaling.
  */
 Vec2.scale = function scale(v, s, output) {
-    output.x = v.x * s;
-    output.y = v.y * s;
-    return output;
+  output.x = v.x * s;
+  output.y = v.y * s;
+  return output;
 };
 
 /**
@@ -349,7 +349,7 @@ Vec2.scale = function scale(v, s, output) {
  * @return {Number} The dot product.
  */
 Vec2.dot = function dot(v1, v2) {
-    return v1.x * v2.x + v1.y * v2.y;
+  return v1.x * v2.x + v1.y * v2.y;
 };
 
 /**
@@ -362,8 +362,8 @@ Vec2.dot = function dot(v1, v2) {
  *
  * @return {Number} The z-component of the cross product.
  */
-Vec2.cross = function(v1,v2) {
-    return v1.x * v2.y - v1.y * v2.x;
+Vec2.cross = function(v1, v2) {
+  return v1.x * v2.y - v1.y * v2.x;
 };
 
 module.exports = Vec2;

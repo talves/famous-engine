@@ -39,17 +39,18 @@
  *         {Array}          result.values   Values of passed in object.
  */
 module.exports = function keyValuesToArrays(obj) {
-    var keysArray = [], valuesArray = [];
-    var i = 0;
-    for(var key in obj) {
-        if (obj.hasOwnProperty(key)) {
-            keysArray[i] = key;
-            valuesArray[i] = obj[key];
-            i++;
-        }
+  var keysArray = [],
+    valuesArray = [];
+  var i = 0;
+  for (var key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      keysArray[i] = key;
+      valuesArray[i] = obj[key];
+      i++;
     }
-    return {
-        keys: keysArray,
-        values: valuesArray
-    };
+  }
+  return {
+    keys: keysArray,
+    values: valuesArray
+  };
 };

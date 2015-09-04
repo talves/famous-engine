@@ -49,38 +49,38 @@ var TIME_UPDATE = [Commands.TIME, null];
  * @constructor
  */
 function FamousEngine() {
-    var _this = this;
+  var _this = this;
 
-    Dispatch._setUpdater(this);
+  Dispatch._setUpdater(this);
 
-    this._updateQueue = []; // The updateQueue is a place where nodes
-                            // can place themselves in order to be
-                            // updated on the frame.
+  this._updateQueue = []; // The updateQueue is a place where nodes
+  // can place themselves in order to be
+  // updated on the frame.
 
-    this._nextUpdateQueue = []; // the nextUpdateQueue is used to queue
-                                // updates for the next tick.
-                                // this prevents infinite loops where during
-                                // an update a node continuously puts itself
-                                // back in the update queue.
+  this._nextUpdateQueue = []; // the nextUpdateQueue is used to queue
+  // updates for the next tick.
+  // this prevents infinite loops where during
+  // an update a node continuously puts itself
+  // back in the update queue.
 
-    this._scenes = {}; // a hash of all of the scenes's that the FamousEngine
-                         // is responsible for.
+  this._scenes = {}; // a hash of all of the scenes's that the FamousEngine
+  // is responsible for.
 
-    this._messages = TIME_UPDATE;   // a queue of all of the draw commands to
-                                    // send to the the renderers this frame.
+  this._messages = TIME_UPDATE; // a queue of all of the draw commands to
+  // send to the the renderers this frame.
 
-    this._inUpdate = false; // when the famous is updating this is true.
-                            // all requests for updates will get put in the
-                            // nextUpdateQueue
+  this._inUpdate = false; // when the famous is updating this is true.
+  // all requests for updates will get put in the
+  // nextUpdateQueue
 
-    this._clock = new Clock(); // a clock to keep track of time for the scene
-                               // graph.
+  this._clock = new Clock(); // a clock to keep track of time for the scene
+  // graph.
 
 
-    this._channel = new Channel();
-    this._channel.onMessage = function (message) {
-        _this.handleMessage(message);
-    };
+  this._channel = new Channel();
+  this._channel.onMessage = function(message) {
+    _this.handleMessage(message);
+  };
 }
 
 
@@ -95,16 +95,16 @@ function FamousEngine() {
  * @return {FamousEngine} this
  */
 FamousEngine.prototype.init = function init(options) {
-    if (typeof window === 'undefined') {
-        throw new Error(
-            'FamousEngine#init needs to have access to the global window object. ' +
-            'Instantiate Compositor and UIManager manually in the UI thread.'
-        );
-    }
-    this.compositor = options && options.compositor || new Compositor();
-    this.renderLoop = options && options.renderLoop || new RequestAnimationFrameLoop();
-    this.uiManager = new UIManager(this.getChannel(), this.compositor, this.renderLoop);
-    return this;
+  if (typeof window === 'undefined') {
+    throw new Error(
+      'FamousEngine#init needs to have access to the global window object. ' +
+      'Instantiate Compositor and UIManager manually in the UI thread.'
+    );
+  }
+  this.compositor = options && options.compositor || new Compositor();
+  this.renderLoop = options && options.renderLoop || new RequestAnimationFrameLoop();
+  this.uiManager = new UIManager(this.getChannel(), this.compositor, this.renderLoop);
+  return this;
 };
 
 /**
@@ -119,8 +119,8 @@ FamousEngine.prototype.init = function init(options) {
  * @return {FamousEngine} this
  */
 FamousEngine.prototype.setChannel = function setChannel(channel) {
-    this._channel = channel;
-    return this;
+  this._channel = channel;
+  return this;
 };
 
 /**
@@ -132,8 +132,8 @@ FamousEngine.prototype.setChannel = function setChannel(channel) {
  * @return {Channel} channel    The channel to be used for communicating with
  *                              the `UIManager`/ `Compositor`.
  */
-FamousEngine.prototype.getChannel = function getChannel () {
-    return this._channel;
+FamousEngine.prototype.getChannel = function getChannel() {
+  return this._channel;
 };
 
 /**
@@ -148,28 +148,28 @@ FamousEngine.prototype.getChannel = function getChannel () {
  *
  * @return {undefined} undefined
  */
-FamousEngine.prototype._update = function _update () {
-    this._inUpdate = true;
-    var time = this._clock.now();
-    var nextQueue = this._nextUpdateQueue;
-    var queue = this._updateQueue;
-    var item;
+FamousEngine.prototype._update = function _update() {
+  this._inUpdate = true;
+  var time = this._clock.now();
+  var nextQueue = this._nextUpdateQueue;
+  var queue = this._updateQueue;
+  var item;
 
-    this._messages[1] = time;
+  this._messages[1] = time;
 
-    SizeSystem.update();
-    TransformSystem.update();
-    OpacitySystem.update();
+  SizeSystem.update();
+  TransformSystem.update();
+  OpacitySystem.update();
 
-    while (nextQueue.length) queue.unshift(nextQueue.pop());
+  while (nextQueue.length) queue.unshift(nextQueue.pop());
 
-    while (queue.length) {
-        item = queue.shift();
-        if (item && item.update) item.update(time);
-        if (item && item.onUpdate) item.onUpdate(time);
-    }
+  while (queue.length) {
+    item = queue.shift();
+    if (item && item.update) item.update(time);
+    if (item && item.onUpdate) item.onUpdate(time);
+  }
 
-    this._inUpdate = false;
+  this._inUpdate = false;
 };
 
 /**
@@ -184,14 +184,14 @@ FamousEngine.prototype._update = function _update () {
  *
  * @return {undefined} undefined
  */
-FamousEngine.prototype.requestUpdate = function requestUpdate (requester) {
-    if (!requester)
-        throw new Error(
-            'requestUpdate must be called with a class to be updated'
-        );
+FamousEngine.prototype.requestUpdate = function requestUpdate(requester) {
+  if (!requester)
+    throw new Error(
+      'requestUpdate must be called with a class to be updated'
+    );
 
-    if (this._inUpdate) this.requestUpdateOnNextTick(requester);
-    else this._updateQueue.push(requester);
+  if (this._inUpdate) this.requestUpdateOnNextTick(requester);
+  else this._updateQueue.push(requester);
 };
 
 /**
@@ -206,8 +206,8 @@ FamousEngine.prototype.requestUpdate = function requestUpdate (requester) {
  *
  * @return {undefined} undefined
  */
-FamousEngine.prototype.requestUpdateOnNextTick = function requestUpdateOnNextTick (requester) {
-    this._nextUpdateQueue.push(requester);
+FamousEngine.prototype.requestUpdateOnNextTick = function requestUpdateOnNextTick(requester) {
+  this._nextUpdateQueue.push(requester);
 };
 
 /**
@@ -221,28 +221,28 @@ FamousEngine.prototype.requestUpdateOnNextTick = function requestUpdateOnNextTic
  *
  * @return {FamousEngine} this
  */
-FamousEngine.prototype.handleMessage = function handleMessage (messages) {
-    if (!messages)
-        throw new Error(
-            'onMessage must be called with an array of messages'
-        );
+FamousEngine.prototype.handleMessage = function handleMessage(messages) {
+  if (!messages)
+    throw new Error(
+      'onMessage must be called with an array of messages'
+    );
 
-    var command;
+  var command;
 
-    while (messages.length > 0) {
-        command = messages.shift();
-        switch (command) {
-            case Commands.WITH:
-                this.handleWith(messages);
-                break;
-            case Commands.FRAME:
-                this.handleFrame(messages);
-                break;
-            default:
-                throw new Error('received unknown command: ' + command);
-        }
+  while (messages.length > 0) {
+    command = messages.shift();
+    switch (command) {
+      case Commands.WITH:
+        this.handleWith(messages);
+        break;
+      case Commands.FRAME:
+        this.handleFrame(messages);
+        break;
+      default:
+        throw new Error('received unknown command: ' + command);
     }
-    return this;
+  }
+  return this;
 };
 
 /**
@@ -256,19 +256,19 @@ FamousEngine.prototype.handleMessage = function handleMessage (messages) {
  *
  * @return {FamousEngine} this
  */
-FamousEngine.prototype.handleWith = function handleWith (messages) {
-    var path = messages.shift();
-    var command = messages.shift();
-    switch (command) {
-        case Commands.TRIGGER: // the TRIGGER command sends a UIEvent to the specified path
-            var type = messages.shift();
-            var ev = messages.shift();
-            Dispatch.dispatchUIEvent(path, type, ev);
-            break;
-        default:
-            throw new Error('received unknown command: ' + command);
-    }
-    return this;
+FamousEngine.prototype.handleWith = function handleWith(messages) {
+  var path = messages.shift();
+  var command = messages.shift();
+  switch (command) {
+    case Commands.TRIGGER: // the TRIGGER command sends a UIEvent to the specified path
+      var type = messages.shift();
+      var ev = messages.shift();
+      Dispatch.dispatchUIEvent(path, type, ev);
+      break;
+    default:
+      throw new Error('received unknown command: ' + command);
+  }
+  return this;
 };
 
 /**
@@ -281,12 +281,14 @@ FamousEngine.prototype.handleWith = function handleWith (messages) {
  *
  * @return {FamousEngine} this
  */
-FamousEngine.prototype.handleFrame = function handleFrame (messages) {
-    if (!messages) throw new Error('handleFrame must be called with an array of messages');
-    if (!messages.length) throw new Error('FRAME must be sent with a time');
+FamousEngine.prototype.handleFrame = function handleFrame(messages) {
+  if (!messages)
+    throw new Error('handleFrame must be called with an array of messages');
+  if (!messages.length)
+    throw new Error('FRAME must be sent with a time');
 
-    this.step(messages.shift());
-    return this;
+  this.step(messages.shift());
+  return this;
 };
 
 /**
@@ -299,18 +301,19 @@ FamousEngine.prototype.handleFrame = function handleFrame (messages) {
  *
  * @return {FamousEngine} this
  */
-FamousEngine.prototype.step = function step (time) {
-    if (time == null) throw new Error('step must be called with a time');
+FamousEngine.prototype.step = function step(time) {
+  if (time == null)
+    throw new Error('step must be called with a time');
 
-    this._clock.step(time);
-    this._update();
+  this._clock.step(time);
+  this._update();
 
-    if (this._messages.length) {
-        this._channel.sendMessage(this._messages);
-        while (this._messages.length > 2) this._messages.pop();
-    }
+  if (this._messages.length) {
+    this._channel.sendMessage(this._messages);
+    while (this._messages.length > 2) this._messages.pop();
+  }
 
-    return this;
+  return this;
 };
 
 /**
@@ -324,13 +327,14 @@ FamousEngine.prototype.step = function step (time) {
  *
  * @return {Context | Undefined} the context if found, else undefined.
  */
-FamousEngine.prototype.getContext = function getContext (selector) {
-    if (!selector) throw new Error('getContext must be called with a selector');
+FamousEngine.prototype.getContext = function getContext(selector) {
+  if (!selector)
+    throw new Error('getContext must be called with a selector');
 
-    var index = selector.indexOf('/');
-    selector = index === -1 ? selector : selector.substring(0, index);
+  var index = selector.indexOf('/');
+  selector = index === -1 ? selector : selector.substring(0, index);
 
-    return this._scenes[selector];
+  return this._scenes[selector];
 };
 
 /**
@@ -340,8 +344,8 @@ FamousEngine.prototype.getContext = function getContext (selector) {
  *
  * @return {Clock} FamousEngine's clock
  */
-FamousEngine.prototype.getClock = function getClock () {
-    return this._clock;
+FamousEngine.prototype.getClock = function getClock() {
+  return this._clock;
 };
 
 /**
@@ -353,9 +357,9 @@ FamousEngine.prototype.getClock = function getClock () {
  *
  * @return {FamousEngine} this
  */
-FamousEngine.prototype.message = function message (command) {
-    this._messages.push(command);
-    return this;
+FamousEngine.prototype.message = function message(command) {
+  this._messages.push(command);
+  return this;
 };
 
 /**
@@ -367,12 +371,12 @@ FamousEngine.prototype.message = function message (command) {
  *
  * @return {Scene} a new instance of Scene.
  */
-FamousEngine.prototype.createScene = function createScene (selector) {
-    selector = selector || 'body';
+FamousEngine.prototype.createScene = function createScene(selector) {
+  selector = selector || 'body';
 
-    if (this._scenes[selector]) this._scenes[selector].dismount();
-    this._scenes[selector] = new Scene(selector, this);
-    return this._scenes[selector];
+  if (this._scenes[selector]) this._scenes[selector].dismount();
+  this._scenes[selector] = new Scene(selector, this);
+  return this._scenes[selector];
 };
 
 /**
@@ -384,14 +388,14 @@ FamousEngine.prototype.createScene = function createScene (selector) {
  *
  * @return {FamousEngine} this
  */
-FamousEngine.prototype.addScene = function addScene (scene) {
-    var selector = scene._selector;
+FamousEngine.prototype.addScene = function addScene(scene) {
+  var selector = scene._selector;
 
-    var current = this._scenes[selector];
-    if (current && current !== scene) current.dismount();
-    if (!scene.isMounted()) scene.mount(scene.getSelector());
-    this._scenes[selector] = scene;
-    return this;
+  var current = this._scenes[selector];
+  if (current && current !== scene) current.dismount();
+  if (!scene.isMounted()) scene.mount(scene.getSelector());
+  this._scenes[selector] = scene;
+  return this;
 };
 
 /**
@@ -403,15 +407,16 @@ FamousEngine.prototype.addScene = function addScene (scene) {
  *
  * @return {FamousEngine} this
  */
-FamousEngine.prototype.removeScene = function removeScene (scene) {
-    var selector = scene._selector;
+FamousEngine.prototype.removeScene = function removeScene(scene) {
+  var selector = scene._selector;
 
-    var current = this._scenes[selector];
-    if (current && current === scene) {
-        if (scene.isMounted()) scene.dismount();
-        delete this._scenes[selector];
-    }
-    return this;
+  var current = this._scenes[selector];
+  if (current && current === scene) {
+    if (scene.isMounted()) scene.dismount();
+    delete this._scenes[selector]
+    ;
+  }
+  return this;
 };
 
 /**
@@ -423,8 +428,8 @@ FamousEngine.prototype.removeScene = function removeScene (scene) {
  * @return {FamousEngine} this
  */
 FamousEngine.prototype.startRenderLoop = function startRenderLoop() {
-    this._channel.sendMessage(ENGINE_START);
-    return this;
+  this._channel.sendMessage(ENGINE_START);
+  return this;
 };
 
 /**
@@ -436,8 +441,8 @@ FamousEngine.prototype.startRenderLoop = function startRenderLoop() {
  * @return {FamousEngine} this
  */
 FamousEngine.prototype.stopRenderLoop = function stopRenderLoop() {
-    this._channel.sendMessage(ENGINE_STOP);
-    return this;
+  this._channel.sendMessage(ENGINE_STOP);
+  return this;
 };
 
 /**
@@ -447,11 +452,11 @@ FamousEngine.prototype.stopRenderLoop = function stopRenderLoop() {
  * @return {FamousEngine} this
  */
 FamousEngine.prototype.startEngine = function startEngine() {
-    console.warn(
-        'FamousEngine.startEngine is deprecated! Use ' +
-        'FamousEngine.startRenderLoop instead!'
-    );
-    return this.startRenderLoop();
+  console.warn(
+    'FamousEngine.startEngine is deprecated! Use ' +
+    'FamousEngine.startRenderLoop instead!'
+  );
+  return this.startRenderLoop();
 };
 
 /**
@@ -461,11 +466,11 @@ FamousEngine.prototype.startEngine = function startEngine() {
  * @return {FamousEngine} this
  */
 FamousEngine.prototype.stopEngine = function stopEngine() {
-    console.warn(
-        'FamousEngine.stopEngine is deprecated! Use ' +
-        'FamousEngine.stopRenderLoop instead!'
-    );
-    return this.stopRenderLoop();
+  console.warn(
+    'FamousEngine.stopEngine is deprecated! Use ' +
+    'FamousEngine.stopRenderLoop instead!'
+  );
+  return this.stopRenderLoop();
 };
 
 module.exports = new FamousEngine();

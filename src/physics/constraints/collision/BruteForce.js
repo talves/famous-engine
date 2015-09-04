@@ -34,11 +34,11 @@ var AABB = require('./AABB');
  * @param {Particles[]} targets The bodies to track.
  */
 function BruteForceAABB(targets) {
-    this._volumes = [];
-    this._entityRegistry = {};
-    for (var i = 0; i < targets.length; i++) {
-        this.add(targets[i]);
-    }
+  this._volumes = [];
+  this._entityRegistry = {};
+  for (var i = 0; i < targets.length; i++) {
+    this.add(targets[i]);
+  }
 }
 
 /**
@@ -49,10 +49,10 @@ function BruteForceAABB(targets) {
  * @return {undefined} undefined
  */
 BruteForceAABB.prototype.add = function add(body) {
-    var boundingVolume = new AABB(body);
+  var boundingVolume = new AABB(body);
 
-    this._entityRegistry[body._ID] = body;
-    this._volumes.push(boundingVolume);
+  this._entityRegistry[body._ID] = body;
+  this._volumes.push(boundingVolume);
 };
 
 /**
@@ -62,22 +62,22 @@ BruteForceAABB.prototype.add = function add(body) {
  * @return {Array.<Particle[]>} Results.
  */
 BruteForceAABB.prototype.update = function update() {
-    var _volumes = this._volumes;
-    var _entityRegistry = this._entityRegistry;
+  var _volumes = this._volumes;
+  var _entityRegistry = this._entityRegistry;
 
-    for (var k = 0, len = _volumes.length; k < len; k++) {
-        _volumes[k].update();
-    }
+  for (var k = 0, len = _volumes.length; k < len; k++) {
+    _volumes[k].update();
+  }
 
-    var result = [];
-    for (var i = 0, numTargets = _volumes.length; i < numTargets; i++) {
-        for (var j = i + 1; j < numTargets; j++) {
-            if (AABB.checkOverlap(_volumes[i], _volumes[j])) {
-                result.push([_entityRegistry[i], _entityRegistry[j]]);
-            }
-        }
+  var result = [];
+  for (var i = 0, numTargets = _volumes.length; i < numTargets; i++) {
+    for (var j = i + 1; j < numTargets; j++) {
+      if (AABB.checkOverlap(_volumes[i], _volumes[j])) {
+        result.push([_entityRegistry[i], _entityRegistry[j]]);
+      }
     }
-    return result;
+  }
+  return result;
 };
 
 /**
@@ -88,7 +88,7 @@ BruteForceAABB.prototype.update = function update() {
  * @param {Particle[]} targets The targets to track.
  */
 function BruteForce(targets) {
-    this.targets = targets;
+  this.targets = targets;
 }
 
 /**
@@ -99,7 +99,7 @@ function BruteForce(targets) {
  * @return {undefined} undefined
  */
 BruteForce.prototype.add = function add(body) {
-    this.targets.push(body);
+  this.targets.push(body);
 };
 
 /**
@@ -109,7 +109,7 @@ BruteForce.prototype.add = function add(body) {
  * @return {Array.<Particle[]>} Results.
  */
 BruteForce.prototype.update = function update() {
-    return [this.targets];
+  return [this.targets];
 };
 
 module.exports.BruteForceAABB = BruteForceAABB;

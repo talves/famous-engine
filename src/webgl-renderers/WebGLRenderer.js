@@ -35,13 +35,13 @@ var Registry = require('../utilities/Registry');
 var identity = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 
 var globalUniforms = keyValueToArrays({
-    'u_numLights': 0,
-    'u_ambientLight': new Array(3),
-    'u_lightPosition': new Array(3),
-    'u_lightColor': new Array(3),
-    'u_perspective': new Array(16),
-    'u_time': 0,
-    'u_view': new Array(16)
+  'u_numLights': 0,
+  'u_ambientLight': new Array(3),
+  'u_lightPosition': new Array(3),
+  'u_lightColor': new Array(3),
+  'u_perspective': new Array(16),
+  'u_time': 0,
+  'u_view': new Array(16)
 });
 
 /**
@@ -59,83 +59,85 @@ var globalUniforms = keyValueToArrays({
  * @return {undefined} undefined
  */
 function WebGLRenderer(canvas, compositor) {
-    canvas.classList.add('famous-webgl-renderer');
+  canvas.classList.add('famous-webgl-renderer');
 
-    this.canvas = canvas;
-    this.compositor = compositor;
+  this.canvas = canvas;
+  this.compositor = compositor;
 
-    var gl = this.getWebGLContext(this.canvas);
+  var gl = this.getWebGLContext(this.canvas);
 
-    gl.clearColor(0.0, 0.0, 0.0, 0.0);
-    gl.polygonOffset(0.1, 0.1);
-    gl.enable(gl.POLYGON_OFFSET_FILL);
-    gl.enable(gl.DEPTH_TEST);
-    gl.enable(gl.BLEND);
-    gl.depthFunc(gl.LEQUAL);
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-    gl.enable(gl.CULL_FACE);
-    gl.cullFace(gl.BACK);
+  gl.clearColor(0.0, 0.0, 0.0, 0.0);
+  gl.polygonOffset(0.1, 0.1);
+  gl.enable(gl.POLYGON_OFFSET_FILL);
+  gl.enable(gl.DEPTH_TEST);
+  gl.enable(gl.BLEND);
+  gl.depthFunc(gl.LEQUAL);
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+  gl.enable(gl.CULL_FACE);
+  gl.cullFace(gl.BACK);
 
-    this.meshRegistry = {};
-    this.meshRegistryKeys = [];
+  this.meshRegistry = {};
+  this.meshRegistryKeys = [];
 
-    this.cutoutRegistry = new Registry();
-    this.lightRegistry = new Registry();
+  this.cutoutRegistry = new Registry();
+  this.lightRegistry = new Registry();
 
-    this.numLights = 0;
-    this.ambientLightColor = [0, 0, 0];
-    this.lightPositions = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    this.lightColors = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  this.numLights = 0;
+  this.ambientLightColor = [0, 0, 0];
+  this.lightPositions = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  this.lightColors = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
-    this.textureManager = new TextureManager(gl);
-    this.bufferRegistry = new BufferRegistry(gl);
-    this.program = new Program(gl, { debug: true });
+  this.textureManager = new TextureManager(gl);
+  this.bufferRegistry = new BufferRegistry(gl);
+  this.program = new Program(gl, {
+    debug: true
+  });
 
-    this.state = {
-        boundArrayBuffer: null,
-        boundElementBuffer: null,
-        lastDrawn: null,
-        enabledAttributes: {},
-        enabledAttributesKeys: []
-    };
+  this.state = {
+    boundArrayBuffer: null,
+    boundElementBuffer: null,
+    lastDrawn: null,
+    enabledAttributes: {},
+    enabledAttributesKeys: []
+  };
 
-    this.resolutionName = ['u_resolution'];
-    this.resolutionValues = [[0, 0, 0]];
+  this.resolutionName = ['u_resolution'];
+  this.resolutionValues = [[0, 0, 0]];
 
-    this.cachedSize = [];
+  this.cachedSize = [];
 
-    /*
-    The projectionTransform has some constant components, i.e. the z scale, and the x and y translation.
+  /*
+  The projectionTransform has some constant components, i.e. the z scale, and the x and y translation.
 
-    The z scale keeps the final z position of any vertex within the clip's domain by scaling it by an
-    arbitrarily small coefficient. This has the advantage of being a useful default in the event of the
-    user forgoing a near and far plane, an alien convention in dom space as in DOM overlapping is
-    conducted via painter's algorithm.
+  The z scale keeps the final z position of any vertex within the clip's domain by scaling it by an
+  arbitrarily small coefficient. This has the advantage of being a useful default in the event of the
+  user forgoing a near and far plane, an alien convention in dom space as in DOM overlapping is
+  conducted via painter's algorithm.
 
-    The x and y translation transforms the world space origin to the top left corner of the screen.
+  The x and y translation transforms the world space origin to the top left corner of the screen.
 
-    The final component (this.projectionTransform[15]) is initialized as 1 because certain projection models,
-    e.g. the WC3 specified model, keep the XY plane as the projection hyperplane.
-    */
-    this.projectionTransform = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -0.000001, 0, -1, 1, 0, 1];
+  The final component (this.projectionTransform[15]) is initialized as 1 because certain projection models,
+  e.g. the WC3 specified model, keep the XY plane as the projection hyperplane.
+  */
+  this.projectionTransform = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -0.000001, 0, -1, 1, 0, 1];
 
-    // TODO: remove this hack
+  // TODO: remove this hack
 
-    var cutout = this.cutoutGeometry = {
-        spec: {
-            id: -1,
-            bufferValues: [[-1, -1, 0, 1, -1, 0, -1, 1, 0, 1, 1, 0]],
-            bufferNames: ['a_pos'],
-            type: 'TRIANGLE_STRIP'
-        }
-    };
+  var cutout = this.cutoutGeometry = {
+    spec: {
+      id: -1,
+      bufferValues: [[-1, -1, 0, 1, -1, 0, -1, 1, 0, 1, 1, 0]],
+      bufferNames: ['a_pos'],
+      type: 'TRIANGLE_STRIP'
+    }
+  };
 
-    this.bufferRegistry.allocate(
-        this.cutoutGeometry.spec.id,
-        cutout.spec.bufferNames[0],
-        cutout.spec.bufferValues[0],
-        3
-    );
+  this.bufferRegistry.allocate(
+    this.cutoutGeometry.spec.id,
+    cutout.spec.bufferNames[0],
+    cutout.spec.bufferValues[0],
+    3
+  );
 }
 
 /**
@@ -149,17 +151,17 @@ function WebGLRenderer(canvas, compositor) {
  * @return {Object} WebGLContext WebGL context
  */
 WebGLRenderer.prototype.getWebGLContext = function getWebGLContext(canvas) {
-    if (this.gl) return this.gl;
+  if (this.gl) return this.gl;
 
-    var names = ['webgl', 'experimental-webgl', 'webkit-3d', 'moz-webgl'];
+  var names = ['webgl', 'experimental-webgl', 'webkit-3d', 'moz-webgl'];
 
-    for (var i = 0, len = names.length; i < len && !this.gl; i++)
-        this.gl = canvas.getContext(names[i]);
+  for (var i = 0, len = names.length; i < len && !this.gl; i++)
+    this.gl = canvas.getContext(names[i]);
 
-    if (!this.gl)
-        throw new Error('Could not retrieve WebGL context. Please refer to https://www.khronos.org/webgl/ for requirements');
+  if (!this.gl)
+    throw new Error('Could not retrieve WebGL context. Please refer to https://www.khronos.org/webgl/ for requirements');
 
-    return this.gl;
+  return this.gl;
 };
 
 /**
@@ -172,13 +174,13 @@ WebGLRenderer.prototype.getWebGLContext = function getWebGLContext(canvas) {
  * @return {Object} Newly created light spec
  */
 WebGLRenderer.prototype.createLight = function createLight(path) {
-    this.numLights++;
-    var light = {
-        color: [0, 0, 0],
-        position: [0, 0, 0]
-    };
-    this.lightRegistry.register(path, light);
-    return light;
+  this.numLights++;
+  var light = {
+    color: [0, 0, 0],
+    position: [0, 0, 0]
+  };
+  this.lightRegistry.register(path, light);
+  return light;
 };
 
 /**
@@ -191,30 +193,30 @@ WebGLRenderer.prototype.createLight = function createLight(path) {
  * @return {Object} Newly created mesh spec.
  */
 WebGLRenderer.prototype.createMesh = function createMesh(path) {
-    var uniforms = keyValueToArrays({
-        u_opacity: 1,
-        u_transform: identity,
-        u_size: [0, 0, 0],
-        u_baseColor: [0.5, 0.5, 0.5, 1],
-        u_positionOffset: [0, 0, 0],
-        u_normals: [0, 0, 0],
-        u_flatShading: 0,
-        u_glossiness: [0, 0, 0, 0]
-    });
-    var mesh = {
-        depth: null,
-        uniformKeys: uniforms.keys,
-        uniformValues: uniforms.values,
-        buffers: {},
-        geometry: null,
-        drawType: null,
-        textures: [],
-        visible: true
-    };
+  var uniforms = keyValueToArrays({
+    u_opacity: 1,
+    u_transform: identity,
+    u_size: [0, 0, 0],
+    u_baseColor: [0.5, 0.5, 0.5, 1],
+    u_positionOffset: [0, 0, 0],
+    u_normals: [0, 0, 0],
+    u_flatShading: 0,
+    u_glossiness: [0, 0, 0, 0]
+  });
+  var mesh = {
+    depth: null,
+    uniformKeys: uniforms.keys,
+    uniformValues: uniforms.values,
+    buffers: {},
+    geometry: null,
+    drawType: null,
+    textures: [],
+    visible: true
+  };
 
-    this.meshRegistry[path] = mesh;
-    this.meshRegistryKeys.push(path);
-    return mesh;
+  this.meshRegistry[path] = mesh;
+  this.meshRegistryKeys.push(path);
+  return mesh;
 };
 
 /**
@@ -229,9 +231,9 @@ WebGLRenderer.prototype.createMesh = function createMesh(path) {
  * @return {undefined} undefined
  */
 WebGLRenderer.prototype.setCutoutState = function setCutoutState(path, usesCutout) {
-    var cutout = this.getOrSetCutout(path);
+  var cutout = this.getOrSetCutout(path);
 
-    cutout.visible = usesCutout;
+  cutout.visible = usesCutout;
 };
 
 /**
@@ -244,29 +246,29 @@ WebGLRenderer.prototype.setCutoutState = function setCutoutState(path, usesCutou
  * @return {Object} Newly created cutout spec.
  */
 WebGLRenderer.prototype.getOrSetCutout = function getOrSetCutout(path) {
-    var cutout = this.cutoutRegistry.get(path);
+  var cutout = this.cutoutRegistry.get(path);
 
-    if (!cutout) {
-        var uniforms = keyValueToArrays({
-            u_opacity: 0,
-            u_transform: identity.slice(),
-            u_size: [0, 0, 0],
-            u_origin: [0, 0, 0],
-            u_baseColor: [0, 0, 0, 1]
-        });
+  if (!cutout) {
+    var uniforms = keyValueToArrays({
+      u_opacity: 0,
+      u_transform: identity.slice(),
+      u_size: [0, 0, 0],
+      u_origin: [0, 0, 0],
+      u_baseColor: [0, 0, 0, 1]
+    });
 
-        cutout = {
-            uniformKeys: uniforms.keys,
-            uniformValues: uniforms.values,
-            geometry: this.cutoutGeometry.spec.id,
-            drawType: this.cutoutGeometry.spec.type,
-            visible: true
-        };
+    cutout = {
+      uniformKeys: uniforms.keys,
+      uniformValues: uniforms.values,
+      geometry: this.cutoutGeometry.spec.id,
+      drawType: this.cutoutGeometry.spec.type,
+      visible: true
+    };
 
-        this.cutoutRegistry.register(path, cutout);
-    }
+    this.cutoutRegistry.register(path, cutout);
+  }
 
-    return cutout;
+  return cutout;
 };
 
 /**
@@ -280,9 +282,9 @@ WebGLRenderer.prototype.getOrSetCutout = function getOrSetCutout(path) {
  * @return {undefined} undefined
  */
 WebGLRenderer.prototype.setMeshVisibility = function setMeshVisibility(path, visibility) {
-    var mesh = this.meshRegistry[path] || this.createMesh(path);
+  var mesh = this.meshRegistry[path] || this.createMesh(path);
 
-    mesh.visible = visibility;
+  mesh.visible = visibility;
 };
 
 /**
@@ -294,10 +296,11 @@ WebGLRenderer.prototype.setMeshVisibility = function setMeshVisibility(path, vis
  * @return {undefined} undefined
  */
 WebGLRenderer.prototype.removeMesh = function removeMesh(path) {
-    delete this.meshRegistry[path];
-    var index = this.meshRegistryKeys.indexOf(path);
+  delete this.meshRegistry[path]
+  ;
+  var index = this.meshRegistryKeys.indexOf(path);
 
-    if (index !== -1) this.meshRegistryKeys.splice(index, 1);
+  if (index !== -1) this.meshRegistryKeys.splice(index, 1);
 };
 
 /**
@@ -311,18 +314,17 @@ WebGLRenderer.prototype.removeMesh = function removeMesh(path) {
  * @return {undefined} undefined
  */
 WebGLRenderer.prototype.setCutoutUniform = function setCutoutUniform(path, uniformName, uniformValue) {
-    var cutout = this.getOrSetCutout(path);
+  var cutout = this.getOrSetCutout(path);
 
-    var index = cutout.uniformKeys.indexOf(uniformName);
+  var index = cutout.uniformKeys.indexOf(uniformName);
 
-    if (uniformValue.length) {
-        for (var i = 0, len = uniformValue.length; i < len; i++) {
-            cutout.uniformValues[index][i] = uniformValue[i];
-        }
+  if (uniformValue.length) {
+    for (var i = 0, len = uniformValue.length; i < len; i++) {
+      cutout.uniformValues[index][i] = uniformValue[i];
     }
-    else {
-        cutout.uniformValues[index] = uniformValue;
-    }
+  } else {
+    cutout.uniformValues[index] = uniformValue;
+  }
 };
 
 /**
@@ -335,10 +337,10 @@ WebGLRenderer.prototype.setCutoutUniform = function setCutoutUniform(path, unifo
  * @return {WebGLRenderer} this
  */
 WebGLRenderer.prototype.setMeshOptions = function(path, options) {
-    var mesh = this.meshRegistry[path] || this.createMesh(path);
+  var mesh = this.meshRegistry[path] || this.createMesh(path);
 
-    mesh.options = options;
-    return this;
+  mesh.options = options;
+  return this;
 };
 
 /**
@@ -354,10 +356,10 @@ WebGLRenderer.prototype.setMeshOptions = function(path, options) {
  * @return {WebGLRenderer} this
  */
 WebGLRenderer.prototype.setAmbientLightColor = function setAmbientLightColor(path, r, g, b) {
-    this.ambientLightColor[0] = r;
-    this.ambientLightColor[1] = g;
-    this.ambientLightColor[2] = b;
-    return this;
+  this.ambientLightColor[0] = r;
+  this.ambientLightColor[1] = g;
+  this.ambientLightColor[2] = b;
+  return this;
 };
 
 /**
@@ -373,11 +375,11 @@ WebGLRenderer.prototype.setAmbientLightColor = function setAmbientLightColor(pat
  * @return {WebGLRenderer} this
  */
 WebGLRenderer.prototype.setLightPosition = function setLightPosition(path, x, y, z) {
-    var light = this.lightRegistry.get(path) || this.createLight(path);
-    light.position[0] = x;
-    light.position[1] = y;
-    light.position[2] = z;
-    return this;
+  var light = this.lightRegistry.get(path) || this.createLight(path);
+  light.position[0] = x;
+  light.position[1] = y;
+  light.position[2] = z;
+  return this;
 };
 
 /**
@@ -393,12 +395,12 @@ WebGLRenderer.prototype.setLightPosition = function setLightPosition(path, x, y,
  * @return {WebGLRenderer} this
  */
 WebGLRenderer.prototype.setLightColor = function setLightColor(path, r, g, b) {
-    var light = this.lightRegistry.get(path) || this.createLight(path);
+  var light = this.lightRegistry.get(path) || this.createLight(path);
 
-    light.color[0] = r;
-    light.color[1] = g;
-    light.color[2] = b;
-    return this;
+  light.color[0] = r;
+  light.color[1] = g;
+  light.color[2] = b;
+  return this;
 };
 
 /**
@@ -413,27 +415,27 @@ WebGLRenderer.prototype.setLightColor = function setLightColor(path, r, g, b) {
  * @return {WebGLRenderer} this
  */
 WebGLRenderer.prototype.handleMaterialInput = function handleMaterialInput(path, name, material) {
-    var mesh = this.meshRegistry[path] || this.createMesh(path);
-    material = compileMaterial(material, mesh.textures.length);
+  var mesh = this.meshRegistry[path] || this.createMesh(path);
+  material = compileMaterial(material, mesh.textures.length);
 
-    // Set uniforms to enable texture!
+  // Set uniforms to enable texture!
 
-    mesh.uniformValues[mesh.uniformKeys.indexOf(name)][0] = -material._id;
+  mesh.uniformValues[mesh.uniformKeys.indexOf(name)][0] = -material._id;
 
-    // Register textures!
+  // Register textures!
 
-    var i = material.textures.length;
-    while (i--) {
-        mesh.textures.push(
-            this.textureManager.register(material.textures[i], mesh.textures.length + i)
-        );
-    }
+  var i = material.textures.length;
+  while (i--) {
+    mesh.textures.push(
+      this.textureManager.register(material.textures[i], mesh.textures.length + i)
+    );
+  }
 
-    // Register material!
+  // Register material!
 
-    this.program.registerMaterial(name, material);
+  this.program.registerMaterial(name, material);
 
-    return this.updateSize();
+  return this.updateSize();
 };
 
 /**
@@ -449,13 +451,13 @@ WebGLRenderer.prototype.handleMaterialInput = function handleMaterialInput(path,
  * @return {undefined} undefined
  */
 WebGLRenderer.prototype.setGeometry = function setGeometry(path, geometry, drawType, dynamic) {
-    var mesh = this.meshRegistry[path] || this.createMesh(path);
+  var mesh = this.meshRegistry[path] || this.createMesh(path);
 
-    mesh.geometry = geometry;
-    mesh.drawType = drawType;
-    mesh.dynamic = dynamic;
+  mesh.geometry = geometry;
+  mesh.drawType = drawType;
+  mesh.dynamic = dynamic;
 
-    return this;
+  return this;
 };
 
 /**
@@ -470,17 +472,16 @@ WebGLRenderer.prototype.setGeometry = function setGeometry(path, geometry, drawT
  * @return {undefined} undefined
  */
 WebGLRenderer.prototype.setMeshUniform = function setMeshUniform(path, uniformName, uniformValue) {
-    var mesh = this.meshRegistry[path] || this.createMesh(path);
+  var mesh = this.meshRegistry[path] || this.createMesh(path);
 
-    var index = mesh.uniformKeys.indexOf(uniformName);
+  var index = mesh.uniformKeys.indexOf(uniformName);
 
-    if (index === -1) {
-        mesh.uniformKeys.push(uniformName);
-        mesh.uniformValues.push(uniformValue);
-    }
-    else {
-        mesh.uniformValues[index] = uniformValue;
-    }
+  if (index === -1) {
+    mesh.uniformKeys.push(uniformName);
+    mesh.uniformValues.push(uniformValue);
+  } else {
+    mesh.uniformValues[index] = uniformValue;
+  }
 };
 
 /**
@@ -497,7 +498,7 @@ WebGLRenderer.prototype.setMeshUniform = function setMeshUniform(path, uniformNa
  * @return {undefined} undefined
  */
 WebGLRenderer.prototype.bufferData = function bufferData(geometryId, bufferName, bufferValue, bufferSpacing, isDynamic) {
-    this.bufferRegistry.allocate(geometryId, bufferName, bufferValue, bufferSpacing, isDynamic);
+  this.bufferRegistry.allocate(geometryId, bufferName, bufferValue, bufferSpacing, isDynamic);
 };
 
 /**
@@ -511,16 +512,16 @@ WebGLRenderer.prototype.bufferData = function bufferData(geometryId, bufferName,
  * @return {undefined} undefined
  */
 WebGLRenderer.prototype.draw = function draw(renderState) {
-    var time = this.compositor.getTime();
+  var time = this.compositor.getTime();
 
-    this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-    this.textureManager.update(time);
+  this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+  this.textureManager.update(time);
 
-    this.meshRegistryKeys = sorter(this.meshRegistryKeys, this.meshRegistry);
+  this.meshRegistryKeys = sorter(this.meshRegistryKeys, this.meshRegistry);
 
-    this.setGlobalUniforms(renderState);
-    this.drawCutouts();
-    this.drawMeshes();
+  this.setGlobalUniforms(renderState);
+  this.drawCutouts();
+  this.drawMeshes();
 };
 
 /**
@@ -533,42 +534,41 @@ WebGLRenderer.prototype.draw = function draw(renderState) {
  * @return {undefined} undefined
  */
 WebGLRenderer.prototype.drawMeshes = function drawMeshes() {
-    var gl = this.gl;
-    var buffers;
-    var mesh;
+  var gl = this.gl;
+  var buffers;
+  var mesh;
 
-    var paths = this.meshRegistryKeys;
+  var paths = this.meshRegistryKeys;
 
-    for(var i = 0; i < paths.length; i++) {
-        mesh = this.meshRegistry[paths[i]];
+  for (var i = 0; i < paths.length; i++) {
+    mesh = this.meshRegistry[paths[i]];
 
-        if (!mesh) continue;
+    if (!mesh) continue;
 
-        buffers = this.bufferRegistry.registry[mesh.geometry];
+    buffers = this.bufferRegistry.registry[mesh.geometry];
 
-        if (!mesh.visible) continue;
+    if (!mesh.visible) continue;
 
-        if (mesh.uniformValues[0] < 1) {
-            gl.depthMask(false);
-            gl.enable(gl.BLEND);
-        }
-        else {
-            gl.depthMask(true);
-            gl.disable(gl.BLEND);
-        }
-
-        if (!buffers) continue;
-
-        var j = mesh.textures.length;
-        while (j--) this.textureManager.bindTexture(mesh.textures[j]);
-
-        if (mesh.options) this.handleOptions(mesh.options, mesh);
-
-        this.program.setUniforms(mesh.uniformKeys, mesh.uniformValues);
-        this.drawBuffers(buffers, mesh.drawType, mesh.geometry);
-
-        if (mesh.options) this.resetOptions(mesh.options);
+    if (mesh.uniformValues[0] < 1) {
+      gl.depthMask(false);
+      gl.enable(gl.BLEND);
+    } else {
+      gl.depthMask(true);
+      gl.disable(gl.BLEND);
     }
+
+    if (!buffers) continue;
+
+    var j = mesh.textures.length;
+    while (j--) this.textureManager.bindTexture(mesh.textures[j]);
+
+    if (mesh.options) this.handleOptions(mesh.options, mesh);
+
+    this.program.setUniforms(mesh.uniformKeys, mesh.uniformValues);
+    this.drawBuffers(buffers, mesh.drawType, mesh.geometry);
+
+    if (mesh.options) this.resetOptions(mesh.options);
+  }
 };
 
 /**
@@ -580,29 +580,29 @@ WebGLRenderer.prototype.drawMeshes = function drawMeshes() {
  * @return {undefined} undefined
  */
 WebGLRenderer.prototype.drawCutouts = function drawCutouts() {
-    var cutout;
-    var buffers;
-    var cutouts = this.cutoutRegistry.getValues();
-    var len = cutouts.length;
+  var cutout;
+  var buffers;
+  var cutouts = this.cutoutRegistry.getValues();
+  var len = cutouts.length;
 
-    this.gl.disable(this.gl.CULL_FACE);
-    this.gl.enable(this.gl.BLEND);
-    this.gl.depthMask(true);
+  this.gl.disable(this.gl.CULL_FACE);
+  this.gl.enable(this.gl.BLEND);
+  this.gl.depthMask(true);
 
-    for (var i = 0; i < len; i++) {
-        cutout = cutouts[i];
+  for (var i = 0; i < len; i++) {
+    cutout = cutouts[i];
 
-        if (!cutout) continue;
+    if (!cutout) continue;
 
-        buffers = this.bufferRegistry.registry[cutout.geometry];
+    buffers = this.bufferRegistry.registry[cutout.geometry];
 
-        if (!cutout.visible) continue;
+    if (!cutout.visible) continue;
 
-        this.program.setUniforms(cutout.uniformKeys, cutout.uniformValues);
-        this.drawBuffers(buffers, cutout.drawType, cutout.geometry);
-    }
+    this.program.setUniforms(cutout.uniformKeys, cutout.uniformValues);
+    this.drawBuffers(buffers, cutout.drawType, cutout.geometry);
+  }
 
-    this.gl.enable(this.gl.CULL_FACE);
+  this.gl.enable(this.gl.CULL_FACE);
 };
 
 /**
@@ -615,55 +615,55 @@ WebGLRenderer.prototype.drawCutouts = function drawCutouts() {
  * @return {undefined} undefined
  */
 WebGLRenderer.prototype.setGlobalUniforms = function setGlobalUniforms(renderState) {
-    var light;
-    var stride;
-    var lights = this.lightRegistry.getValues();
-    var len = lights.length;
+  var light;
+  var stride;
+  var lights = this.lightRegistry.getValues();
+  var len = lights.length;
 
-    for (var i = 0; i < len; i++) {
-        light = lights[i];
+  for (var i = 0; i < len; i++) {
+    light = lights[i];
 
-        if (!light) continue;
+    if (!light) continue;
 
-        stride = i * 4;
+    stride = i * 4;
 
-        // Build the light positions' 4x4 matrix
+    // Build the light positions' 4x4 matrix
 
-        this.lightPositions[0 + stride] = light.position[0];
-        this.lightPositions[1 + stride] = light.position[1];
-        this.lightPositions[2 + stride] = light.position[2];
+    this.lightPositions[0 + stride] = light.position[0];
+    this.lightPositions[1 + stride] = light.position[1];
+    this.lightPositions[2 + stride] = light.position[2];
 
-        // Build the light colors' 4x4 matrix
+    // Build the light colors' 4x4 matrix
 
-        this.lightColors[0 + stride] = light.color[0];
-        this.lightColors[1 + stride] = light.color[1];
-        this.lightColors[2 + stride] = light.color[2];
-    }
+    this.lightColors[0 + stride] = light.color[0];
+    this.lightColors[1 + stride] = light.color[1];
+    this.lightColors[2 + stride] = light.color[2];
+  }
 
-    globalUniforms.values[0] = this.numLights;
-    globalUniforms.values[1] = this.ambientLightColor;
-    globalUniforms.values[2] = this.lightPositions;
-    globalUniforms.values[3] = this.lightColors;
+  globalUniforms.values[0] = this.numLights;
+  globalUniforms.values[1] = this.ambientLightColor;
+  globalUniforms.values[2] = this.lightPositions;
+  globalUniforms.values[3] = this.lightColors;
 
-    /*
-     * Set time and projection uniforms
-     * projecting world space into a 2d plane representation of the canvas.
-     * The x and y scale (this.projectionTransform[0] and this.projectionTransform[5] respectively)
-     * convert the projected geometry back into clipspace.
-     * The perpective divide (this.projectionTransform[11]), adds the z value of the point
-     * multiplied by the perspective divide to the w value of the point. In the process
-     * of converting from homogenous coordinates to NDC (normalized device coordinates)
-     * the x and y values of the point are divided by w, which implements perspective.
-     */
-    this.projectionTransform[0] = 1 / (this.cachedSize[0] * 0.5);
-    this.projectionTransform[5] = -1 / (this.cachedSize[1] * 0.5);
-    this.projectionTransform[11] = renderState.perspectiveTransform[11];
+  /*
+   * Set time and projection uniforms
+   * projecting world space into a 2d plane representation of the canvas.
+   * The x and y scale (this.projectionTransform[0] and this.projectionTransform[5] respectively)
+   * convert the projected geometry back into clipspace.
+   * The perpective divide (this.projectionTransform[11]), adds the z value of the point
+   * multiplied by the perspective divide to the w value of the point. In the process
+   * of converting from homogenous coordinates to NDC (normalized device coordinates)
+   * the x and y values of the point are divided by w, which implements perspective.
+   */
+  this.projectionTransform[0] = 1 / (this.cachedSize[0] * 0.5);
+  this.projectionTransform[5] = -1 / (this.cachedSize[1] * 0.5);
+  this.projectionTransform[11] = renderState.perspectiveTransform[11];
 
-    globalUniforms.values[4] = this.projectionTransform;
-    globalUniforms.values[5] = this.compositor.getTime() * 0.001;
-    globalUniforms.values[6] = renderState.viewTransform;
+  globalUniforms.values[4] = this.projectionTransform;
+  globalUniforms.values[5] = this.compositor.getTime() * 0.001;
+  globalUniforms.values[6] = renderState.viewTransform;
 
-    this.program.setUniforms(globalUniforms.keys, globalUniforms.values);
+  this.program.setUniforms(globalUniforms.keys, globalUniforms.values);
 };
 
 /**
@@ -678,99 +678,98 @@ WebGLRenderer.prototype.setGlobalUniforms = function setGlobalUniforms(renderSta
  * @return {undefined} undefined
  */
 WebGLRenderer.prototype.drawBuffers = function drawBuffers(vertexBuffers, mode, id) {
-    var gl = this.gl;
-    var length = 0;
-    var attribute;
-    var location;
-    var spacing;
-    var offset;
-    var buffer;
-    var iter;
-    var j;
-    var i;
+  var gl = this.gl;
+  var length = 0;
+  var attribute;
+  var location;
+  var spacing;
+  var offset;
+  var buffer;
+  var iter;
+  var j;
+  var i;
 
-    iter = vertexBuffers.keys.length;
-    for (i = 0; i < iter; i++) {
-        attribute = vertexBuffers.keys[i];
+  iter = vertexBuffers.keys.length;
+  for (i = 0; i < iter; i++) {
+    attribute = vertexBuffers.keys[i];
 
-        // Do not set vertexAttribPointer if index buffer.
+    // Do not set vertexAttribPointer if index buffer.
 
-        if (attribute === 'indices') {
-            j = i; continue;
-        }
-
-        // Retreive the attribute location and make sure it is enabled.
-
-        location = this.program.attributeLocations[attribute];
-
-        if (location === -1) continue;
-        if (location === undefined) {
-            location = gl.getAttribLocation(this.program.program, attribute);
-            this.program.attributeLocations[attribute] = location;
-            if (location === -1) continue;
-        }
-
-        if (!this.state.enabledAttributes[attribute]) {
-            gl.enableVertexAttribArray(location);
-            this.state.enabledAttributes[attribute] = true;
-            this.state.enabledAttributesKeys.push(attribute);
-        }
-
-        // Retreive buffer information used to set attribute pointer.
-
-        buffer = vertexBuffers.values[i];
-        spacing = vertexBuffers.spacing[i];
-        offset = vertexBuffers.offset[i];
-        length = vertexBuffers.length[i];
-
-        // Skip bindBuffer if buffer is currently bound.
-
-        if (this.state.boundArrayBuffer !== buffer) {
-            gl.bindBuffer(buffer.target, buffer.buffer);
-            this.state.boundArrayBuffer = buffer;
-        }
-
-        if (this.state.lastDrawn !== id) {
-            gl.vertexAttribPointer(location, spacing, gl.FLOAT, gl.FALSE, 0, 4 * offset);
-        }
+    if (attribute === 'indices') {
+      j = i; continue;
     }
 
-    // Disable any attributes that not currently being used.
+    // Retreive the attribute location and make sure it is enabled.
 
-    var len = this.state.enabledAttributesKeys.length;
-    for (i = 0; i < len; i++) {
-        var key = this.state.enabledAttributesKeys[i];
-        if (this.state.enabledAttributes[key] && vertexBuffers.keys.indexOf(key) === -1) {
-            gl.disableVertexAttribArray(this.program.attributeLocations[key]);
-            this.state.enabledAttributes[key] = false;
-        }
+    location = this.program.attributeLocations[attribute];
+
+    if (location === -1) continue;
+    if (location === undefined) {
+      location = gl.getAttribLocation(this.program.program, attribute);
+      this.program.attributeLocations[attribute] = location;
+      if (location === -1) continue;
     }
 
-    if (length) {
-
-        // If index buffer, use drawElements.
-
-        if (j !== undefined) {
-            buffer = vertexBuffers.values[j];
-            offset = vertexBuffers.offset[j];
-            spacing = vertexBuffers.spacing[j];
-            length = vertexBuffers.length[j];
-
-            // Skip bindBuffer if buffer is currently bound.
-
-            if (this.state.boundElementBuffer !== buffer) {
-                gl.bindBuffer(buffer.target, buffer.buffer);
-                this.state.boundElementBuffer = buffer;
-            }
-
-            gl.drawElements(gl[mode], length, gl.UNSIGNED_SHORT, 2 * offset);
-        }
-        else {
-            gl.drawArrays(gl[mode], 0, length);
-        }
+    if (!this.state.enabledAttributes[attribute]) {
+      gl.enableVertexAttribArray(location);
+      this.state.enabledAttributes[attribute] = true;
+      this.state.enabledAttributesKeys.push(attribute);
     }
 
-    this.state.lastDrawn = id;
+    // Retreive buffer information used to set attribute pointer.
+
+    buffer = vertexBuffers.values[i];
+    spacing = vertexBuffers.spacing[i];
+    offset = vertexBuffers.offset[i];
+    length = vertexBuffers.length[i];
+
+    // Skip bindBuffer if buffer is currently bound.
+
+    if (this.state.boundArrayBuffer !== buffer) {
+      gl.bindBuffer(buffer.target, buffer.buffer);
+      this.state.boundArrayBuffer = buffer;
+    }
+
+    if (this.state.lastDrawn !== id) {
+      gl.vertexAttribPointer(location, spacing, gl.FLOAT, gl.FALSE, 0, 4 * offset);
+    }
+  }
+
+  // Disable any attributes that not currently being used.
+
+  var len = this.state.enabledAttributesKeys.length;
+  for (i = 0; i < len; i++) {
+    var key = this.state.enabledAttributesKeys[i];
+    if (this.state.enabledAttributes[key] && vertexBuffers.keys.indexOf(key) === -1) {
+      gl.disableVertexAttribArray(this.program.attributeLocations[key]);
+      this.state.enabledAttributes[key] = false;
+    }
+  }
+
+  if (length) {
+
+    // If index buffer, use drawElements.
+
+    if (j !== undefined) {
+      buffer = vertexBuffers.values[j];
+      offset = vertexBuffers.offset[j];
+      spacing = vertexBuffers.spacing[j];
+      length = vertexBuffers.length[j];
+
+      // Skip bindBuffer if buffer is currently bound.
+
+      if (this.state.boundElementBuffer !== buffer) {
+        gl.bindBuffer(buffer.target, buffer.buffer);
+        this.state.boundElementBuffer = buffer;
+      }
+
+      gl.drawElements(gl[mode], length, gl.UNSIGNED_SHORT, 2 * offset);
+    } else {
+      gl.drawArrays(gl[mode], 0, length);
+    }
+  }
+
+  this.state.lastDrawn = id;
 };
 
 
@@ -786,23 +785,23 @@ WebGLRenderer.prototype.drawBuffers = function drawBuffers(vertexBuffers, mode, 
  * @return {undefined} undefined
  */
 WebGLRenderer.prototype.updateSize = function updateSize(size) {
-    if (size) {
-        var pixelRatio = window.devicePixelRatio || 1;
-        var displayWidth = ~~(size[0] * pixelRatio);
-        var displayHeight = ~~(size[1] * pixelRatio);
-        this.canvas.width = displayWidth;
-        this.canvas.height = displayHeight;
-        this.gl.viewport(0, 0, displayWidth, displayHeight);
+  if (size) {
+    var pixelRatio = window.devicePixelRatio || 1;
+    var displayWidth = ~~(size[0] * pixelRatio);
+    var displayHeight = ~~(size[1] * pixelRatio);
+    this.canvas.width = displayWidth;
+    this.canvas.height = displayHeight;
+    this.gl.viewport(0, 0, displayWidth, displayHeight);
 
-        this.cachedSize[0] = size[0];
-        this.cachedSize[1] = size[1];
-        this.cachedSize[2] = (size[0] > size[1]) ? size[0] : size[1];
-        this.resolutionValues[0] = this.cachedSize;
-    }
+    this.cachedSize[0] = size[0];
+    this.cachedSize[1] = size[1];
+    this.cachedSize[2] = (size[0] > size[1]) ? size[0] : size[1];
+    this.resolutionValues[0] = this.cachedSize;
+  }
 
-    this.program.setUniforms(this.resolutionName, this.resolutionValues);
+  this.program.setUniforms(this.resolutionName, this.resolutionValues);
 
-    return this;
+  return this;
 };
 
 /**
@@ -817,21 +816,21 @@ WebGLRenderer.prototype.updateSize = function updateSize(size) {
  * @return {undefined} undefined
  */
 WebGLRenderer.prototype.handleOptions = function handleOptions(options, mesh) {
-    var gl = this.gl;
-    if (!options) return;
+  var gl = this.gl;
+  if (!options) return;
 
-    if (options.blending) gl.enable(gl.BLEND);
+  if (options.blending) gl.enable(gl.BLEND);
 
-    switch (options.side) {
-        case 'double':
-            this.gl.cullFace(this.gl.FRONT);
-            this.drawBuffers(this.bufferRegistry.registry[mesh.geometry], mesh.drawType, mesh.geometry);
-            this.gl.cullFace(this.gl.BACK);
-            break;
-        case 'back':
-            gl.cullFace(gl.FRONT);
-            break;
-    }
+  switch (options.side) {
+    case 'double':
+      this.gl.cullFace(this.gl.FRONT);
+      this.drawBuffers(this.bufferRegistry.registry[mesh.geometry], mesh.drawType, mesh.geometry);
+      this.gl.cullFace(this.gl.BACK);
+      break;
+    case 'back':
+      gl.cullFace(gl.FRONT);
+      break;
+  }
 };
 
 /**
@@ -844,10 +843,10 @@ WebGLRenderer.prototype.handleOptions = function handleOptions(options, mesh) {
  * @return {undefined} undefined
  */
 WebGLRenderer.prototype.resetOptions = function resetOptions(options) {
-    var gl = this.gl;
-    if (!options) return;
-    if (options.blending) gl.disable(gl.BLEND);
-    if (options.side === 'back') gl.cullFace(gl.BACK);
+  var gl = this.gl;
+  if (!options) return;
+  if (options.blending) gl.disable(gl.BLEND);
+  if (options.side === 'back') gl.cullFace(gl.BACK);
 };
 
 module.exports = WebGLRenderer;

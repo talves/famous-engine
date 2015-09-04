@@ -25,15 +25,15 @@
 'use strict';
 
 module.exports = {
-    CallbackStore: require('./CallbackStore'),
-    clamp: require('./clamp'),
-    clone: require('./clone'),
-    Color: require('./Color'),
-    KeyCodes: require('./KeyCodes'),
-    keyValueToArrays: require('./keyValueToArrays'),
-    loadURL: require('./loadURL'),
-    ObjectManager: require('./ObjectManager'),
-    Registry: require('./Registry'),
-    strip: require('./strip'),
-    vendorPrefix: require('./vendorPrefix')
+  CallbackStore: require('./CallbackStore'),
+  clamp: require('./clamp'),
+  clone: require('./clone'),
+  Color: require('./Color'),
+  KeyCodes: require('./KeyCodes'),
+  keyValueToArrays: require('./keyValueToArrays'),
+  loadURL: require('./loadURL'),
+  ObjectManager: require('./ObjectManager'),
+  Registry: require('./Registry'),
+  strip: require('./strip'),
+  vendorPrefix: require('./vendorPrefix')
 };

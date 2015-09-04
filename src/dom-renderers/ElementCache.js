@@ -38,26 +38,26 @@ var VoidElements = require('./VoidElements');
  * @param {String} path Path used for uniquely identifying the location in the
  *                      scene graph.
  */
-function ElementCache (element, path) {
-    this.tagName = element.tagName.toLowerCase();
-    this.void = VoidElements[this.tagName];
+function ElementCache(element, path) {
+  this.tagName = element.tagName.toLowerCase();
+  this.void = VoidElements[this.tagName];
 
-    var constructor = element.constructor;
+  var constructor = element.constructor;
 
-    this.formElement = constructor === HTMLInputElement ||
-        constructor === HTMLTextAreaElement ||
-        constructor === HTMLSelectElement;
+  this.formElement = constructor === HTMLInputElement ||
+    constructor === HTMLTextAreaElement ||
+    constructor === HTMLSelectElement;
 
-    this.element = element;
-    this.path = path;
-    this.content = null;
-    this.size = new Int16Array(3);
-    this.explicitHeight = false;
-    this.explicitWidth = false;
-    this.postRenderSize = new Float32Array(2);
-    this.listeners = {};
-    this.preventDefault = {};
-    this.subscribe = {};
+  this.element = element;
+  this.path = path;
+  this.content = null;
+  this.size = new Int16Array(3);
+  this.explicitHeight = false;
+  this.explicitWidth = false;
+  this.postRenderSize = new Float32Array(2);
+  this.listeners = {};
+  this.preventDefault = {};
+  this.subscribe = {};
 }
 
 module.exports = ElementCache;

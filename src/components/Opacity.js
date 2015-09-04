@@ -36,11 +36,11 @@ var Transitionable = require('../transitions/Transitionable');
  * @param {Node} node Node that the Opacity component is attached to
  */
 function Opacity(node) {
-    this._node = node;
-    this._id = node.addComponent(this);
-    this._value = new Transitionable(1);
+  this._node = node;
+  this._id = node.addComponent(this);
+  this._value = new Transitionable(1);
 
-    this._requestingUpdate = false;
+  this._requestingUpdate = false;
 }
 
 /**
@@ -51,7 +51,7 @@ function Opacity(node) {
  * @return {String} Name of the component
  */
 Opacity.prototype.toString = function toString() {
-    return 'Opacity';
+  return 'Opacity';
 };
 
 /**
@@ -63,10 +63,10 @@ Opacity.prototype.toString = function toString() {
  * and value key which contains the numeric value
  */
 Opacity.prototype.getValue = function getValue() {
-    return {
-        component: this.toString(),
-        value: this._value.get()
-    };
+  return {
+    component: this.toString(),
+    value: this._value.get()
+  };
 };
 
 /**
@@ -79,11 +79,11 @@ Opacity.prototype.getValue = function getValue() {
  * @return {Boolean} true if set is successful, false otherwise
  */
 Opacity.prototype.setValue = function setValue(value) {
-    if (this.toString() === value.component) {
-        this.set(value.value);
-        return true;
-    }
-    return false;
+  if (this.toString() === value.component) {
+    this.set(value.value);
+    return true;
+  }
+  return false;
 };
 
 /**
@@ -98,13 +98,13 @@ Opacity.prototype.setValue = function setValue(value) {
  * @return {Opacity} this
  */
 Opacity.prototype.set = function set(value, transition, callback) {
-    if (!this._requestingUpdate) {
-        this._node.requestUpdate(this._id);
-        this._requestingUpdate = true;
-    }
+  if (!this._requestingUpdate) {
+    this._node.requestUpdate(this._id);
+    this._requestingUpdate = true;
+  }
 
-    this._value.set(value, transition, callback);
-    return this;
+  this._value.set(value, transition, callback);
+  return this;
 };
 
 /**
@@ -115,7 +115,7 @@ Opacity.prototype.set = function set(value, transition, callback) {
  * @return {Number} opacity as known by the component
  */
 Opacity.prototype.get = function get() {
-    return this._value.get();
+  return this._value.get();
 };
 
 /**
@@ -126,8 +126,8 @@ Opacity.prototype.get = function get() {
  * @return {Opacity} this
  */
 Opacity.prototype.halt = function halt() {
-    this._value.halt();
-    return this;
+  this._value.halt();
+  return this;
 };
 
 /**
@@ -137,8 +137,8 @@ Opacity.prototype.halt = function halt() {
  *
  * @return {Boolean} whether or not the opacity is transitioning
  */
-Opacity.prototype.isActive = function isActive(){
-    return this._value.isActive();
+Opacity.prototype.isActive = function isActive() {
+  return this._value.isActive();
 };
 
 /**
@@ -149,15 +149,14 @@ Opacity.prototype.isActive = function isActive(){
  *
  * @return {undefined} undefined
  */
-Opacity.prototype.update = function update () {
-    this._node.setOpacity(this._value.get());
-    
-    if (this._value.isActive()) {
-      this._node.requestUpdateOnNextTick(this._id);
-    }
-    else {
-      this._requestingUpdate = false;
-    }
+Opacity.prototype.update = function update() {
+  this._node.setOpacity(this._value.get());
+
+  if (this._value.isActive()) {
+    this._node.requestUpdateOnNextTick(this._id);
+  } else {
+    this._requestingUpdate = false;
+  }
 };
 
 Opacity.prototype.onUpdate = Opacity.prototype.update;

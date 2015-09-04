@@ -39,45 +39,59 @@ var GeometryHelper = require('../GeometryHelper');
  *
  * @return {Object} constructed geometry
  */
-function Circle (options) {
-    if (!(this instanceof Circle)) return new Circle(options);
+function Circle(options) {
+  if (!(this instanceof Circle)) return new Circle(options);
 
-    options  = options || {};
-    var detail   = options.detail || 30;
-    var buffers  = getCircleBuffers(detail, true);
+  options = options || {};
+  var detail = options.detail || 30;
+  var buffers = getCircleBuffers(detail, true);
 
-    if (options.backface !== false) {
-        GeometryHelper.addBackfaceTriangles(buffers.vertices, buffers.indices);
+  if (options.backface !== false) {
+    GeometryHelper.addBackfaceTriangles(buffers.vertices, buffers.indices);
+  }
+
+  var textureCoords = getCircleTexCoords(buffers.vertices);
+  var normals = GeometryHelper.computeNormals(buffers.vertices, buffers.indices);
+
+  options.buffers = [
+    {
+      name: 'a_pos',
+      data: buffers.vertices
+    },
+    {
+      name: 'a_texCoord',
+      data: textureCoords,
+      size: 2
+    },
+    {
+      name: 'a_normals',
+      data: normals
+    },
+    {
+      name: 'indices',
+      data: buffers.indices,
+      size: 1
     }
+  ];
 
-    var textureCoords = getCircleTexCoords(buffers.vertices);
-    var normals = GeometryHelper.computeNormals(buffers.vertices, buffers.indices);
-
-    options.buffers = [
-        { name: 'a_pos', data: buffers.vertices },
-        { name: 'a_texCoord', data: textureCoords, size: 2 },
-        { name: 'a_normals', data: normals },
-        { name: 'indices', data: buffers.indices, size: 1 }
-    ];
-
-    Geometry.call(this, options);
+  Geometry.call(this, options);
 }
 
 Circle.prototype = Object.create(Geometry.prototype);
 Circle.prototype.constructor = Circle;
 
-function getCircleTexCoords (vertices) {
-    var textureCoords = [];
-    var nFaces = vertices.length / 3;
+function getCircleTexCoords(vertices) {
+  var textureCoords = [];
+  var nFaces = vertices.length / 3;
 
-    for (var i = 0; i < nFaces; i++) {
-        var x = vertices[i * 3],
-            y = vertices[i * 3 + 1];
+  for (var i = 0; i < nFaces; i++) {
+    var x = vertices[i * 3],
+      y = vertices[i * 3 + 1];
 
-        textureCoords.push(0.5 + x * 0.5, 0.5 + -y * 0.5);
-    }
+    textureCoords.push(0.5 + x * 0.5, 0.5 + -y * 0.5);
+  }
 
-    return textureCoords;
+  return textureCoords;
 }
 
 /**
@@ -92,28 +106,28 @@ function getCircleTexCoords (vertices) {
  * @return {Object} constructed geometry
  */
 function getCircleBuffers(detail) {
-    var vertices = [0, 0, 0];
-    var indices = [];
-    var counter = 1;
-    var theta;
-    var x;
-    var y;
+  var vertices = [0, 0, 0];
+  var indices = [];
+  var counter = 1;
+  var theta;
+  var x;
+  var y;
 
-    for (var i = 0; i < detail + 1; i++) {
-        theta = i / detail * Math.PI * 2;
+  for (var i = 0; i < detail + 1; i++) {
+    theta = i / detail * Math.PI * 2;
 
-        x = Math.cos(theta);
-        y = Math.sin(theta);
+    x = Math.cos(theta);
+    y = Math.sin(theta);
 
-        vertices.push(x, y, 0);
+    vertices.push(x, y, 0);
 
-        if (i > 0) indices.push(0, counter, ++counter);
-    }
+    if (i > 0) indices.push(0, counter, ++counter);
+  }
 
-    return {
-        vertices: vertices,
-        indices: indices
-    };
+  return {
+    vertices: vertices,
+    indices: indices
+  };
 }
 
 module.exports = Circle;

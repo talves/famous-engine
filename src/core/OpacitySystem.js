@@ -35,8 +35,8 @@ var PathStore = require('./PathStore');
  *
  * @constructor {OpacitySystem}
  */
-function OpacitySystem () {
-    this.pathStore = new PathStore();
+function OpacitySystem() {
+  this.pathStore = new PathStore();
 }
 
 /**
@@ -49,18 +49,19 @@ function OpacitySystem () {
  * @param {Opacity} [opacity] opacity to register.
  * @return {undefined} undefined
  */
-OpacitySystem.prototype.registerOpacityAtPath = function registerOpacityAtPath (path, opacity) {
-    if (!PathUtils.depth(path)) return this.pathStore.insert(path, opacity ? opacity : new Opacity());
+OpacitySystem.prototype.registerOpacityAtPath = function registerOpacityAtPath(path, opacity) {
+  if (!PathUtils.depth(path)) return this.pathStore.insert(path, opacity ? opacity : new Opacity());
 
-    var parent = this.pathStore.get(PathUtils.parent(path));
+  var parent = this.pathStore.get(PathUtils.parent(path));
 
-    if (!parent) throw new Error(
-            'No parent opacity registered at expected path: ' + PathUtils.parent(path)
+  if (!parent)
+    throw new Error(
+      'No parent opacity registered at expected path: ' + PathUtils.parent(path)
     );
 
-    if (opacity) opacity.setParent(parent);
+  if (opacity) opacity.setParent(parent);
 
-    this.pathStore.insert(path, opacity ? opacity : new Opacity(parent));
+  this.pathStore.insert(path, opacity ? opacity : new Opacity(parent));
 };
 
 /**
@@ -71,8 +72,8 @@ OpacitySystem.prototype.registerOpacityAtPath = function registerOpacityAtPath (
  *
  * @param {String} path at which to register the opacity
  */
-OpacitySystem.prototype.deregisterOpacityAtPath = function deregisterOpacityAtPath (path) {
-    this.pathStore.remove(path);
+OpacitySystem.prototype.deregisterOpacityAtPath = function deregisterOpacityAtPath(path) {
+  this.pathStore.remove(path);
 };
 
 /**
@@ -88,10 +89,11 @@ OpacitySystem.prototype.deregisterOpacityAtPath = function deregisterOpacityAtPa
  *
  * @return {undefined} undefined
  */
-OpacitySystem.prototype.makeBreakPointAt = function makeBreakPointAt (path) {
-    var opacity = this.pathStore.get(path);
-    if (!opacity) throw new Error('No opacity Registered at path: ' + path);
-    opacity.setBreakPoint();
+OpacitySystem.prototype.makeBreakPointAt = function makeBreakPointAt(path) {
+  var opacity = this.pathStore.get(path);
+  if (!opacity)
+    throw new Error('No opacity Registered at path: ' + path);
+  opacity.setBreakPoint();
 };
 
 /**
@@ -103,10 +105,11 @@ OpacitySystem.prototype.makeBreakPointAt = function makeBreakPointAt (path) {
  *
  * @return {undefined} undefined
  */
-OpacitySystem.prototype.makeCalculateWorldOpacityAt = function makeCalculateWorldOpacityAt (path) {
-        var opacity = this.pathStore.get(path);
-        if (!opacity) throw new Error('No opacity opacity at path: ' + path);
-        opacity.setCalculateWorldOpacity();
+OpacitySystem.prototype.makeCalculateWorldOpacityAt = function makeCalculateWorldOpacityAt(path) {
+  var opacity = this.pathStore.get(path);
+  if (!opacity)
+    throw new Error('No opacity opacity at path: ' + path);
+  opacity.setCalculateWorldOpacity();
 };
 
 /**
@@ -119,8 +122,8 @@ OpacitySystem.prototype.makeCalculateWorldOpacityAt = function makeCalculateWorl
  *
  * @return {Opacity | undefined} the opacity at that path is available, else undefined.
  */
-OpacitySystem.prototype.get = function get (path) {
-    return this.pathStore.get(path);
+OpacitySystem.prototype.get = function get(path) {
+  return this.pathStore.get(path);
 };
 
 /**
@@ -132,26 +135,26 @@ OpacitySystem.prototype.get = function get (path) {
  * @method update
  * @return {undefined} undefined
  */
-OpacitySystem.prototype.update = function update () {
-    var opacities = this.pathStore.getItems();
-    var paths = this.pathStore.getPaths();
-    var opacity;
-    var changed;
-    var node;
-    var components;
+OpacitySystem.prototype.update = function update() {
+  var opacities = this.pathStore.getItems();
+  var paths = this.pathStore.getPaths();
+  var opacity;
+  var changed;
+  var node;
+  var components;
 
-    for (var i = 0, len = opacities.length ; i < len ; i++) {
-        node = Dispatch.getNode(paths[i]);
-        if (!node) continue;
-        components = node.getComponents();
-        opacity = opacities[i];
+  for (var i = 0, len = opacities.length; i < len; i++) {
+    node = Dispatch.getNode(paths[i]);
+    if (!node) continue;
+    components = node.getComponents();
+    opacity = opacities[i];
 
-        if ((changed = opacity.calculate())) {
-            opacityChanged(node, components, opacity);
-            if (changed & Opacity.LOCAL_CHANGED) localOpacityChanged(node, components, opacity.getLocalOpacity());
-            if (changed & Opacity.WORLD_CHANGED) worldOpacityChanged(node, components, opacity.getWorldOpacity());
-        }
+    if ( (changed = opacity.calculate()) ) {
+      opacityChanged(node, components, opacity);
+      if (changed & Opacity.LOCAL_CHANGED) localOpacityChanged(node, components, opacity.getLocalOpacity());
+      if (changed & Opacity.WORLD_CHANGED) worldOpacityChanged(node, components, opacity.getWorldOpacity());
     }
+  }
 };
 
 /**
@@ -167,11 +170,11 @@ OpacitySystem.prototype.update = function update () {
  *
  * @return {undefined} undefined
  */
-function opacityChanged (node, components, opacity) {
-    if (node.onOpacityChange) node.onOpacityChange(opacity);
-    for (var i = 0, len = components.length ; i < len ; i++)
-        if (components[i] && components[i].onOpacityChange)
-            components[i].onOpacityChange(opacity);
+function opacityChanged(node, components, opacity) {
+  if (node.onOpacityChange) node.onOpacityChange(opacity);
+  for (var i = 0, len = components.length; i < len; i++)
+    if (components[i] && components[i].onOpacityChange)
+      components[i].onOpacityChange(opacity);
 }
 
 /**
@@ -187,11 +190,11 @@ function opacityChanged (node, components, opacity) {
  *
  * @return {undefined} undefined
  */
-function localOpacityChanged (node, components, opacity) {
-    if (node.onLocalOpacityChange) node.onLocalOpacityChange(opacity);
-    for (var i = 0, len = components.length ; i < len ; i++)
-        if (components[i] && components[i].onLocalOpacityChange)
-            components[i].onLocalOpacityChange(opacity);
+function localOpacityChanged(node, components, opacity) {
+  if (node.onLocalOpacityChange) node.onLocalOpacityChange(opacity);
+  for (var i = 0, len = components.length; i < len; i++)
+    if (components[i] && components[i].onLocalOpacityChange)
+      components[i].onLocalOpacityChange(opacity);
 }
 
 /**
@@ -207,11 +210,11 @@ function localOpacityChanged (node, components, opacity) {
  *
  * @return {undefined} undefined
  */
-function worldOpacityChanged (node, components, opacity) {
-    if (node.onWorldOpacityChange) node.onWorldOpacityChange(opacity);
-    for (var i = 0, len = components.length ; i < len ; i++)
-        if (components[i] && components[i].onWorldOpacityChange)
-            components[i].onWorldOpacityChange(opacity);
+function worldOpacityChanged(node, components, opacity) {
+  if (node.onWorldOpacityChange) node.onWorldOpacityChange(opacity);
+  for (var i = 0, len = components.length; i < len; i++)
+    if (components[i] && components[i].onWorldOpacityChange)
+      components[i].onWorldOpacityChange(opacity);
 }
 
 module.exports = new OpacitySystem();
