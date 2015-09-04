@@ -24,8 +24,8 @@
 
 'use strict';
 
-var Geometry = require('../Geometry');
-var GeometryHelper = require('../GeometryHelper');
+import { Geometry } from '../Geometry';
+import { GeometryHelper } from '../GeometryHelper';
 
 /**
  * This function returns a new static geometry, which is passed
@@ -39,58 +39,59 @@ var GeometryHelper = require('../GeometryHelper');
  *
  * @return {Object} constructed geometry
  */
-function Triangle(options) {
-  if (!(this instanceof Triangle)) return new Triangle(options);
+class Triangle extends Geometry {
+  constructor(options) {
+    //handled by es6 transpiler
+    //if (!(this instanceof Triangle)) return new Triangle(options);
 
-  options = options || {};
-  var detail = options.detail || 1;
-  var normals = [];
-  var textureCoords = [
-    0.0, 0.0,
-    0.5, 1.0,
-    1.0, 0.0
-  ];
-  var indices = [
-    0, 1, 2
-  ];
-  var vertices = [
-    -1, -1, 0,
-    0, 1, 0,
-    1, -1, 0
-  ];
+    options = options || {};
+    var detail = options.detail || 1;
+    var normals = [];
+    var textureCoords = [
+      0.0, 0.0,
+      0.5, 1.0,
+      1.0, 0.0
+    ];
+    var indices = [
+      0, 1, 2
+    ];
+    var vertices = [
+      -1, -1, 0,
+      0, 1, 0,
+      1, -1, 0
+    ];
 
-  while (--detail) GeometryHelper.subdivide(indices, vertices, textureCoords);
+    while (--detail) GeometryHelper.subdivide(indices, vertices, textureCoords);
 
-  if (options.backface !== false)
-    GeometryHelper.addBackfaceTriangles(vertices, indices);
+    if (options.backface !== false)
+      GeometryHelper.addBackfaceTriangles(vertices, indices);
 
-  normals = GeometryHelper.computeNormals(vertices, indices);
+    normals = GeometryHelper.computeNormals(vertices, indices);
 
-  options.buffers = [
-    {
-      name: 'a_pos',
-      data: vertices
-    },
-    {
-      name: 'a_texCoord',
-      data: textureCoords,
-      size: 2
-    },
-    {
-      name: 'a_normals',
-      data: normals
-    },
-    {
-      name: 'indices',
-      data: indices,
-      size: 1
-    }
-  ];
+    options.buffers = [
+      {
+        name: 'a_pos',
+        data: vertices
+      },
+      {
+        name: 'a_texCoord',
+        data: textureCoords,
+        size: 2
+      },
+      {
+        name: 'a_normals',
+        data: normals
+      },
+      {
+        name: 'indices',
+        data: indices,
+        size: 1
+      }
+    ];
 
-  Geometry.call(this, options);
+    super(options);
+  }
+
 }
 
-Triangle.prototype = Object.create(Geometry.prototype);
-Triangle.prototype.constructor = Triangle;
-
-module.exports = Triangle;
+export { Triangle };

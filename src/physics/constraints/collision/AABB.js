@@ -24,24 +24,6 @@
 
 'use strict';
 
-/**
- * Axis-aligned bounding box. Used in collision broadphases.
- *
- * @class AABB
- * @param {Particle} body The body around which to track a bounding box.
- */
-function AABB(body) {
-  this._body = body;
-  this._ID = body._ID;
-  this.position = null;
-  this.vertices = {
-    x: [],
-    y: [],
-    z: []
-  };
-  this.update();
-}
-
 var SPHERE = 1 << 2;
 var WALL = 1 << 3;
 
@@ -53,89 +35,110 @@ var FORWARD = 4;
 var BACKWARD = 5;
 
 /**
- * Update the bounds to reflect the current orientation and position of the parent Body.
+ * Axis-aligned bounding box. Used in collision broadphases.
  *
- * @method
- * @return {undefined} undefined
+ * @class AABB
+ * @param {Particle} body The body around which to track a bounding box.
  */
-AABB.prototype.update = function() {
-  var body = this._body;
-  var pos = this.position = body.position;
-
-  var minX = Infinity,
-    maxX = -Infinity;
-  var minY = Infinity,
-    maxY = -Infinity;
-  var minZ = Infinity,
-    maxZ = -Infinity;
-
-  var type = body.type;
-  if (type === SPHERE) {
-    maxX = maxY = maxZ = body.radius;
-    minX = minY = minZ = -body.radius;
-  } else if (type === WALL) {
-    var d = body.direction;
-    maxX = maxY = maxZ = 1e6;
-    minX = minY = minZ = -1e6;
-    switch (d) {
-      case DOWN:
-        maxY = 25;
-        minY = -1e3;
-        break;
-      case UP:
-        maxY = 1e3;
-        minY = -25;
-        break;
-      case LEFT:
-        maxX = 25;
-        minX = -1e3;
-        break;
-      case RIGHT:
-        maxX = 1e3;
-        minX = -25;
-        break;
-      case FORWARD:
-        maxZ = 25;
-        minZ = -1e3;
-        break;
-      case BACKWARD:
-        maxZ = 1e3;
-        minZ = -25;
-        break;
-      default:
-        break;
-    }
-  } else if (body.vertices) {
-    // ConvexBody
-    var bodyVertices = body.vertices;
-    for (var i = 0, len = bodyVertices.length; i < len; i++) {
-      var vertex = bodyVertices[i];
-      if (vertex.x < minX)
-        minX = vertex.x;
-      if (vertex.x > maxX)
-        maxX = vertex.x;
-      if (vertex.y < minY)
-        minY = vertex.y;
-      if (vertex.y > maxY)
-        maxY = vertex.y;
-      if (vertex.z < minZ)
-        minZ = vertex.z;
-      if (vertex.z > maxZ)
-        maxZ = vertex.z;
-    }
-  } else {
-    // Particle
-    maxX = maxY = maxZ = 25;
-    minX = minY = minZ = -25;
+class AABB {
+  constructor(body) {
+    this._body = body;
+    this._ID = body._ID;
+    this.position = null;
+    this.vertices = {
+      x: [],
+      y: [],
+      z: []
+    };
+    this.update();
   }
-  var vertices = this.vertices;
-  vertices.x[0] = minX + pos.x;
-  vertices.x[1] = maxX + pos.x;
-  vertices.y[0] = minY + pos.y;
-  vertices.y[1] = maxY + pos.y;
-  vertices.z[0] = minZ + pos.z;
-  vertices.z[1] = maxZ + pos.z;
-};
+
+  /**
+   * Update the bounds to reflect the current orientation and position of the parent Body.
+   *
+   * @method
+   * @return {undefined} undefined
+   */
+  update() {
+    var body = this._body;
+    var pos = this.position = body.position;
+
+    var minX = Infinity,
+      maxX = -Infinity;
+    var minY = Infinity,
+      maxY = -Infinity;
+    var minZ = Infinity,
+      maxZ = -Infinity;
+
+    var type = body.type;
+    if (type === SPHERE) {
+      maxX = maxY = maxZ = body.radius;
+      minX = minY = minZ = -body.radius;
+    } else if (type === WALL) {
+      var d = body.direction;
+      maxX = maxY = maxZ = 1e6;
+      minX = minY = minZ = -1e6;
+      switch (d) {
+        case DOWN:
+          maxY = 25;
+          minY = -1e3;
+          break;
+        case UP:
+          maxY = 1e3;
+          minY = -25;
+          break;
+        case LEFT:
+          maxX = 25;
+          minX = -1e3;
+          break;
+        case RIGHT:
+          maxX = 1e3;
+          minX = -25;
+          break;
+        case FORWARD:
+          maxZ = 25;
+          minZ = -1e3;
+          break;
+        case BACKWARD:
+          maxZ = 1e3;
+          minZ = -25;
+          break;
+        default:
+          break;
+      }
+    } else if (body.vertices) {
+      // ConvexBody
+      var bodyVertices = body.vertices;
+      for (var i = 0, len = bodyVertices.length; i < len; i++) {
+        var vertex = bodyVertices[i];
+        if (vertex.x < minX)
+          minX = vertex.x;
+        if (vertex.x > maxX)
+          maxX = vertex.x;
+        if (vertex.y < minY)
+          minY = vertex.y;
+        if (vertex.y > maxY)
+          maxY = vertex.y;
+        if (vertex.z < minZ)
+          minZ = vertex.z;
+        if (vertex.z > maxZ)
+          maxZ = vertex.z;
+      }
+    } else {
+      // Particle
+      maxX = maxY = maxZ = 25;
+      minX = minY = minZ = -25;
+    }
+    var vertices = this.vertices;
+    vertices.x[0] = minX + pos.x;
+    vertices.x[1] = maxX + pos.x;
+    vertices.y[0] = minY + pos.y;
+    vertices.y[1] = maxY + pos.y;
+    vertices.z[0] = minZ + pos.z;
+    vertices.z[1] = maxZ + pos.z;
+  };
+
+}
 
 /**
  * Check for overlap between two AABB's.
@@ -173,4 +176,4 @@ AABB.checkOverlap = function(aabb1, aabb2) {
 
 AABB.vertexThreshold = 100;
 
-module.exports = AABB;
+export { AABB };

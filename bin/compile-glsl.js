@@ -44,6 +44,7 @@ Promise.props({
   fragment: bundle('FragmentShader.glsl')
 }).then(function (result) {
   var filePath = path.resolve(GLSL_DIR, 'index.js');
-  var code = 'module.exports = ' + JSON.stringify(result, null, 2) + ';';
+  //var code = 'module.exports = ' + JSON.stringify(result, null, 2) + ';';
+  var code = 'export let webglShaders = ' + JSON.stringify(result, null, 2) + ';';
   return Promise.promisify(fs.writeFile)(filePath, code);
 });

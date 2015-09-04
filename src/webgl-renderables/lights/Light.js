@@ -24,7 +24,7 @@
 
 'use strict';
 
-var Commands = require('../../core/Commands');
+import { Commands } from '../../core/Commands';
 
 /**
  * The blueprint for all light components.
@@ -37,83 +37,86 @@ var Commands = require('../../core/Commands');
  *
  * @return {undefined} undefined
  */
-function Light(node) {
-  this._node = node;
-  this._requestingUpdate = false;
-  this._color = null;
-  this.queue = [];
-  this.commands = {
-    color: Commands.GL_LIGHT_COLOR,
-    position: Commands.GL_LIGHT_POSITION
+class Light {
+  constructor(node) {
+    this._node = node;
+    this._requestingUpdate = false;
+    this._color = null;
+    this.queue = [];
+    this.commands = {
+      color: Commands.GL_LIGHT_COLOR,
+      position: Commands.GL_LIGHT_POSITION
+    };
+    this._id = node.addComponent(this);
+  }
+
+  /**
+  * Changes the color of the light, using the 'Color' utility component.
+  *
+  * @method
+  *
+  * @param {Color} color Color instance
+  *
+  * @return {Light} Light
+  */
+  setColor(color) {
+    if (!color.getNormalizedRGB) return false;
+    if (!this._requestingUpdate) {
+      this._node.requestUpdate(this._id);
+      this._requestingUpdate = true;
+    }
+    this._color = color;
+    this.queue.push(this.commands.color);
+    var rgb = this._color.getNormalizedRGB();
+    this.queue.push(rgb[0]);
+    this.queue.push(rgb[1]);
+    this.queue.push(rgb[2]);
+    return this;
   };
-  this._id = node.addComponent(this);
+
+  /**
+  * Returns the current color.
+
+  * @method
+  *
+  * @returns {Color} Color
+  */
+  getColor() {
+    return this._color;
+  };
+
+  /**
+  * Sends draw commands to the renderer
+  *
+  * @private
+  * @method
+  *
+  * @return {undefined} undefined
+  */
+  onUpdate() {
+    var path = this._node.getLocation();
+
+    this._node
+      .sendDrawCommand(Commands.WITH)
+      .sendDrawCommand(path);
+
+    var i = this.queue.length;
+    while (i--) {
+      this._node.sendDrawCommand(this.queue.shift());
+    }
+
+    if (this._color && this._color.isActive()) {
+      this._node.sendDrawCommand(this.commands.color);
+      var rgb = this._color.getNormalizedRGB();
+      this._node.sendDrawCommand(rgb[0]);
+      this._node.sendDrawCommand(rgb[1]);
+      this._node.sendDrawCommand(rgb[2]);
+      this._node.requestUpdateOnNextTick(this._id);
+    } else {
+      this._requestingUpdate = false;
+    }
+  };
+
 }
 
-/**
-* Changes the color of the light, using the 'Color' utility component.
-*
-* @method
-*
-* @param {Color} color Color instance
-*
-* @return {Light} Light
-*/
-Light.prototype.setColor = function setColor(color) {
-  if (!color.getNormalizedRGB) return false;
-  if (!this._requestingUpdate) {
-    this._node.requestUpdate(this._id);
-    this._requestingUpdate = true;
-  }
-  this._color = color;
-  this.queue.push(this.commands.color);
-  var rgb = this._color.getNormalizedRGB();
-  this.queue.push(rgb[0]);
-  this.queue.push(rgb[1]);
-  this.queue.push(rgb[2]);
-  return this;
-};
-
-/**
-* Returns the current color.
-
-* @method
-*
-* @returns {Color} Color
-*/
-Light.prototype.getColor = function getColor() {
-  return this._color;
-};
-
-/**
-* Sends draw commands to the renderer
-*
-* @private
-* @method
-*
-* @return {undefined} undefined
-*/
-Light.prototype.onUpdate = function onUpdate() {
-  var path = this._node.getLocation();
-
-  this._node
-    .sendDrawCommand(Commands.WITH)
-    .sendDrawCommand(path);
-
-  var i = this.queue.length;
-  while (i--) {
-    this._node.sendDrawCommand(this.queue.shift());
-  }
-
-  if (this._color && this._color.isActive()) {
-    this._node.sendDrawCommand(this.commands.color);
-    var rgb = this._color.getNormalizedRGB();
-    this._node.sendDrawCommand(rgb[0]);
-    this._node.sendDrawCommand(rgb[1]);
-    this._node.sendDrawCommand(rgb[2]);
-    this._node.requestUpdateOnNextTick(this._id);
-  } else {
-    this._requestingUpdate = false;
-  }
-};
-
-module.exports = Light;
+export { Light };

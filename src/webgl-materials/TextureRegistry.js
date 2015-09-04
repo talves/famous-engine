@@ -88,4 +88,4 @@ TextureRegistry.get = function get(accessor) {
   }
 };
 
-module.exports = TextureRegistry;
+export { TextureRegistry };

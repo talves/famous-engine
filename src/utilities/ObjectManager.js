@@ -88,4 +88,4 @@ ObjectManager.disposeOf = function(type) {
   while (i--) pool.pop();
 };
 
-module.exports = ObjectManager;
+export { ObjectManager };

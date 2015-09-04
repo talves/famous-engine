@@ -24,9 +24,9 @@
 
 'use strict';
 
-var Constraint = require('./Constraint');
-var Vec3 = require('../../math/Vec3');
-var Mat33 = require('../../math/Mat33');
+import { Constraint } from './Constraint';
+import { Vec3 } from '../../math/Vec3';
+import { Mat33 } from '../../math/Mat33';
 
 var DELTA_REGISTER = new Vec3();
 
@@ -40,83 +40,93 @@ var DELTA_REGISTER = new Vec3();
  *  @param {Particle} b The other body.
  *  @param {Object} options An object of configurable options.
  */
-function Angle(a, b, options) {
-  this.a = a;
-  this.b = b;
+class Angle extends Constraint {
+  constructor(a, b, options) {
+    super(options);
 
-  Constraint.call(this, options);
+    this.a = a;
+    this.b = b;
 
-  this.effectiveInertia = new Mat33();
-  this.angularImpulse = new Vec3();
-  this.error = 0;
+    this.effectiveInertia = new Mat33();
+    this.angularImpulse = new Vec3();
+    this.error = 0;
+
+    this.initLocals();
+  }
+
+  /**
+   * Initialize passing the Options.
+   *
+   * @method
+   * @return {undefined} undefined
+   */
+  init(options) {};
+
+  /**
+   * Initialize the Angle. Sets defaults if a property was not already set.
+   *
+   * @method
+   * @param {Object} options The options hash.
+   * @return {undefined} undefined
+   */
+  initLocals() {
+    this.cosAngle = this.cosAngle || this.a.orientation.dot(this.b.orientation);
+  };
+
+  /**
+   * Warmstart the constraint and prepare calculations used in .resolve.
+   *
+   * @method
+   * @return {undefined} undefined
+   */
+  update() {
+    var a = this.a;
+    var b = this.b;
+
+    var q1 = a.orientation;
+    var q2 = b.orientation;
+
+    var cosTheta = q1.dot(q2);
+    var diff = 2 * (cosTheta - this.cosAngle);
+
+    this.error = diff;
+
+    var angularImpulse = this.angularImpulse;
+    b.applyAngularImpulse(angularImpulse);
+    a.applyAngularImpulse(angularImpulse.invert());
+
+    Mat33.add(a.inverseInertia, b.inverseInertia, this.effectiveInertia);
+    this.effectiveInertia.inverse();
+
+    angularImpulse.clear();
+  };
+
+  /**
+   * Adds an angular impulse to a physics body's angular velocity.
+   *
+   * @method
+   * @return {undefined} undefined
+   */
+  resolve() {
+    var a = this.a;
+    var b = this.b;
+
+    var diffW = DELTA_REGISTER;
+
+    var w1 = a.angularVelocity;
+    var w2 = b.angularVelocity;
+
+    Vec3.subtract(w1, w2, diffW);
+    diffW.scale(1 + this.error);
+
+    var angularImpulse = diffW.applyMatrix(this.effectiveInertia);
+
+    b.applyAngularImpulse(angularImpulse);
+    a.applyAngularImpulse(angularImpulse.invert());
+    angularImpulse.invert();
+    this.angularImpulse.add(angularImpulse);
+  };
+
 }
 
-Angle.prototype = Object.create(Constraint.prototype);
-Angle.prototype.constructor = Angle;
-
-/**
- * Initialize the Angle. Sets defaults if a property was not already set.
- *
- * @method
- * @param {Object} options The options hash.
- * @return {undefined} undefined
- */
-Angle.prototype.init = function() {
-  this.cosAngle = this.cosAngle || this.a.orientation.dot(this.b.orientation);
-};
-
-/**
- * Warmstart the constraint and prepare calculations used in .resolve.
- *
- * @method
- * @return {undefined} undefined
- */
-Angle.prototype.update = function update() {
-  var a = this.a;
-  var b = this.b;
-
-  var q1 = a.orientation;
-  var q2 = b.orientation;
-
-  var cosTheta = q1.dot(q2);
-  var diff = 2 * (cosTheta - this.cosAngle);
-
-  this.error = diff;
-
-  var angularImpulse = this.angularImpulse;
-  b.applyAngularImpulse(angularImpulse);
-  a.applyAngularImpulse(angularImpulse.invert());
-
-  Mat33.add(a.inverseInertia, b.inverseInertia, this.effectiveInertia);
-  this.effectiveInertia.inverse();
-
-  angularImpulse.clear();
-};
-
-/**
- * Adds an angular impulse to a physics body's angular velocity.
- *
- * @method
- * @return {undefined} undefined
- */
-Angle.prototype.resolve = function update() {
-  var a = this.a;
-  var b = this.b;
-
-  var diffW = DELTA_REGISTER;
-
-  var w1 = a.angularVelocity;
-  var w2 = b.angularVelocity;
-
-  Vec3.subtract(w1, w2, diffW);
-  diffW.scale(1 + this.error);
-
-  var angularImpulse = diffW.applyMatrix(this.effectiveInertia);
-
-  b.applyAngularImpulse(angularImpulse);
-  a.applyAngularImpulse(angularImpulse.invert());
-  angularImpulse.invert();
-  this.angularImpulse.add(angularImpulse);
-};
-
-module.exports = Angle;
+export { Angle };

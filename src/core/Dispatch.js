@@ -24,8 +24,8 @@
 
 'use strict';
 
-var Event = require('./Event');
-var PathUtils = require('./Path');
+import { Event } from './Event';
+import { Path as PathUtils } from './Path';
 
 /**
  * The Dispatch class is used to propogate events down the
@@ -35,344 +35,349 @@ var PathUtils = require('./Path');
  * @param {Scene} context The context on which it operates
  * @constructor
  */
-function Dispatch() {
-  this._nodes = {}; // a container for constant time lookup of nodes
+class Dispatch {
+  constructor() {
+    this._nodes = {}; // a container for constant time lookup of nodes
 
-// The queue is used for two purposes
-// 1. It is used to list indicies in the
-//    Nodes path which are then used to lookup
-//    a node in the scene graph.
-// 2. It is used to assist dispatching
-//    such that it is possible to do a breadth first
-//    traversal of the scene graph.
-}
+    // The queue is used for two purposes
+    // 1. It is used to list indicies in the
+    //    Nodes path which are then used to lookup
+    //    a node in the scene graph.
+    // 2. It is used to assist dispatching
+    //    such that it is possible to do a breadth first
+    //    traversal of the scene graph.
 
-/**
- * Protected method that sets the updater for the dispatch. The updater will
- * almost certainly be the FamousEngine class.
- *
- * @method
- * @protected
- *
- * @param {FamousEngine} updater The updater which will be passed through the scene graph
- *
- * @return {undefined} undefined
- */
-Dispatch.prototype._setUpdater = function _setUpdater(updater) {
-  this._updater = updater;
+    this.queues = [];
 
-  for (var key in this._nodes) this._nodes[key]._setUpdater(updater);
-};
-
-/**
- * Calls the onMount method for the node at a given path and
- * properly registers all of that nodes children to their proper
- * paths. Throws if that path doesn't have a node registered as
- * a parent or if there is no node registered at that path.
- *
- * @method mount
- *
- * @param {String} path at which to begin mounting
- * @param {Node} node the node that was mounted
- *
- * @return {void}
- */
-Dispatch.prototype.mount = function mount(path, node) {
-  if (!node)
-    throw new Error('Dispatch: no node passed to mount at: ' + path);
-  if (this._nodes[path])
-    throw new Error('Dispatch: there is a node already registered at: ' + path);
-
-  node._setUpdater(this._updater);
-  this._nodes[path] = node;
-  var parentPath = PathUtils.parent(path);
-
-  // scenes are their own parents
-  var parent = !parentPath ? node : this._nodes[parentPath];
-
-  if (!parent)
-    throw new Error(
-      'Parent to path: ' + path +
-      ' doesn\'t exist at expected path: ' + parentPath
-    );
-
-  var children = node.getChildren();
-  var components = node.getComponents();
-  var i;
-  var len;
-
-  if (parent.isMounted()) node._setMounted(true, path);
-  if (parent.isShown()) node._setShown(true);
-
-  if (parent.isMounted()) {
-    node._setParent(parent);
-    if (node.onMount) node.onMount(path);
-
-    for (i = 0, len = components.length; i < len; i++)
-      if (components[i] && components[i].onMount)
-        components[i].onMount(node, i);
-
-    for (i = 0, len = children.length; i < len; i++)
-      if (children[i] && children[i].mount) children[i].mount(path + '/' + i);else if (children[i]) this.mount(path + '/' + i, children[i]);
   }
 
-  if (parent.isShown()) {
+  /**
+   * Protected method that sets the updater for the dispatch. The updater will
+   * almost certainly be the FamousEngine class.
+   *
+   * @method
+   * @protected
+   *
+   * @param {FamousEngine} updater The updater which will be passed through the scene graph
+   *
+   * @return {undefined} undefined
+   */
+  _setUpdater(updater) {
+    this._updater = updater;
+
+    for (var key in this._nodes) this._nodes[key]._setUpdater(updater);
+  };
+
+  /**
+   * Calls the onMount method for the node at a given path and
+   * properly registers all of that nodes children to their proper
+   * paths. Throws if that path doesn't have a node registered as
+   * a parent or if there is no node registered at that path.
+   *
+   * @method mount
+   *
+   * @param {String} path at which to begin mounting
+   * @param {Node} node the node that was mounted
+   *
+   * @return {void}
+   */
+  mount(path, node) {
+    if (!node)
+      throw new Error('Dispatch: no node passed to mount at: ' + path);
+    if (this._nodes[path])
+      throw new Error('Dispatch: there is a node already registered at: ' + path);
+
+    node._setUpdater(this._updater);
+    this._nodes[path] = node;
+    var parentPath = PathUtils.parent(path);
+
+    // scenes are their own parents
+    var parent = !parentPath ? node : this._nodes[parentPath];
+
+    if (!parent)
+      throw new Error(
+        'Parent to path: ' + path +
+        ' doesn\'t exist at expected path: ' + parentPath
+      );
+
+    var children = node.getChildren();
+    var components = node.getComponents();
+    var i;
+    var len;
+
+    if (parent.isMounted()) node._setMounted(true, path);
+    if (parent.isShown()) node._setShown(true);
+
+    if (parent.isMounted()) {
+      node._setParent(parent);
+      if (node.onMount) node.onMount(path);
+
+      for (i = 0, len = components.length; i < len; i++)
+        if (components[i] && components[i].onMount)
+          components[i].onMount(node, i);
+
+      for (i = 0, len = children.length; i < len; i++)
+        if (children[i] && children[i].mount) children[i].mount(path + '/' + i);else if (children[i]) this.mount(path + '/' + i, children[i]);
+    }
+
+    if (parent.isShown()) {
+      if (node.onShow) node.onShow();
+      for (i = 0, len = components.length; i < len; i++)
+        if (components[i] && components[i].onShow)
+          components[i].onShow();
+    }
+  };
+
+  /**
+   * Calls the onDismount method for the node at a given path
+   * and deregisters all of that nodes children. Throws if there
+   * is no node registered at that path.
+   *
+   * @method dismount
+   * @return {void}
+   *
+   * @param {String} path at which to begin dismounting
+   */
+  dismount(path) {
+    var node = this._nodes[path];
+
+    if (!node)
+      throw new Error(
+        'No node registered to path: ' + path
+      );
+
+    var children = node.getChildren();
+    var components = node.getComponents();
+    var i;
+    var len;
+
+    if (node.isShown()) {
+      node._setShown(false);
+      if (node.onHide) node.onHide();
+      for (i = 0, len = components.length; i < len; i++)
+        if (components[i] && components[i].onHide)
+          components[i].onHide();
+    }
+
+    if (node.isMounted()) {
+      if (node.onDismount) node.onDismount(path);
+
+      for (i = 0, len = children.length; i < len; i++)
+        if (children[i] && children[i].dismount) children[i].dismount();else if (children[i]) this.dismount(path + '/' + i);
+
+      for (i = 0, len = components.length; i < len; i++)
+        if (components[i] && components[i].onDismount)
+          components[i].onDismount();
+
+      node._setMounted(false);
+      node._setParent(null);
+    }
+
+    this._nodes[path] = null;
+  };
+
+  /**
+   * Returns a the node registered to the given path, or none
+   * if no node exists at that path.
+   *
+   * @method getNode
+   * @return {Node | void} node at the given path
+   *
+   * @param {String} path at which to look up the node
+   */
+  getNode(path) {
+    return this._nodes[path];
+  };
+
+  /**
+   * Issues the onShow method to the node registered at the given path,
+   * and shows the entire subtree below that node. Throws if no node
+   * is registered to this path.
+   *
+   * @method show
+   * @return {void}
+   *
+   * @param {String} path the path of the node to show
+   */
+  show(path) {
+    var node = this._nodes[path];
+
+    if (!node)
+      throw new Error(
+        'No node registered to path: ' + path
+      );
+
     if (node.onShow) node.onShow();
-    for (i = 0, len = components.length; i < len; i++)
+
+    var components = node.getComponents();
+    for (var i = 0, len = components.length; i < len; i++)
       if (components[i] && components[i].onShow)
         components[i].onShow();
-  }
-};
 
-/**
- * Calls the onDismount method for the node at a given path
- * and deregisters all of that nodes children. Throws if there
- * is no node registered at that path.
- *
- * @method dismount
- * @return {void}
- *
- * @param {String} path at which to begin dismounting
- */
-Dispatch.prototype.dismount = function dismount(path) {
-  var node = this._nodes[path];
+    var queue = allocQueue();
 
-  if (!node)
-    throw new Error(
-      'No node registered to path: ' + path
-    );
+    addChildrenToQueue(node, queue);
+    var child;
 
-  var children = node.getChildren();
-  var components = node.getComponents();
-  var i;
-  var len;
+    while ((child = breadthFirstNext(queue)))
+    this.show(child.getLocation());
 
-  if (node.isShown()) {
-    node._setShown(false);
+    deallocQueue(queue);
+  };
+
+  /**
+   * Issues the onHide method to the node registered at the given path,
+   * and hides the entire subtree below that node. Throws if no node
+   * is registered to this path.
+   *
+   * @method hide
+   * @return {void}
+   *
+   * @param {String} path the path of the node to hide
+   */
+  hide(path) {
+    var node = this._nodes[path];
+
+    if (!node)
+      throw new Error(
+        'No node registered to path: ' + path
+      );
+
     if (node.onHide) node.onHide();
-    for (i = 0, len = components.length; i < len; i++)
+
+    var components = node.getComponents();
+    for (var i = 0, len = components.length; i < len; i++)
       if (components[i] && components[i].onHide)
         components[i].onHide();
-  }
 
-  if (node.isMounted()) {
-    if (node.onDismount) node.onDismount(path);
+    var queue = allocQueue();
 
-    for (i = 0, len = children.length; i < len; i++)
-      if (children[i] && children[i].dismount) children[i].dismount();else if (children[i]) this.dismount(path + '/' + i);
+    addChildrenToQueue(node, queue);
+    var child;
 
-    for (i = 0, len = components.length; i < len; i++)
-      if (components[i] && components[i].onDismount)
-        components[i].onDismount();
+    while ((child = breadthFirstNext(queue)))
+    this.hide(child.getLocation());
 
-    node._setMounted(false);
-    node._setParent(null);
-  }
+    deallocQueue(queue);
+  };
 
-  this._nodes[path] = null;
-};
+  /**
+   * lookupNode takes a path and returns the node at the location specified
+   * by the path, if one exists. If not, it returns undefined.
+   *
+   * @param {String} location The location of the node specified by its path
+   *
+   * @return {Node | undefined} The node at the requested path
+   */
+  lookupNode(location) {
+    if (!location)
+      throw new Error('lookupNode must be called with a path');
 
-/**
- * Returns a the node registered to the given path, or none
- * if no node exists at that path.
- *
- * @method getNode
- * @return {Node | void} node at the given path
- *
- * @param {String} path at which to look up the node
- */
-Dispatch.prototype.getNode = function getNode(path) {
-  return this._nodes[path];
-};
+    var path = allocQueue();
 
-/**
- * Issues the onShow method to the node registered at the given path,
- * and shows the entire subtree below that node. Throws if no node
- * is registered to this path.
- *
- * @method show
- * @return {void}
- *
- * @param {String} path the path of the node to show
- */
-Dispatch.prototype.show = function show(path) {
-  var node = this._nodes[path];
+    _splitTo(location, path);
 
-  if (!node)
-    throw new Error(
-      'No node registered to path: ' + path
-    );
+    for (var i = 0, len = path.length; i < len; i++)
+      path[i] = this._nodes[path[i]];
 
-  if (node.onShow) node.onShow();
+    path.length = 0;
+    deallocQueue(path);
 
-  var components = node.getComponents();
-  for (var i = 0, len = components.length; i < len; i++)
-    if (components[i] && components[i].onShow)
-      components[i].onShow();
+    return path[path.length - 1];
+  };
 
-  var queue = allocQueue();
+  /**
+   * dispatch takes an event name and a payload and dispatches it to the
+   * entire scene graph below the node that the dispatcher is on. The nodes
+   * receive the events in a breadth first traversal, meaning that parents
+   * have the opportunity to react to the event before children.
+   *
+   * @param {String} path path of the node to send the event to
+   * @param {String} event name of the event
+   * @param {Any} payload data associated with the event
+   *
+   * @return {undefined} undefined
+   */
+  dispatch(path, event, payload) {
+    if (!path)
+      throw new Error('dispatch requires a path as it\'s first argument');
+    if (!event)
+      throw new Error('dispatch requires an event name as it\'s second argument');
 
-  addChildrenToQueue(node, queue);
-  var child;
+    var node = this._nodes[path];
 
-  while ((child = breadthFirstNext(queue)))
-  this.show(child.getLocation());
+    if (!node) return;
 
-  deallocQueue(queue);
-};
+    payload.node = node;
 
-/**
- * Issues the onHide method to the node registered at the given path,
- * and hides the entire subtree below that node. Throws if no node
- * is registered to this path.
- *
- * @method hide
- * @return {void}
- *
- * @param {String} path the path of the node to hide
- */
-Dispatch.prototype.hide = function hide(path) {
-  var node = this._nodes[path];
+    var queue = allocQueue();
+    queue.push(node);
 
-  if (!node)
-    throw new Error(
-      'No node registered to path: ' + path
-    );
-
-  if (node.onHide) node.onHide();
-
-  var components = node.getComponents();
-  for (var i = 0, len = components.length; i < len; i++)
-    if (components[i] && components[i].onHide)
-      components[i].onHide();
-
-  var queue = allocQueue();
-
-  addChildrenToQueue(node, queue);
-  var child;
-
-  while ((child = breadthFirstNext(queue)))
-  this.hide(child.getLocation());
-
-  deallocQueue(queue);
-};
-
-/**
- * lookupNode takes a path and returns the node at the location specified
- * by the path, if one exists. If not, it returns undefined.
- *
- * @param {String} location The location of the node specified by its path
- *
- * @return {Node | undefined} The node at the requested path
- */
-Dispatch.prototype.lookupNode = function lookupNode(location) {
-  if (!location)
-    throw new Error('lookupNode must be called with a path');
-
-  var path = allocQueue();
-
-  _splitTo(location, path);
-
-  for (var i = 0, len = path.length; i < len; i++)
-    path[i] = this._nodes[path[i]];
-
-  path.length = 0;
-  deallocQueue(path);
-
-  return path[path.length - 1];
-};
-
-/**
- * dispatch takes an event name and a payload and dispatches it to the
- * entire scene graph below the node that the dispatcher is on. The nodes
- * receive the events in a breadth first traversal, meaning that parents
- * have the opportunity to react to the event before children.
- *
- * @param {String} path path of the node to send the event to
- * @param {String} event name of the event
- * @param {Any} payload data associated with the event
- *
- * @return {undefined} undefined
- */
-Dispatch.prototype.dispatch = function dispatch(path, event, payload) {
-  if (!path)
-    throw new Error('dispatch requires a path as it\'s first argument');
-  if (!event)
-    throw new Error('dispatch requires an event name as it\'s second argument');
-
-  var node = this._nodes[path];
-
-  if (!node) return;
-
-  payload.node = node;
-
-  var queue = allocQueue();
-  queue.push(node);
-
-  var child;
-  var components;
-  var i;
-  var len;
-
-  while ((child = breadthFirstNext(queue))) {
-    if (child && child.onReceive)
-      child.onReceive(event, payload);
-
-    components = child.getComponents();
-
-    for (i = 0, len = components.length; i < len; i++)
-      if (components[i] && components[i].onReceive)
-        components[i].onReceive(event, payload);
-  }
-
-  deallocQueue(queue);
-};
-
-/**
- * dispatchUIevent takes a path, an event name, and a payload and dispatches them in
- * a manner anologous to DOM bubbling. It first traverses down to the node specified at
- * the path. That node receives the event first, and then every ancestor receives the event
- * until the context.
- *
- * @param {String} path the path of the node
- * @param {String} event the event name
- * @param {Any} payload the payload
- *
- * @return {undefined} undefined
- */
-Dispatch.prototype.dispatchUIEvent = function dispatchUIEvent(path, event, payload) {
-  if (!path)
-    throw new Error('dispatchUIEvent needs a valid path to dispatch to');
-  if (!event)
-    throw new Error('dispatchUIEvent needs an event name as its second argument');
-  var node;
-
-  Event.call(payload);
-  node = this.getNode(path);
-  if (node) {
-    var parent;
+    var child;
     var components;
     var i;
     var len;
 
-    payload.node = node;
+    while ((child = breadthFirstNext(queue))) {
+      if (child && child.onReceive)
+        child.onReceive(event, payload);
 
-    while (node) {
-      if (node.onReceive) node.onReceive(event, payload);
-      components = node.getComponents();
+      components = child.getComponents();
 
       for (i = 0, len = components.length; i < len; i++)
         if (components[i] && components[i].onReceive)
           components[i].onReceive(event, payload);
-
-      if (payload.propagationStopped) break;
-      parent = node.getParent();
-      if (parent === node) return;
-      node = parent;
     }
-  }
-};
 
+    deallocQueue(queue);
+  };
+
+  /**
+   * dispatchUIevent takes a path, an event name, and a payload and dispatches them in
+   * a manner anologous to DOM bubbling. It first traverses down to the node specified at
+   * the path. That node receives the event first, and then every ancestor receives the event
+   * until the context.
+   *
+   * @param {String} path the path of the node
+   * @param {String} event the event name
+   * @param {Any} payload the payload
+   *
+   * @return {undefined} undefined
+   */
+  dispatchUIEvent(path, event, payload) {
+    if (!path)
+      throw new Error('dispatchUIEvent needs a valid path to dispatch to');
+    if (!event)
+      throw new Error('dispatchUIEvent needs an event name as its second argument');
+    var node;
+
+    Event.call(payload);
+    node = this.getNode(path);
+    if (node) {
+      var parent;
+      var components;
+      var i;
+      var len;
+
+      payload.node = node;
+
+      while (node) {
+        if (node.onReceive) node.onReceive(event, payload);
+        components = node.getComponents();
+
+        for (i = 0, len = components.length; i < len; i++)
+          if (components[i] && components[i].onReceive)
+            components[i].onReceive(event, payload);
+
+        if (payload.propagationStopped) break;
+        parent = node.getParent();
+        if (parent === node) return;
+        node = parent;
+      }
+    }
+  };
+
+}
 var queues = [];
 
 /**
@@ -463,5 +468,5 @@ function breadthFirstNext(queue) {
   return child;
 }
 
-
-module.exports = new Dispatch();
+var newDispatch = new Dispatch();
+export { newDispatch as Dispatch };

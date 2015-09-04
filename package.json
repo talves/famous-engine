@@ -29,7 +29,8 @@
     "build-min": "browserify dist/commonjs/index.js --standalone famous | uglifyjs --screw-ie8 -m -c dead_code,sequences,conditionals,booleans,unused,if_return,join_vars,drop_debugger > dist/famous.min.js",
     "build-glsl": "node ./bin/compile-glsl.js",
     "build-commonjs": "npm run build-glsl && babel ./src --out-dir ./dist/commonjs --modules common",
-    "build-amd": "npm run build-glsl && babel ./src --out-dir ./dist/amd --modules amd"
+    "build-amd": "npm run build-glsl && babel ./src --out-dir ./dist/amd --modules amd",
+    "build-umd": "npm run build-glsl && babel ./src --out-dir ./dist/umd --modules umd"
   },
   "repository": {
     "type": "git",
@@ -39,8 +40,8 @@
   "license": "MIT",
   "devDependencies": {
     "babel": "^5.8.21",
-    "babelify": "^5.8.21",
-    "browserify": "^11.0.0",
+    "babelify": "^6.2.0",
+    "browserify": "^11.0.1",
     "colors": "^1.1.0",
     "esformatter": "^0.7.3",
     "esformatter-quotes": "^1.0.3",

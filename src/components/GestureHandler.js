@@ -24,8 +24,8 @@
 
 'use strict';
 
-var CallbackStore = require('../utilities/CallbackStore');
-var Vec2 = require('../math/Vec2');
+import { CallbackStore } from '../utilities/CallbackStore';
+import { Vec2 } from '../math/Vec2';
 
 var VEC_REGISTER = new Vec2();
 
@@ -45,189 +45,192 @@ var gestures = {
  * @param {Node} node The node with which to register the handler.
  * @param {Array} events An array of event objects specifying .event and .callback properties.
  */
-function GestureHandler(node, events) {
-  this.node = node;
-  this.id = node.addComponent(this);
+class GestureHandler {
+  constructor(node, events) {
+    this.node = node;
+    this.id = node.addComponent(this);
 
-  this._events = new CallbackStore();
+    this._events = new CallbackStore();
 
-  this.last1 = new Vec2();
-  this.last2 = new Vec2();
+    this.last1 = new Vec2();
+    this.last2 = new Vec2();
 
-  this.delta1 = new Vec2();
-  this.delta2 = new Vec2();
+    this.delta1 = new Vec2();
+    this.delta2 = new Vec2();
 
-  this.velocity1 = new Vec2();
-  this.velocity2 = new Vec2();
+    this.velocity1 = new Vec2();
+    this.velocity2 = new Vec2();
 
-  this.dist = 0;
-  this.diff12 = new Vec2();
+    this.dist = 0;
+    this.diff12 = new Vec2();
 
-  this.center = new Vec2();
-  this.centerDelta = new Vec2();
-  this.centerVelocity = new Vec2();
+    this.center = new Vec2();
+    this.centerDelta = new Vec2();
+    this.centerVelocity = new Vec2();
 
-  this.pointer1 = {
-    position: this.last1,
-    delta: this.delta1,
-    velocity: this.velocity1
-  };
+    this.pointer1 = {
+      position: this.last1,
+      delta: this.delta1,
+      velocity: this.velocity1
+    };
 
-  this.pointer2 = {
-    position: this.last2,
-    delta: this.delta2,
-    velocity: this.velocity2
-  };
+    this.pointer2 = {
+      position: this.last2,
+      delta: this.delta2,
+      velocity: this.velocity2
+    };
 
-  this.event = {
-    status: null,
-    time: 0,
-    pointers: [],
-    center: this.center,
-    centerDelta: this.centerDelta,
-    centerVelocity: this.centerVelocity,
-    points: 0,
-    current: 0
-  };
+    this.event = {
+      status: null,
+      time: 0,
+      pointers: [],
+      center: this.center,
+      centerDelta: this.centerDelta,
+      centerVelocity: this.centerVelocity,
+      points: 0,
+      current: 0
+    };
 
-  this.trackedPointerIDs = [-1, -1];
-  this.timeOfPointer = 0;
-  this.multiTap = 0;
+    this.trackedPointerIDs = [-1, -1];
+    this.timeOfPointer = 0;
+    this.multiTap = 0;
 
-  this.mice = [];
+    this.mice = [];
 
-  this.gestures = [];
-  this.options = {};
-  this.trackedGestures = {};
+    this.gestures = [];
+    this.options = {};
+    this.trackedGestures = {};
 
-  var i;
-  var len;
+    var i;
+    var len;
 
-  if (events) {
-    for (i = 0, len = events.length; i < len; i++) {
-      this.on(events[i], events[i].callback);
+    if (events) {
+      for (i = 0, len = events.length; i < len; i++) {
+        this.on(events[i], events[i].callback);
+      }
     }
+
+    node.addUIEvent('touchstart');
+    node.addUIEvent('mousedown');
+    node.addUIEvent('touchmove');
+    node.addUIEvent('mousemove');
+    node.addUIEvent('touchend');
+    node.addUIEvent('mouseup');
+    node.addUIEvent('mouseleave');
   }
 
-  node.addUIEvent('touchstart');
-  node.addUIEvent('mousedown');
-  node.addUIEvent('touchmove');
-  node.addUIEvent('mousemove');
-  node.addUIEvent('touchend');
-  node.addUIEvent('mouseup');
-  node.addUIEvent('mouseleave');
-}
 
-
-/**
- * onReceive fires when the node this component is attached to gets an event.
- *
- * @method
- *
- * @param {String} ev name of the event
- * @param {Object} payload data associated with the event
- *
- * @return {undefined} undefined
- */
-GestureHandler.prototype.onReceive = function onReceive(ev, payload) {
-  switch (ev) {
-    case 'touchstart':
-    case 'mousedown':
-      _processPointerStart.call(this, payload);
-      break;
-    case 'touchmove':
-    case 'mousemove':
-      _processPointerMove.call(this, payload);
-      break;
-    case 'touchend':
-    case 'mouseup':
-      _processPointerEnd.call(this, payload);
-      break;
-    case 'mouseleave':
-      _processMouseLeave.call(this, payload);
-      break;
-    default:
-      break;
-  }
-};
-
-/**
- * Return the name of the GestureHandler component
- *
- * @method
- *
- * @return {String} Name of the component
- */
-GestureHandler.prototype.toString = function toString() {
-  return 'GestureHandler';
-};
-
-/**
- * Register a callback to be invoked on an event.
- *
- * @method
- *
- * @param {Object|String} ev The event object or event name.
- * @param {Function} cb The callback
- *
- * @return {undefined} undefined
- */
-GestureHandler.prototype.on = function on(ev, cb) {
-  var gesture = ev.event || ev;
-  if (gestures[gesture]) {
-    this.trackedGestures[gesture] = true;
-    this.gestures.push(gesture);
-    if (ev.event)
-      this.options[gesture] = ev;
-    this._events.on(gesture, cb);
-  }
-};
-
-/**
- * Trigger gestures in the order they were requested, if they occurred.
- *
- * @method
- *
- * @return {undefined} undefined
- */
-GestureHandler.prototype.triggerGestures = function() {
-  var payload = this.event;
-  for (var i = 0, len = this.gestures.length; i < len; i++) {
-    var gesture = this.gestures[i];
-    switch (gesture) {
-      case 'rotate':
-      case 'pinch':
-        if (payload.points === 2) this.trigger(gesture, payload);
+  /**
+   * onReceive fires when the node this component is attached to gets an event.
+   *
+   * @method
+   *
+   * @param {String} ev name of the event
+   * @param {Object} payload data associated with the event
+   *
+   * @return {undefined} undefined
+   */
+  onReceive(ev, payload) {
+    switch (ev) {
+      case 'touchstart':
+      case 'mousedown':
+        _processPointerStart.call(this, payload);
         break;
-      case 'tap':
-        if (payload.status === 'start') {
-          if (this.options.tap) {
-            var pts = this.options.tap.points || 1;
-            if (this.multiTap >= pts && payload.points >= pts) this.trigger(gesture, payload);
-          }
-          else this.trigger(gesture, payload);
-        }
+      case 'touchmove':
+      case 'mousemove':
+        _processPointerMove.call(this, payload);
+        break;
+      case 'touchend':
+      case 'mouseup':
+        _processPointerEnd.call(this, payload);
+        break;
+      case 'mouseleave':
+        _processMouseLeave.call(this, payload);
         break;
       default:
-        this.trigger(gesture, payload);
         break;
     }
-  }
-};
+  };
 
-/**
- * Trigger the callback associated with an event, passing in a payload.
- *
- * @method trigger
- *
- * @param {String} ev The event name
- * @param {Object} payload The event payload
- *
- * @return {undefined} undefined
- */
-GestureHandler.prototype.trigger = function trigger(ev, payload) {
-  this._events.trigger(ev, payload);
-};
+  /**
+   * Return the name of the GestureHandler component
+   *
+   * @method
+   *
+   * @return {String} Name of the component
+   */
+  toString() {
+    return 'GestureHandler';
+  };
+
+  /**
+   * Register a callback to be invoked on an event.
+   *
+   * @method
+   *
+   * @param {Object|String} ev The event object or event name.
+   * @param {Function} cb The callback
+   *
+   * @return {undefined} undefined
+   */
+  on(ev, cb) {
+    var gesture = ev.event || ev;
+    if (gestures[gesture]) {
+      this.trackedGestures[gesture] = true;
+      this.gestures.push(gesture);
+      if (ev.event)
+        this.options[gesture] = ev;
+      this._events.on(gesture, cb);
+    }
+  };
+
+  /**
+   * Trigger gestures in the order they were requested, if they occurred.
+   *
+   * @method
+   *
+   * @return {undefined} undefined
+   */
+  triggerGestures() {
+    var payload = this.event;
+    for (var i = 0, len = this.gestures.length; i < len; i++) {
+      var gesture = this.gestures[i];
+      switch (gesture) {
+        case 'rotate':
+        case 'pinch':
+          if (payload.points === 2) this.trigger(gesture, payload);
+          break;
+        case 'tap':
+          if (payload.status === 'start') {
+            if (this.options.tap) {
+              var pts = this.options.tap.points || 1;
+              if (this.multiTap >= pts && payload.points >= pts) this.trigger(gesture, payload);
+            }
+            else this.trigger(gesture, payload);
+          }
+          break;
+        default:
+          this.trigger(gesture, payload);
+          break;
+      }
+    }
+  };
+
+  /**
+   * Trigger the callback associated with an event, passing in a payload.
+   *
+   * @method trigger
+   *
+   * @param {String} ev The event name
+   * @param {Object} payload The event payload
+   *
+   * @return {undefined} undefined
+   */
+  trigger(ev, payload) {
+    this._events.trigger(ev, payload);
+  };
+
+}
 
 /**
  * Process up to the first two touch/mouse move events. Exit out if the first two points are already being tracked.
@@ -510,4 +513,4 @@ function _processMouseLeave() {
   }
 }
 
-module.exports = GestureHandler;
+export { GestureHandler };

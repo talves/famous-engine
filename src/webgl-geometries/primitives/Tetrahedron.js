@@ -24,8 +24,8 @@
 
 'use strict';
 
-var Geometry = require('../Geometry');
-var GeometryHelper = require('../GeometryHelper');
+import { Geometry } from '../Geometry';
+import { GeometryHelper } from '../GeometryHelper';
 
 /**
  * This function generates custom buffers and passes them to
@@ -39,82 +39,83 @@ var GeometryHelper = require('../GeometryHelper');
  *
  * @return {Object} constructed geometry
  */
-function Tetrahedron(options) {
-  if (!(this instanceof Tetrahedron)) return new Tetrahedron(options);
+class Tetrahedron extends Geometry {
+  constructor(options) {
+    //handled by es6 transpiler
+    //if (!(this instanceof Tetrahedron)) return new Tetrahedron(options);
 
-  var textureCoords = [];
-  var normals = [];
-  var detail;
-  var i;
-  var t = Math.sqrt(3);
+    var textureCoords = [];
+    var normals = [];
+    var detail;
+    var i;
+    var t = Math.sqrt(3);
 
-  var vertices = [
-    // Back
-    1, -1, -1 / t,
-    -1, -1, -1 / t,
-    0, 1, 0,
+    var vertices = [
+      // Back
+      1, -1, -1 / t,
+      -1, -1, -1 / t,
+      0, 1, 0,
 
-    // Right
-    0, 1, 0,
-    0, -1, t - 1 / t,
-    1, -1, -1 / t,
+      // Right
+      0, 1, 0,
+      0, -1, t - 1 / t,
+      1, -1, -1 / t,
 
-    // Left
-    0, 1, 0,
-    -1, -1, -1 / t,
-    0, -1, t - 1 / t,
+      // Left
+      0, 1, 0,
+      -1, -1, -1 / t,
+      0, -1, t - 1 / t,
 
-    // Bottom
-    0, -1, t - 1 / t,
-    -1, -1, -1 / t,
-    1, -1, -1 / t
-  ];
+      // Bottom
+      0, -1, t - 1 / t,
+      -1, -1, -1 / t,
+      1, -1, -1 / t
+    ];
 
-  var indices = [
-    0, 1, 2,
-    3, 4, 5,
-    6, 7, 8,
-    9, 10, 11
-  ];
+    var indices = [
+      0, 1, 2,
+      3, 4, 5,
+      6, 7, 8,
+      9, 10, 11
+    ];
 
-  for (i = 0; i < 4; i++) {
-    textureCoords.push(
-      0.0, 0.0,
-      0.5, 1.0,
-      1.0, 0.0
-    );
+    for (i = 0; i < 4; i++) {
+      textureCoords.push(
+        0.0, 0.0,
+        0.5, 1.0,
+        1.0, 0.0
+      );
+    }
+
+    options = options || {};
+
+    while (--detail) GeometryHelper.subdivide(indices, vertices, textureCoords);
+    normals = GeometryHelper.computeNormals(vertices, indices);
+
+    options.buffers = [
+      {
+        name: 'a_pos',
+        data: vertices
+      },
+      {
+        name: 'a_texCoord',
+        data: textureCoords,
+        size: 2
+      },
+      {
+        name: 'a_normals',
+        data: normals
+      },
+      {
+        name: 'indices',
+        data: indices,
+        size: 1
+      }
+    ];
+
+    super(options);
   }
 
-  options = options || {};
-
-  while (--detail) GeometryHelper.subdivide(indices, vertices, textureCoords);
-  normals = GeometryHelper.computeNormals(vertices, indices);
-
-  options.buffers = [
-    {
-      name: 'a_pos',
-      data: vertices
-    },
-    {
-      name: 'a_texCoord',
-      data: textureCoords,
-      size: 2
-    },
-    {
-      name: 'a_normals',
-      data: normals
-    },
-    {
-      name: 'indices',
-      data: indices,
-      size: 1
-    }
-  ];
-
-  Geometry.call(this, options);
 }
 
-Tetrahedron.prototype = Object.create(Geometry.prototype);
-Tetrahedron.prototype.constructor = Tetrahedron;
-
-module.exports = Tetrahedron;
+export { Tetrahedron };

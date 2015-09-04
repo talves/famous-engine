@@ -39,7 +39,7 @@
  * @return {*} strippedObj      A primitive or (nested) object only containing
  *                              primitive types (serializable).
  */
-function strip(obj) {
+var strip = function(obj) {
   switch (obj) {
     case null:
     case undefined:
@@ -61,4 +61,4 @@ function strip(obj) {
   }
 }
 
-module.exports = strip;
+export { strip };

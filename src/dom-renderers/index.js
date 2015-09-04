@@ -23,11 +23,14 @@
  */
 
 'use strict';
+import * as Math from './Math';
+import * as Events from './events';
+import { DOMRenderer } from './DOMRenderer';
+import { ElementCache } from './ElementCache';
+import { VoidElements } from './VoidElements';
 
-module.exports = {
-  DOMRenderer: require('./DOMRenderer'),
-  ElementCache: require('./ElementCache'),
-  Events: require('./events'),
-  Math: require('./Math'),
-  VoidElements: require('./VoidElements')
-};
+export { Math };
+export { DOMRenderer };
+export { ElementCache };
+export { VoidElements };
+export { Events };

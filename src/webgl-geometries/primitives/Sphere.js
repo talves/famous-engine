@@ -24,14 +24,14 @@
 
 'use strict';
 
-var Geometry = require('../Geometry');
-var GeometryHelper = require('../GeometryHelper');
+import { Geometry } from '../Geometry';
+import { GeometryHelper } from '../GeometryHelper';
 
 /**
  * This function returns a new static geometry, which is passed
  * custom buffer data.
  *
- * @class ParametricSphere
+ * @class Sphere
  * @constructor
  *
  * @param {Object} options Parameters that alter the
@@ -39,47 +39,48 @@ var GeometryHelper = require('../GeometryHelper');
  *
  * @return {Object} constructed geometry
  */
-function ParametricSphere(options) {
-  if (!(this instanceof ParametricSphere)) return new ParametricSphere(options);
+class Sphere extends Geometry {
+  constructor(options) {
+    //handled by es6 transpiler
+    //if (!(this instanceof Sphere)) return new Sphere(options);
 
-  options = options || {};
-  var detail = options.detail || 10;
-  var detailX = options.detailX || detail;
-  var detailY = options.detailY || detail;
+    options = options || {};
+    var detail = options.detail || 10;
+    var detailX = options.detailX || detail;
+    var detailY = options.detailY || detail;
 
-  var buffers = GeometryHelper.generateParametric(
-    detailX,
-    detailY,
-    ParametricSphere.generator,
-    true
-  );
+    var buffers = GeometryHelper.generateParametric(
+      detailX,
+      detailY,
+      Sphere.generator,
+      true
+    );
 
-  options.buffers = [
-    {
-      name: 'a_pos',
-      data: buffers.vertices
-    },
-    {
-      name: 'a_texCoord',
-      data: GeometryHelper.getSpheroidUV(buffers.vertices),
-      size: 2
-    },
-    {
-      name: 'a_normals',
-      data: GeometryHelper.getSpheroidNormals(buffers.vertices)
-    },
-    {
-      name: 'indices',
-      data: buffers.indices,
-      size: 1
-    }
-  ];
+    options.buffers = [
+      {
+        name: 'a_pos',
+        data: buffers.vertices
+      },
+      {
+        name: 'a_texCoord',
+        data: GeometryHelper.getSpheroidUV(buffers.vertices),
+        size: 2
+      },
+      {
+        name: 'a_normals',
+        data: GeometryHelper.getSpheroidNormals(buffers.vertices)
+      },
+      {
+        name: 'indices',
+        data: buffers.indices,
+        size: 1
+      }
+    ];
 
-  Geometry.call(this, options);
+    super(options);
+  }
+
 }
-
-ParametricSphere.prototype = Object.create(Geometry.prototype);
-ParametricSphere.prototype.constructor = ParametricSphere;
 
 /**
  * Function used in iterative construction of parametric primitive.
@@ -92,7 +93,7 @@ ParametricSphere.prototype.constructor = ParametricSphere;
  *
  * @return {undefined} undefined
  */
-ParametricSphere.generator = function generator(u, v, pos) {
+Sphere.generator = function generator(u, v, pos) {
   var x = Math.sin(u) * Math.cos(v);
   var y = Math.cos(u);
   var z = -Math.sin(u) * Math.sin(v);
@@ -102,4 +103,4 @@ ParametricSphere.generator = function generator(u, v, pos) {
   pos[2] = z;
 };
 
-module.exports = ParametricSphere;
+export { Sphere };

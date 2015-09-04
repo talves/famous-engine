@@ -65,7 +65,7 @@ var Commands = {
   ALLOW_DEFAULT: 34,
   PREVENT_DEFAULT: 35,
   UNSUBSCRIBE: 36,
-  prettyPrint: function(buffer, start, count) {
+  prettyPrint(buffer, start, count) {
     var callback;
     start = start ? start : 0;
     var data = {
@@ -210,5 +210,4 @@ commandPrinters[Commands.NEED_SIZE_FOR] = function need_size_for(buffer, data) {
   data.result += data.i + '. NEED_SIZE_FOR\n    selector: ' + buffer[++data.i] + '\n\n';
 };
 
-module.exports = Commands;
-
+export { Commands };

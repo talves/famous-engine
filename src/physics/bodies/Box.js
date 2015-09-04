@@ -24,8 +24,8 @@
 
 'use strict';
 
-var Vec3 = require('../../math/Vec3');
-var convexBodyFactory = require('./convexBodyFactory');
+import { Vec3 } from '../../math/Vec3';
+import { convexBodyFactory } from './convexBodyFactory';
 
 var _Box = convexBodyFactory([
   // Order: back-left, back-right, front-left, front-right
@@ -46,19 +46,21 @@ var _Box = convexBodyFactory([
  * @extends Particle
  * @param {Object} options Initial state of the body.
  */
-function Box(options) {
-  _Box.call(this, options);
-  this.normals = [
-    // Order: top, right, front
-    new Vec3(0, 1, 0),
-    new Vec3(1, 0, 0),
-    new Vec3(0, 0, 1)
-  ];
+class Box extends _Box {
+  constructor(options) {
+    //_Box.call(this, options);
+    super(options);
 
-  this.type = 1 << 1;
+    this.normals = [
+      // Order: top, right, front
+      new Vec3(0, 1, 0),
+      new Vec3(1, 0, 0),
+      new Vec3(0, 0, 1)
+    ];
+
+    this.type = 1 << 1;
+  }
+
 }
 
-Box.prototype = Object.create(_Box.prototype);
-Box.prototype.constructor = Box;
-
-module.exports = Box;
+export { Box };

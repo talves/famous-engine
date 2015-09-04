@@ -24,15 +24,15 @@
 
 'use strict';
 
-var CompositionEvent = require('./CompositionEvent');
-var Event = require('./Event');
-var FocusEvent = require('./FocusEvent');
-var InputEvent = require('./InputEvent');
-var KeyboardEvent = require('./KeyboardEvent');
-var MouseEvent = require('./MouseEvent');
-var TouchEvent = require('./TouchEvent');
-var UIEvent = require('./UIEvent');
-var WheelEvent = require('./WheelEvent');
+import { CompositionEvent } from './CompositionEvent';
+import { Event } from './Event';
+import { FocusEvent } from './FocusEvent';
+import { InputEvent } from './InputEvent';
+import { KeyboardEvent } from './KeyboardEvent';
+import { MouseEvent } from './MouseEvent';
+import { TouchEvent } from './TouchEvent';
+import { UIEvent } from './UIEvent';
+import { WheelEvent } from './WheelEvent';
 
 /**
  * A mapping of DOM events to the corresponding handlers
@@ -87,4 +87,4 @@ var EventMap = {
   touchstart: [TouchEvent, true]
 };
 
-module.exports = EventMap;
+export { EventMap };

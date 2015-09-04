@@ -32,224 +32,227 @@
  * @param {Number} x The x component.
  * @param {Number} y The y component.
  */
-var Vec2 = function(x, y) {
-  if (x instanceof Array || x instanceof Float32Array) {
-    this.x = x[0] || 0;
-    this.y = x[1] || 0;
-  } else {
-    this.x = x || 0;
-    this.y = y || 0;
-  }
-};
+class Vec2 {
+  constructor(x, y) {
+    if (x instanceof Array || x instanceof Float32Array) {
+      this.x = x[0] || 0;
+      this.y = x[1] || 0;
+    } else {
+      this.x = x || 0;
+      this.y = y || 0;
+    }
+  };
 
-/**
- * Set the components of the current Vec2.
- *
- * @method
- *
- * @param {Number} x The x component.
- * @param {Number} y The y component.
- *
- * @return {Vec2} this
- */
-Vec2.prototype.set = function set(x, y) {
-  if (x != null)
-    this.x = x;
-  if (y != null)
-    this.y = y;
-  return this;
-};
+  /**
+   * Set the components of the current Vec2.
+   *
+   * @method
+   *
+   * @param {Number} x The x component.
+   * @param {Number} y The y component.
+   *
+   * @return {Vec2} this
+   */
+  set(x, y) {
+    if (x != null)
+      this.x = x;
+    if (y != null)
+      this.y = y;
+    return this;
+  };
 
-/**
- * Add the input v to the current Vec2.
- *
- * @method
- *
- * @param {Vec2} v The Vec2 to add.
- *
- * @return {Vec2} this
- */
-Vec2.prototype.add = function add(v) {
-  this.x += v.x;
-  this.y += v.y;
-  return this;
-};
+  /**
+   * Add the input v to the current Vec2.
+   *
+   * @method
+   *
+   * @param {Vec2} v The Vec2 to add.
+   *
+   * @return {Vec2} this
+   */
+  add(v) {
+    this.x += v.x;
+    this.y += v.y;
+    return this;
+  };
 
-/**
- * Subtract the input v from the current Vec2.
- *
- * @method
- *
- * @param {Vec2} v The Vec2 to subtract.
- *
- * @return {Vec2} this
- */
-Vec2.prototype.subtract = function subtract(v) {
-  this.x -= v.x;
-  this.y -= v.y;
-  return this;
-};
+  /**
+   * Subtract the input v from the current Vec2.
+   *
+   * @method
+   *
+   * @param {Vec2} v The Vec2 to subtract.
+   *
+   * @return {Vec2} this
+   */
+  subtract(v) {
+    this.x -= v.x;
+    this.y -= v.y;
+    return this;
+  };
 
-/**
- * Scale the current Vec2 by a scalar or Vec2.
- *
- * @method
- *
- * @param {Number|Vec2} s The Number or vec2 by which to scale.
- *
- * @return {Vec2} this
- */
-Vec2.prototype.scale = function scale(s) {
-  if (s instanceof Vec2) {
-    this.x *= s.x;
-    this.y *= s.y;
-  } else {
-    this.x *= s;
-    this.y *= s;
-  }
-  return this;
-};
+  /**
+   * Scale the current Vec2 by a scalar or Vec2.
+   *
+   * @method
+   *
+   * @param {Number|Vec2} s The Number or vec2 by which to scale.
+   *
+   * @return {Vec2} this
+   */
+  scale(s) {
+    if (s instanceof Vec2) {
+      this.x *= s.x;
+      this.y *= s.y;
+    } else {
+      this.x *= s;
+      this.y *= s;
+    }
+    return this;
+  };
 
-/**
- * Rotate the Vec2 counter-clockwise by theta about the z-axis.
- *
- * @method
- *
- * @param {Number} theta Angle by which to rotate.
- *
- * @return {Vec2} this
- */
-Vec2.prototype.rotate = function(theta) {
-  var x = this.x;
-  var y = this.y;
+  /**
+   * Rotate the Vec2 counter-clockwise by theta about the z-axis.
+   *
+   * @method
+   *
+   * @param {Number} theta Angle by which to rotate.
+   *
+   * @return {Vec2} this
+   */
+  rotate(theta) {
+    var x = this.x;
+    var y = this.y;
 
-  var cosTheta = Math.cos(theta);
-  var sinTheta = Math.sin(theta);
+    var cosTheta = Math.cos(theta);
+    var sinTheta = Math.sin(theta);
 
-  this.x = x * cosTheta - y * sinTheta;
-  this.y = x * sinTheta + y * cosTheta;
+    this.x = x * cosTheta - y * sinTheta;
+    this.y = x * sinTheta + y * cosTheta;
 
-  return this;
-};
+    return this;
+  };
 
-/**
- * The dot product of of the current Vec2 with the input Vec2.
- *
- * @method
- *
- * @param {Number} v The other Vec2.
- *
- * @return {Vec2} this
- */
-Vec2.prototype.dot = function(v) {
-  return this.x * v.x + this.y * v.y;
-};
+  /**
+   * The dot product of of the current Vec2 with the input Vec2.
+   *
+   * @method
+   *
+   * @param {Number} v The other Vec2.
+   *
+   * @return {Vec2} this
+   */
+  dot(v) {
+    return this.x * v.x + this.y * v.y;
+  };
 
-/**
- * The cross product of of the current Vec2 with the input Vec2.
- *
- * @method
- *
- * @param {Number} v The other Vec2.
- *
- * @return {Vec2} this
- */
-Vec2.prototype.cross = function(v) {
-  return this.x * v.y - this.y * v.x;
-};
+  /**
+   * The cross product of of the current Vec2 with the input Vec2.
+   *
+   * @method
+   *
+   * @param {Number} v The other Vec2.
+   *
+   * @return {Vec2} this
+   */
+  cross(v) {
+    return this.x * v.y - this.y * v.x;
+  };
 
-/**
- * Preserve the magnitude but invert the orientation of the current Vec2.
- *
- * @method
- *
- * @return {Vec2} this
- */
-Vec2.prototype.invert = function invert() {
-  this.x *= -1;
-  this.y *= -1;
-  return this;
-};
+  /**
+   * Preserve the magnitude but invert the orientation of the current Vec2.
+   *
+   * @method
+   *
+   * @return {Vec2} this
+   */
+  invert() {
+    this.x *= -1;
+    this.y *= -1;
+    return this;
+  };
 
-/**
- * Apply a function component-wise to the current Vec2.
- *
- * @method
- *
- * @param {Function} fn Function to apply.
- *
- * @return {Vec2} this
- */
-Vec2.prototype.map = function map(fn) {
-  this.x = fn(this.x);
-  this.y = fn(this.y);
-  return this;
-};
+  /**
+   * Apply a function component-wise to the current Vec2.
+   *
+   * @method
+   *
+   * @param {Function} fn Function to apply.
+   *
+   * @return {Vec2} this
+   */
+  map(fn) {
+    this.x = fn(this.x);
+    this.y = fn(this.y);
+    return this;
+  };
 
-/**
- * Get the magnitude of the current Vec2.
- *
- * @method
- *
- * @return {Number} the length of the vector
- */
-Vec2.prototype.length = function length() {
-  var x = this.x;
-  var y = this.y;
+  /**
+   * Get the magnitude of the current Vec2.
+   *
+   * @method
+   *
+   * @return {Number} the length of the vector
+   */
+  length() {
+    var x = this.x;
+    var y = this.y;
 
-  return Math.sqrt(x * x + y * y);
-};
+    return Math.sqrt(x * x + y * y);
+  };
 
-/**
- * Copy the input onto the current Vec2.
- *
- * @method
- *
- * @param {Vec2} v Vec2 to copy
- *
- * @return {Vec2} this
- */
-Vec2.prototype.copy = function copy(v) {
-  this.x = v.x;
-  this.y = v.y;
-  return this;
-};
+  /**
+   * Copy the input onto the current Vec2.
+   *
+   * @method
+   *
+   * @param {Vec2} v Vec2 to copy
+   *
+   * @return {Vec2} this
+   */
+  copy(v) {
+    this.x = v.x;
+    this.y = v.y;
+    return this;
+  };
 
-/**
- * Reset the current Vec2.
- *
- * @method
- *
- * @return {Vec2} this
- */
-Vec2.prototype.clear = function clear() {
-  this.x = 0;
-  this.y = 0;
-  return this;
-};
+  /**
+   * Reset the current Vec2.
+   *
+   * @method
+   *
+   * @return {Vec2} this
+   */
+  clear() {
+    this.x = 0;
+    this.y = 0;
+    return this;
+  };
 
-/**
- * Check whether the magnitude of the current Vec2 is exactly 0.
- *
- * @method
- *
- * @return {Boolean} whether or not the length is 0
- */
-Vec2.prototype.isZero = function isZero() {
-  if (this.x !== 0 || this.y !== 0) return false;
-  else return true;
-};
+  /**
+   * Check whether the magnitude of the current Vec2 is exactly 0.
+   *
+   * @method
+   *
+   * @return {Boolean} whether or not the length is 0
+   */
+  isZero() {
+    if (this.x !== 0 || this.y !== 0) return false;
+    else return true;
+  };
 
-/**
- * The array form of the current Vec2.
- *
- * @method
- *
- * @return {Array} the Vec to as an array
- */
-Vec2.prototype.toArray = function toArray() {
-  return [this.x, this.y];
-};
+  /**
+   * The array form of the current Vec2.
+   *
+   * @method
+   *
+   * @return {Array} the Vec to as an array
+   */
+  toArray() {
+    return [this.x, this.y];
+  };
+
+}
 
 /**
  * Normalize the input Vec2.
@@ -366,4 +369,4 @@ Vec2.cross = function(v1, v2) {
   return v1.x * v2.y - v1.y * v2.x;
 };
 
-module.exports = Vec2;
+export { Vec2 };

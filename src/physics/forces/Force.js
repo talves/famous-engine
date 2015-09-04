@@ -33,75 +33,78 @@ var _ID = 0;
  * @param {Particle[]} targets The targets of the force.
  * @param {Object} options The options hash.
  */
-function Force(targets, options) {
-  if (targets) {
-    if (targets instanceof Array)
-      this.targets = targets;
+class Force {
+  constructor(targets, options) {
+    if (targets) {
+      if (targets instanceof Array)
+        this.targets = targets;
+      else
+        this.targets = [targets];
+    }
     else
-      this.targets = [targets];
+      this.targets = [];
+
+    options = options || {};
+    this.setOptions(options);
+
+    this._ID = _ID++;
   }
-  else
-    this.targets = [];
 
-  options = options || {};
-  this.setOptions(options);
+  /**
+   * Decorates the Force with the options object.
+   *
+   * @method
+   * @param {Object} options The options hash.
+   * @return {undefined} undefined
+   */
+  setOptions(options) {
+    for (var key in options) this[key] = options[key];
+    this.init(options);
+  };
 
-  this._ID = _ID++;
+  /**
+   * Add a target or targets to the Force.
+   *
+   * @method
+   * @param {Particle} target The body to begin targetting.
+   * @return {undefined} undefined
+   */
+  addTarget(target) {
+    this.targets.push(target);
+  };
+
+  /**
+   * Remove a target or targets from the Force.
+   *
+   * @method
+   * @param {Particle} target The body to stop targetting.
+   * @return {undefined} undefined
+   */
+  removeTarget(target) {
+    var index = this.targets.indexOf(target);
+    if (index < 0) return;
+    this.targets.splice(index, 1);
+  };
+
+  /**
+   * Method invoked upon instantiation and the setting of options.
+   *
+   * @method
+   * @param {Object} options The options hash.
+   * @return {undefined} undefined
+   */
+  init(options) {};
+
+  /**
+   * Apply forces on each target.
+   *
+   * @method
+   * @param {Number} time The current time in the physics engine.
+   * @param {Number} dt The physics engine frame delta.
+   * @return {undefined} undefined
+   */
+  update(time, dt) {};
+
 }
 
-/**
- * Decorates the Force with the options object.
- *
- * @method
- * @param {Object} options The options hash.
- * @return {undefined} undefined
- */
-Force.prototype.setOptions = function setOptions(options) {
-  for (var key in options) this[key] = options[key];
-  this.init(options);
-};
-
-/**
- * Add a target or targets to the Force.
- *
- * @method
- * @param {Particle} target The body to begin targetting.
- * @return {undefined} undefined
- */
-Force.prototype.addTarget = function addTarget(target) {
-  this.targets.push(target);
-};
-
-/**
- * Remove a target or targets from the Force.
- *
- * @method
- * @param {Particle} target The body to stop targetting.
- * @return {undefined} undefined
- */
-Force.prototype.removeTarget = function removeTarget(target) {
-  var index = this.targets.indexOf(target);
-  if (index < 0) return;
-  this.targets.splice(index, 1);
-};
-
-/**
- * Method invoked upon instantiation and the setting of options.
- *
- * @method
- * @param {Object} options The options hash.
- * @return {undefined} undefined
- */
-Force.prototype.init = function init(options) {};
-
-/**
- * Apply forces on each target.
- *
- * @method
- * @param {Number} time The current time in the physics engine.
- * @param {Number} dt The physics engine frame delta.
- * @return {undefined} undefined
- */
-Force.prototype.update = function update(time, dt) {};
-
-module.exports = Force;
+export { Force };

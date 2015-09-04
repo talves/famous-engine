@@ -24,13 +24,10 @@
 
 'use strict';
 
-var Vec3 = require('../../../math/Vec3');
-var ObjectManager = require('../../../utilities/ObjectManager');
-
-ObjectManager.register('GJK_EPASupportPoint', GJK_EPASupportPoint);
-var oMRequestGJK_EPASupportPoint = ObjectManager.requestGJK_EPASupportPoint;
+import { Vec3 } from '../../../math/Vec3';
+import { ObjectManager } from '../../../utilities/ObjectManager';
+import * as Geometry from '../../Geometry';
 var oMRequestDynamicGeometry = ObjectManager.requestDynamicGeometry;
-var oMFreeGJK_EPASupportPoint = ObjectManager.freeGJK_EPASupportPoint;
 var oMFreeDynamicGeometry = ObjectManager.freeDynamicGeometry;
 var oMFreeDynamicGeometryFeature = ObjectManager.freeDynamicGeometryFeature;
 
@@ -51,28 +48,35 @@ var INVDIRECTION_REGISTER = new Vec3();
  * @param {Vec3} worldVertexA The one vertex.
  * @param {Vec3} worldVertexB The other vertex.
  */
-function GJK_EPASupportPoint(vertex, worldVertexA, worldVertexB) {
-  this.vertex = vertex;
-  this.worldVertexA = worldVertexA;
-  this.worldVertexB = worldVertexB;
+class GJK_EPASupportPoint {
+  constructor(vertex, worldVertexA, worldVertexB) {
+    this.vertex = vertex;
+    this.worldVertexA = worldVertexA;
+    this.worldVertexB = worldVertexB;
+  }
+
+  /**
+   * Used by ObjectManager to reset the object with different data.
+   *
+   * @method
+   * @param {Vec3} vertex The point in Minkowski space.
+   * @param {Vec3} worldVertexA The one vertex.
+   * @param {Vec3} worldVertexB The other vertex.
+   * @return {GJK_EPASupportPoint} this
+   */
+  reset(vertex, worldVertexA, worldVertexB) {
+    this.vertex = vertex;
+    this.worldVertexA = worldVertexA;
+    this.worldVertexB = worldVertexB;
+
+    return this;
+  };
+
 }
 
-/**
- * Used by ObjectManager to reset the object with different data.
- *
- * @method
- * @param {Vec3} vertex The point in Minkowski space.
- * @param {Vec3} worldVertexA The one vertex.
- * @param {Vec3} worldVertexB The other vertex.
- * @return {GJK_EPASupportPoint} this
- */
-GJK_EPASupportPoint.prototype.reset = function reset(vertex, worldVertexA, worldVertexB) {
-  this.vertex = vertex;
-  this.worldVertexA = worldVertexA;
-  this.worldVertexB = worldVertexB;
-
-  return this;
-};
+ObjectManager.register('GJK_EPASupportPoint', GJK_EPASupportPoint);
+var oMRequestGJK_EPASupportPoint = ObjectManager.requestGJK_EPASupportPoint;
+var oMFreeGJK_EPASupportPoint = ObjectManager.freeGJK_EPASupportPoint;
 
 /**
  * Free the DynamicGeomtetry and associate vertices and features for later reuse.
@@ -219,5 +223,5 @@ function epa(body1, body2, polytope) {
   throw new Error('EPA failed to terminate in allotted iterations.');
 }
 
-module.exports.gjk = gjk;
-module.exports.epa = epa;
+export { gjk };
+export { epa };

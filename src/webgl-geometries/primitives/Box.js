@@ -24,7 +24,7 @@
 
 'use strict';
 
-var Geometry = require('../Geometry');
+import { Geometry } from '../Geometry';
 
 function pickOctant(i) {
   return [(i & 1) * 2 - 1, (i & 2) - 1, (i & 4) / 2 - 1];
@@ -51,62 +51,63 @@ var boxData = [
  *
  * @return {Object} constructed geometry
  */
-function BoxGeometry(options) {
-  if (!(this instanceof BoxGeometry)) return new BoxGeometry(options);
+class Box extends Geometry {
+  constructor(options) {
+    //handled by es6 transpiler
+    //if (!(this instanceof BoxGeometry)) return new BoxGeometry(options);
 
-  options = options || {};
+    options = options || {};
 
-  var vertices = [];
-  var textureCoords = [];
-  var normals = [];
-  var indices = [];
+    var vertices = [];
+    var textureCoords = [];
+    var normals = [];
+    var indices = [];
 
-  var data;
-  var d;
-  var v;
-  var i;
-  var j;
+    var data;
+    var d;
+    var v;
+    var i;
+    var j;
 
-  for (i = 0; i < boxData.length; i++) {
-    data = boxData[i];
-    v = i * 4;
-    for (j = 0; j < 4; j++) {
-      d = data[j];
-      var octant = pickOctant(d);
-      vertices.push(octant[0], octant[1], octant[2]);
-      textureCoords.push(j & 1, (j & 2) / 2);
-      normals.push(data[4], data[5], data[6]);
+    for (i = 0; i < boxData.length; i++) {
+      data = boxData[i];
+      v = i * 4;
+      for (j = 0; j < 4; j++) {
+        d = data[j];
+        var octant = pickOctant(d);
+        vertices.push(octant[0], octant[1], octant[2]);
+        textureCoords.push(j & 1, (j & 2) / 2);
+        normals.push(data[4], data[5], data[6]);
+      }
+      indices.push(v, v + 1, v + 2);
+      indices.push(v + 2, v + 1, v + 3);
+
     }
-    indices.push(v, v + 1, v + 2);
-    indices.push(v + 2, v + 1, v + 3);
 
+    options.buffers = [
+      {
+        name: 'a_pos',
+        data: vertices
+      },
+      {
+        name: 'a_texCoord',
+        data: textureCoords,
+        size: 2
+      },
+      {
+        name: 'a_normals',
+        data: normals
+      },
+      {
+        name: 'indices',
+        data: indices,
+        size: 1
+      }
+    ];
+
+    super(options);
   }
 
-  options.buffers = [
-    {
-      name: 'a_pos',
-      data: vertices
-    },
-    {
-      name: 'a_texCoord',
-      data: textureCoords,
-      size: 2
-    },
-    {
-      name: 'a_normals',
-      data: normals
-    },
-    {
-      name: 'indices',
-      data: indices,
-      size: 1
-    }
-  ];
-
-  Geometry.call(this, options);
 }
 
-BoxGeometry.prototype = Object.create(Geometry.prototype);
-BoxGeometry.prototype.constructor = BoxGeometry;
-
-module.exports = BoxGeometry;
+export { Box };

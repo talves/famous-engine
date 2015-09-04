@@ -24,8 +24,8 @@
 
 'use strict';
 
-var Geometry = require('../Geometry');
-var GeometryHelper = require('../GeometryHelper');
+import { Geometry } from '../Geometry';
+import { GeometryHelper } from '../GeometryHelper';
 
 /**
  * This function returns a new static geometry, which is passed
@@ -39,46 +39,47 @@ var GeometryHelper = require('../GeometryHelper');
  *
  * @return {Object} constructed geometry
  */
-function Circle(options) {
-  if (!(this instanceof Circle)) return new Circle(options);
+class Circle extends Geometry {
+  constructor(options) {
+    //handled by es6 transpiler
+    //if (!(this instanceof Circle)) return new Circle(options);
 
-  options = options || {};
-  var detail = options.detail || 30;
-  var buffers = getCircleBuffers(detail, true);
+    options = options || {};
+    var detail = options.detail || 30;
+    var buffers = getCircleBuffers(detail, true);
 
-  if (options.backface !== false) {
-    GeometryHelper.addBackfaceTriangles(buffers.vertices, buffers.indices);
+    if (options.backface !== false) {
+      GeometryHelper.addBackfaceTriangles(buffers.vertices, buffers.indices);
+    }
+
+    var textureCoords = getCircleTexCoords(buffers.vertices);
+    var normals = GeometryHelper.computeNormals(buffers.vertices, buffers.indices);
+
+    options.buffers = [
+      {
+        name: 'a_pos',
+        data: buffers.vertices
+      },
+      {
+        name: 'a_texCoord',
+        data: textureCoords,
+        size: 2
+      },
+      {
+        name: 'a_normals',
+        data: normals
+      },
+      {
+        name: 'indices',
+        data: buffers.indices,
+        size: 1
+      }
+    ];
+
+    super(options);
   }
 
-  var textureCoords = getCircleTexCoords(buffers.vertices);
-  var normals = GeometryHelper.computeNormals(buffers.vertices, buffers.indices);
-
-  options.buffers = [
-    {
-      name: 'a_pos',
-      data: buffers.vertices
-    },
-    {
-      name: 'a_texCoord',
-      data: textureCoords,
-      size: 2
-    },
-    {
-      name: 'a_normals',
-      data: normals
-    },
-    {
-      name: 'indices',
-      data: buffers.indices,
-      size: 1
-    }
-  ];
-
-  Geometry.call(this, options);
 }
-
-Circle.prototype = Object.create(Geometry.prototype);
-Circle.prototype.constructor = Circle;
 
 function getCircleTexCoords(vertices) {
   var textureCoords = [];
@@ -130,4 +131,4 @@ function getCircleBuffers(detail) {
   };
 }
 
-module.exports = Circle;
+export { Circle };

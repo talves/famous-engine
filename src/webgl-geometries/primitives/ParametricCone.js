@@ -24,8 +24,8 @@
 
 'use strict';
 
-var Geometry = require('../Geometry');
-var GeometryHelper = require('../GeometryHelper');
+import { Geometry } from '../Geometry';
+import { GeometryHelper } from '../GeometryHelper';
 
 /**
  * This function returns a new static geometry, which is passed
@@ -39,49 +39,50 @@ var GeometryHelper = require('../GeometryHelper');
  *
  * @return {Object} constructed geometry
  */
-function ParametricCone(options) {
-  if (!(this instanceof ParametricCone)) return new ParametricCone(options);
+class ParametricCone extends Geometry {
+  constructor(options) {
+    //handled by es6 transpiler
+    //if (!(this instanceof ParametricCone)) return new ParametricCone(options);
 
-  options = options || {};
-  var detail = options.detail || 15;
-  var radius = options.radius || 1 / Math.PI;
+    options = options || {};
+    var detail = options.detail || 15;
+    var radius = options.radius || 1 / Math.PI;
 
-  var buffers = GeometryHelper.generateParametric(
-    detail,
-    detail,
-    ParametricCone.generator.bind(null, radius)
-  );
+    var buffers = GeometryHelper.generateParametric(
+      detail,
+      detail,
+      ParametricCone.generator.bind(null, radius)
+    );
 
-  if (options.backface !== false) {
-    GeometryHelper.addBackfaceTriangles(buffers.vertices, buffers.indices);
+    if (options.backface !== false) {
+      GeometryHelper.addBackfaceTriangles(buffers.vertices, buffers.indices);
+    }
+
+    options.buffers = [
+      {
+        name: 'a_pos',
+        data: buffers.vertices
+      },
+      {
+        name: 'a_texCoord',
+        data: GeometryHelper.getSpheroidUV(buffers.vertices),
+        size: 2
+      },
+      {
+        name: 'a_normals',
+        data: GeometryHelper.computeNormals(buffers.vertices, buffers.indices)
+      },
+      {
+        name: 'indices',
+        data: buffers.indices,
+        size: 1
+      }
+    ];
+
+    super(options);
   }
 
-  options.buffers = [
-    {
-      name: 'a_pos',
-      data: buffers.vertices
-    },
-    {
-      name: 'a_texCoord',
-      data: GeometryHelper.getSpheroidUV(buffers.vertices),
-      size: 2
-    },
-    {
-      name: 'a_normals',
-      data: GeometryHelper.computeNormals(buffers.vertices, buffers.indices)
-    },
-    {
-      name: 'indices',
-      data: buffers.indices,
-      size: 1
-    }
-  ];
-
-  Geometry.call(this, options);
 }
-
-ParametricCone.prototype = Object.create(Geometry.prototype);
-ParametricCone.prototype.constructor = ParametricCone;
 
 /**
  * function used in iterative construction of parametric primitive.
@@ -100,4 +101,4 @@ ParametricCone.generator = function generator(r, u, v, pos) {
   pos[2] = -u / (Math.PI / 2) + 1;
 };
 
-module.exports = ParametricCone;
+export { ParametricCone };

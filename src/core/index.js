@@ -17,26 +17,39 @@
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING } from,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
 
 'use strict';
 
-module.exports = {
-  Channel: require('./Channel'),
-  Clock: require('./Clock'),
-  Commands: require('./Commands'),
-  Dispatch: require('./Dispatch'),
-  Event: require('./Event'),
-  FamousEngine: require('./FamousEngine'),
-  Node: require('./Node'),
-  Path: require('./Path'),
-  PathStore: require('./PathStore'),
-  Scene: require('./Scene'),
-  Size: require('./Size'),
-  SizeSystem: require('./SizeSystem'),
-  Transform: require('./Transform'),
-  TransformSystem: require('./TransformSystem')
-};
+import { Channel } from './Channel';
+import { Clock } from './Clock';
+import { Commands } from './Commands';
+import { Dispatch } from './Dispatch';
+import { Event } from './Event';
+import { FamousEngine } from './FamousEngine';
+import { Node } from './Node';
+import { Path } from './Path';
+import { PathStore } from './PathStore';
+import { Scene } from './Scene';
+import { Size } from './Size';
+import { SizeSystem } from './SizeSystem';
+import { Transform } from './Transform';
+import { TransformSystem } from './TransformSystem';
+
+export { Channel };
+export { Clock };
+export { Commands };
+export { Dispatch };
+export { Event };
+export { FamousEngine };
+export { Node };
+export { Path };
+export { PathStore };
+export { Scene };
+export { Size };
+export { SizeSystem };
+export { Transform };
+export { TransformSystem };

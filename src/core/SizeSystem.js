@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2015 Famous Industries Inc.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -24,10 +24,10 @@
 
 'use strict';
 
-var PathStore = require('./PathStore');
-var Size = require('./Size');
-var Dispatch = require('./Dispatch');
-var PathUtils = require('./Path');
+import { PathStore } from './PathStore';
+import { Size } from './Size';
+import { Dispatch } from './Dispatch';
+import { Path as PathUtils } from './Path';
 
 /**
  * The size system is used to calculate size throughout the scene graph.
@@ -35,94 +35,96 @@ var PathUtils = require('./Path');
  *
  * @constructor
  */
-function SizeSystem() {
-  this.pathStore = new PathStore();
-}
-
-/**
- * Registers a size component to a give path. A size component can be passed as the second argument
- * or a default one will be created. Throws if no size component has been added at the parent path.
- *
- * @method
- *
- * @param {String} path The path at which to register the size component
- * @param {Size | undefined} size The size component to be registered or undefined.
- *
- * @return {undefined} undefined
- */
-SizeSystem.prototype.registerSizeAtPath = function registerSizeAtPath(path, size) {
-  if (!PathUtils.depth(path)) return this.pathStore.insert(path, size ? size : new Size());
-
-  var parent = this.pathStore.get(PathUtils.parent(path));
-
-  if (!parent)
-    throw new Error(
-      'No parent size registered at expected path: ' + PathUtils.parent(path)
-    );
-
-  if (size) size.setParent(parent);
-
-  this.pathStore.insert(path, size ? size : new Size(parent));
-};
-
-/**
- * Removes the size component from the given path. Will throw if no component is at that
- * path
- *
- * @method
- *
- * @param {String} path The path at which to remove the size.
- *
- * @return {undefined} undefined
- */
-SizeSystem.prototype.deregisterSizeAtPath = function deregisterSizeAtPath(path) {
-  this.pathStore.remove(path);
-};
-
-/**
- * Returns the size component stored at a given path. Returns undefined if no
- * size component is registered to that path.
- *
- * @method
- *
- * @param {String} path The path at which to get the size component.
- *
- * @return {undefined} undefined
- */
-SizeSystem.prototype.get = function get(path) {
-  return this.pathStore.get(path);
-};
-
-/**
- * Updates the sizes in the scene graph. Called internally by the famous engine.
- *
- * @method
- *
- * @return {undefined} undefined
- */
-SizeSystem.prototype.update = function update() {
-  var sizes = this.pathStore.getItems();
-  var paths = this.pathStore.getPaths();
-  var node;
-  var size;
-  var i;
-  var len;
-  var components;
-
-  for (i = 0, len = sizes.length; i < len; i++) {
-    node = Dispatch.getNode(paths[i]);
-    components = node.getComponents();
-    if (!node) continue;
-    size = sizes[i];
-    if (size.sizeModeChanged) sizeModeChanged(node, components, size);
-    if (size.absoluteSizeChanged) absoluteSizeChanged(node, components, size);
-    if (size.proportionalSizeChanged) proportionalSizeChanged(node, components, size);
-    if (size.differentialSizeChanged) differentialSizeChanged(node, components, size);
-    if (size.renderSizeChanged) renderSizeChanged(node, components, size);
-    if (size.fromComponents(components)) sizeChanged(node, components, size);
+class SizeSystem {
+  constructor() {
+    this.pathStore = new PathStore();
   }
-};
 
+  /**
+   * Registers a size component to a give path. A size component can be passed as the second argument
+   * or a default one will be created. Throws if no size component has been added at the parent path.
+   *
+   * @method
+   *
+   * @param {String} path The path at which to register the size component
+   * @param {Size | undefined} size The size component to be registered or undefined.
+   *
+   * @return {undefined} undefined
+   */
+  registerSizeAtPath(path, size) {
+    if (!PathUtils.depth(path)) return this.pathStore.insert(path, size ? size : new Size());
+
+    var parent = this.pathStore.get(PathUtils.parent(path));
+
+    if (!parent)
+      throw new Error(
+        'No parent size registered at expected path: ' + PathUtils.parent(path)
+      );
+
+    if (size) size.setParent(parent);
+
+    this.pathStore.insert(path, size ? size : new Size(parent));
+  };
+
+  /**
+   * Removes the size component from the given path. Will throw if no component is at that
+   * path
+   *
+   * @method
+   *
+   * @param {String} path The path at which to remove the size.
+   *
+   * @return {undefined} undefined
+   */
+  deregisterSizeAtPath(path) {
+    this.pathStore.remove(path);
+  };
+
+  /**
+   * Returns the size component stored at a given path. Returns undefined if no
+   * size component is registered to that path.
+   *
+   * @method
+   *
+   * @param {String} path The path at which to get the size component.
+   *
+   * @return {undefined} undefined
+   */
+  get(path) {
+    return this.pathStore.get(path);
+  };
+
+  /**
+   * Updates the sizes in the scene graph. Called internally by the famous engine.
+   *
+   * @method
+   *
+   * @return {undefined} undefined
+   */
+  update() {
+    var sizes = this.pathStore.getItems();
+    var paths = this.pathStore.getPaths();
+    var node;
+    var size;
+    var i;
+    var len;
+    var components;
+
+    for (i = 0, len = sizes.length; i < len; i++) {
+      node = Dispatch.getNode(paths[i]);
+      components = node.getComponents();
+      if (!node) continue;
+      size = sizes[i];
+      if (size.sizeModeChanged) _sizeModeChanged(node, components, size);
+      if (size.absoluteSizeChanged) _absoluteSizeChanged(node, components, size);
+      if (size.proportionalSizeChanged) _proportionalSizeChanged(node, components, size);
+      if (size.differentialSizeChanged) _differentialSizeChanged(node, components, size);
+      if (size.renderSizeChanged) _renderSizeChanged(node, components, size);
+      if (size.fromComponents(components)) _sizeChanged(node, components, size);
+    }
+  };
+
+}
 // private methods
 
 /**
@@ -137,7 +139,7 @@ SizeSystem.prototype.update = function update() {
  *
  * @return {undefined} undefined
  */
-function sizeModeChanged(node, components, size) {
+function _sizeModeChanged(node, components, size) {
   var sizeMode = size.getSizeMode();
   var x = sizeMode[0];
   var y = sizeMode[1];
@@ -161,7 +163,7 @@ function sizeModeChanged(node, components, size) {
  *
  * @return {undefined} undefined
  */
-function absoluteSizeChanged(node, components, size) {
+function _absoluteSizeChanged(node, components, size) {
   var absoluteSize = size.getAbsolute();
   var x = absoluteSize[0];
   var y = absoluteSize[1];
@@ -185,7 +187,7 @@ function absoluteSizeChanged(node, components, size) {
  *
  * @return {undefined} undefined
  */
-function proportionalSizeChanged(node, components, size) {
+function _proportionalSizeChanged(node, components, size) {
   var proportionalSize = size.getProportional();
   var x = proportionalSize[0];
   var y = proportionalSize[1];
@@ -209,7 +211,7 @@ function proportionalSizeChanged(node, components, size) {
  *
  * @return {undefined} undefined
  */
-function differentialSizeChanged(node, components, size) {
+function _differentialSizeChanged(node, components, size) {
   var differentialSize = size.getDifferential();
   var x = differentialSize[0];
   var y = differentialSize[1];
@@ -233,7 +235,7 @@ function differentialSizeChanged(node, components, size) {
  *
  * @return {undefined} undefined
  */
-function renderSizeChanged(node, components, size) {
+function _renderSizeChanged(node, components, size) {
   var renderSize = size.getRenderSize();
   var x = renderSize[0];
   var y = renderSize[1];
@@ -257,7 +259,7 @@ function renderSizeChanged(node, components, size) {
  *
  * @return {undefined} undefined
  */
-function sizeChanged(node, components, size) {
+function _sizeChanged(node, components, size) {
   var finalSize = size.get();
   var x = finalSize[0];
   var y = finalSize[1];
@@ -269,4 +271,5 @@ function sizeChanged(node, components, size) {
   size.sizeChanged = false;
 }
 
-module.exports = new SizeSystem();
+var newSizeSystem = new SizeSystem();
+export { newSizeSystem as SizeSystem };

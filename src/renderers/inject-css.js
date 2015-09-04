@@ -64,7 +64,7 @@ var css = '.famous-dom-renderer {' +
 
 var INJECTED = typeof document === 'undefined';
 
-function injectCSS() {
+var injectCSS = function() {
   if (INJECTED) return;
   INJECTED = true;
   if (document.createStyleSheet) {
@@ -84,4 +84,4 @@ function injectCSS() {
   }
 }
 
-module.exports = injectCSS;
+export { injectCSS };

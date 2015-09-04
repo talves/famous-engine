@@ -23,31 +23,44 @@
  */
 
 'use strict';
+import * as bodies from './bodies';
+import * as constraints from './constraints';
+import * as forces from './forces';
 
-module.exports = {
-  Particle: require('./bodies/Particle'),
-  convexBodyFactory: require('./bodies/convexBodyFactory'),
-  Box: require('./bodies/Box'),
-  Sphere: require('./bodies/Sphere'),
-  Wall: require('./bodies/Wall'),
+import * as Geometry from './Geometry';
+import { PhysicsEngine } from './PhysicsEngine';
 
-  Constraint: require('./constraints/Constraint'),
-  Angle: require('./constraints/Angle'),
-  Collision: require('./constraints/Collision'),
-  Direction: require('./constraints/Direction'),
-  Distance: require('./constraints/Distance'),
-  Curve: require('./constraints/Curve'),
-  Hinge: require('./constraints/Hinge'),
-  BallAndSocket: require('./constraints/BallAndSocket'),
+export { bodies };
+export { constraints };
+export { forces };
 
-  Force: require('./forces/Force'),
-  Drag: require('./forces/Drag'),
-  RotationalDrag: require('./forces/RotationalDrag'),
-  Gravity1D: require('./forces/Gravity1D'),
-  Gravity3D: require('./forces/Gravity3D'),
-  Spring: require('./forces/Spring'),
-  RotationalSpring: require('./forces/RotationalSpring'),
-
-  PhysicsEngine: require('./PhysicsEngine'),
-  Geometry: require('./Geometry')
-};
+export { Geometry };
+export { PhysicsEngine };
+//
+// module.exports = {
+//     Particle: require('./bodies/Particle'),
+//     convexBodyFactory: require('./bodies/convexBodyFactory'),
+//     Box: require('./bodies/Box'),
+//     Sphere: require('./bodies/Sphere'),
+//     Wall: require('./bodies/Wall'),
+//
+//     Constraint: require('./constraints/Constraint'),
+//     Angle: require('./constraints/Angle'),
+//     Collision: require('./constraints/Collision'),
+//     Direction: require('./constraints/Direction'),
+//     Distance: require('./constraints/Distance'),
+//     Curve: require('./constraints/Curve'),
+//     Hinge: require('./constraints/Hinge'),
+//     BallAndSocket: require('./constraints/BallAndSocket'),
+//
+//     Force: require('./forces/Force'),
+//     Drag: require('./forces/Drag'),
+//     RotationalDrag: require('./forces/RotationalDrag'),
+//     Gravity1D: require('./forces/Gravity1D'),
+//     Gravity3D: require('./forces/Gravity3D'),
+//     Spring: require('./forces/Spring'),
+//     RotationalSpring: require('./forces/RotationalSpring'),
+//
+//     PhysicsEngine: require('./PhysicsEngine'),
+//     Geometry: require('./Geometry')
+// };

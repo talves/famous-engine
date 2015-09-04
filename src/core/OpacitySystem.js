@@ -24,10 +24,10 @@
 
 'use strict';
 
-var PathUtils = require('./Path');
-var Opacity = require('./Opacity');
-var Dispatch = require('./Dispatch');
-var PathStore = require('./PathStore');
+import { Path as PathUtils } from './Path';
+import { Opacity } from './Opacity';
+import { Dispatch } from './Dispatch';
+import { PathStore } from './PathStore';
 
 /**
  * The opacity class is responsible for calculating the opacity of a particular
@@ -35,127 +35,130 @@ var PathStore = require('./PathStore');
  *
  * @constructor {OpacitySystem}
  */
-function OpacitySystem() {
-  this.pathStore = new PathStore();
-}
-
-/**
- * registers a new Opacity for the given path. This opacity will be updated
- * when the OpacitySystem updates.
- *
- * @method registerOpacityAtPath
- *
- * @param {String} path path for the opacity to be registered to.
- * @param {Opacity} [opacity] opacity to register.
- * @return {undefined} undefined
- */
-OpacitySystem.prototype.registerOpacityAtPath = function registerOpacityAtPath(path, opacity) {
-  if (!PathUtils.depth(path)) return this.pathStore.insert(path, opacity ? opacity : new Opacity());
-
-  var parent = this.pathStore.get(PathUtils.parent(path));
-
-  if (!parent)
-    throw new Error(
-      'No parent opacity registered at expected path: ' + PathUtils.parent(path)
-    );
-
-  if (opacity) opacity.setParent(parent);
-
-  this.pathStore.insert(path, opacity ? opacity : new Opacity(parent));
-};
-
-/**
- * Deregisters a opacity registered at the given path.
- *
- * @method deregisterOpacityAtPath
- * @return {void}
- *
- * @param {String} path at which to register the opacity
- */
-OpacitySystem.prototype.deregisterOpacityAtPath = function deregisterOpacityAtPath(path) {
-  this.pathStore.remove(path);
-};
-
-/**
- * Method which will make the opacity currently stored at the given path a breakpoint.
- * A opacity being a breakpoint means that both a local and world opacity will be calculated
- * for that point. The local opacity being the concatinated opacity of all ancestor opacities up
- * until the nearest breakpoint, and the world being the concatinated opacity of all ancestor opacities.
- * This method throws if no opacity is at the provided path.
- *
- * @method
- *
- * @param {String} path The path at which to turn the opacity into a breakpoint
- *
- * @return {undefined} undefined
- */
-OpacitySystem.prototype.makeBreakPointAt = function makeBreakPointAt(path) {
-  var opacity = this.pathStore.get(path);
-  if (!opacity)
-    throw new Error('No opacity Registered at path: ' + path);
-  opacity.setBreakPoint();
-};
-
-/**
- * Method that will make the opacity at this location calculate a world opacity.
- *
- * @method
- *
- * @param {String} path The path at which to make the opacity calculate a world matrix
- *
- * @return {undefined} undefined
- */
-OpacitySystem.prototype.makeCalculateWorldOpacityAt = function makeCalculateWorldOpacityAt(path) {
-  var opacity = this.pathStore.get(path);
-  if (!opacity)
-    throw new Error('No opacity opacity at path: ' + path);
-  opacity.setCalculateWorldOpacity();
-};
-
-/**
- * Returns the instance of the opacity class associated with the given path,
- * or undefined if no opacity is associated.
- *
- * @method
- *
- * @param {String} path The path to lookup
- *
- * @return {Opacity | undefined} the opacity at that path is available, else undefined.
- */
-OpacitySystem.prototype.get = function get(path) {
-  return this.pathStore.get(path);
-};
-
-/**
- * update is called when the opacity system requires an update.
- * It traverses the opacity array and evaluates the necessary opacities
- * in the scene graph with the information from the corresponding node
- * in the scene graph
- *
- * @method update
- * @return {undefined} undefined
- */
-OpacitySystem.prototype.update = function update() {
-  var opacities = this.pathStore.getItems();
-  var paths = this.pathStore.getPaths();
-  var opacity;
-  var changed;
-  var node;
-  var components;
-
-  for (var i = 0, len = opacities.length; i < len; i++) {
-    node = Dispatch.getNode(paths[i]);
-    if (!node) continue;
-    components = node.getComponents();
-    opacity = opacities[i];
-
-    if ( (changed = opacity.calculate()) ) {
-      opacityChanged(node, components, opacity);
-      if (changed & Opacity.LOCAL_CHANGED) localOpacityChanged(node, components, opacity.getLocalOpacity());
-      if (changed & Opacity.WORLD_CHANGED) worldOpacityChanged(node, components, opacity.getWorldOpacity());
-    }
+class OpacitySystem {
+  constructor() {
+    this.pathStore = new PathStore();
   }
-};
+
+  /**
+   * registers a new Opacity for the given path. This opacity will be updated
+   * when the OpacitySystem updates.
+   *
+   * @method registerOpacityAtPath
+   *
+   * @param {String} path path for the opacity to be registered to.
+   * @param {Opacity} [opacity] opacity to register.
+   * @return {undefined} undefined
+   */
+  registerOpacityAtPath(path, opacity) {
+    if (!PathUtils.depth(path)) return this.pathStore.insert(path, opacity ? opacity : new Opacity());
+
+    var parent = this.pathStore.get(PathUtils.parent(path));
+
+    if (!parent)
+      throw new Error(
+        'No parent opacity registered at expected path: ' + PathUtils.parent(path)
+      );
+
+    if (opacity) opacity.setParent(parent);
+
+    this.pathStore.insert(path, opacity ? opacity : new Opacity(parent));
+  };
+
+  /**
+   * Deregisters a opacity registered at the given path.
+   *
+   * @method deregisterOpacityAtPath
+   * @return {void}
+   *
+   * @param {String} path at which to register the opacity
+   */
+  deregisterOpacityAtPath(path) {
+    this.pathStore.remove(path);
+  };
+
+  /**
+   * Method which will make the opacity currently stored at the given path a breakpoint.
+   * A opacity being a breakpoint means that both a local and world opacity will be calculated
+   * for that point. The local opacity being the concatinated opacity of all ancestor opacities up
+   * until the nearest breakpoint, and the world being the concatinated opacity of all ancestor opacities.
+   * This method throws if no opacity is at the provided path.
+   *
+   * @method
+   *
+   * @param {String} path The path at which to turn the opacity into a breakpoint
+   *
+   * @return {undefined} undefined
+   */
+  makeBreakPointAt(path) {
+    var opacity = this.pathStore.get(path);
+    if (!opacity)
+      throw new Error('No opacity Registered at path: ' + path);
+    opacity.setBreakPoint();
+  };
+
+  /**
+   * Method that will make the opacity at this location calculate a world opacity.
+   *
+   * @method
+   *
+   * @param {String} path The path at which to make the opacity calculate a world matrix
+   *
+   * @return {undefined} undefined
+   */
+  makeCalculateWorldOpacityAt(path) {
+    var opacity = this.pathStore.get(path);
+    if (!opacity)
+      throw new Error('No opacity opacity at path: ' + path);
+    opacity.setCalculateWorldOpacity();
+  };
+
+  /**
+   * Returns the instance of the opacity class associated with the given path,
+   * or undefined if no opacity is associated.
+   *
+   * @method
+   *
+   * @param {String} path The path to lookup
+   *
+   * @return {Opacity | undefined} the opacity at that path is available, else undefined.
+   */
+  get(path) {
+    return this.pathStore.get(path);
+  };
+
+  /**
+   * update is called when the opacity system requires an update.
+   * It traverses the opacity array and evaluates the necessary opacities
+   * in the scene graph with the information from the corresponding node
+   * in the scene graph
+   *
+   * @method update
+   * @return {undefined} undefined
+   */
+  update() {
+    var opacities = this.pathStore.getItems();
+    var paths = this.pathStore.getPaths();
+    var opacity;
+    var changed;
+    var node;
+    var components;
+
+    for (var i = 0, len = opacities.length; i < len; i++) {
+      node = Dispatch.getNode(paths[i]);
+      if (!node) continue;
+      components = node.getComponents();
+      opacity = opacities[i];
+
+      if ( (changed = opacity.calculate()) ) {
+        _opacityChanged(node, components, opacity);
+        if (changed & Opacity.LOCAL_CHANGED) _localOpacityChanged(node, components, opacity.getLocalOpacity());
+        if (changed & Opacity.WORLD_CHANGED) _worldOpacityChanged(node, components, opacity.getWorldOpacity());
+      }
+    }
+  };
+
+}
 
 /**
  * Private method to call when either the Local or World Opacity changes.
@@ -170,7 +173,7 @@ OpacitySystem.prototype.update = function update() {
  *
  * @return {undefined} undefined
  */
-function opacityChanged(node, components, opacity) {
+function _opacityChanged(node, components, opacity) {
   if (node.onOpacityChange) node.onOpacityChange(opacity);
   for (var i = 0, len = components.length; i < len; i++)
     if (components[i] && components[i].onOpacityChange)
@@ -190,7 +193,7 @@ function opacityChanged(node, components, opacity) {
  *
  * @return {undefined} undefined
  */
-function localOpacityChanged(node, components, opacity) {
+function _localOpacityChanged(node, components, opacity) {
   if (node.onLocalOpacityChange) node.onLocalOpacityChange(opacity);
   for (var i = 0, len = components.length; i < len; i++)
     if (components[i] && components[i].onLocalOpacityChange)
@@ -210,11 +213,12 @@ function localOpacityChanged(node, components, opacity) {
  *
  * @return {undefined} undefined
  */
-function worldOpacityChanged(node, components, opacity) {
+function _worldOpacityChanged(node, components, opacity) {
   if (node.onWorldOpacityChange) node.onWorldOpacityChange(opacity);
   for (var i = 0, len = components.length; i < len; i++)
     if (components[i] && components[i].onWorldOpacityChange)
       components[i].onWorldOpacityChange(opacity);
 }
 
-module.exports = new OpacitySystem();
+var newOpacitySystem = new OpacitySystem();
+export { newOpacitySystem as OpacitySystem };

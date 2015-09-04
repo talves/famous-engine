@@ -26,12 +26,12 @@
 
 'use strict';
 
-var Node = require('./Node');
-var Dispatch = require('./Dispatch');
-var Commands = require('./Commands');
-var TransformSystem = require('./TransformSystem');
-var OpacitySystem = require('./OpacitySystem');
-var SizeSystem = require('./SizeSystem');
+import { Node } from './Node';
+import { Dispatch } from './Dispatch';
+import { Commands } from './Commands';
+import { TransformSystem } from './TransformSystem';
+import { OpacitySystem } from './OpacitySystem';
+import { SizeSystem } from './SizeSystem';
 
 /**
  * Scene is the bottom of the scene graph. It is its own
@@ -48,110 +48,111 @@ var SizeSystem = require('./SizeSystem');
  *                 it needs to be able to send methods to
  *                 the renderers and update nodes in the scene graph
  */
-function Scene(selector, updater) {
-  if (!selector)
-    throw new Error('Scene needs to be created with a DOM selector');
-  if (!updater)
-    throw new Error('Scene needs to be created with a class like Famous');
+class Scene extends Node {
+  constructor(selector, updater) {
 
-  Node.call(this); // Scene inherits from node
+    if (!selector)
+      throw new Error('Scene needs to be created with a DOM selector');
+    if (!updater)
+      throw new Error('Scene needs to be created with a class like Famous');
 
-  this._globalUpdater = updater; // The updater that will both
-  // send messages to the renderers
-  // and update dirty nodes
+    super(); // Scene inherits from node
 
-  this._selector = selector; // reference to the DOM selector
-  // that represents the element
-  // in the dom that this context
-  // inhabits
+    this._globalUpdater = updater; // The updater that will both
+    // send messages to the renderers
+    // and update dirty nodes
 
-  this.mount(selector); // Mount the context to itself
-  // (it is its own parent)
+    this._selector = selector; // reference to the DOM selector
+    // that represents the element
+    // in the dom that this context
+    // inhabits
 
-  this._globalUpdater // message a request for the dom
-    .message(Commands.NEED_SIZE_FOR) // size of the context so that
-    .message(selector); // the scene graph has a total size
+    this.mount(selector); // Mount the context to itself
+    // (it is its own parent)
 
-  this.show(); // the context begins shown (it's already present in the dom)
+    this._globalUpdater // message a request for the dom
+      .message(Commands.NEED_SIZE_FOR) // size of the context so that
+      .message(selector); // the scene graph has a total size
+
+    this.show(); // the context begins shown (it's already present in the dom)
+  }
+
+  /**
+   * Scene getUpdater function returns the passed in updater
+   *
+   * @return {Famous} the updater for this Scene
+   */
+  getUpdater() {
+    return this._updater;
+  };
+
+  /**
+   * Returns the selector that the context was instantiated with
+   *
+   * @return {String} dom selector
+   */
+  getSelector() {
+    return this._selector;
+  };
+
+  /**
+   * Returns the dispatcher of the context. Used to send events
+   * to the nodes in the scene graph.
+   *
+   * @return {Dispatch} the Scene's Dispatch
+   * @deprecated
+   */
+  getDispatch() {
+    console.warn('Scene#getDispatch is deprecated, require the dispatch directly');
+    return Dispatch;
+  };
+
+  /**
+   * Receives an event. If the event is 'CONTEXT_RESIZE' it sets the size of the scene
+   * graph to the payload, which must be an array of numbers of at least
+   * length three representing the pixel size in 3 dimensions.
+   *
+   * @param {String} event the name of the event being received
+   * @param {*} payload the object being sent
+   *
+   * @return {undefined} undefined
+   */
+  onReceive(event, payload) {
+    // TODO: In the future the dom element that the context is attached to
+    // should have a representation as a component. It would be render sized
+    // and the context would receive its size the same way that any render size
+    // component receives its size.
+    if (event === 'CONTEXT_RESIZE') {
+      if (payload.length < 2)
+        throw new Error(
+          'CONTEXT_RESIZE\'s payload needs to be at least a pair' +
+          ' of pixel sizes'
+        );
+
+      this.setSizeMode('absolute', 'absolute', 'absolute');
+      this.setAbsoluteSize(payload[0],
+        payload[1],
+        payload[2] ? payload[2] : 0);
+
+      this._updater.message(Commands.WITH).message(this._selector).message(Commands.READY);
+    }
+  };
+
+
+  mount(path) {
+    if (this.isMounted())
+      throw new Error('Scene is already mounted at: ' + this.getLocation());
+    Dispatch.mount(path, this);
+    this._id = path;
+    this._mounted = true;
+    this._parent = this;
+    TransformSystem.registerTransformAtPath(path);
+    OpacitySystem.registerOpacityAtPath(path);
+    SizeSystem.registerSizeAtPath(path);
+  };
+
 }
 
-// Scene inherits from node
-Scene.prototype = Object.create(Node.prototype);
-Scene.prototype.constructor = Scene;
 Scene.NO_DEFAULT_COMPONENTS = true;
 
-/**
- * Scene getUpdater function returns the passed in updater
- *
- * @return {Famous} the updater for this Scene
- */
-Scene.prototype.getUpdater = function getUpdater() {
-  return this._updater;
-};
-
-/**
- * Returns the selector that the context was instantiated with
- *
- * @return {String} dom selector
- */
-Scene.prototype.getSelector = function getSelector() {
-  return this._selector;
-};
-
-/**
- * Returns the dispatcher of the context. Used to send events
- * to the nodes in the scene graph.
- *
- * @return {Dispatch} the Scene's Dispatch
- * @deprecated
- */
-Scene.prototype.getDispatch = function getDispatch() {
-  console.warn('Scene#getDispatch is deprecated, require the dispatch directly');
-  return Dispatch;
-};
-
-/**
- * Receives an event. If the event is 'CONTEXT_RESIZE' it sets the size of the scene
- * graph to the payload, which must be an array of numbers of at least
- * length three representing the pixel size in 3 dimensions.
- *
- * @param {String} event the name of the event being received
- * @param {*} payload the object being sent
- *
- * @return {undefined} undefined
- */
-Scene.prototype.onReceive = function onReceive(event, payload) {
-  // TODO: In the future the dom element that the context is attached to
-  // should have a representation as a component. It would be render sized
-  // and the context would receive its size the same way that any render size
-  // component receives its size.
-  if (event === 'CONTEXT_RESIZE') {
-    if (payload.length < 2)
-      throw new Error(
-        'CONTEXT_RESIZE\'s payload needs to be at least a pair' +
-        ' of pixel sizes'
-      );
-
-    this.setSizeMode('absolute', 'absolute', 'absolute');
-    this.setAbsoluteSize(payload[0],
-      payload[1],
-      payload[2] ? payload[2] : 0);
-
-    this._updater.message(Commands.WITH).message(this._selector).message(Commands.READY);
-  }
-};
-
-
-Scene.prototype.mount = function mount(path) {
-  if (this.isMounted())
-    throw new Error('Scene is already mounted at: ' + this.getLocation());
-  Dispatch.mount(path, this);
-  this._id = path;
-  this._mounted = true;
-  this._parent = this;
-  TransformSystem.registerTransformAtPath(path);
-  OpacitySystem.registerOpacityAtPath(path);
-  SizeSystem.registerSizeAtPath(path);
-};
-
-module.exports = Scene;
+export { Scene };

@@ -46,4 +46,4 @@ function createCheckerBoard() {
   return context.canvas;
 }
 
-module.exports = createCheckerBoard;
+export { createCheckerBoard };

@@ -24,7 +24,7 @@
 
 'use strict';
 
-var Transitionable = require('../transitions/Transitionable');
+import { Transitionable } from '../transitions/Transitionable';
 
 /**
  * @class Color
@@ -36,340 +36,343 @@ var Transitionable = require('../transitions/Transitionable');
  *
  * @return {undefined} undefined
  */
-function Color(color, transition, cb) {
-  this._r = new Transitionable(0);
-  this._g = new Transitionable(0);
-  this._b = new Transitionable(0);
-  this._opacity = new Transitionable(1);
-  if (color) this.set(color, transition, cb);
+class Color {
+  constructor(color, transition, cb) {
+    this._r = new Transitionable(0);
+    this._g = new Transitionable(0);
+    this._b = new Transitionable(0);
+    this._opacity = new Transitionable(1);
+    if (color) this.set(color, transition, cb);
+  }
+
+  /**
+   * Returns the definition of the Class: 'Color'.
+   *
+   * @method
+   *
+   * @return {String} "Color"
+   */
+  toString() {
+    return 'Color';
+  };
+
+  /**
+   * Sets the color. It accepts an optional transition parameter and callback.
+   * set(Color, transition, callback)
+   * set('#000000', transition, callback)
+   * set('black', transition, callback)
+   * set([r, g, b], transition, callback)
+   *
+   * @method
+   *
+   * @param {Color|String|Array} color Sets color using Hex, a Color instance, color name or RGB.
+   * @param {Object} transition Optional transition
+   * @param {Function} cb Callback function to be called on completion of the transition.
+   *
+   * @return {Color} Color
+   */
+  set(color, transition, cb) {
+    switch (Color.determineType(color)) {
+      case 'hex': return this.setHex(color, transition, cb);
+      case 'colorName': return this.setColor(color, transition, cb);
+      case 'instance': return this.changeTo(color, transition, cb);
+      case 'rgb': return this.setRGB(color[0], color[1], color[2], transition, cb);
+    }
+    return this;
+  };
+
+  /**
+   * Returns whether Color is still in an animating (transitioning) state.
+   *
+   * @method
+   *
+   * @returns {Boolean} Boolean value indicating whether the there is an active transition.
+   */
+  isActive() {
+    return this._r.isActive() ||
+      this._g.isActive() ||
+      this._b.isActive() ||
+      this._opacity.isActive();
+  };
+
+  /**
+   * Halt transition at current state and erase all pending actions.
+   *
+   * @method
+   *
+   * @return {Color} Color
+   */
+  halt() {
+    this._r.halt();
+    this._g.halt();
+    this._b.halt();
+    this._opacity.halt();
+    return this;
+  };
+
+  /**
+   * Sets the color values from another Color instance.
+   *
+   * @method
+   *
+   * @param {Color} color Color instance.
+   * @param {Object} transition Optional transition.
+   * @param {Function} cb Optional callback function.
+   *
+   * @return {Color} Color
+   */
+  changeTo(color, transition, cb) {
+    if (Color.isColorInstance(color)) {
+      var rgb = color.getRGB();
+      this.setRGB(rgb[0], rgb[1], rgb[2], transition, cb);
+    }
+    return this;
+  };
+
+  /**
+   * Sets the color based on static color names.
+   *
+   * @method
+   *
+   * @param {String} name Color name
+   * @param {Object} transition Optional transition parameters
+   * @param {Function} cb Optional callback
+   *
+   * @return {Color} Color
+   */
+  setColor(name, transition, cb) {
+    if (colorNames[name]) {
+      this.setHex(colorNames[name], transition, cb);
+    }
+    return this;
+  };
+
+  /**
+   * Returns the color in either RGB or with the requested format.
+   *
+   * @method
+   *
+   * @param {String} option Optional argument for determining which type of color to get (default is RGB)
+   *
+   * @returns {Object} Color in either RGB or specific option value
+   */
+  getColor(option) {
+    if (Color.isString(option))
+      option = option.toLowerCase();
+    return (option === 'hex') ? this.getHex() : this.getRGB();
+  };
+
+  /**
+   * Sets the R of the Color's RGB
+   *
+   * @method
+   *
+   * @param {Number} r R channel of color
+   * @param {Object} transition Optional transition parameters
+   * @param {Function} cb Optional callback
+   *
+   * @return {Color} Color
+   */
+  setR(r, transition, cb) {
+    this._r.set(r, transition, cb);
+    return this;
+  };
+
+  /**
+   * Sets the G of the Color's RGB
+   *
+   * @method
+   *
+   * @param {Number} g G channel of color
+   * @param {Object} transition Optional transition parameters
+   * @param {Function} cb Optional callback
+   *
+   * @return {Color} Color
+   */
+  setG(g, transition, cb) {
+    this._g.set(g, transition, cb);
+    return this;
+  };
+
+  /**
+   * Sets the B of the Color's RGB
+   *
+   * @method
+   *
+   * @param {Number} b B channel of color
+   * @param {Object} transition Optional transition parameters
+   * @param {Function} cb Optional callback
+   *
+   * @return {Color} Color
+   */
+  setB(b, transition, cb) {
+    this._b.set(b, transition, cb);
+    return this;
+  };
+
+  /**
+   * Sets opacity value
+   *
+   * @method
+   *
+   * @param {Number} opacity Opacity value
+   * @param {Object} transition Optional transition parameters
+   * @param {Function} cb Optional callback
+   *
+   * @return {Color} Color
+   */
+  setOpacity(opacity, transition, cb) {
+    this._opacity.set(opacity, transition, cb);
+    return this;
+  };
+
+  /**
+   * Sets RGB
+   *
+   * @method
+   *
+   * @param {Number} r R channel of color
+   * @param {Number} g G channel of color
+   * @param {Number} b B channel of color
+   * @param {Object} transition Optional transition parameters
+   * @param {Function} cb Optional callback
+   *
+   * @return {Color} Color
+   */
+  setRGB(r, g, b, transition, cb) {
+    this.setR(r, transition);
+    this.setG(g, transition);
+    this.setB(b, transition, cb);
+    return this;
+  };
+
+  /**
+   * Returns R of RGB
+   *
+   * @method
+   *
+   * @returns {Number} R of Color
+   */
+  getR() {
+    return this._r.get();
+  };
+
+  /**
+   * Returns G of RGB
+   *
+   * @method
+   *
+   * @returns {Number} G of Color
+   */
+  getG() {
+    return this._g.get();
+  };
+
+  /**
+   * Returns B of RGB
+   *
+   * @method
+   *
+   * @returns {Number} B of Color
+   */
+  getB() {
+    return this._b.get();
+  };
+
+  /**
+   * Returns Opacity value
+   *
+   * @method
+   *
+   * @returns {Number} Opacity
+   */
+  getOpacity() {
+    return this._opacity.get();
+  };
+
+  /**
+   * Returns RGB
+   *
+   * @method
+   *
+   * @returns {Array} RGB
+   */
+  getRGB() {
+    return [this.getR(), this.getG(), this.getB()];
+  };
+
+  /**
+   * Returns Normalized RGB
+   *
+   * @method
+   *
+   * @returns {Array} Normalized RGB
+   */
+  getNormalizedRGB() {
+    var r = this.getR() / 255.0;
+    var g = this.getG() / 255.0;
+    var b = this.getB() / 255.0;
+    return [r, g, b];
+  };
+
+  /**
+   * Returns Normalized RGBA
+   *
+   * @method
+   *
+   * @returns {Array} Normalized RGBA
+   */
+  getNormalizedRGBA() {
+    var r = this.getR() / 255.0;
+    var g = this.getG() / 255.0;
+    var b = this.getB() / 255.0;
+    var opacity = this.getOpacity();
+    return [r, g, b, opacity];
+  };
+
+  /**
+   * Returns the current color in Hex
+   *
+   * @method
+   *
+   * @returns {String} Hex value
+   */
+  getHex() {
+    var r = Color.toHex(this.getR());
+    var g = Color.toHex(this.getG());
+    var b = Color.toHex(this.getB());
+    return '#' + r + g + b;
+  };
+
+  /**
+   * Sets color using Hex
+   *
+   * @method
+   *
+   * @param {String} hex Hex value
+   * @param {Object} transition Optional transition parameters
+   * @param {Function} cb Optional callback
+   *
+   * @return {Color} Color
+   */
+  setHex(hex, transition, cb) {
+    hex = (hex.charAt(0) === '#') ? hex.substring(1, hex.length) : hex;
+
+    if (hex.length === 3) {
+      var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+      hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+        return r + r + g + g + b + b;
+      });
+    }
+
+    var r = parseInt(hex.substring(0, 2), 16);
+    var g = parseInt(hex.substring(2, 4), 16);
+    var b = parseInt(hex.substring(4, 6), 16);
+    this.setRGB(r, g, b, transition, cb);
+    return this;
+  };
+
 }
-
-/**
- * Returns the definition of the Class: 'Color'.
- *
- * @method
- *
- * @return {String} "Color"
- */
-Color.prototype.toString = function toString() {
-  return 'Color';
-};
-
-/**
- * Sets the color. It accepts an optional transition parameter and callback.
- * set(Color, transition, callback)
- * set('#000000', transition, callback)
- * set('black', transition, callback)
- * set([r, g, b], transition, callback)
- *
- * @method
- *
- * @param {Color|String|Array} color Sets color using Hex, a Color instance, color name or RGB.
- * @param {Object} transition Optional transition
- * @param {Function} cb Callback function to be called on completion of the transition.
- *
- * @return {Color} Color
- */
-Color.prototype.set = function set(color, transition, cb) {
-  switch (Color.determineType(color)) {
-    case 'hex': return this.setHex(color, transition, cb);
-    case 'colorName': return this.setColor(color, transition, cb);
-    case 'instance': return this.changeTo(color, transition, cb);
-    case 'rgb': return this.setRGB(color[0], color[1], color[2], transition, cb);
-  }
-  return this;
-};
-
-/**
- * Returns whether Color is still in an animating (transitioning) state.
- *
- * @method
- *
- * @returns {Boolean} Boolean value indicating whether the there is an active transition.
- */
-Color.prototype.isActive = function isActive() {
-  return this._r.isActive() ||
-    this._g.isActive() ||
-    this._b.isActive() ||
-    this._opacity.isActive();
-};
-
-/**
- * Halt transition at current state and erase all pending actions.
- *
- * @method
- *
- * @return {Color} Color
- */
-Color.prototype.halt = function halt() {
-  this._r.halt();
-  this._g.halt();
-  this._b.halt();
-  this._opacity.halt();
-  return this;
-};
-
-/**
- * Sets the color values from another Color instance.
- *
- * @method
- *
- * @param {Color} color Color instance.
- * @param {Object} transition Optional transition.
- * @param {Function} cb Optional callback function.
- *
- * @return {Color} Color
- */
-Color.prototype.changeTo = function changeTo(color, transition, cb) {
-  if (Color.isColorInstance(color)) {
-    var rgb = color.getRGB();
-    this.setRGB(rgb[0], rgb[1], rgb[2], transition, cb);
-  }
-  return this;
-};
-
-/**
- * Sets the color based on static color names.
- *
- * @method
- *
- * @param {String} name Color name
- * @param {Object} transition Optional transition parameters
- * @param {Function} cb Optional callback
- *
- * @return {Color} Color
- */
-Color.prototype.setColor = function setColor(name, transition, cb) {
-  if (colorNames[name]) {
-    this.setHex(colorNames[name], transition, cb);
-  }
-  return this;
-};
-
-/**
- * Returns the color in either RGB or with the requested format.
- *
- * @method
- *
- * @param {String} option Optional argument for determining which type of color to get (default is RGB)
- *
- * @returns {Object} Color in either RGB or specific option value
- */
-Color.prototype.getColor = function getColor(option) {
-  if (Color.isString(option))
-    option = option.toLowerCase();
-  return (option === 'hex') ? this.getHex() : this.getRGB();
-};
-
-/**
- * Sets the R of the Color's RGB
- *
- * @method
- *
- * @param {Number} r R channel of color
- * @param {Object} transition Optional transition parameters
- * @param {Function} cb Optional callback
- *
- * @return {Color} Color
- */
-Color.prototype.setR = function setR(r, transition, cb) {
-  this._r.set(r, transition, cb);
-  return this;
-};
-
-/**
- * Sets the G of the Color's RGB
- *
- * @method
- *
- * @param {Number} g G channel of color
- * @param {Object} transition Optional transition parameters
- * @param {Function} cb Optional callback
- *
- * @return {Color} Color
- */
-Color.prototype.setG = function setG(g, transition, cb) {
-  this._g.set(g, transition, cb);
-  return this;
-};
-
-/**
- * Sets the B of the Color's RGB
- *
- * @method
- *
- * @param {Number} b B channel of color
- * @param {Object} transition Optional transition parameters
- * @param {Function} cb Optional callback
- *
- * @return {Color} Color
- */
-Color.prototype.setB = function setB(b, transition, cb) {
-  this._b.set(b, transition, cb);
-  return this;
-};
-
-/**
- * Sets opacity value
- *
- * @method
- *
- * @param {Number} opacity Opacity value
- * @param {Object} transition Optional transition parameters
- * @param {Function} cb Optional callback
- *
- * @return {Color} Color
- */
-Color.prototype.setOpacity = function setOpacity(opacity, transition, cb) {
-  this._opacity.set(opacity, transition, cb);
-  return this;
-};
-
-/**
- * Sets RGB
- *
- * @method
- *
- * @param {Number} r R channel of color
- * @param {Number} g G channel of color
- * @param {Number} b B channel of color
- * @param {Object} transition Optional transition parameters
- * @param {Function} cb Optional callback
- *
- * @return {Color} Color
- */
-Color.prototype.setRGB = function setRGB(r, g, b, transition, cb) {
-  this.setR(r, transition);
-  this.setG(g, transition);
-  this.setB(b, transition, cb);
-  return this;
-};
-
-/**
- * Returns R of RGB
- *
- * @method
- *
- * @returns {Number} R of Color
- */
-Color.prototype.getR = function getR() {
-  return this._r.get();
-};
-
-/**
- * Returns G of RGB
- *
- * @method
- *
- * @returns {Number} G of Color
- */
-Color.prototype.getG = function getG() {
-  return this._g.get();
-};
-
-/**
- * Returns B of RGB
- *
- * @method
- *
- * @returns {Number} B of Color
- */
-Color.prototype.getB = function getB() {
-  return this._b.get();
-};
-
-/**
- * Returns Opacity value
- *
- * @method
- *
- * @returns {Number} Opacity
- */
-Color.prototype.getOpacity = function getOpacity() {
-  return this._opacity.get();
-};
-
-/**
- * Returns RGB
- *
- * @method
- *
- * @returns {Array} RGB
- */
-Color.prototype.getRGB = function getRGB() {
-  return [this.getR(), this.getG(), this.getB()];
-};
-
-/**
- * Returns Normalized RGB
- *
- * @method
- *
- * @returns {Array} Normalized RGB
- */
-Color.prototype.getNormalizedRGB = function getNormalizedRGB() {
-  var r = this.getR() / 255.0;
-  var g = this.getG() / 255.0;
-  var b = this.getB() / 255.0;
-  return [r, g, b];
-};
-
-/**
- * Returns Normalized RGBA
- *
- * @method
- *
- * @returns {Array} Normalized RGBA
- */
-Color.prototype.getNormalizedRGBA = function getNormalizedRGB() {
-  var r = this.getR() / 255.0;
-  var g = this.getG() / 255.0;
-  var b = this.getB() / 255.0;
-  var opacity = this.getOpacity();
-  return [r, g, b, opacity];
-};
-
-/**
- * Returns the current color in Hex
- *
- * @method
- *
- * @returns {String} Hex value
- */
-Color.prototype.getHex = function getHex() {
-  var r = Color.toHex(this.getR());
-  var g = Color.toHex(this.getG());
-  var b = Color.toHex(this.getB());
-  return '#' + r + g + b;
-};
-
-/**
- * Sets color using Hex
- *
- * @method
- *
- * @param {String} hex Hex value
- * @param {Object} transition Optional transition parameters
- * @param {Function} cb Optional callback
- *
- * @return {Color} Color
- */
-Color.prototype.setHex = function setHex(hex, transition, cb) {
-  hex = (hex.charAt(0) === '#') ? hex.substring(1, hex.length) : hex;
-
-  if (hex.length === 3) {
-    var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-    hex = hex.replace(shorthandRegex, function(m, r, g, b) {
-      return r + r + g + g + b + b;
-    });
-  }
-
-  var r = parseInt(hex.substring(0, 2), 16);
-  var g = parseInt(hex.substring(2, 4), 16);
-  var b = parseInt(hex.substring(4, 6), 16);
-  this.setRGB(r, g, b, transition, cb);
-  return this;
-};
 
 /**
  * Converts a number to a hex value
@@ -595,4 +598,4 @@ var colorNames = {
   yellowgreen: '#9acd32'
 };
 
-module.exports = Color;
+export { Color };

@@ -24,8 +24,8 @@
 
 'use strict';
 
-var Vec3 = require('../math/Vec3');
-var Vec2 = require('../math/Vec2');
+import { Vec3 } from '../math/Vec3';
+import { Vec2 } from '../math/Vec2';
 
 var outputs = [
   new Vec3(),
@@ -567,4 +567,4 @@ GeometryHelper.addBackfaceTriangles = function addBackfaceTriangles(vertices, in
   }
 };
 
-module.exports = GeometryHelper;
+export { GeometryHelper };

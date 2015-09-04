@@ -24,8 +24,8 @@
 
 'use strict';
 
-var Light = require('./Light');
-var Commands = require('../../core/Commands');
+import { Light } from './Light';
+import { Commands } from '../../core/Commands';
 
 /**
  * AmbientLight extends the functionality of Light. It sets the ambience in
@@ -40,19 +40,12 @@ var Commands = require('../../core/Commands');
  *
  * @return {undefined} undefined
  */
-function AmbientLight(node) {
-  Light.call(this, node);
-  this.commands.color = Commands.GL_AMBIENT_LIGHT;
+class AmbientLight extends Light {
+  constructor(node) {
+    super(node);
+    this.commands.color = Commands.GL_AMBIENT_LIGHT;
+  }
+
 }
 
-/**
- * Extends Light constructor
- */
-AmbientLight.prototype = Object.create(Light.prototype);
-
-/**
- * Sets AmbientLight as the constructor
- */
-AmbientLight.prototype.constructor = AmbientLight;
-
-module.exports = AmbientLight;
+export { AmbientLight };

@@ -24,16 +24,26 @@
 
 'use strict';
 
-module.exports = {
-  CallbackStore: require('./CallbackStore'),
-  clamp: require('./clamp'),
-  clone: require('./clone'),
-  Color: require('./Color'),
-  KeyCodes: require('./KeyCodes'),
-  keyValueToArrays: require('./keyValueToArrays'),
-  loadURL: require('./loadURL'),
-  ObjectManager: require('./ObjectManager'),
-  Registry: require('./Registry'),
-  strip: require('./strip'),
-  vendorPrefix: require('./vendorPrefix')
-};
+import { CallbackStore } from './CallbackStore';
+import { clamp } from './clamp';
+import { clone } from './clone';
+import { Color } from './Color';
+import { KeyCodes } from './KeyCodes';
+import { keyValueToArrays } from './keyValueToArrays';
+import { loadURL } from './loadURL';
+import { ObjectManager } from './ObjectManager';
+import { Registry } from './Registry';
+import { strip } from './strip';
+import { vendorPrefix } from './vendorPrefix';
+
+export { CallbackStore };
+export { clamp };
+export { clone };
+export { Color };
+export { KeyCodes };
+export { keyValueToArrays };
+export { loadURL };
+export { ObjectManager };
+export { Registry };
+export { strip };
+export { vendorPrefix };

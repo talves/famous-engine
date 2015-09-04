@@ -24,13 +24,14 @@
 
 'use strict';
 
-var Particle = require('./Particle');
-var Mat33 = require('../../math/Mat33');
-var Vec3 = require('../../math/Vec3');
-var Geometry = require('../Geometry');
+import { Particle } from './Particle';
+import { Mat33 } from '../../math/Mat33';
+import { Vec3 } from '../../math/Vec3';
+import * as Geometry from '../Geometry';
 var ConvexHull = Geometry.ConvexHull;
 
 var TEMP_REGISTER = new Vec3();
+
 
 /**
  * Returns a constructor for a physical body reflecting the shape defined by input ConvexHull or Vec3 array.
@@ -53,137 +54,136 @@ function convexBodyFactory(hull) {
    * @class ConvexBody
    * @param {Object} options The options hash.
    */
-  function ConvexBody(options) {
-    Particle.call(this, options);
+  class ConvexBody extends Particle {
+    constructor(options) {
+      super(options);
 
-    var originalSize = hull.polyhedralProperties.size;
-    var size = options.size || originalSize;
+      var originalSize = hull.polyhedralProperties.size;
+      var size = options.size || originalSize;
 
-    var scaleX = size[0] / originalSize[0];
-    var scaleY = size[1] / originalSize[1];
-    var scaleZ = size[2] / originalSize[2];
+      var scaleX = size[0] / originalSize[0];
+      var scaleY = size[1] / originalSize[1];
+      var scaleZ = size[2] / originalSize[2];
 
-    this._scale = [scaleX, scaleY, scaleZ];
+      this._scale = [scaleX, scaleY, scaleZ];
 
-    var T = new Mat33([scaleX, 0, 0, 0, scaleY, 0, 0, 0, scaleZ]);
+      var T = new Mat33([scaleX, 0, 0, 0, scaleY, 0, 0, 0, scaleZ]);
 
-    this.hull = hull;
+      this.hull = hull;
 
-    this.vertices = [];
-    for (var i = 0, len = hull.vertices.length; i < len; i++) {
-      this.vertices.push(T.vectorMultiply(hull.vertices[i], new Vec3()));
-    }
-
-    _computeInertiaProperties.call(this, T);
-    this.inverseInertia.copy(this.localInverseInertia);
-    this.updateInertia();
-
-    var w = options.angularVelocity;
-    if (w) this.setAngularVelocity(w.x, w.y, w.z);
-  }
-
-  ConvexBody.prototype = Object.create(Particle.prototype);
-  ConvexBody.prototype.constructor = ConvexBody;
-
-  /**
-   * Set the size and recalculate
-   *
-   * @method
-   * @chainable
-   * @param {Number} x The x span.
-   * @param {Number} y The y span.
-   * @param {Number} z The z span.
-   * @return {ConvexBody} this
-   */
-  ConvexBody.prototype.setSize = function setSize(x, y, z) {
-    var originalSize = hull.polyhedralProperties.size;
-
-    this.size[0] = x;
-    this.size[1] = y;
-    this.size[2] = z;
-
-    var scaleX = x / originalSize[0];
-    var scaleY = y / originalSize[1];
-    var scaleZ = z / originalSize[2];
-
-    this._scale = [scaleX, scaleY, scaleZ];
-
-    var T = new Mat33([scaleX, 0, 0, 0, scaleY, 0, 0, 0, scaleZ]);
-
-    var vertices = this.vertices;
-    for (var i = 0, len = hull.vertices.length; i < len; i++) {
-      T.vectorMultiply(hull.vertices[i], vertices[i]);
-    }
-
-    return this;
-  };
-
-  /**
-   * Update the local inertia and inverse inertia to reflect the current size.
-   *
-   * @method
-   * @return {ConvexBody} this
-   */
-  ConvexBody.prototype.updateLocalInertia = function updateInertia() {
-    var scaleX = this._scale[0];
-    var scaleY = this._scale[1];
-    var scaleZ = this._scale[2];
-
-    var T = new Mat33([scaleX, 0, 0, 0, scaleY, 0, 0, 0, scaleZ]);
-
-    _computeInertiaProperties.call(this, T);
-
-    return this;
-  };
-
-  /**
-   * Retrieve the vertex furthest in a direction. Used internally for collision detection.
-   *
-   * @method
-   * @param {Vec3} direction The direction in which to search.
-   * @return {Vec3} The furthest vertex.
-   */
-  ConvexBody.prototype.support = function support(direction) {
-    var vertices = this.vertices;
-    var vertex, dot, furthest;
-    var max = -Infinity;
-    for (var i = 0, len = vertices.length; i < len; i++) {
-      vertex = vertices[i];
-      dot = Vec3.dot(vertex, direction);
-      if (dot > max) {
-        furthest = vertex;
-        max = dot;
+      this.vertices = [];
+      for (var i = 0, len = hull.vertices.length; i < len; i++) {
+        this.vertices.push(T.vectorMultiply(hull.vertices[i], new Vec3()));
       }
-    }
-    return furthest;
-  };
 
-  /**
-   * Update vertices to reflect current orientation.
-   *
-   * @method
-   * @return {ConvexBody} this
-   */
-  ConvexBody.prototype.updateShape = function updateShape() {
-    var vertices = this.vertices;
-    var q = this.orientation;
-    var modelVertices = this.hull.vertices;
+      _computeInertiaProperties.call(this, T);
+      this.inverseInertia.copy(this.localInverseInertia);
+      this.updateInertia();
 
-    var scaleX = this._scale[0];
-    var scaleY = this._scale[1];
-    var scaleZ = this._scale[2];
-
-    var t = TEMP_REGISTER;
-    for (var i = 0, len = vertices.length; i < len; i++) {
-      t.copy(modelVertices[i]);
-      t.x *= scaleX;
-      t.y *= scaleY;
-      t.z *= scaleZ;
-      Vec3.applyRotation(t, q, vertices[i]);
+      var w = options.angularVelocity;
+      if (w) this.setAngularVelocity(w.x, w.y, w.z);
     }
 
-    return this;
-  };
+    /**
+     * Set the size and recalculate
+     *
+     * @method
+     * @chainable
+     * @param {Number} x The x span.
+     * @param {Number} y The y span.
+     * @param {Number} z The z span.
+     * @return {ConvexBody} this
+     */
+    setSize(x, y, z) {
+      var originalSize = hull.polyhedralProperties.size;
+
+      this.size[0] = x;
+      this.size[1] = y;
+      this.size[2] = z;
+
+      var scaleX = x / originalSize[0];
+      var scaleY = y / originalSize[1];
+      var scaleZ = z / originalSize[2];
+
+      this._scale = [scaleX, scaleY, scaleZ];
+
+      var T = new Mat33([scaleX, 0, 0, 0, scaleY, 0, 0, 0, scaleZ]);
+
+      var vertices = this.vertices;
+      for (var i = 0, len = hull.vertices.length; i < len; i++) {
+        T.vectorMultiply(hull.vertices[i], vertices[i]);
+      }
+
+      return this;
+    };
+
+    /**
+     * Update the local inertia and inverse inertia to reflect the current size.
+     *
+     * @method
+     * @return {ConvexBody} this
+     */
+    updateLocalInertia() {
+      var scaleX = this._scale[0];
+      var scaleY = this._scale[1];
+      var scaleZ = this._scale[2];
+
+      var T = new Mat33([scaleX, 0, 0, 0, scaleY, 0, 0, 0, scaleZ]);
+
+      _computeInertiaProperties.call(this, T);
+
+      return this;
+    };
+
+    /**
+     * Retrieve the vertex furthest in a direction. Used internally for collision detection.
+     *
+     * @method
+     * @param {Vec3} direction The direction in which to search.
+     * @return {Vec3} The furthest vertex.
+     */
+    support(direction) {
+      var vertices = this.vertices;
+      var vertex, dot, furthest;
+      var max = -Infinity;
+      for (var i = 0, len = vertices.length; i < len; i++) {
+        vertex = vertices[i];
+        dot = Vec3.dot(vertex, direction);
+        if (dot > max) {
+          furthest = vertex;
+          max = dot;
+        }
+      }
+      return furthest;
+    };
+
+    /**
+     * Update vertices to reflect current orientation.
+     *
+     * @method
+     * @return {ConvexBody} this
+     */
+    updateShape() {
+      var vertices = this.vertices;
+      var q = this.orientation;
+      var modelVertices = this.hull.vertices;
+
+      var scaleX = this._scale[0];
+      var scaleY = this._scale[1];
+      var scaleZ = this._scale[2];
+
+      var t = TEMP_REGISTER;
+      for (var i = 0, len = vertices.length; i < len; i++) {
+        t.copy(modelVertices[i]);
+        t.x *= scaleX;
+        t.y *= scaleY;
+        t.z *= scaleZ;
+        Vec3.applyRotation(t, q, vertices[i]);
+      }
+
+      return this;
+    };
+  }
 
   return ConvexBody;
 }
@@ -252,4 +252,4 @@ function _computeInertiaProperties(T) {
   Mat33.inverse(this.localInertia, this.localInverseInertia);
 }
 
-module.exports = convexBodyFactory;
+export { convexBodyFactory };

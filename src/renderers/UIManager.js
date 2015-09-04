@@ -24,7 +24,7 @@
 
 'use strict';
 
-var Commands = require('../core/Commands');
+import { Commands } from '../core/Commands';
 
 /**
  * The UIManager is being updated by an Engine by consecutively calling its
@@ -54,103 +54,106 @@ var Commands = require('../core/Commands');
  * @param {RenderLoop} renderLoop an instance of Engine used for executing
  * the `ENGINE` commands on.
  */
-function UIManager(thread, compositor, renderLoop) {
-  this._thread = thread;
-  this._compositor = compositor;
-  this._renderLoop = renderLoop;
+class UIManager {
+  constructor(thread, compositor, renderLoop) {
+    this._thread = thread;
+    this._compositor = compositor;
+    this._renderLoop = renderLoop;
 
-  this._renderLoop.update(this);
+    this._renderLoop.update(this);
 
-  var _this = this;
-  this._thread.onmessage = function(ev) {
-    var message = ev.data ? ev.data : ev;
-    if (message[0] === Commands.ENGINE) {
-      switch (message[1]) {
-        case Commands.START:
-          _this._engine.start();
-          break;
-        case Commands.STOP:
-          _this._engine.stop();
-          break;
-        default:
-          console.error(
-            'Unknown ENGINE command "' + message[1] + '"'
-          );
-          break;
+    var _this = this;
+    this._thread.onmessage = function(ev) {
+      var message = ev.data ? ev.data : ev;
+      if (message[0] === Commands.ENGINE) {
+        switch (message[1]) {
+          case Commands.START:
+            _this._engine.start();
+            break;
+          case Commands.STOP:
+            _this._engine.stop();
+            break;
+          default:
+            console.error(
+              'Unknown ENGINE command "' + message[1] + '"'
+            );
+            break;
+        }
+      } else {
+        _this._compositor.receiveCommands(message);
       }
-    } else {
-      _this._compositor.receiveCommands(message);
-    }
+    };
+    this._thread.onerror = function(error) {
+      console.error(error);
+    };
+  }
+
+  /**
+   * Returns the thread being used by the UIManager.
+   * This could either be an an actual web worker or a `FamousEngine` singleton.
+   *
+   * @method
+   *
+   * @return {Worker|FamousEngine} Either a web worker or a `FamousEngine` singleton.
+   */
+  getThread() {
+    return this._thread;
   };
-  this._thread.onerror = function(error) {
-    console.error(error);
+
+  /**
+   * Returns the compositor being used by this UIManager.
+   *
+   * @method
+   *
+   * @return {Compositor} The compositor used by the UIManager.
+   */
+  getCompositor() {
+    return this._compositor;
   };
+
+  /**
+   * Returns the engine being used by this UIManager.
+   *
+   * @method
+   * @deprecated Use {@link UIManager#getRenderLoop instead!}
+   *
+   * @return {Engine} The engine used by the UIManager.
+   */
+  getEngine() {
+    return this._renderLoop;
+  };
+
+
+  /**
+   * Returns the render loop currently being used by the UIManager.
+   *
+   * @method
+   *
+   * @return {RenderLoop}  The registered render loop used for updating the
+   * UIManager.
+   */
+  getRenderLoop() {
+    return this._renderLoop;
+  };
+
+  /**
+   * Update method being invoked by the Engine on every `requestAnimationFrame`.
+   * Used for updating the notion of time within the managed thread by sending
+   * a FRAME command and sending messages to
+   *
+   * @method
+   *
+   * @param  {Number} time unix timestamp to be passed down to the worker as a
+   * FRAME command
+   * @return {undefined} undefined
+   */
+  update(time) {
+    this._thread.postMessage([Commands.FRAME, time]);
+    var threadMessages = this._compositor.drawCommands();
+    this._thread.postMessage(threadMessages);
+    this._compositor.clearCommands();
+  };
+
 }
 
-/**
- * Returns the thread being used by the UIManager.
- * This could either be an an actual web worker or a `FamousEngine` singleton.
- *
- * @method
- *
- * @return {Worker|FamousEngine} Either a web worker or a `FamousEngine` singleton.
- */
-UIManager.prototype.getThread = function getThread() {
-  return this._thread;
-};
-
-/**
- * Returns the compositor being used by this UIManager.
- *
- * @method
- *
- * @return {Compositor} The compositor used by the UIManager.
- */
-UIManager.prototype.getCompositor = function getCompositor() {
-  return this._compositor;
-};
-
-/**
- * Returns the engine being used by this UIManager.
- *
- * @method
- * @deprecated Use {@link UIManager#getRenderLoop instead!}
- *
- * @return {Engine} The engine used by the UIManager.
- */
-UIManager.prototype.getEngine = function getEngine() {
-  return this._renderLoop;
-};
-
-
-/**
- * Returns the render loop currently being used by the UIManager.
- *
- * @method
- *
- * @return {RenderLoop}  The registered render loop used for updating the
- * UIManager.
- */
-UIManager.prototype.getRenderLoop = function getRenderLoop() {
-  return this._renderLoop;
-};
-
-/**
- * Update method being invoked by the Engine on every `requestAnimationFrame`.
- * Used for updating the notion of time within the managed thread by sending
- * a FRAME command and sending messages to
- *
- * @method
- *
- * @param  {Number} time unix timestamp to be passed down to the worker as a
- * FRAME command
- * @return {undefined} undefined
- */
-UIManager.prototype.update = function update(time) {
-  this._thread.postMessage([Commands.FRAME, time]);
-  var threadMessages = this._compositor.drawCommands();
-  this._thread.postMessage(threadMessages);
-  this._compositor.clearCommands();
-};
-
-module.exports = UIManager;
+export { UIManager };

@@ -33,52 +33,55 @@ var _ID = 0;
  * @class Constraint
  * @param {Object} options The options hash.
  */
-function Constraint(options) {
-  options = options || {};
-  this.setOptions(options);
+class Constraint {
+  constructor(options) {
+    options = options || {};
+    this.setOptions(options);
 
-  this._ID = _ID++;
+    this._ID = _ID++;
+  }
+
+  /**
+   * Decorates the Constraint with the options object.
+   *
+   * @method
+   * @param {Object} options The options hash.
+   * @return {undefined} undefined
+   */
+  setOptions(options) {
+    for (var key in options) this[key] = options[key];
+    this.init(options);
+  };
+
+  /**
+   * Method invoked upon instantiation and the setting of options.
+   *
+   * @method
+   * @param {Object} options The options hash.
+   * @return {undefined} undefined
+   */
+  init(options) {};
+
+  /**
+   * Detect violations of the constraint. Warm start the constraint, if possible.
+   *
+   * @method
+   * @param {Number} time The current time in the physics engine.
+   * @param {Number} dt The physics engine frame delta.
+   * @return {undefined} undefined
+   */
+  update(time, dt) {};
+
+  /**
+   * Apply impulses to resolve the constraint.
+   *
+   * @method
+   * @param {Number} time The current time in the physics engine.
+   * @param {Number} dt The physics engine frame delta.
+   * @return {undefined} undefined
+   */
+  resolve(time, dt) {};
+
 }
 
-/**
- * Decorates the Constraint with the options object.
- *
- * @method
- * @param {Object} options The options hash.
- * @return {undefined} undefined
- */
-Constraint.prototype.setOptions = function setOptions(options) {
-  for (var key in options) this[key] = options[key];
-  this.init(options);
-};
-
-/**
- * Method invoked upon instantiation and the setting of options.
- *
- * @method
- * @param {Object} options The options hash.
- * @return {undefined} undefined
- */
-Constraint.prototype.init = function init(options) {};
-
-/**
- * Detect violations of the constraint. Warm start the constraint, if possible.
- *
- * @method
- * @param {Number} time The current time in the physics engine.
- * @param {Number} dt The physics engine frame delta.
- * @return {undefined} undefined
- */
-Constraint.prototype.update = function update(time, dt) {};
-
-/**
- * Apply impulses to resolve the constraint.
- *
- * @method
- * @param {Number} time The current time in the physics engine.
- * @param {Number} dt The physics engine frame delta.
- * @return {undefined} undefined
- */
-Constraint.prototype.resolve = function resolve(time, dt) {};
-
-module.exports = Constraint;
+export { Constraint };

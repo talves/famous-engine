@@ -24,8 +24,8 @@
 
 'use strict';
 
-var Geometry = require('../Geometry');
-var GeometryHelper = require('../GeometryHelper');
+import { Geometry } from '../Geometry';
+import { GeometryHelper } from '../GeometryHelper';
 
 /**
  * This function returns a new static geometry, which is passed
@@ -39,59 +39,60 @@ var GeometryHelper = require('../GeometryHelper');
  *
  * @return {Object} constructed geometry
  */
-function GeodesicSphere(options) {
-  if (!(this instanceof GeodesicSphere)) return new GeodesicSphere(options);
+class GeodesicSphere extends Geometry {
+  constructor(options) {
+    //handled by es6 transpiler
+    //if (!(this instanceof GeodesicSphere)) return new GeodesicSphere(options);
 
-  var t = (1 + Math.sqrt(5)) * 0.5;
+    var t = (1 + Math.sqrt(5)) * 0.5;
 
-  var vertices = [
-    -1, t, 0, 1, t, 0, -1, -t, 0, 1, -t, 0,
-    0, -1, -t, 0, 1, -t, 0, -1, t, 0, 1, t,
-    t, 0, 1, t, 0, -1, -t, 0, 1, -t, 0, -1
-  ];
-  var indices = [
-    0, 5, 11, 0, 1, 5, 0, 7, 1, 0, 10, 7, 0, 11, 10,
-    1, 9, 5, 5, 4, 11, 11, 2, 10, 10, 6, 7, 7, 8, 1,
-    3, 4, 9, 3, 2, 4, 3, 6, 2, 3, 8, 6, 3, 9, 8,
-    4, 5, 9, 2, 11, 4, 6, 10, 2, 8, 7, 6, 9, 1, 8
-  ];
+    var vertices = [
+      -1, t, 0, 1, t, 0, -1, -t, 0, 1, -t, 0,
+      0, -1, -t, 0, 1, -t, 0, -1, t, 0, 1, t,
+      t, 0, 1, t, 0, -1, -t, 0, 1, -t, 0, -1
+    ];
+    var indices = [
+      0, 5, 11, 0, 1, 5, 0, 7, 1, 0, 10, 7, 0, 11, 10,
+      1, 9, 5, 5, 4, 11, 11, 2, 10, 10, 6, 7, 7, 8, 1,
+      3, 4, 9, 3, 2, 4, 3, 6, 2, 3, 8, 6, 3, 9, 8,
+      4, 5, 9, 2, 11, 4, 6, 10, 2, 8, 7, 6, 9, 1, 8
+    ];
 
-  vertices = GeometryHelper.normalizeAll(vertices);
+    vertices = GeometryHelper.normalizeAll(vertices);
 
-  options = options || {};
-  var detail = options.detail || 3;
+    options = options || {};
+    var detail = options.detail || 3;
 
-  while (--detail) GeometryHelper.subdivideSpheroid(vertices, indices);
-  GeometryHelper.getUniqueFaces(vertices, indices);
+    while (--detail) GeometryHelper.subdivideSpheroid(vertices, indices);
+    GeometryHelper.getUniqueFaces(vertices, indices);
 
-  var normals = GeometryHelper.computeNormals(vertices, indices);
-  var textureCoords = GeometryHelper.getSpheroidUV(vertices);
+    var normals = GeometryHelper.computeNormals(vertices, indices);
+    var textureCoords = GeometryHelper.getSpheroidUV(vertices);
 
-  options.buffers = [
-    {
-      name: 'a_pos',
-      data: vertices
-    },
-    {
-      name: 'a_texCoord',
-      data: textureCoords,
-      size: 2
-    },
-    {
-      name: 'a_normals',
-      data: normals
-    },
-    {
-      name: 'indices',
-      data: indices,
-      size: 1
-    }
-  ];
+    options.buffers = [
+      {
+        name: 'a_pos',
+        data: vertices
+      },
+      {
+        name: 'a_texCoord',
+        data: textureCoords,
+        size: 2
+      },
+      {
+        name: 'a_normals',
+        data: normals
+      },
+      {
+        name: 'indices',
+        data: indices,
+        size: 1
+      }
+    ];
 
-  Geometry.call(this, options);
+    super(options);
+  }
+
 }
 
-GeodesicSphere.prototype = Object.create(Geometry.prototype);
-GeodesicSphere.prototype.constructor = GeodesicSphere;
-
-module.exports = GeodesicSphere;
+export { GeodesicSphere };

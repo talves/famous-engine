@@ -24,7 +24,7 @@
 
 'use strict';
 
-var UIEvent = require('./UIEvent');
+import { UIEvent } from './UIEvent';
 
 /**
  * See [Input Events](http://w3c.github.io/editing-explainer/input-events.html#idl-def-InputEvent).
@@ -34,56 +34,56 @@ var UIEvent = require('./UIEvent');
  *
  * @param {Event} ev The native DOM event.
  */
-function InputEvent(ev) {
-  // [Constructor(DOMString typeArg, optional InputEventInit inputEventInitDict)]
-  // interface InputEvent : UIEvent {
-  //     readonly    attribute DOMString inputType;
-  //     readonly    attribute DOMString data;
-  //     readonly    attribute boolean   isComposing;
-  //     readonly    attribute Range     targetRange;
-  // };
+class InputEvent extends UIEvent {
+  constructor(ev) {
+    // [Constructor(DOMString typeArg, optional InputEventInit inputEventInitDict)]
+    // interface InputEvent : UIEvent {
+    //     readonly    attribute DOMString inputType;
+    //     readonly    attribute DOMString data;
+    //     readonly    attribute boolean   isComposing;
+    //     readonly    attribute Range     targetRange;
+    // };
 
-  UIEvent.call(this, ev);
+    super(ev);
+
+    /**
+     * @name    InputEvent#inputType
+     * @type    String
+     */
+    this.inputType = ev.inputType;
+
+    /**
+     * @name    InputEvent#data
+     * @type    String
+     */
+    this.data = ev.data;
+
+    /**
+     * @name    InputEvent#isComposing
+     * @type    Boolean
+     */
+    this.isComposing = ev.isComposing;
+
+    /**
+     * **Limited browser support**.
+     *
+     * @name    InputEvent#targetRange
+     * @type    Boolean
+     */
+    this.targetRange = ev.targetRange;
+  }
 
   /**
-   * @name    InputEvent#inputType
-   * @type    String
-   */
-  this.inputType = ev.inputType;
-
-  /**
-   * @name    InputEvent#data
-   * @type    String
-   */
-  this.data = ev.data;
-
-  /**
-   * @name    InputEvent#isComposing
-   * @type    Boolean
-   */
-  this.isComposing = ev.isComposing;
-
-  /**
-   * **Limited browser support**.
+   * Return the name of the event type
    *
-   * @name    InputEvent#targetRange
-   * @type    Boolean
+   * @method
+   *
+   * @return {String} Name of the event type
    */
-  this.targetRange = ev.targetRange;
+  toString() {
+    return 'InputEvent';
+  };
+
 }
 
-InputEvent.prototype = Object.create(UIEvent.prototype);
-InputEvent.prototype.constructor = InputEvent;
-
-/**
- * Return the name of the event type
- *
- * @method
- *
- * @return {String} Name of the event type
- */
-InputEvent.prototype.toString = function toString() {
-  return 'InputEvent';
-};
-
-module.exports = InputEvent;
+export { InputEvent };

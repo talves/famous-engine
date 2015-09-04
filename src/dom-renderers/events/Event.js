@@ -40,79 +40,82 @@
  *
  * @param {Event} ev The native DOM event.
  */
-function Event(ev) {
-  // [Constructor(DOMString type, optional EventInit eventInitDict),
-  //  Exposed=Window,Worker]
-  // interface Event {
-  //   readonly attribute DOMString type;
-  //   readonly attribute EventTarget? target;
-  //   readonly attribute EventTarget? currentTarget;
+class Event {
+  constructor(ev) {
+    // [Constructor(DOMString type, optional EventInit eventInitDict),
+    //  Exposed=Window,Worker]
+    // interface Event {
+    //   readonly attribute DOMString type;
+    //   readonly attribute EventTarget? target;
+    //   readonly attribute EventTarget? currentTarget;
 
-  //   const unsigned short NONE = 0;
-  //   const unsigned short CAPTURING_PHASE = 1;
-  //   const unsigned short AT_TARGET = 2;
-  //   const unsigned short BUBBLING_PHASE = 3;
-  //   readonly attribute unsigned short eventPhase;
+    //   const unsigned short NONE = 0;
+    //   const unsigned short CAPTURING_PHASE = 1;
+    //   const unsigned short AT_TARGET = 2;
+    //   const unsigned short BUBBLING_PHASE = 3;
+    //   readonly attribute unsigned short eventPhase;
 
-  //   void stopPropagation();
-  //   void stopImmediatePropagation();
+    //   void stopPropagation();
+    //   void stopImmediatePropagation();
 
-  //   readonly attribute boolean bubbles;
-  //   readonly attribute boolean cancelable;
-  //   void preventDefault();
-  //   readonly attribute boolean defaultPrevented;
+    //   readonly attribute boolean bubbles;
+    //   readonly attribute boolean cancelable;
+    //   void preventDefault();
+    //   readonly attribute boolean defaultPrevented;
 
-  //   [Unforgeable] readonly attribute boolean isTrusted;
-  //   readonly attribute DOMTimeStamp timeStamp;
+    //   [Unforgeable] readonly attribute boolean isTrusted;
+    //   readonly attribute DOMTimeStamp timeStamp;
 
-  //   void initEvent(DOMString type, boolean bubbles, boolean cancelable);
-  // };
+    //   void initEvent(DOMString type, boolean bubbles, boolean cancelable);
+    // };
 
-  /**
-   * @name Event#type
-   * @type String
-   */
-  this.type = ev.type;
+    /**
+     * @name Event#type
+     * @type String
+     */
+    this.type = ev.type;
 
-  /**
-   * @name Event#defaultPrevented
-   * @type Boolean
-   */
-  this.defaultPrevented = ev.defaultPrevented;
+    /**
+     * @name Event#defaultPrevented
+     * @type Boolean
+     */
+    this.defaultPrevented = ev.defaultPrevented;
 
-  /**
-   * @name Event#timeStamp
-   * @type Number
-   */
-  this.timeStamp = ev.timeStamp;
+    /**
+     * @name Event#timeStamp
+     * @type Number
+     */
+    this.timeStamp = ev.timeStamp;
 
 
-  /**
-   * Used for exposing the current target's value.
-   *
-   * @name Event#value
-   * @type String
-   */
-  var targetConstructor = ev.target.constructor;
-  // TODO Support HTMLKeygenElement
-  if (
-    targetConstructor === HTMLInputElement ||
-    targetConstructor === HTMLTextAreaElement ||
-    targetConstructor === HTMLSelectElement
-  ) {
-    this.value = ev.target.value;
+    /**
+     * Used for exposing the current target's value.
+     *
+     * @name Event#value
+     * @type String
+     */
+    var targetConstructor = ev.target.constructor;
+    // TODO Support HTMLKeygenElement
+    if (
+      targetConstructor === HTMLInputElement ||
+      targetConstructor === HTMLTextAreaElement ||
+      targetConstructor === HTMLSelectElement
+    ) {
+      this.value = ev.target.value;
+    }
   }
+
+  /**
+   * Return the name of the event type
+   *
+   * @method
+   *
+   * @return {String} Name of the event type
+   */
+  toString() {
+    return 'Event';
+  };
+
 }
 
-/**
- * Return the name of the event type
- *
- * @method
- *
- * @return {String} Name of the event type
- */
-Event.prototype.toString = function toString() {
-  return 'Event';
-};
-
-module.exports = Event;
+export { Event };

@@ -23,7 +23,6 @@
  */
 
 'use strict';
-
 var ONES = [1, 1, 1];
 var ZEROS = [0, 0, 0];
 
@@ -33,27 +32,231 @@ var ZEROS = [0, 0, 0];
  *
  * @param {Size} parent the parent size
  */
-function Size(parent) {
+class Size {
+  constructor(parent) {
 
-  this.finalSize = new Float32Array(3);
-  this.sizeChanged = false;
+    this.finalSize = new Float32Array(3);
+    this.sizeChanged = false;
 
-  this.sizeMode = new Uint8Array(3);
-  this.sizeModeChanged = false;
+    this.sizeMode = new Uint8Array(3);
+    this.sizeModeChanged = false;
 
-  this.absoluteSize = new Float32Array(3);
-  this.absoluteSizeChanged = false;
+    this.absoluteSize = new Float32Array(3);
+    this.absoluteSizeChanged = false;
 
-  this.proportionalSize = new Float32Array(ONES);
-  this.proportionalSizeChanged = false;
+    this.proportionalSize = new Float32Array(ONES);
+    this.proportionalSizeChanged = false;
 
-  this.differentialSize = new Float32Array(3);
-  this.differentialSizeChanged = false;
+    this.differentialSize = new Float32Array(3);
+    this.differentialSizeChanged = false;
 
-  this.renderSize = new Float32Array(3);
-  this.renderSizeChanged = false;
+    this.renderSize = new Float32Array(3);
+    this.renderSizeChanged = false;
 
-  this.parent = parent != null ? parent : null;
+    this.parent = parent != null ? parent : null;
+  }
+
+  /**
+   * Sets the parent of this size.
+   *
+   * @method
+   *
+   * @param {Size} parent The parent size component
+   *
+   * @return {Size} this
+   */
+  setParent(parent) {
+    this.parent = parent;
+    return this;
+  };
+
+  /**
+   * Gets the parent of this size.
+   *
+   * @method
+   *
+   * @returns {Size|undefined} the parent if one exists
+   */
+  getParent() {
+    return this.parent;
+  };
+
+  /**
+   * Gets the size mode of this size representation
+   *
+   * @method
+   *
+   * @param {Number} x the size mode to use for the width
+   * @param {Number} y the size mode to use for the height
+   * @param {Number} z the size mode to use for the depth
+   *
+   * @return {array} array of size modes
+   */
+  setSizeMode(x, y, z) {
+    if (x != null)
+      x = _resolveSizeMode(x);
+    if (y != null)
+      y = _resolveSizeMode(y);
+    if (z != null)
+      z = _resolveSizeMode(z);
+    this.sizeModeChanged = _setVec(this.sizeMode, x, y, z);
+    return this;
+  };
+
+  /**
+   * Returns the size mode of this component.
+   *
+   * @method
+   *
+   * @return {Array} the current size mode of the this.
+   */
+  getSizeMode() {
+    return this.sizeMode;
+  };
+
+  /**
+   * Sets the absolute size of this size representation.
+   *
+   * @method
+   *
+   * @param {Number} x The x dimension of the absolute size
+   * @param {Number} y The y dimension of the absolute size
+   * @param {Number} z The z dimension of the absolute size
+   *
+   * @return {Size} this
+   */
+  setAbsolute(x, y, z) {
+    this.absoluteSizeChanged = _setVec(this.absoluteSize, x, y, z);
+    return this;
+  };
+
+  /**
+   * Gets the absolute size of this size representation
+   *
+   * @method
+   *
+   * @return {array} array of absolute size
+   */
+  getAbsolute() {
+    return this.absoluteSize;
+  };
+
+  /**
+   * Sets the proportional size of this size representation.
+   *
+   * @method
+   *
+   * @param {Number} x The x dimension of the proportional size
+   * @param {Number} y The y dimension of the proportional size
+   * @param {Number} z The z dimension of the proportional size
+   *
+   * @return {Size} this
+   */
+  setProportional(x, y, z) {
+    this.proportionalSizeChanged = _setVec(this.proportionalSize, x, y, z);
+    return this;
+  };
+
+  /**
+   * Gets the propotional size of this size representation
+   *
+   * @method
+   *
+   * @return {array} array of proportional size
+   */
+  getProportional() {
+    return this.proportionalSize;
+  };
+
+  /**
+   * Sets the differential size of this size representation.
+   *
+   * @method
+   *
+   * @param {Number} x The x dimension of the differential size
+   * @param {Number} y The y dimension of the differential size
+   * @param {Number} z The z dimension of the differential size
+   *
+   * @return {Size} this
+   */
+  setDifferential(x, y, z) {
+    this.differentialSizeChanged = _setVec(this.differentialSize, x, y, z);
+    return this;
+  };
+
+  /**
+   * Gets the differential size of this size representation
+   *
+   * @method
+   *
+   * @return {array} array of differential size
+   */
+  getDifferential() {
+    return this.differentialSize;
+  };
+
+  /**
+   * Sets the size of this size representation.
+   *
+   * @method
+   *
+   * @param {Number} x The x dimension of the size
+   * @param {Number} y The y dimension of the size
+   * @param {Number} z The z dimension of the size
+   *
+   * @return {Size} this
+   */
+  get() {
+    return this.finalSize;
+  };
+
+  /**
+   * fromSpecWithParent takes the parent node's size, the target node's spec,
+   * and a target array to write to. Using the node's size mode it calculates
+   * a final size for the node from the node's spec. Returns whether or not
+   * the final size has changed from its last value.
+   *
+   * @method
+   *
+   * @param {Array} components the node's components
+   *
+   * @return {Boolean} true if the size of the node has changed.
+   */
+  fromComponents(components) {
+    var mode = this.sizeMode;
+    var target = this.finalSize;
+    var parentSize = this.parent ? this.parent.get() : ZEROS;
+    var prev;
+    var changed = false;
+    var len = components.length;
+    var j;
+    for (var i = 0; i < 3; i++) {
+      prev = target[i];
+      switch (mode[i]) {
+        case Size.RELATIVE:
+          target[i] = parentSize[i] * this.proportionalSize[i] + this.differentialSize[i];
+          break;
+        case Size.ABSOLUTE:
+          target[i] = this.absoluteSize[i];
+          break;
+        case Size.RENDER:
+          var candidate;
+          var component;
+          for (j = 0; j < len; j++) {
+            component = components[j];
+            if (component && component.getRenderSize) {
+              candidate = component.getRenderSize()[i];
+              target[i] = target[i] < candidate || target[i] === 0 ? candidate : target[i];
+            }
+          }
+          break;
+      }
+      changed = changed || prev !== target[i];
+    }
+    this.sizeChanged = changed;
+    return changed;
+  };
+
 }
 
 // an enumeration of the different types of size modes
@@ -96,7 +299,7 @@ function _vecOptionalSet(vec, index, val) {
  *
  * @return {Boolean} whether anything has changed
  */
-function setVec(vec, x, y, z) {
+function _setVec(vec, x, y, z) {
   var propagate = false;
 
   propagate = _vecOptionalSet(vec, 0, x) || propagate;
@@ -116,7 +319,7 @@ function setVec(vec, x, y, z) {
  *
  * @return {Number} the resolved size mode from the enumeration.
  */
-function resolveSizeMode(val) {
+function _resolveSizeMode(val) {
   if (val.constructor === String) {
     switch (val.toLowerCase()) {
       case 'relative':
@@ -131,206 +334,4 @@ function resolveSizeMode(val) {
   return val;
 }
 
-/**
- * Sets the parent of this size.
- *
- * @method
- *
- * @param {Size} parent The parent size component
- *
- * @return {Size} this
- */
-Size.prototype.setParent = function setParent(parent) {
-  this.parent = parent;
-  return this;
-};
-
-/**
- * Gets the parent of this size.
- *
- * @method
- *
- * @returns {Size|undefined} the parent if one exists
- */
-Size.prototype.getParent = function getParent() {
-  return this.parent;
-};
-
-/**
- * Gets the size mode of this size representation
- *
- * @method
- *
- * @param {Number} x the size mode to use for the width
- * @param {Number} y the size mode to use for the height
- * @param {Number} z the size mode to use for the depth
- *
- * @return {array} array of size modes
- */
-Size.prototype.setSizeMode = function setSizeMode(x, y, z) {
-  if (x != null)
-    x = resolveSizeMode(x);
-  if (y != null)
-    y = resolveSizeMode(y);
-  if (z != null)
-    z = resolveSizeMode(z);
-  this.sizeModeChanged = setVec(this.sizeMode, x, y, z);
-  return this;
-};
-
-/**
- * Returns the size mode of this component.
- *
- * @method
- *
- * @return {Array} the current size mode of the this.
- */
-Size.prototype.getSizeMode = function getSizeMode() {
-  return this.sizeMode;
-};
-
-/**
- * Sets the absolute size of this size representation.
- *
- * @method
- *
- * @param {Number} x The x dimension of the absolute size
- * @param {Number} y The y dimension of the absolute size
- * @param {Number} z The z dimension of the absolute size
- *
- * @return {Size} this
- */
-Size.prototype.setAbsolute = function setAbsolute(x, y, z) {
-  this.absoluteSizeChanged = setVec(this.absoluteSize, x, y, z);
-  return this;
-};
-
-/**
- * Gets the absolute size of this size representation
- *
- * @method
- *
- * @return {array} array of absolute size
- */
-Size.prototype.getAbsolute = function getAbsolute() {
-  return this.absoluteSize;
-};
-
-/**
- * Sets the proportional size of this size representation.
- *
- * @method
- *
- * @param {Number} x The x dimension of the proportional size
- * @param {Number} y The y dimension of the proportional size
- * @param {Number} z The z dimension of the proportional size
- *
- * @return {Size} this
- */
-Size.prototype.setProportional = function setProportional(x, y, z) {
-  this.proportionalSizeChanged = setVec(this.proportionalSize, x, y, z);
-  return this;
-};
-
-/**
- * Gets the propotional size of this size representation
- *
- * @method
- *
- * @return {array} array of proportional size
- */
-Size.prototype.getProportional = function getProportional() {
-  return this.proportionalSize;
-};
-
-/**
- * Sets the differential size of this size representation.
- *
- * @method
- *
- * @param {Number} x The x dimension of the differential size
- * @param {Number} y The y dimension of the differential size
- * @param {Number} z The z dimension of the differential size
- *
- * @return {Size} this
- */
-Size.prototype.setDifferential = function setDifferential(x, y, z) {
-  this.differentialSizeChanged = setVec(this.differentialSize, x, y, z);
-  return this;
-};
-
-/**
- * Gets the differential size of this size representation
- *
- * @method
- *
- * @return {array} array of differential size
- */
-Size.prototype.getDifferential = function getDifferential() {
-  return this.differentialSize;
-};
-
-/**
- * Sets the size of this size representation.
- *
- * @method
- *
- * @param {Number} x The x dimension of the size
- * @param {Number} y The y dimension of the size
- * @param {Number} z The z dimension of the size
- *
- * @return {Size} this
- */
-Size.prototype.get = function get() {
-  return this.finalSize;
-};
-
-/**
- * fromSpecWithParent takes the parent node's size, the target node's spec,
- * and a target array to write to. Using the node's size mode it calculates
- * a final size for the node from the node's spec. Returns whether or not
- * the final size has changed from its last value.
- *
- * @method
- *
- * @param {Array} components the node's components
- *
- * @return {Boolean} true if the size of the node has changed.
- */
-Size.prototype.fromComponents = function fromComponents(components) {
-  var mode = this.sizeMode;
-  var target = this.finalSize;
-  var parentSize = this.parent ? this.parent.get() : ZEROS;
-  var prev;
-  var changed = false;
-  var len = components.length;
-  var j;
-  for (var i = 0; i < 3; i++) {
-    prev = target[i];
-    switch (mode[i]) {
-      case Size.RELATIVE:
-        target[i] = parentSize[i] * this.proportionalSize[i] + this.differentialSize[i];
-        break;
-      case Size.ABSOLUTE:
-        target[i] = this.absoluteSize[i];
-        break;
-      case Size.RENDER:
-        var candidate;
-        var component;
-        for (j = 0; j < len; j++) {
-          component = components[j];
-          if (component && component.getRenderSize) {
-            candidate = component.getRenderSize()[i];
-            target[i] = target[i] < candidate || target[i] === 0 ? candidate : target[i];
-          }
-        }
-        break;
-    }
-    changed = changed || prev !== target[i];
-  }
-  this.sizeChanged = changed;
-  return changed;
-};
-
-module.exports = Size;
-
+export { Size };

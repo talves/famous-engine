@@ -24,7 +24,7 @@
 
 'use strict';
 
-var PREFIXES = ['', '-ms-', '-webkit-', '-moz-', '-o-'];
+const PREFIXES = ['', '-ms-', '-webkit-', '-moz-', '-o-'];
 
 /**
  * A helper function used for determining the vendor prefixed version of the
@@ -45,7 +45,7 @@ var PREFIXES = ['', '-ms-', '-webkit-', '-moz-', '-o-'];
  * @return {String} prefixed    Vendor prefixed version of passed in CSS
  *                              property (e.g. `-webkit-border-radius`).
  */
-function vendorPrefix(property) {
+var vendorPrefix = function(property) {
   for (var i = 0; i < PREFIXES.length; i++) {
     var prefixed = PREFIXES[i] + property;
     if (document.documentElement.style[prefixed] === '') {
@@ -55,4 +55,4 @@ function vendorPrefix(property) {
   return property;
 }
 
-module.exports = vendorPrefix;
+export { vendorPrefix };

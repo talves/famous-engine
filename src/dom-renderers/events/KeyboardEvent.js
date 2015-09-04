@@ -24,7 +24,7 @@
 
 'use strict';
 
-var UIEvent = require('./UIEvent');
+import { UIEvent } from './UIEvent';
 
 /**
  * See [UI Events (formerly DOM Level 3 Events)](http://www.w3.org/TR/2015/WD-uievents-20150428/#events-keyboardevents).
@@ -34,126 +34,126 @@ var UIEvent = require('./UIEvent');
  *
  * @param {Event} ev The native DOM event.
  */
-function KeyboardEvent(ev) {
-  // [Constructor(DOMString typeArg, optional KeyboardEventInit keyboardEventInitDict)]
-  // interface KeyboardEvent : UIEvent {
-  //     // KeyLocationCode
-  //     const unsigned long DOM_KEY_LOCATION_STANDARD = 0x00;
-  //     const unsigned long DOM_KEY_LOCATION_LEFT = 0x01;
-  //     const unsigned long DOM_KEY_LOCATION_RIGHT = 0x02;
-  //     const unsigned long DOM_KEY_LOCATION_NUMPAD = 0x03;
-  //     readonly    attribute DOMString     key;
-  //     readonly    attribute DOMString     code;
-  //     readonly    attribute unsigned long location;
-  //     readonly    attribute boolean       ctrlKey;
-  //     readonly    attribute boolean       shiftKey;
-  //     readonly    attribute boolean       altKey;
-  //     readonly    attribute boolean       metaKey;
-  //     readonly    attribute boolean       repeat;
-  //     readonly    attribute boolean       isComposing;
-  //     boolean getModifierState (DOMString keyArg);
-  // };
+class KeyboardEvent extends UIEvent {
+  constructor(ev) {
+    // [Constructor(DOMString typeArg, optional KeyboardEventInit keyboardEventInitDict)]
+    // interface KeyboardEvent : UIEvent {
+    //     // KeyLocationCode
+    //     const unsigned long DOM_KEY_LOCATION_STANDARD = 0x00;
+    //     const unsigned long DOM_KEY_LOCATION_LEFT = 0x01;
+    //     const unsigned long DOM_KEY_LOCATION_RIGHT = 0x02;
+    //     const unsigned long DOM_KEY_LOCATION_NUMPAD = 0x03;
+    //     readonly    attribute DOMString     key;
+    //     readonly    attribute DOMString     code;
+    //     readonly    attribute unsigned long location;
+    //     readonly    attribute boolean       ctrlKey;
+    //     readonly    attribute boolean       shiftKey;
+    //     readonly    attribute boolean       altKey;
+    //     readonly    attribute boolean       metaKey;
+    //     readonly    attribute boolean       repeat;
+    //     readonly    attribute boolean       isComposing;
+    //     boolean getModifierState (DOMString keyArg);
+    // };
 
-  UIEvent.call(this, ev);
+    super(ev);
+
+    /**
+     * @name KeyboardEvent#DOM_KEY_LOCATION_STANDARD
+     * @type Number
+     */
+    this.DOM_KEY_LOCATION_STANDARD = 0x00;
+
+    /**
+     * @name KeyboardEvent#DOM_KEY_LOCATION_LEFT
+     * @type Number
+     */
+    this.DOM_KEY_LOCATION_LEFT = 0x01;
+
+    /**
+     * @name KeyboardEvent#DOM_KEY_LOCATION_RIGHT
+     * @type Number
+     */
+    this.DOM_KEY_LOCATION_RIGHT = 0x02;
+
+    /**
+     * @name KeyboardEvent#DOM_KEY_LOCATION_NUMPAD
+     * @type Number
+     */
+    this.DOM_KEY_LOCATION_NUMPAD = 0x03;
+
+    /**
+     * @name KeyboardEvent#key
+     * @type String
+     */
+    this.key = ev.key;
+
+    /**
+     * @name KeyboardEvent#code
+     * @type String
+     */
+    this.code = ev.code;
+
+    /**
+     * @name KeyboardEvent#location
+     * @type Number
+     */
+    this.location = ev.location;
+
+    /**
+     * @name KeyboardEvent#ctrlKey
+     * @type Boolean
+     */
+    this.ctrlKey = ev.ctrlKey;
+
+    /**
+     * @name KeyboardEvent#shiftKey
+     * @type Boolean
+     */
+    this.shiftKey = ev.shiftKey;
+
+    /**
+     * @name KeyboardEvent#altKey
+     * @type Boolean
+     */
+    this.altKey = ev.altKey;
+
+    /**
+     * @name KeyboardEvent#metaKey
+     * @type Boolean
+     */
+    this.metaKey = ev.metaKey;
+
+    /**
+     * @name KeyboardEvent#repeat
+     * @type Boolean
+     */
+    this.repeat = ev.repeat;
+
+    /**
+     * @name KeyboardEvent#isComposing
+     * @type Boolean
+     */
+    this.isComposing = ev.isComposing;
+
+    /**
+     * @name KeyboardEvent#keyCode
+     * @type String
+     * @deprecated
+     */
+    this.keyCode = ev.keyCode;
+  }
 
   /**
-   * @name KeyboardEvent#DOM_KEY_LOCATION_STANDARD
-   * @type Number
+   * Return the name of the event type
+   *
+   * @method
+   *
+   * @return {String} Name of the event type
    */
-  this.DOM_KEY_LOCATION_STANDARD = 0x00;
+  toString() {
+    return 'KeyboardEvent';
+  };
 
-  /**
-   * @name KeyboardEvent#DOM_KEY_LOCATION_LEFT
-   * @type Number
-   */
-  this.DOM_KEY_LOCATION_LEFT = 0x01;
-
-  /**
-   * @name KeyboardEvent#DOM_KEY_LOCATION_RIGHT
-   * @type Number
-   */
-  this.DOM_KEY_LOCATION_RIGHT = 0x02;
-
-  /**
-   * @name KeyboardEvent#DOM_KEY_LOCATION_NUMPAD
-   * @type Number
-   */
-  this.DOM_KEY_LOCATION_NUMPAD = 0x03;
-
-  /**
-   * @name KeyboardEvent#key
-   * @type String
-   */
-  this.key = ev.key;
-
-  /**
-   * @name KeyboardEvent#code
-   * @type String
-   */
-  this.code = ev.code;
-
-  /**
-   * @name KeyboardEvent#location
-   * @type Number
-   */
-  this.location = ev.location;
-
-  /**
-   * @name KeyboardEvent#ctrlKey
-   * @type Boolean
-   */
-  this.ctrlKey = ev.ctrlKey;
-
-  /**
-   * @name KeyboardEvent#shiftKey
-   * @type Boolean
-   */
-  this.shiftKey = ev.shiftKey;
-
-  /**
-   * @name KeyboardEvent#altKey
-   * @type Boolean
-   */
-  this.altKey = ev.altKey;
-
-  /**
-   * @name KeyboardEvent#metaKey
-   * @type Boolean
-   */
-  this.metaKey = ev.metaKey;
-
-  /**
-   * @name KeyboardEvent#repeat
-   * @type Boolean
-   */
-  this.repeat = ev.repeat;
-
-  /**
-   * @name KeyboardEvent#isComposing
-   * @type Boolean
-   */
-  this.isComposing = ev.isComposing;
-
-  /**
-   * @name KeyboardEvent#keyCode
-   * @type String
-   * @deprecated
-   */
-  this.keyCode = ev.keyCode;
 }
 
-KeyboardEvent.prototype = Object.create(UIEvent.prototype);
-KeyboardEvent.prototype.constructor = KeyboardEvent;
-
-/**
- * Return the name of the event type
- *
- * @method
- *
- * @return {String} Name of the event type
- */
-KeyboardEvent.prototype.toString = function toString() {
-  return 'KeyboardEvent';
-};
-
-module.exports = KeyboardEvent;
+export { KeyboardEvent };

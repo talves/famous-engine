@@ -24,8 +24,8 @@
 
 'use strict';
 
-var Force = require('./Force');
-var Vec3 = require('../../math/Vec3');
+import { Force } from './Force';
+import { Vec3 } from '../../math/Vec3';
 
 var TORQUE_REGISTER = new Vec3();
 
@@ -37,12 +37,47 @@ var TORQUE_REGISTER = new Vec3();
  * @param {Particle[]} targets The targets to affect.
  * @param {Object} options options to set on drag
  */
-function RotationalDrag(targets, options) {
-  Force.call(this, targets, options);
-}
+class RotationalDrag extends Force {
+  constructor(targets, options) {
+    super(targets, options);
+  }
 
-RotationalDrag.prototype = Object.create(Force.prototype);
-RotationalDrag.prototype.constructor = RotationalDrag;
+  /**
+   * Initialize the Force. Sets defaults if a property was not already set.
+   *
+   * @method
+   * @return {undefined} undefined
+   */
+  init() {
+    this.max = this.max || Infinity;
+    this.strength = this.strength || 1;
+    this.type = this.type || RotationalDrag.LINEAR;
+  };
+
+  /**
+   * Adds a rotational drag force to a physics body's torque accumulator.
+   *
+   * @method
+   * @return {undefined} undefined
+   */
+  update() {
+    var targets = this.targets;
+    var type = this.type;
+
+    var torque = TORQUE_REGISTER;
+
+    var max = this.max;
+    var strength = this.strength;
+    for (var i = 0, len = targets.length; i < len; i++) {
+      var target = targets[i];
+      var omega = target.angularVelocity;
+      var magnitude = -strength * type(omega);
+      Vec3.scale(omega, magnitude < -max ? -max : magnitude, torque);
+      target.applyTorque(torque);
+    }
+  };
+
+}
 
 /**
  * Used to scale angular velocity in the computation of the drag torque.
@@ -65,39 +100,5 @@ RotationalDrag.LINEAR = function LINEAR() {
   return 1;
 };
 
-/**
- * Initialize the Force. Sets defaults if a property was not already set.
- *
- * @method
- * @return {undefined} undefined
- */
-RotationalDrag.prototype.init = function init() {
-  this.max = this.max || Infinity;
-  this.strength = this.strength || 1;
-  this.type = this.type || RotationalDrag.LINEAR;
-};
 
-/**
- * Adds a rotational drag force to a physics body's torque accumulator.
- *
- * @method
- * @return {undefined} undefined
- */
-RotationalDrag.prototype.update = function update() {
-  var targets = this.targets;
-  var type = this.type;
-
-  var torque = TORQUE_REGISTER;
-
-  var max = this.max;
-  var strength = this.strength;
-  for (var i = 0, len = targets.length; i < len; i++) {
-    var target = targets[i];
-    var omega = target.angularVelocity;
-    var magnitude = -strength * type(omega);
-    Vec3.scale(omega, magnitude < -max ? -max : magnitude, torque);
-    target.applyTorque(torque);
-  }
-};
-
-module.exports = RotationalDrag;
+export { RotationalDrag };

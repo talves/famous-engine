@@ -24,8 +24,8 @@
 
 'use strict';
 
-var Geometry = require('../Geometry');
-var GeometryHelper = require('../GeometryHelper');
+import { Geometry } from '../Geometry';
+import { GeometryHelper } from '../GeometryHelper';
 
 /**
  * This function returns a new static geometry, which is passed
@@ -39,70 +39,71 @@ var GeometryHelper = require('../GeometryHelper');
  *
  * @return {Object} constructed geometry
  */
-function Plane(options) {
-  if (!(this instanceof Plane)) return new Plane(options);
+class Plane extends Geometry {
+  constructor(options) {
+    //handled by es6 transpiler
+    //if (!(this instanceof Plane)) return new Plane(options);
 
-  options = options || {};
-  var detailX = options.detailX || options.detail || 1;
-  var detailY = options.detailY || options.detail || 1;
+    options = options || {};
+    var detailX = options.detailX || options.detail || 1;
+    var detailY = options.detailY || options.detail || 1;
 
-  var vertices = [];
-  var textureCoords = [];
-  var normals = [];
-  var indices = [];
+    var vertices = [];
+    var textureCoords = [];
+    var normals = [];
+    var indices = [];
 
-  var i;
+    var i;
 
-  for (var y = 0; y <= detailY; y++) {
-    var t = y / detailY;
-    for (var x = 0; x <= detailX; x++) {
-      var s = x / detailX;
-      vertices.push(2. * (s - .5), 2 * (t - .5), 0);
-      textureCoords.push(s, 1 - t);
-      if (x < detailX && y < detailY) {
-        i = x + y * (detailX + 1);
-        indices.push(i, i + 1, i + detailX + 1);
-        indices.push(i + detailX + 1, i + 1, i + detailX + 2);
+    for (var y = 0; y <= detailY; y++) {
+      var t = y / detailY;
+      for (var x = 0; x <= detailX; x++) {
+        var s = x / detailX;
+        vertices.push(2. * (s - .5), 2 * (t - .5), 0);
+        textureCoords.push(s, 1 - t);
+        if (x < detailX && y < detailY) {
+          i = x + y * (detailX + 1);
+          indices.push(i, i + 1, i + detailX + 1);
+          indices.push(i + detailX + 1, i + 1, i + detailX + 2);
+        }
       }
     }
-  }
 
-  if (options.backface !== false) {
-    GeometryHelper.addBackfaceTriangles(vertices, indices);
+    if (options.backface !== false) {
+      GeometryHelper.addBackfaceTriangles(vertices, indices);
 
-    // duplicate texture coordinates as well
+      // duplicate texture coordinates as well
 
-    var len = textureCoords.length;
-    for (i = 0; i < len; i++) textureCoords.push(textureCoords[i]);
-  }
-
-  normals = GeometryHelper.computeNormals(vertices, indices);
-
-  options.buffers = [
-    {
-      name: 'a_pos',
-      data: vertices
-    },
-    {
-      name: 'a_texCoord',
-      data: textureCoords,
-      size: 2
-    },
-    {
-      name: 'a_normals',
-      data: normals
-    },
-    {
-      name: 'indices',
-      data: indices,
-      size: 1
+      var len = textureCoords.length;
+      for (i = 0; i < len; i++) textureCoords.push(textureCoords[i]);
     }
-  ];
 
-  Geometry.call(this, options);
+    normals = GeometryHelper.computeNormals(vertices, indices);
+
+    options.buffers = [
+      {
+        name: 'a_pos',
+        data: vertices
+      },
+      {
+        name: 'a_texCoord',
+        data: textureCoords,
+        size: 2
+      },
+      {
+        name: 'a_normals',
+        data: normals
+      },
+      {
+        name: 'indices',
+        data: indices,
+        size: 1
+      }
+    ];
+
+    super(options);
+  }
+
 }
 
-Plane.prototype = Object.create(Geometry.prototype);
-Plane.prototype.constructor = Plane;
-
-module.exports = Plane;
+export { Plane };
