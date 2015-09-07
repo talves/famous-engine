@@ -287,13 +287,13 @@ class Transitionable {
       if (output == null)
         output = [];
       for (var i = 0, len = input.length; i < len; i++) {
-        output[i] = _sync(output[i], input[i]);
+        output[i] = this._sync(output[i], input[i]);
       }
     } else if (input instanceof Object) {
       if (output == null)
         output = {};
       for (var key in input) {
-        output[key] = _sync(output[key], input[key]);
+        output[key] = this._sync(output[key], input[key]);
       }
     }
     return output;
